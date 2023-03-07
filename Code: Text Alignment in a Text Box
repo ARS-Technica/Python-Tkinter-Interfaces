@@ -1,0 +1,25 @@
+"""
+Center text in a Tkinter Text Box
+"""
+
+# Import the required libraries
+from tkinter import *
+
+# Create an instance of tkinter frame or window
+win=Tk()
+
+# Set the size of the tkinter window
+win.geometry("700x350")
+
+# Create a text widget
+text=Text(win, width=40, height=10)
+
+# Justify the text alignment to the center
+text.tag_configure("center", justify='center')
+text.insert(INSERT, "Welcome to Tutorialspoint...")
+
+# Add the tag from start to end text
+text.tag_add("center", 1.0, "end")
+text.pack()
+
+win.mainloop()
