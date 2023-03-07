@@ -1,0 +1,129 @@
+"""
+A demonstration of the various drop-down menu options offered by Tkinter
+"""
+
+from tkinter import * # This is more convenient.
+
+
+def new_file():
+    print("Create new file")
+
+
+def open_file():
+    print("Open existing file")
+
+
+def stub_action():
+    print("Menu select")
+
+
+def makeCascadeMenubutton():
+    menubutton = Menubutton(menubarFrame, text='Cascading Menus', underline=0)
+    menubutton.menu = Menu(menubutton)
+    menubutton.menu.choices = Menu(menubutton.menu)
+
+    # Create and populate the "weirdOnes" submenu
+    menubutton.menu.choices.weirdOnes = Menu(menubutton.menu.choices)
+    menubutton.menu.choices.weirdOnes.add_command(label='Stockbroker')
+    menubutton.menu.choices.weirdOnes.add_command(label='Quantity Surveyor')
+    menubutton.menu.choices.weirdOnes.add_command(label='Church Warden')
+    menubutton.menu.choices.weirdOnes.add_command(label='BRM')    
+
+    menubutton.menu.choices.add_command(label='Wooden Leg')
+    menubutton.menu.choices.add_command(label='Hire Purchase')
+    menubutton.menu.choices.add_command(label='Dead Crab')
+    menubutton.menu.choices.add_command(label='Tree Surgeon')
+    menubutton.menu.choices.add_command(label='Filing Cabinet')
+    menubutton.menu.choices.add_command(label='Goldfish')
+    # note the "add_cascade()" rather than the "add_command()"
+    menubutton.menu.choices.add_cascade(label='Is it a...', 
+            menu=menubutton.menu.choices.weirdOnes)
+
+    menubutton.menu.add_cascade(label='Scripts',
+            menu=menubutton.menu.choices)
+    menubutton['menu'] = menubutton.menu
+    return menubutton
+
+
+def makeCheckbuttonMenubutton():
+    menubutton = Menubutton(menubarFrame, text='Checkbutton Menus', underline=0)
+    menubutton.menu = Menu(menubutton)
+
+    menubutton.menu.add_checkbutton(label='Doug')
+    menubutton.menu.add_checkbutton(label='Dinsdale')
+    menubutton.menu.add_checkbutton(label="Stig O'Tracy")
+    menubutton.menu.add_checkbutton(label='Vince')
+    menubutton.menu.add_checkbutton(label='Gloria Pules')    
+    menubutton.menu.invoke(menubutton.menu.index('Dinsdale'))
+
+    menubutton['menu'] = menubutton.menu
+    return menubutton
+
+
+def makeCommandMenubutton():
+    menubutton = Menubutton(menubarFrame, text='Button Commands', underline=0)
+    menubutton.menu = Menu(menubutton)
+
+    menubutton.menu.add_command(label="Undo")
+    menubutton.menu.entryconfig(0, state=DISABLED)
+
+    menubutton.menu.add_command(label='New...', underline=0, command=new_file)
+    menubutton.menu.add_command(label='Open...', underline=0, command=open_file)
+    menubutton.menu.add_command(label='Wild Font', underline=0,
+            font=('Zapfino', 14), command=stub_action)
+    #menubutton.menu.add_command(bitmap="@bitmaps/RotateLeft")
+    menubutton.menu.add('separator')
+    menubutton.menu.add_command(label='Quit', underline=0, 
+            background='red', activebackground='green', 
+            command=menubutton.quit)
+
+    menubutton['menu'] = menubutton.menu
+    return menubutton
+
+
+def makeRadiobuttonMenubutton():
+    menubutton = Menubutton(menubarFrame, text='Radiobutton Menus', underline=0)
+    menubutton.menu = Menu(menubutton)
+
+    menubutton.menu.add_radiobutton(label='metonymy')
+    menubutton.menu.add_radiobutton(label='zeugmatists')
+    menubutton.menu.add_radiobutton(label='synechdotists')
+    menubutton.menu.add_radiobutton(label='axiomists')
+    menubutton.menu.add_radiobutton(label='anagogists')
+    menubutton.menu.add_radiobutton(label='catachresis')
+    menubutton.menu.add_radiobutton(label='periphrastic')
+    menubutton.menu.add_radiobutton(label='litotes')
+    menubutton.menu.add_radiobutton(label='circumlocutors')
+
+    menubutton['menu'] = menubutton.menu
+    return menubutton
+
+
+def makeDisabledMenubutton(): 
+    menubutton = Menubutton(menubarFrame, text='Disabled Menu', underline=0)
+    menubutton["state"] = DISABLED
+    return menubutton
+
+root = Tk()
+root.title('tkinter Menu demo')
+
+try:
+    root.option_readfile('lecture_options.txt')
+except TclError:
+    pass
+
+menubarFrame = Frame(root, relief=RAISED, borderwidth=2)
+menubarFrame.grid(row=0, column=0)
+
+commandMenubutton = makeCommandMenubutton()
+commandMenubutton.grid(row=0, column=0)
+cascadeMenubutton = makeCascadeMenubutton()
+cascadeMenubutton.grid(row=0, column=1)
+checkbuttonMenubutton = makeCheckbuttonMenubutton()
+checkbuttonMenubutton.grid(row=0, column=2)
+radiobuttonMenubutton = makeRadiobuttonMenubutton()
+radiobuttonMenubutton.grid(row=0, column=3)
+disabledMenubutton = makeDisabledMenubutton()
+disabledMenubutton.grid(row=0, column=4)
+
+root.mainloop()
