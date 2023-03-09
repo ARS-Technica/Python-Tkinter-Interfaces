@@ -1,0 +1,25 @@
+"""
+Making Menu options with Checkbutton in Tkinter?
+"""
+
+#Import the required Libraries
+from tkinter import *
+#Create an instance of Tkinter frame
+win = Tk()
+#Set the geometry of Tkinter Frame
+win.geometry("750x250")
+
+#Initialize a Menu Bar
+menubar = Menu(win)
+
+#Add Menu Items in the MenuBar
+menu_items = Menu(menubar)
+menu_items.add_checkbutton(label="C++", onvalue=1, offvalue=0)
+menu_items.add_checkbutton(label="Java", onvalue=1, offvalue=0)
+menu_items.add_checkbutton(label="Python", onvalue=1, offvalue=0)
+
+# Add the Viwable Menu to the MenuBar
+menubar.add_cascade(label='File', menu=menu_items)
+win.config(menu=menubar)
+
+win.mainloop()
