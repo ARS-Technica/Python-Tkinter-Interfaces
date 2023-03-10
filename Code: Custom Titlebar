@@ -1,0 +1,46 @@
+"""
+Custom Titlebar in Tkinter
+
+Tkinter doesn't come with the ability to customize your titlebar built into it.
+Here is a work-around to create a custom title bar.
+"""
+
+from tkinter import *
+
+root = Tk()
+root.title("Codemy.com - Change Titlebar Color")
+# root.iconbitmap("c:/")
+root.geometry("500x300")
+
+# Remove Title Bar
+root.overrideredirect(True)
+
+def move_app(e):
+    root.geometry(f"+{e.x_root}+{e.y_root}")
+
+def quitter(e):
+    root.quit()
+    root.destroy()
+
+# Create Fake Title Bar
+title_bar = Frame(root, bg="red", relief="raised", bd=1)
+title_bar.pack(expand=1, fill=X)
+
+# Bind the Title Bar
+title_bar.bind("<B1 Motion>", move_app)
+
+# Create Title Text
+title_label = Label(title_bar, text="   My Awesome App!", bg="red", fg="white")
+title_label.pack(side=LEFT, pady=2, padx=0)
+
+# Create close button on Title Bar
+close_label = Label(title_bar, text="  X  ", bg="darkgreen", fg="white", relief="raised")
+close_label.pack(side=RIGHT, pady=4, padx=4)
+close_label.bind("<Button-1>", quitter)
+
+my_button = Button(root, text="CLOSE!", font=("Helvetica", 32))
+my_button.pack(pady=100)
+my_button.bind("<Button-1>", quitter)
+
+root.mainloop()
+
