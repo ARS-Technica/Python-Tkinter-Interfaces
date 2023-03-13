@@ -1,0 +1,58 @@
+"""
+Context Menu (Right Click Menu Popups) With Tkinter
+
+A demonstration of how to create a context menu inside a Tkinter widget.
+"""
+
+from tkinter import *
+
+root = Tk()
+root.title("Right Click Pop-Up Menu")
+root.geometry("500x550")
+
+
+# ***************** Setting Labels ***************** #
+
+message = Label(root, text="", font=("Helvertica", 30))
+message.pack(pady=25)
+
+instructions = Label(root, text ="Right-click to display menu")
+instructions.pack()
+
+
+# ***************** Functions for Menu Options ***************** #
+
+def hello():
+    message.config(text="Hello World!", foreground="green")
+
+def goodbye():
+    message.config(text="Goodbye World!", foreground="red")
+
+def my_popup(event):
+    # Pass in coordinates of mouse
+    context_menu.tk_popup(event.x_root, event.y_root)
+
+
+# ***************** Context Menu ***************** #
+
+# Create a Menu
+context_menu = Menu(root, tearoff=False)
+context_menu.add_command(label="Say Hello", command=hello)
+context_menu.add_command(label="Say Goodbye", command=goodbye)
+context_menu.add_separator()
+context_menu.add_command(label="Exit", command=root.destroy)
+
+
+# ***************** Bindings ***************** #
+
+# Bind the mouse click to the menu function
+root.bind("<Button-3>", my_popup)
+
+"""
+Button-1 = Left mouse button
+Button-2 = Center mouse button (Not always available)
+Button-3 = Right mouse button
+"""
+
+root.mainloop()
+
