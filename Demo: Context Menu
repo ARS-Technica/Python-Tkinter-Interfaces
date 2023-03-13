@@ -13,7 +13,7 @@ root.geometry("500x550")
 
 # ***************** Setting Labels ***************** #
 
-message = Label(root, text="", font=("Helvertica", 30))
+message = Label(root, text="", font=("Helvetica", 30))
 message.pack(pady=25)
 
 instructions = Label(root, text ="Right-click to display menu")
