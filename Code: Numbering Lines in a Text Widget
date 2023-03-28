@@ -7,27 +7,53 @@ Display line number for the Text widget in an adjacent frame.
 Refactored to work with Notepad app.
 """ 
     
+
+import os
+import sys
 from tkinter import *
+from tkinter import filedialog
+from tkinter import font
+from tkinter import messagebox
+from tkinter import colorchooser
+import tkinter.ttk as ttk   # To toggle Status Bar visibility
+import win32print
+import win32api
+import tkinter.font as tkf
 
 
-def create_text_line_numbers(canvas, text_widget):
-    def redraw(*args):
-        # Redraw line numbers
-        canvas.delete("all")
+root = Tk()
+root.title("Text Editor")
+root.geometry("1200x690")
+root.resizable(True,True)
 
-        i = text_widget.index("@0,0")
-        while True:
-            dline = text_widget.dlineinfo(i)
-            if dline is None:
-                break
-            y = dline[1]
-            linenum = str(i).split(".")[0]
-            canvas.create_text(2, y, anchor="nw", text=linenum)
-            i = text_widget.index("%s+1line" % i)
+# Create Main Frame
+my_frame = Frame(root)
+my_frame.pack(pady=5, fill="both", expand=True)
 
-    return redraw
+# Create Line Number Canvas
+line_number_canvas = Canvas(my_frame, width=30)
+line_number_canvas.pack(side="left", fill="y")
+
+# Create Vertical Scrollbar for the Text Box
+text_scroll = Scrollbar(my_frame, orient="vertical")
+text_scroll.pack(side="right", fill="y")
+
+# Create Horizontal Scrollbar for the Text Box
+horizontal_scroll = Scrollbar(my_frame, orient="horizontal")
+horizontal_scroll.pack(side="bottom", fill="x")
+
+# Create Text Box
+my_text = Text(my_frame, width=97, height=25, font=("Helvetica", 16),
+               selectbackground="yellow", selectforeground="black", undo=True,
+               xscrollcommand=horizontal_scroll.set, yscrollcommand=text_scroll.set, wrap="none")
+my_text.pack(side="right", fill="both", expand=True)
+
+# Configure Scrollbar
+text_scroll.config(command=my_text.yview)
+horizontal_scroll.config(command=my_text.xview)
 
 
+"""
 def create_custom_text(root, scrollbar):
     text = Text(root)
 
@@ -58,42 +84,113 @@ def create_custom_text(root, scrollbar):
 
     return text
 
-
-def create_example(root):
-    vsb = Scrollbar(root, orient="vertical")
-    vsb.pack(side="right", fill="y")
-
-    text = create_custom_text(root, vsb)
-    text.pack(side="right", fill="both", expand=True)
-
-    linenumbers_canvas = Canvas(root, width=30)
-    linenumbers_canvas.pack(side="left", fill="y")
-
-    redraw = create_text_line_numbers(linenumbers_canvas, text)
-
-    text.bind("<<Change>>", lambda event: redraw())
-    text.bind("<Configure>", lambda event: redraw())
-
-    text.insert("end", "one\ntwo\nthree\n")
-    text.insert("end", "four\n", ("bigfont",))
-    text.insert("end", "five\n")
-
-    return linenumbers_canvas
+text = create_custom_text(root, text_scroll)
+text.pack(side="right", fill="both", expand=True)
+"""
 
 
-if __name__ == "__main__":
-    root = Tk()
+# Update line numbers when text is edited
+def update_line_numbers(event=None):
+    # Clear the line number canvas
+    line_number_canvas.delete("all")
+    
+    # Get the current scroll position of the text widget
+    scroll_pos = my_text.yview()[0]
+    
+    # Draw the line numbers on the canvas
+    text_height = my_text.winfo_height()
+    #line_height = my_text.font.metrics("linespace")
+    line_height = tkf.Font(font=my_text['font']).metrics('linespace')
+    line_number_canvas.config(height=text_height)
+    for i, line in enumerate(my_text.get("1.0", "end").split("\n")):
+        y = i * line_height - int(scroll_pos * text_height)
+        line_number_canvas.create_text(20, y, anchor="nw", text=str(i+1))
+    
+    # Adjust the width of the canvas to the width of the line numbers
+    line_number_canvas.config(width=line_number_canvas.bbox("all")[2] + 10)
+    
+    # Update the scroll region of the text widget
+    line_number_canvas.update_idletasks()
+    my_text.config(yscrollcommand=lambda f, l: scrollbar_callback(f, l, line_number_canvas))
+    my_text.config(yscrollcommand=text_scroll.set)
+ 
 
-    def toggle_linenumbers():
-        if linenumbers_button_var.get():
-            linenumbers_canvas.pack(side="left", fill="y")
-        else:
-            linenumbers_canvas.pack_forget()
+# Display line numbers
+def display_line_numbers():
+    if numbering.get() == True:
+        # Create a new line_number_canvas widget
+        line_number_canvas.pack(side="left", fill="y")
+        update_line_numbers()
+    else:
+        # Forget existing canvas widget.  DO NOT USE DESTROY.
+        line_number_canvas.pack_forget()
 
-    linenumbers_button_var = BooleanVar(value=True)
-    linenumbers_button = Checkbutton(root, text="Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)
-    linenumbers_button.pack(side="top", anchor="w")
 
-    linenumbers_canvas = create_example(root)
+def create_text_line_numbers(canvas, text_widget):
+    def redraw(*args):
+        # Redraw line numbers
+        canvas.delete("all")
 
-    root.mainloop()
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            canvas.create_text(2, y, anchor="nw", text=linenum)
+            i = text_widget.index("%s+1line" % i)
+
+    return redraw
+
+
+redraw = create_text_line_numbers(line_number_canvas, my_text)
+
+
+# Bind KeyRelease event to update line numbers in real time
+my_text.bind("<KeyRelease>", update_line_numbers)
+my_text.bind("<<Change>>", lambda event: redraw())
+my_text.bind("<Configure>", lambda event: redraw())
+
+"""
+# Bind KeyRelease event to update line numbers in real time
+my_text.bind("<KeyRelease>", update_line_numbers)
+my_text.bind("<<Change>>", lambda event: update_line_numbers)
+my_text.bind("<Configure>", lambda event: update_line_numbers)
+"""
+
+# Toggle Word Wrap on and off
+def word_wrap():
+    if wrap.get() == True:
+        my_text.config(wrap="word")
+    else:
+        my_text.config(wrap="none")
+    
+    # Redraw the line numbers
+    display_line_numbers()
+
+# Create Menu
+my_menu = Menu(root)
+root.config(menu=my_menu)
+
+# Add File Menu
+file_menu = Menu(my_menu, tearoff=False)
+my_menu.add_cascade(label="File", menu=file_menu)
+file_menu.add_command(label="Exit", command=root.quit)
+
+# Add Options Menu
+options_menu = Menu(my_menu, tearoff=False)
+my_menu.add_cascade(label="Options", menu=options_menu)
+
+# Toggle line numbering on and off
+numbering = BooleanVar()
+options_menu.add_checkbutton(label="Line Numbering", onvalue=True, offvalue=False, variable=numbering, command=display_line_numbers)
+
+#Toggle Word Wrap on and off
+wrap = BooleanVar()
+options_menu.add_checkbutton(label="Word Wrap", onvalue=True, offvalue=False, variable=wrap, command=word_wrap)
+
+     
+
+root.mainloop()
+
