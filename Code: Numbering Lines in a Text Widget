@@ -8,19 +8,19 @@ Refactored to work with Notepad app.
 """ 
 
 
-import tkinter as tk
+from tkinter import *
 
-root = tk.Tk()
+root = Tk()
 root.geometry("400x300")
 
-text_frame = tk.Frame(root)
+text_frame = Frame(root)
 text_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-line_numbers = tk.Text(text_frame, width=4, padx=5, pady=5, takefocus=0, border=0, background='light gray', state='disabled')
-line_numbers.pack(side=tk.LEFT, fill=tk.Y)
+line_numbers = Text(text_frame, width=4, padx=5, pady=5, takefocus=0, border=0, background='light gray', state='disabled')
+line_numbers.pack(side=LEFT, fill=Y)
 
-text_widget = tk.Text(text_frame, padx=5, pady=5, wrap=tk.WORD)
-text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+text_widget = Text(text_frame, padx=5, pady=5, wrap=tk.WORD)
+text_widget.pack(side=LEFT, fill=BOTH, expand=True)
 
 def update_line_numbers(event=None):
     line_numbers.config(state='normal')
@@ -38,24 +38,24 @@ def toggle_line_numbers():
     if show_line_numbers_var.get():
         text_widget.pack_forget()
         line_numbers.pack_forget()
-        line_numbers.pack(side=tk.LEFT, fill=tk.Y)
-        text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        line_numbers.pack(side=LEFT, fill=Y)
+        text_widget.pack(side=LEFT, fill=BOTH, expand=True)
         update_line_numbers()
     else:
         line_numbers.pack_forget()
         text_widget.pack_forget()
-        text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        text_widget.pack(side=LEFT, fill=BOTH, expand=True)
         update_line_numbers()
 
 def create_widgets(master):
-    menu = tk.Menu(master)
+    menu = Menu(master)
     master.config(menu=menu)
 
-    view_menu = tk.Menu(menu, tearoff=False)
+    view_menu = Menu(menu, tearoff=False)
     menu.add_cascade(label="View", menu=view_menu)
 
     global show_line_numbers_var
-    show_line_numbers_var = tk.BooleanVar()
+    show_line_numbers_var = BooleanVar()
     show_line_numbers_var.set(True)
 
     view_menu.add_checkbutton(label="Line Numbers", variable=show_line_numbers_var, command=toggle_line_numbers)
@@ -63,4 +63,3 @@ def create_widgets(master):
 create_widgets(root)
 
 root.mainloop()
-
