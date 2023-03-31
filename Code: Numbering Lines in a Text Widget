@@ -4,62 +4,100 @@ Tkinter adding line number to text widget
 Inspired by: https://stackoverflow.com/questions/16369470/tkinter-adding-line-number-to-text-widget
 
 Display line number for the Text widget in an adjacent frame.
-Refactored to work with Notepad app.
+Refactored into functions to work with small Notepad app.
 """ 
 
 
 from tkinter import *
 
-root = Tk()
-root.geometry("400x300")
 
-text_frame = Frame(root)
-text_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+def create_text_line_numbers(canvas, text_widget):
+    def redraw(*args):
+        # Redraw line numbers
+        canvas.delete("all")
 
-line_numbers = Text(text_frame, width=4, padx=5, pady=5, takefocus=0, border=0, background='light gray', state='disabled')
-line_numbers.pack(side=LEFT, fill=Y)
+        i = text_widget.index("@0,0")
+        while True:
+            dline = text_widget.dlineinfo(i)
+            if dline is None:
+                break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            canvas.create_text(2, y, anchor="nw", text=linenum)
+            i = text_widget.index("%s+1line" % i)
 
-text_widget = Text(text_frame, padx=5, pady=5, wrap=tk.WORD)
-text_widget.pack(side=LEFT, fill=BOTH, expand=True)
+    return redraw
 
-def update_line_numbers(event=None):
-    line_numbers.config(state='normal')
-    line_numbers.delete('1.0', 'end')
-    text_content = text_widget.get('1.0', 'end')
-    line_count = text_content.count('\n') + 1
-    line_number_text = '\n'.join(str(i) for i in range(1, line_count+1))
-    line_numbers.insert('end', line_number_text)
-    line_numbers.config(state='disabled')
 
-text_widget.bind('<Key>', update_line_numbers)
-text_widget.bind('<Button-1>', update_line_numbers)
+def create_custom_text(root, scrollbar):
+    text = Text(root)
 
-def toggle_line_numbers():
-    if show_line_numbers_var.get():
-        text_widget.pack_forget()
-        line_numbers.pack_forget()
-        line_numbers.pack(side=LEFT, fill=Y)
-        text_widget.pack(side=LEFT, fill=BOTH, expand=True)
-        update_line_numbers()
+    def proxy(*args):
+        # Let the actual widget perform the requested action
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        # Generate an event if something was added or deleted,
+        # or the cursor position changed
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        # Return what the actual widget returned
+        return result
+
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+    text.configure(yscrollcommand=scrollbar.set)
+
+    return text
+
+
+def toggle_linenumbers():
+    if linenumbers_button_var.get():
+        linenumbers_canvas.pack(side="left", fill="y")
     else:
-        line_numbers.pack_forget()
-        text_widget.pack_forget()
-        text_widget.pack(side=LEFT, fill=BOTH, expand=True)
-        update_line_numbers()
+        linenumbers_canvas.pack_forget()
 
-def create_widgets(master):
-    menu = Menu(master)
-    master.config(menu=menu)
 
-    view_menu = Menu(menu, tearoff=False)
-    menu.add_cascade(label="View", menu=view_menu)
+#def create_menu(root, linenumbers_canvas):  
+def create_menu():  
+    menubar = Menu(root)
+    root.config(menu=menubar)
 
-    global show_line_numbers_var
-    show_line_numbers_var = BooleanVar()
-    show_line_numbers_var.set(True)
+    view_menu = Menu(menubar, tearoff=False)
+    menubar.add_cascade(label="View", menu=view_menu)
+    
+    # Toggle line numbering on and off
+    global linenumbers_button_var
+    linenumbers_button_var = BooleanVar(value=True)  # Line numbering is on by default 
+    view_menu.add_checkbutton(label="Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)
 
-    view_menu.add_checkbutton(label="Line Numbers", variable=show_line_numbers_var, command=toggle_line_numbers)
 
-create_widgets(root)
+if __name__ == "__main__":
+    root = Tk()
+    
+    scrollbar = Scrollbar(root, orient="vertical")
+    scrollbar.pack(side="right", fill="y")
+    
+    text_widget = create_custom_text(root, scrollbar)
+    text_widget.pack(side="right", fill="both", expand=True)
+    
+    linenumbers_canvas = Canvas(root, width=30)
+    linenumbers_canvas.pack(side="left", fill="y")
 
-root.mainloop()
+    text_widget.bind("<<Change>>", lambda event: attach())
+    text_widget.bind("<Configure>", lambda event: attach())
+    
+    attach = create_text_line_numbers(linenumbers_canvas, text_widget)
+    
+    create_menu()
+    
+    root.mainloop()
