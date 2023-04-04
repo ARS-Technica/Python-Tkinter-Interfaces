@@ -101,3 +101,41 @@ if __name__ == "__main__":
     create_menu()
     
     root.mainloop()
+
+
+
+"""
+
+# The following code prevents the Line Numbering canvas from disappearing 
+# as the window resizes.  It needs to be integrated with the code above.
+
+import tkinter as tk
+
+def resize_canvas(event): 
+    if event.width < 30:
+        canvas.itemconfigure(line_numbers, width=30)
+    else:
+        canvas.itemconfigure(line_numbers, width=event.width)
+
+root = tk.Tk()
+root.geometry('400x300')
+
+# create the line number canvas
+canvas = tk.Canvas(root, width=30, highlightthickness=0)
+canvas.pack(side='left', fill='y')
+
+# add the line numbers to the canvas
+line_numbers = canvas.create_text(15, 0, anchor='n', text='1')
+
+# create the text widget
+text_widget = tk.Text(root)
+text_widget.pack(side='right', fill='both', expand=True)
+
+# set initial canvas width
+canvas.itemconfigure(line_numbers, width=30)
+
+# bind the canvas to the text widget
+text_widget.bind('<Configure>', resize_canvas)
+
+root.mainloop()
+"""
