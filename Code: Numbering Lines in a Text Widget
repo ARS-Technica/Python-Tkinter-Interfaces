@@ -3,9 +3,9 @@ Tkinter adding line number to text widget
 
 Inspired by: https://stackoverflow.com/questions/16369470/tkinter-adding-line-number-to-text-widget
 
-Display line number for the Text widget in an adjacent frame.
-Refactored into functions to work with small Notepad app.
+Changelog: Code updated to prevent the Line Number Canvas from disappearing when the window is resized.
 """ 
+
 
 
 from tkinter import *
@@ -29,7 +29,7 @@ def create_text_line_numbers(canvas, text_widget):
     return redraw
 
 
-def create_custom_text(root, scrollbar):
+def create_custom_text(root, scrollbar, linenumbers_canvas):
     text = Text(root)
 
     def proxy(*args):
@@ -57,84 +57,65 @@ def create_custom_text(root, scrollbar):
     text.tk.createcommand(text._w, proxy)
     text.configure(yscrollcommand=scrollbar.set)
 
+    text.grid(row=0, column=1, sticky="nsew")
+
+    root.grid_rowconfigure(0, weight=1, minsize=linenumbers_canvas.winfo_reqheight())
+    root.grid_columnconfigure(1, weight=1)
+
+    linenumbers_canvas.grid(row=0, column=0, sticky="nsew")
+    linenumbers_canvas.grid_propagate(False)
+    linenumbers_canvas.configure(width=30)
+
+    text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
+
     return text
 
 
 def toggle_linenumbers():
     if linenumbers_button_var.get():
-        linenumbers_canvas.pack(side="left", fill="y")
+        linenumbers_canvas.grid(row=0, column=0, sticky="nsew")
+        root.grid_rowconfigure(0, minsize=linenumbers_canvas.winfo_reqheight())
     else:
-        linenumbers_canvas.pack_forget()
+        linenumbers_canvas.grid_forget()
+        root.grid_rowconfigure(0, minsize=0)
 
 
-#def create_menu(root, linenumbers_canvas):  
-def create_menu():  
+def create_menu():
     menubar = Menu(root)
     root.config(menu=menubar)
 
     view_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="View", menu=view_menu)
-    
+
     # Toggle line numbering on and off
     global linenumbers_button_var
-    linenumbers_button_var = BooleanVar(value=True)  # Line numbering is on by default 
-    view_menu.add_checkbutton(label="Line Numbers", variable=linenumbers_button_var, command=toggle_linenumbers)
-
+    linenumbers_button_var = BooleanVar(value=True)  # Line numbering is on by default
+    view_menu.add_checkbutton(
+        label="Show Line Numbers",
+        variable=linenumbers_button_var,
+        onvalue=True,
+        offvalue=False,
+        command=toggle_linenumbers,
+    )
 
 if __name__ == "__main__":
     root = Tk()
     
-    scrollbar = Scrollbar(root, orient="vertical")
-    scrollbar.pack(side="right", fill="y")
+    # Create scrollbar
+    scrollbar = Scrollbar(root)
+    scrollbar.grid(row=0, column=2, sticky="ns")
     
-    text_widget = create_custom_text(root, scrollbar)
-    text_widget.pack(side="right", fill="both", expand=True)
+    # Create canvas to hold line numbers
+    linenumbers_canvas = Canvas(root)
+    linenumbers_canvas.grid(row=0, column=0, sticky="nsew")
     
-    linenumbers_canvas = Canvas(root, width=30)
-    linenumbers_canvas.pack(side="left", fill="y")
-
-    text_widget.bind("<<Change>>", lambda event: attach())
-    text_widget.bind("<Configure>", lambda event: attach())
-    
-    attach = create_text_line_numbers(linenumbers_canvas, text_widget)
-    
+    # Create text widget
+    text = create_custom_text(root, scrollbar, linenumbers_canvas)
+ 
     create_menu()
     
+    text.insert("end", "Type some text here...")
+        
     root.mainloop()
 
 
-
-"""
-# The following code prevents the Line Numbering canvas from disappearing 
-# as the window resizes.  It needs to be integrated with the code above.
-
-from tkinter import *
-
-def resize_canvas(event): 
-    if event.width < 30:
-        canvas.itemconfigure(line_numbers, width=30)
-    else:
-        canvas.itemconfigure(line_numbers, width=event.width)
-
-root = Tk()
-root.geometry('400x300')
-
-# create the line number canvas
-canvas = Canvas(root, width=30, highlightthickness=0)
-canvas.pack(side='left', fill='y')
-
-# add the line numbers to the canvas
-line_numbers = canvas.create_text(15, 0, anchor='n', text='1')
-
-# create the text widget
-text_widget = Text(root)
-text_widget.pack(side='right', fill='both', expand=True)
-
-# set initial canvas width
-canvas.itemconfigure(line_numbers, width=30)
-
-# bind the canvas to the text widget
-text_widget.bind('<Configure>', resize_canvas)
-
-root.mainloop()
-"""
