@@ -3,14 +3,20 @@ Tkinter adding line number to text widget
 
 Inspired by: https://stackoverflow.com/questions/16369470/tkinter-adding-line-number-to-text-widget
 
-Changelog: Code updated to prevent the Line Number Canvas from disappearing when the window is resized.
+Changelog: Improved commenting on code.  Bound the <<Modified>> event to the create_text_line_numbers function.
 """ 
 
-
+# Import tkinter library
 from tkinter import *
 
 
+# Function to redraw the line numbers on the canvas whenever the text in the text widget is changed
 def create_text_line_numbers(canvas, text_widget):
+    """
+    # First, delete all existing text in the canvas
+    # Next, find the starting index of the text widget, and iterate over all lines of text
+    # For each line, calculate the vertical position and line number, and draw it on the canvas
+    """
     def redraw(*args):
         # Redraw line numbers
         canvas.delete("all")
@@ -28,16 +34,21 @@ def create_text_line_numbers(canvas, text_widget):
     return redraw
 
 
+# Function to create the text widget 
 def create_custom_text(root, scrollbar, linenumbers_canvas):
+    """
+    Creates the text widget, sets up a scrollbar, and binds the <<Change>> event
+    to the create_text_line_numbers function.
+    """
     text = Text(root)
 
+    # Function to generate an event <<Change>> whenever something is added or deleted in the text widget 
     def proxy(*args):
         # Let the actual widget perform the requested action
         cmd = (text._orig,) + args
         result = text.tk.call(cmd)
 
-        # Generate an event if something was added or deleted,
-        # or the cursor position changed
+        # Generate an event if something was added or deleted, or the cursor position changed
         if (
             args[0] in ("insert", "replace", "delete")
             or args[0:3] == ("mark", "set", "insert")
@@ -51,26 +62,53 @@ def create_custom_text(root, scrollbar, linenumbers_canvas):
         # Return what the actual widget returned
         return result
 
+    # Rename the original method of the text widget and create a new one that will forward calls to it
     text._orig = text._w + "_orig"
     text.tk.call("rename", text._w, text._orig)
     text.tk.createcommand(text._w, proxy)
     text.configure(yscrollcommand=scrollbar.set)
 
-    text.grid(row=0, column=1, sticky="nsew")
-
-    root.grid_rowconfigure(0, weight=1, minsize=linenumbers_canvas.winfo_reqheight())
-    root.grid_columnconfigure(1, weight=1)
-
+    # Create two columns: one for the line numbers and one for the text widget
+    # Line number canvas column (Left)
     linenumbers_canvas.grid(row=0, column=0, sticky="nsew")
     linenumbers_canvas.grid_propagate(False)
     linenumbers_canvas.configure(width=30)
+    
+    # Text widget column (Right)
+    text.grid(row=0, column=1, sticky="nsew")
 
+    root.grid_rowconfigure(0, weight=1, minsize=linenumbers_canvas.winfo_reqheight())
+    # Configure the second column (Text) to stretch and shrink
+    root.grid_columnconfigure(1, weight=1)
+    
+    """
+    The linenumbers_canvas is now passed as an argument to create_custom_text,
+    and is placed in the first column using grid. The second column is configured
+    to stretch and shrink using columnconfigure.
+    """
+
+    # Bind the <<Change>> event to the create_text_line_numbers function to redraw the line numbers whenever the TEXT changes
     text.bind("<<Change>>", create_text_line_numbers(linenumbers_canvas, text))
-
+    # Bind the <<Modified>> event to the create_text_line_numbers function to redraw the line numbers whenever the CONTENTS of the text widget are changed
+    text.bind("<<Modified>>", create_text_line_numbers(linenumbers_canvas, text))
+    # Bind the <Configure> event to the create_text_line_numbers function to redraw the line numbers whenever the SIZE of the text widget changes
+    # Omit the following line and linenumbers_canvas won't add number until selected.
+    text.bind("<Configure>", create_text_line_numbers(linenumbers_canvas, text))
     return text
 
 
+# Shows or hides the line numbers canvas.  Called from Options menu
+# Function modified to set the row and column for the canvas
 def toggle_linenumbers():
+    """
+    In this modified function, the linenumbers_canvas is placed in row 0 and
+    column 0 using the grid() method. The sticky parameter is set to "nsew" to make
+    the canvas fill the entire cell.
+    
+    The root.grid_rowconfigure(0, minsize=linenumbers_canvas.winfo_reqheight()) call
+    is used to make the row height equal to the canvas height, which ensures that
+    the canvas and text widget have the same height.
+    """
     if linenumbers_button_var.get():
         linenumbers_canvas.grid(row=0, column=0, sticky="nsew")
         root.grid_rowconfigure(0, minsize=linenumbers_canvas.winfo_reqheight())
@@ -79,10 +117,13 @@ def toggle_linenumbers():
         root.grid_rowconfigure(0, minsize=0)
 
 
+# Create menu
 def create_menu():
+    # Create the menu bar
     menubar = Menu(root)
     root.config(menu=menubar)
 
+    # Add View menu heading to the menubar 
     view_menu = Menu(menubar, tearoff=False)
     menubar.add_cascade(label="View", menu=view_menu)
 
@@ -98,9 +139,10 @@ def create_menu():
     )
 
 if __name__ == "__main__":
+    # Create the main window
     root = Tk()
     
-    # Create scrollbar
+    # Create a vertical scrollbar for the linenumbers_canvas
     scrollbar = Scrollbar(root)
     scrollbar.grid(row=0, column=2, sticky="ns")
     
@@ -108,13 +150,18 @@ if __name__ == "__main__":
     linenumbers_canvas = Canvas(root)
     linenumbers_canvas.grid(row=0, column=0, sticky="nsew")
     
-    # Create text widget
-    text = create_custom_text(root, scrollbar, linenumbers_canvas)
- 
+    # Create text widget passing the root, scrollbar, and linenumbers_canvas as arguments.
+    text = create_custom_text(root, scrollbar, linenumbers_canvas)   
+    text.insert("end", "Type some text here...")
+
+    text.insert("end", "one\ntwo\nthree\n")
+    text.insert("end", "four\n", ("bigfont",))
+    text.insert("end", "five\n")
+    text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
+
+    # Create the menu bar    
     create_menu()
     
-    text.insert("end", "Type some text here...")
-        
+    # Starts the main event loop of the tkinter application
     root.mainloop()
-
 
