@@ -1,0 +1,68 @@
+
+from tkinter import *
+
+def create_toolbar(parent):
+    toolbar_frame = Frame(parent, bd=1, relief=RAISED)
+
+    bold_button = Button(toolbar_frame, text="Bold")
+    bold_button.grid(row=0, column=0, padx=2, pady=2)
+
+    italic_button = Button(toolbar_frame, text="Italic")
+    italic_button.grid(row=0, column=1, padx=2, pady=2)
+
+    underline_button = Button(toolbar_frame, text="Underline")
+    underline_button.grid(row=0, column=2, padx=2, pady=2)
+
+    toolbar_frame.grid(row=0, column=0, sticky="ew")
+
+def create_text_editor(parent):
+    text_editor_frame = Frame(parent)
+
+    text_widget = Text(text_editor_frame)
+    text_widget.grid(row=0, column=0, sticky="nsew")
+
+    scroll_bar = Scrollbar(text_editor_frame, command=text_widget.yview)
+    scroll_bar.grid(row=0, column=1, sticky="ns")
+
+    text_widget.config(yscrollcommand=scroll_bar.set)
+
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
+    text_editor_frame.grid(row=1, column=0, sticky="nsew")
+
+def create_menu(parent):
+    menu_bar = Menu(parent)
+
+    file_menu = Menu(menu_bar, tearoff=0)
+    file_menu.add_command(label="New")
+    file_menu.add_command(label="Open")
+    file_menu.add_command(label="Save")
+    file_menu.add_separator()
+    file_menu.add_command(label="Exit", command=parent.quit)
+
+    edit_menu = Menu(menu_bar, tearoff=0)
+    edit_menu.add_command(label="Cut")
+    edit_menu.add_command(label="Copy")
+    edit_menu.add_command(label="Paste")
+
+    menu_bar.add_cascade(label="File", menu=file_menu)
+    menu_bar.add_cascade(label="Edit", menu=edit_menu)
+
+    parent.config(menu=menu_bar)
+
+def create_main_window():
+    main_window = Tk()
+    main_window.title("Text Editor")
+    main_window.geometry("600x400")
+
+    main_window.grid_rowconfigure(1, weight=1)
+    main_window.grid_columnconfigure(0, weight=1)
+
+    create_menu(main_window)
+    create_toolbar(main_window)
+    create_text_editor(main_window)
+
+    main_window.mainloop()
+
+if __name__ == "__main__":
+    create_main_window()
