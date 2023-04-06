@@ -4,38 +4,49 @@ Toolbar on a Grid
 Add Buttons to a Tkinter Application using the grid geometry manager
 """
 
-import tkinter as tk
+from tkinter import *
 
-root = tk.Tk()
+def create_toolbar(parent):
+    toolbar_frame = Frame(parent, bd=1, relief=RAISED)
 
-# Create the button frame
-button_frame = tk.Frame(root)
+    bold_button = Button(toolbar_frame, text="Bold")
+    bold_button.grid(row=0, column=0, padx=2, pady=2)
 
-# Create the buttons
-button1 = tk.Button(button_frame, text="Button 1")
-button2 = tk.Button(button_frame, text="Button 2")
-button3 = tk.Button(button_frame, text="Button 3")
+    italic_button = Button(toolbar_frame, text="Italic")
+    italic_button.grid(row=0, column=1, padx=2, pady=2)
 
-# Add the buttons to the grid
-button1.grid(row=0, column=0, padx=5, pady=5)
-button2.grid(row=0, column=1, padx=5, pady=5)
-button3.grid(row=0, column=2, padx=5, pady=5)
+    underline_button = Button(toolbar_frame, text="Underline")
+    underline_button.grid(row=0, column=2, padx=2, pady=2)
 
-# Create the toolbar frame
-toolbar_frame = tk.Frame(root)
+    toolbar_frame.grid(row=0, column=0, sticky="ew")
 
-# Create the toolbar buttons
-toolbar_button1 = tk.Button(toolbar_frame, text="Toolbar Button 1")
-toolbar_button2 = tk.Button(toolbar_frame, text="Toolbar Button 2")
-toolbar_button3 = tk.Button(toolbar_frame, text="Toolbar Button 3")
+def create_text_editor(parent):
+    text_editor_frame = Frame(parent)
 
-# Add the toolbar buttons to the grid
-toolbar_button1.grid(row=0, column=0, padx=5, pady=5)
-toolbar_button2.grid(row=0, column=1, padx=5, pady=5)
-toolbar_button3.grid(row=0, column=2, padx=5, pady=5)
+    text_widget = Text(text_editor_frame)
+    text_widget.grid(row=0, column=0, sticky="nsew")
 
-# Add the frames to the root window
-button_frame.grid(row=0, column=0)
-toolbar_frame.grid(row=1, column=0)
+    scroll_bar = Scrollbar(text_editor_frame, command=text_widget.yview)
+    scroll_bar.grid(row=0, column=1, sticky="ns")
 
-root.mainloop()
+    text_widget.config(yscrollcommand=scroll_bar.set)
+
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
+    text_editor_frame.grid(row=1, column=0, sticky="nsew")
+
+def create_main_window():
+    main_window = Tk()
+    main_window.title("Text Editor")
+    main_window.geometry("600x400")
+
+    main_window.grid_rowconfigure(1, weight=1)
+    main_window.grid_columnconfigure(0, weight=1)
+
+    create_toolbar(main_window)
+    create_text_editor(main_window)
+
+    main_window.mainloop()
+
+if __name__ == "__main__":
+    create_main_window()
