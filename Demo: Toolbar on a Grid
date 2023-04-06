@@ -1,0 +1,41 @@
+"""
+Toolbar on a Grid
+
+Add Buttons to a Tkinter Application using the grid geometry manager
+"""
+
+import tkinter as tk
+
+root = tk.Tk()
+
+# Create the button frame
+button_frame = tk.Frame(root)
+
+# Create the buttons
+button1 = tk.Button(button_frame, text="Button 1")
+button2 = tk.Button(button_frame, text="Button 2")
+button3 = tk.Button(button_frame, text="Button 3")
+
+# Add the buttons to the grid
+button1.grid(row=0, column=0, padx=5, pady=5)
+button2.grid(row=0, column=1, padx=5, pady=5)
+button3.grid(row=0, column=2, padx=5, pady=5)
+
+# Create the toolbar frame
+toolbar_frame = tk.Frame(root)
+
+# Create the toolbar buttons
+toolbar_button1 = tk.Button(toolbar_frame, text="Toolbar Button 1")
+toolbar_button2 = tk.Button(toolbar_frame, text="Toolbar Button 2")
+toolbar_button3 = tk.Button(toolbar_frame, text="Toolbar Button 3")
+
+# Add the toolbar buttons to the grid
+toolbar_button1.grid(row=0, column=0, padx=5, pady=5)
+toolbar_button2.grid(row=0, column=1, padx=5, pady=5)
+toolbar_button3.grid(row=0, column=2, padx=5, pady=5)
+
+# Add the frames to the root window
+button_frame.grid(row=0, column=0)
+toolbar_frame.grid(row=1, column=0)
+
+root.mainloop()
