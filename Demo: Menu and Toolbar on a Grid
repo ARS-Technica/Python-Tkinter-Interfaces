@@ -1,4 +1,3 @@
-
 from tkinter import *
 
 def create_toolbar(parent):
@@ -21,10 +20,12 @@ def create_text_editor(parent):
     text_widget = Text(text_editor_frame)
     text_widget.grid(row=0, column=0, sticky="nsew")
 
-    scroll_bar = Scrollbar(text_editor_frame, command=text_widget.yview)
-    scroll_bar.grid(row=0, column=1, sticky="ns")
+    x_scrollbar = Scrollbar(text_editor_frame, orient=HORIZONTAL, command=text_widget.xview)
+    x_scrollbar.grid(row=1, column=0, sticky="ew")
+    y_scrollbar = Scrollbar(text_editor_frame, orient=VERTICAL, command=text_widget.yview)
+    y_scrollbar.grid(row=0, column=1, sticky="ns")
 
-    text_widget.config(yscrollcommand=scroll_bar.set)
+    text_widget.config(xscrollcommand=x_scrollbar.set, yscrollcommand=y_scrollbar.set)
 
     text_editor_frame.grid_rowconfigure(0, weight=1)
     text_editor_frame.grid_columnconfigure(0, weight=1)
@@ -50,6 +51,13 @@ def create_menu(parent):
 
     parent.config(menu=menu_bar)
 
+def create_statusbar(parent):
+    status_frame = Frame(parent, bd=1, relief=SUNKEN)
+    status_label = Label(status_frame, text="Status Bar")
+    status_label.pack(fill=X)
+
+    status_frame.grid(row=2, column=0, sticky="ew")
+
 def create_main_window():
     main_window = Tk()
     main_window.title("Text Editor")
@@ -61,6 +69,7 @@ def create_main_window():
     create_menu(main_window)
     create_toolbar(main_window)
     create_text_editor(main_window)
+    create_statusbar(main_window)
 
     main_window.mainloop()
 
