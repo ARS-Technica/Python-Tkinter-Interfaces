@@ -7,20 +7,20 @@ Credit goes to Stackoverflow users David and Roland Smith
 """
 
 
-import tkinter as tk
+from tkinter import *
 import tkinter.ttk as ttk
 
 # Root
-root = tk.Tk()
+root = Tk()
 root.minsize(720, 480)
 root.rowconfigure(1, weight=1)
 root.columnconfigure(1, weight=1)
 
 # Variables
-statusbar_is_on = tk.IntVar()
+statusbar_is_on = IntVar()
 
 # Menu
-menu = tk.Menu(root)
+menu = Menu(root)
 
 
 # Toggle status bar on/off
@@ -39,7 +39,7 @@ def toggle_status_bar():
 
 
 # View Menu
-view_menu = tk.Menu(menu, tearoff=0)
+view_menu = Menu(menu, tearoff=0)
 view_menu.add_checkbutton(label="Status Bar", onvalue=1, offvalue=0, variable=statusbar_is_on, command=toggle_status_bar)
 menu.add_cascade(label="View", menu=view_menu)
 
@@ -49,7 +49,7 @@ root.config(menu=menu)
 # Text
 text_frame = ttk.Frame(root)
 text_frame.grid(row=1, column=1, sticky="NEWS")
-text = tk.Text(text_frame)
+text = Text(text_frame)
 text.grid(row=1, column=1, sticky="NEWS")
 text_vertical_scrollbar = ttk.Scrollbar(root, orient="vertical", command=text.yview)
 text_vertical_scrollbar.grid(row=1, column=2, sticky="NS")
@@ -62,3 +62,5 @@ statusbar_is_on.set(1)
 toggle_status_bar()
 
 root.mainloop()
+
+
