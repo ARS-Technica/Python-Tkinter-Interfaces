@@ -6,6 +6,7 @@ https://stackoverflow.com/questions/73516926/python-tkinter-status-bar-toolbar-t
 Credit goes to Stackoverflow users David and Roland Smith
 """
 
+
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -56,15 +57,8 @@ text.configure(yscrollcommand=text_vertical_scrollbar.set)
 text_frame.rowconfigure(1, weight=1)
 text_frame.columnconfigure(1, weight=1)
 
-# User Default Settings
-users_default_status_bar_setting = 1
-if users_default_status_bar_setting == 1:
-    statusbar_is_on.set(1)
-    print("User wants the status bar ON, when the program first starts up")
-else:
-    statusbar_is_on.set(0)
-    print("User wants the status bar OFF, when the program first starts up")
-# Added missing call.
+# Set status bar to on and create it
+statusbar_is_on.set(1)
 toggle_status_bar()
 
 root.mainloop()
