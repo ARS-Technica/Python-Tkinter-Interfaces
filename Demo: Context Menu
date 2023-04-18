@@ -56,3 +56,43 @@ Button-3 = Right mouse button
 
 root.mainloop()
 
+
+#%%
+
+"""
+Alternative code:
+"""
+
+def create_context_menu():
+    global context_menu
+    context_menu = Menu(root, tearoff=False)
+
+    context_menu.add_command(label="Cut", accelerator="Ctrl+X", command=cut)
+    context_menu.add_command(label="Copy", accelerator="Ctrl+C", command=copy)
+    context_menu.add_command(label="Paste", accelerator="Ctrl+V", command=paste)
+    context_menu.add_separator()
+    context_menu.add_command(label="Select All", accelerator="Ctrl+A", command=select_all)
+
+def cut():
+    text.event_generate("<<Cut>>")
+
+def copy():
+    text.event_generate("<<Copy>>")
+
+def paste():
+    text.event_generate("<<Paste>>")
+
+def select_all():
+    text.tag_add("sel", "1.0", "end")
+
+def display_context_menu(event):
+    context_menu.post(event.x_root, event.y_root)
+
+# create the text widget
+text = create_custom_text(root, linenumbers_canvas)
+
+# create the context menu
+create_context_menu()
+
+# bind the context menu to the text widget
+text.bind("<Button-3>", display_context_menu)
