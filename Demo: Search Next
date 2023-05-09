@@ -1,0 +1,66 @@
+"""
+The following code searches a text widget for all instances of a search term,
+them scrolls down through each instance of that term all with a single button.
+"""
+
+from tkinter import *
+
+root = Tk()
+root.title("Search App")
+
+text = Text(root, width=40, height=10, wrap=WORD)
+text.pack(expand=YES, fill=BOTH)
+
+search_entry = Entry(root)
+search_entry.pack(side=LEFT, padx=5, pady=5)
+
+def find_next():
+    """
+    The search function finds all the positions of the search term in the text
+    and compiles them into a list called search_positions. It also highlights
+    the first instance of the search term and sets the current_result_index
+    variable to 0.
+    """
+    global search_positions
+    global current_result_index
+
+    search_text = search_entry.get()
+
+    if search_text:
+        start_pos = "1.0"
+        if not search_positions:
+            search_positions = []
+            while True:
+                pos = text.search(search_text, start_pos, stopindex="end")
+                if not pos:
+                    break
+                end_pos = f"{pos}+{len(search_text)}c"
+                text.tag_add("found", pos, end_pos)
+                start_pos = end_pos
+                search_positions.append(pos)
+            text.tag_configure("found", background="yellow")
+            current_result_index = -1
+        if current_result_index < len(search_positions) - 1:
+            current_result_index += 1
+        else:
+            current_result_index = 0
+        next_result()
+
+def next_result():
+    global search_positions
+    global current_result_index
+
+    if search_positions:
+        pos = search_positions[current_result_index]
+        text.tag_remove("current", "1.0", "end")
+        text.tag_add("current", pos, f"{pos}+{len(search_entry.get())}c")
+        text.mark_set("insert", pos)
+        text.see(pos)
+
+search_button = Button(root, text="Find", command=find_next)
+search_button.pack(side=LEFT, padx=5, pady=5)
+
+search_positions = []
+current_result_index = -1
+
+root.mainloop()
