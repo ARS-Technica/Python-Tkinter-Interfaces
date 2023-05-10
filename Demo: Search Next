@@ -4,7 +4,6 @@ them scrolls down through each instance of that term all with a single button.
 """
 
 
-
 from tkinter import *
 
 root = Tk()
@@ -33,7 +32,7 @@ def find_next():
                 end_pos = pos
                 search_positions.insert(0, pos)
             text.tag_configure("found", background="yellow")
-        current_result_index = 0
+        current_result_index = -1
         next_result("down")
 
 def find_previous():
@@ -54,7 +53,7 @@ def find_previous():
                 text.tag_add("found", pos, f"{pos}+{len(search_text)}c")
                 search_positions.append(pos)
             text.tag_configure("found", background="yellow")
-        current_result_index = len(search_positions) - 1
+        current_result_index = len(search_positions)
         next_result("up")
 
 def next_result(direction):
