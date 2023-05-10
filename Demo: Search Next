@@ -3,6 +3,8 @@ The following code searches a text widget for all instances of a search term,
 them scrolls down through each instance of that term all with a single button.
 """
 
+
+
 from tkinter import *
 
 root = Tk()
@@ -29,15 +31,10 @@ def find_next():
                 if not pos:
                     break
                 end_pos = pos
-                text.tag_add("found", pos, f"{pos}+{len(search_text)}c")
                 search_positions.insert(0, pos)
             text.tag_configure("found", background="yellow")
-            current_result_index = len(search_positions)
-        if current_result_index > 0:
-            current_result_index -= 1
-        else:
-            current_result_index = len(search_positions) - 1
-        next_result()
+        current_result_index = 0
+        next_result("down")
 
 def find_previous():
     global search_positions
@@ -46,30 +43,34 @@ def find_previous():
     search_text = search_entry.get()
 
     if search_text:
-        end_pos = "end-1c"
+        end_pos = "1.0"
         if not search_positions:
             search_positions = []
             while True:
-                pos = text.search(search_text, end_pos, stopindex="1.0", backwards=True)
+                pos = text.search(search_text, end_pos, stopindex="end", backwards=False)
                 if not pos:
                     break
-                end_pos = pos
+                end_pos = pos + "+1c"
                 text.tag_add("found", pos, f"{pos}+{len(search_text)}c")
-                search_positions.insert(0, pos)
+                search_positions.append(pos)
             text.tag_configure("found", background="yellow")
-            current_result_index = len(search_positions)
-        if current_result_index > 0:
-            current_result_index -= 1
-        else:
-            current_result_index = len(search_positions) - 1
-        next_result()
+        current_result_index = len(search_positions) - 1
+        next_result("up")
 
-def next_result():
+def next_result(direction):
     global search_positions
     global current_result_index
 
     if search_positions:
         text.tag_remove("found", "1.0", "end")
+
+        if direction == "up":
+            current_result_index -= 1
+        elif direction == "down":
+            current_result_index += 1
+
+        current_result_index %= len(search_positions)
+
         pos = search_positions[current_result_index]
         text.tag_add("found", pos, f"{pos}+{len(search_entry.get())}c")
         text.mark_set("insert", pos)
@@ -84,6 +85,8 @@ search_button.pack(side=LEFT, padx=5, pady=5)
 search_positions = []
 current_result_index = -1
 
+root.bind("<Up>", lambda event: next_result("up"))
+root.bind("<Down>", lambda event: next_result("down"))
 
 # Test text for the purposes of debugging
 text.insert("end", "one\ntwo\nthree\n")
@@ -96,5 +99,4 @@ text.tag_configure("bigfont", font=("Helvetica", "24", "bold"))
 
 
 root.mainloop()
-
 
