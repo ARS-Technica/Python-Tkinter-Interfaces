@@ -3,6 +3,11 @@ The following code searches a text widget for all instances of a search term,
 them scrolls up or down through each instance of that term.
 """
 
+"""
+The following code searches a text widget for all instances of a search term,
+them scrolls up or down through each instance of that term.
+"""
+
 # Importing the tkinter module to create a GUI
 from tkinter import *
 
@@ -103,6 +108,17 @@ def next_result():
         text.mark_set("insert", pos)
         text.see(pos)
 
+def clear_find_results():
+    global search_positions
+    global current_result_index
+
+    if "found" in text.tag_names():
+        text.tag_remove("found", "1.0", "end")
+        search_positions = []
+        current_result_index -= 1
+    else:
+        pass
+
 # Creating a Button widgets to initiate the search and highlighting
 # Search down
 search_button = Button(root, text="Find Next", command=find_next)
@@ -111,6 +127,10 @@ search_button.pack(side=LEFT, padx=5, pady=5)
 # Search up
 search_button = Button(root, text="Find Prev", command=find_previous)
 search_button.pack(side=LEFT, padx=5, pady=5)
+
+clear_search_button = Button(root, text="Clear Search", command=clear_find_results) 
+clear_search_button.pack(side="left", padx=2, pady=2)
+
 
 # Initializing the search_positions list and current_result_index variable
 search_positions = []
