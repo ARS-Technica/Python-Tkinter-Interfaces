@@ -4,6 +4,7 @@ them scrolls down through each instance of that term all with a single button.
 """
 
 
+
 from tkinter import *
 
 root = Tk()
@@ -22,18 +23,24 @@ def find_next():
     search_text = search_entry.get()
 
     if search_text:
-        end_pos = "end-1c"
+        start_pos = "1.0"
         if not search_positions:
             search_positions = []
             while True:
-                pos = text.search(search_text, end_pos, stopindex="1.0", backwards=True)
+                pos = text.search(search_text, start_pos, stopindex="end")
                 if not pos:
                     break
-                end_pos = pos
-                search_positions.insert(0, pos)
+                end_pos = f"{pos}+{len(search_text)}c"
+                text.tag_add("found", pos, end_pos)
+                start_pos = end_pos
+                search_positions.append(pos)
             text.tag_configure("found", background="yellow")
-        current_result_index = -1
-        next_result("down")
+            current_result_index = -1
+        if current_result_index < len(search_positions) - 1:
+            current_result_index += 1
+        else:
+            current_result_index = 0
+        next_result()
 
 def find_previous():
     global search_positions
@@ -42,34 +49,30 @@ def find_previous():
     search_text = search_entry.get()
 
     if search_text:
-        end_pos = "1.0"
+        end_pos = "end-1c"
         if not search_positions:
             search_positions = []
             while True:
-                pos = text.search(search_text, end_pos, stopindex="end", backwards=False)
+                pos = text.search(search_text, end_pos, stopindex="1.0", backwards=True)
                 if not pos:
                     break
-                end_pos = pos + "+1c"
+                end_pos = pos
                 text.tag_add("found", pos, f"{pos}+{len(search_text)}c")
-                search_positions.append(pos)
+                search_positions.insert(0, pos)
             text.tag_configure("found", background="yellow")
-        current_result_index = len(search_positions)
-        next_result("up")
+            current_result_index = len(search_positions)
+        if current_result_index > 0:
+            current_result_index -= 1
+        else:
+            current_result_index = len(search_positions) - 1
+        next_result()
 
-def next_result(direction):
+def next_result():
     global search_positions
     global current_result_index
 
     if search_positions:
         text.tag_remove("found", "1.0", "end")
-
-        if direction == "up":
-            current_result_index -= 1
-        elif direction == "down":
-            current_result_index += 1
-
-        current_result_index %= len(search_positions)
-
         pos = search_positions[current_result_index]
         text.tag_add("found", pos, f"{pos}+{len(search_entry.get())}c")
         text.mark_set("insert", pos)
@@ -84,16 +87,14 @@ search_button.pack(side=LEFT, padx=5, pady=5)
 search_positions = []
 current_result_index = -1
 
-root.bind("<Up>", lambda event: next_result("up"))
-root.bind("<Down>", lambda event: next_result("down"))
 
 # Test text for the purposes of debugging
 text.insert("end", "one\ntwo\nthree\n")
 text.insert("end", "four\n", ("bigfont",))
-text.insert("end", "five\ntwo\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
-text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
-text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
+text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nthree two")
+text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
+text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
 text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
 
 
