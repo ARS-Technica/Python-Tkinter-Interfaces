@@ -3,85 +3,71 @@ The following code searches a text widget for all instances of a search term,
 them scrolls down through each instance of that term all with a single button.
 """
 
-# Importing the tkinter module to create a GUI
 from tkinter import *
 
-# Creating a tkinter object called "root"
 root = Tk()
-
-# Setting the title of the GUI
 root.title("Search App")
 
-# Creating a Text widget and adding it to the GUI
 text = Text(root, width=40, height=10, wrap=WORD)
 text.pack(expand=YES, fill=BOTH)
 
-# Creating an Entry widget for user to input search term
 search_entry = Entry(root)
 search_entry.pack(side=LEFT, padx=5, pady=5)
 
-# Defining a function to search for the next occurrence of the search term
 def find_next():
-    """
-    The search function finds all the positions of the search term in the text
-    and compiles them into a list called search_positions. It also highlights
-    the first instance of the search term and sets the current_result_index
-    variable to 0.
-    """
-        
-    # Declaring global variables
     global search_positions
     global current_result_index
 
-    # Retrieving the search term from the Entry widget
     search_text = search_entry.get()
 
-    # Searching for the search term in the Text widget and storing the positions in a list
     if search_text:
-        start_pos = "1.0"
+        end_pos = "end-1c"
         if not search_positions:
             search_positions = []
             while True:
-                pos = text.search(search_text, start_pos, stopindex="end")
+                pos = text.search(search_text, end_pos, stopindex="1.0", backwards=True)
                 if not pos:
                     break
-                end_pos = f"{pos}+{len(search_text)}c"
-                text.tag_add("found", pos, end_pos)
-                start_pos = end_pos
-                search_positions.append(pos)
-            # Configuring the "found" tag with a yellow background
+                end_pos = pos
+                text.tag_add("found", pos, f"{pos}+{len(search_text)}c")
+                search_positions.insert(0, pos)
             text.tag_configure("found", background="yellow")
-            # Setting the current_result_index variable to -1
-            current_result_index = -1
-        # Highlighting the next occurrence of the search term
-        if current_result_index < len(search_positions) - 1:
-            current_result_index += 1
+            current_result_index = len(search_positions)
+        if current_result_index > 0:
+            current_result_index -= 1
         else:
-            current_result_index = 0
+            current_result_index = len(search_positions) - 1
         next_result()
 
-"""
-# Highlights ALL instances of a search term
+def find_previous():
+    global search_positions
+    global current_result_index
+
+    search_text = search_entry.get()
+
+    if search_text:
+        end_pos = "end-1c"
+        if not search_positions:
+            search_positions = []
+            while True:
+                pos = text.search(search_text, end_pos, stopindex="1.0", backwards=True)
+                if not pos:
+                    break
+                end_pos = pos
+                text.tag_add("found", pos, f"{pos}+{len(search_text)}c")
+                search_positions.insert(0, pos)
+            text.tag_configure("found", background="yellow")
+            current_result_index = len(search_positions)
+        if current_result_index > 0:
+            current_result_index -= 1
+        else:
+            current_result_index = len(search_positions) - 1
+        next_result()
 
 def next_result():
     global search_positions
     global current_result_index
 
-    if search_positions:
-        pos = search_positions[current_result_index]
-        text.tag_remove("current", "1.0", "end")
-        text.tag_add("current", pos, f"{pos}+{len(search_entry.get())}c")
-        text.mark_set("insert", pos)
-        text.see(pos)
-"""
-
-# Defining a function to highlight the current occurrence of the search term
-def next_result():
-    # Declaring global variables
-    global search_positions
-    global current_result_index
-
-    # Highlighting the current occurrence of the search term
     if search_positions:
         text.tag_remove("found", "1.0", "end")
         pos = search_positions[current_result_index]
@@ -89,13 +75,26 @@ def next_result():
         text.mark_set("insert", pos)
         text.see(pos)
 
-# Creating a Button widget to initiate the search and highlighting
-search_button = Button(root, text="Find", command=find_next)
+search_button = Button(root, text="Find Next", command=find_next)
 search_button.pack(side=LEFT, padx=5, pady=5)
 
-# Initializing the search_positions list and current_result_index variable
+search_button = Button(root, text="Find Prev", command=find_previous)
+search_button.pack(side=LEFT, padx=5, pady=5)
+
 search_positions = []
 current_result_index = -1
 
-# Running the GUI
+
+# Test text for the purposes of debugging
+text.insert("end", "one\ntwo\nthree\n")
+text.insert("end", "four\n", ("bigfont",))
+text.insert("end", "five\ntwo\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
+text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
+text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntwo")
+text.tag_configure("bigfont", font=("Helvetica", "24", "bold")) 
+
+
 root.mainloop()
+
+
