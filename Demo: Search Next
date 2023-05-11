@@ -3,17 +3,11 @@ The following code searches a text widget for all instances of a search term,
 them scrolls up or down through each instance of that term.
 """
 
-"""
-The following code searches a text widget for all instances of a search term,
-them scrolls up or down through each instance of that term.
-"""
-
 # Importing the tkinter module to create a GUI
 from tkinter import *
 
 # Creating a tkinter object called "root"
 root = Tk()
-
 # Setting the title of the GUI
 root.title("Search App")
 
@@ -35,8 +29,8 @@ def find_next():
     """
         
     # Declaring global variables
-    global search_positions
     global current_result_index
+    global search_positions
 
     # Retrieving the search term from the Entry widget
     search_text = search_entry.get()
@@ -70,8 +64,8 @@ def find_previous():
     The find_previous() function is similar to find_next() but searches backwards
     from the end of the text block.
     """
-    global search_positions
     global current_result_index
+    global search_positions
 
     search_text = search_entry.get()
 
@@ -97,8 +91,8 @@ def find_previous():
 # Defining a function to highlight the current occurrence of the search term
 def next_result():
     # Declaring global variables
-    global search_positions
     global current_result_index
+    global search_positions
 
     # Highlighting the current occurrence of the search term
     if search_positions:
@@ -108,29 +102,37 @@ def next_result():
         text.mark_set("insert", pos)
         text.see(pos)
 
-def clear_find_results():
-    global search_positions
+# Clear Find results to start over
+def clear_find_results(event=None):
+    # "event=None" is the secret sauce that makes keybinding work
     global current_result_index
+    global search_positions
 
     if "found" in text.tag_names():
+        # Remove results highlighting
         text.tag_remove("found", "1.0", "end")
+        # Reset global variables to default for new search
         search_positions = []
-        current_result_index -= 1
+        current_result_index = -1
+    """
     else:
         pass
+    """
+
+# Clear search results with clear_find_results upon entering new text in widget
+search_entry.bind("<KeyRelease>", clear_find_results)
 
 # Creating a Button widgets to initiate the search and highlighting
-# Search down
+# Search down the text widget from the top
 search_button = Button(root, text="Find Next", command=find_next)
 search_button.pack(side=LEFT, padx=5, pady=5)
 
-# Search up
+# Search up the text widget from the bottom
 search_button = Button(root, text="Find Prev", command=find_previous)
 search_button.pack(side=LEFT, padx=5, pady=5)
 
 clear_search_button = Button(root, text="Clear Search", command=clear_find_results) 
 clear_search_button.pack(side="left", padx=2, pady=2)
-
 
 # Initializing the search_positions list and current_result_index variable
 search_positions = []
@@ -147,3 +149,4 @@ text.tag_configure("bigfont", font=("Helvetica", "24", "bold"))
 
 # Running the GUI
 root.mainloop()
+
