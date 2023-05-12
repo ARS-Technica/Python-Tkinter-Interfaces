@@ -21,6 +21,7 @@ search_entry.pack(side=LEFT, padx=5, pady=5)
 
 def find_all():
     search_text = search_entry.get()
+    
     if search_text:
         start_pos = "1.0"
         while True:
@@ -31,6 +32,9 @@ def find_all():
             text.tag_add("found", pos, end_pos)
             start_pos = end_pos
         text.tag_configure("found", background="yellow")
+    # If text hasn't been entered into the Entry widget, display an error message
+    else:
+        messagebox.showerror("Search", "Please enter text before searching")
 
     # Keyboard shortcuts to Search or Close
     # search_dialog.bind("<Return>", lambda event: search_command())
@@ -75,6 +79,9 @@ def find_next():
         else:
             current_result_index = 0
         next_result()
+    # If text hasn't been entered into the Entry widget, display an error message
+    else:
+        messagebox.showerror("Search", "Please enter text before searching")
 
 def find_previous():
     """
@@ -104,6 +111,9 @@ def find_previous():
         else:
             current_result_index = len(search_positions) - 1
         next_result()
+    # If text hasn't been entered into the Entry widget, display an error message
+    else:
+        messagebox.showerror("Search", "Please enter text before searching")
 
 # Defining a function to highlight the current occurrence of the search term
 def next_result():
@@ -131,10 +141,6 @@ def clear_find_results(event=None):
         # Reset global variables to default for new search
         search_positions = []
         current_result_index = -1
-    """
-    else:
-        pass
-    """
 
 # Clear search results with clear_find_results upon entering new text in widget
 search_entry.bind("<KeyRelease>", clear_find_results)
@@ -174,4 +180,3 @@ text.tag_configure("bigfont", font=("Helvetica", "24", "bold"))
 
 # Running the GUI
 root.mainloop()
-
