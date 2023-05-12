@@ -19,6 +19,23 @@ text.pack(expand=YES, fill=BOTH)
 search_entry = Entry(root)
 search_entry.pack(side=LEFT, padx=5, pady=5)
 
+def find_all():
+    search_text = search_entry.get()
+    if search_text:
+        start_pos = "1.0"
+        while True:
+            pos = text.search(search_text, start_pos, stopindex="end")
+            if not pos:
+                break
+            end_pos = f"{pos}+{len(search_text)}c"
+            text.tag_add("found", pos, end_pos)
+            start_pos = end_pos
+        text.tag_configure("found", background="yellow")
+
+    # Keyboard shortcuts to Search or Close
+    # search_dialog.bind("<Return>", lambda event: search_command())
+    # search_dialog.bind("<Escape>", lambda event: search_dialog.destroy())
+
 # Defining a function to search for the next occurrence of the search term
 def find_next():
     """
@@ -133,6 +150,14 @@ search_button.pack(side=LEFT, padx=5, pady=5)
 
 clear_search_button = Button(root, text="Clear Search", command=clear_find_results) 
 clear_search_button.pack(side="left", padx=2, pady=2)
+
+# Add invisible button to create space between button groups
+space_button = Button(root, text="",
+                      padx=5, pady=5, relief="flat", width=5, state='disabled')
+space_button.pack(side="left", padx=2, pady=2)
+
+search_button = Button(root, text="Find All", command=find_all) 
+search_button.pack(side="left", padx=2, pady=2)
 
 # Initializing the search_positions list and current_result_index variable
 search_positions = []
