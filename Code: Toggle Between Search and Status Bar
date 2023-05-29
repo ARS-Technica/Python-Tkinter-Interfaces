@@ -32,6 +32,9 @@ def toggle_search_bar():
         # Deselecting Search Bar option
         search_bar.grid_remove()  # Hide search bar
 
+def update_status_bar_message(new_message):
+    status_bar.config(text=new_message)
+
 # Create main window
 window = Tk()
 
@@ -72,6 +75,9 @@ input_field.grid(row=0, column=1, sticky=W)
 # Call toggle_status_bar function to show the status bar by default
 toggle_status_bar()
 
+# Example usage: Change the status bar message to "New Message"
+update_status_bar_message("New Message")
+
 # Start the main event loop
 window.mainloop()
-
+ 
