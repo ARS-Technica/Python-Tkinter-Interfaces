@@ -44,7 +44,7 @@ options_menu = Menu(menu_bar, tearoff=False)
 menu_bar.add_cascade(label="Options", menu=options_menu)
 
 # Create check buttons for status bar and search bar in the options menu
-status_bar_var = IntVar()
+status_bar_var = IntVar(value=1)  # Set default value to 1 (on)
 status_bar_checkbutton = options_menu.add_checkbutton(label="Status bar", variable=status_bar_var, command=toggle_status_bar)
 
 search_bar_var = IntVar()
@@ -72,3 +72,4 @@ input_field.grid(row=0, column=1, sticky=W)
 
 # Start the main event loop
 window.mainloop()
+
