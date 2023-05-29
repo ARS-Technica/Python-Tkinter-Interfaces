@@ -57,7 +57,6 @@ text_widget.grid(row=0, column=0, columnspan=2)
 # Create status bar
 status_bar = Label(window, text=status_bar_message)
 status_bar.grid(row=2, column=0, columnspan=2, sticky=W)
-status_bar.grid_remove()  # Hide status bar initially
 
 # Create search bar
 search_bar = Frame(window)
@@ -69,6 +68,9 @@ search_bar_label.grid(row=0, column=0, sticky=W)
 
 input_field = Entry(search_bar)
 input_field.grid(row=0, column=1, sticky=W)
+
+# Call toggle_status_bar function to show the status bar by default
+toggle_status_bar()
 
 # Start the main event loop
 window.mainloop()
