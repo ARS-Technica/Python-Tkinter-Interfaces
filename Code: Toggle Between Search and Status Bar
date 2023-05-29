@@ -18,9 +18,10 @@ def toggle_status_bar():
         # Toggle status bar visibility
         if status_bar.winfo_ismapped():
             status_bar.grid_remove()  # Remove status bar
-            status_bar_checkbutton.deselect()  # Deselect status bar check button
+            status_bar_var.set(False)  # Deselect status bar check button
         else:
             status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar
+            status_bar_var.set(True)  # Select status bar check button
 
 def toggle_search_bar():
     # Check if status bar is already visible
@@ -33,9 +34,10 @@ def toggle_search_bar():
         # Toggle search bar visibility
         if search_bar.winfo_ismapped():
             search_bar.grid_remove()  # Remove search bar
-            search_bar_checkbutton.deselect()  # Deselect search bar check button
+            search_bar_var.set(False)  # Deselect search bar check button
         else:
             search_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show search bar
+            search_bar_var.set(True)  # Select search bar check button
 
 # Create main window
 window = Tk()
@@ -78,4 +80,5 @@ input_field = Entry(search_bar)
 input_field.grid(row=0, column=1, sticky=W)
 
 # Start the main event loop
-window.mainloop() 
+window.mainloop()
+
