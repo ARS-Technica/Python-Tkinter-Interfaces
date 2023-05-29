@@ -16,6 +16,8 @@ def toggle_status_bar():
         # Deselect search bar check button
         if search_bar_var.get() == 1:
             search_bar_var.set(0)
+        # Destroy search bar
+        search_bar.grid_remove()
     else:
         # Toggle status bar visibility
         if status_bar.winfo_ismapped():
@@ -33,6 +35,8 @@ def toggle_search_bar():
         # Deselect status bar check button
         if status_bar_var.get() == 1:
             status_bar_var.set(0)
+        # Destroy status bar
+        status_bar.grid_remove()
     else:
         # Toggle search bar visibility
         if search_bar.winfo_ismapped():
@@ -83,3 +87,4 @@ input_field.grid(row=0, column=1, sticky=W)
 # Start the main event loop
 window.mainloop()
 
+ 
