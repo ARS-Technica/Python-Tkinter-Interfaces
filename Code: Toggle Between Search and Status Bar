@@ -9,42 +9,28 @@ from tkinter import *
 status_bar_message = "Status Bar"
 
 def toggle_status_bar():
-    # Check if search bar is already visible
-    if search_bar.grid_info():
-        # Change search bar message to "Status Bar"
-        search_bar_label.config(text="Status Bar")
-        # Deselect search bar check button
-        if search_bar_var.get() == 1:
+    if status_bar_var.get() == 1:
+        # Selecting Status Bar option
+        if search_bar.grid_info():
+            # Search Bar is visible, destroy it
+            search_bar.grid_remove()
             search_bar_var.set(0)
-        # Destroy search bar
-        search_bar.grid_remove()
+        status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar
     else:
-        # Toggle status bar visibility
-        if status_bar.grid_info():
-            status_bar.grid_remove()  # Remove status bar
-            status_bar_var.set(0)  # Deselect status bar check button
-        else:
-            status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar
-            status_bar_var.set(1)  # Select status bar check button
+        # Deselecting Status Bar option
+        status_bar.grid_remove()  # Hide status bar
 
 def toggle_search_bar():
-    # Check if status bar is already visible
-    if status_bar.grid_info():
-        # Change status bar message to "Search Bar"
-        status_bar.config(text="Search Bar")
-        # Deselect status bar check button
-        if status_bar_var.get() == 1:
+    if search_bar_var.get() == 1:
+        # Selecting Search Bar option
+        if status_bar.grid_info():
+            # Status Bar is visible, destroy it
+            status_bar.grid_remove()
             status_bar_var.set(0)
-        # Destroy status bar
-        status_bar.grid_remove()
+        search_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show search bar
     else:
-        # Toggle search bar visibility
-        if search_bar.grid_info():
-            search_bar.grid_remove()  # Remove search bar
-            search_bar_var.set(0)  # Deselect search bar check button
-        else:
-            search_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show search bar
-            search_bar_var.set(1)  # Select search bar check button
+        # Deselecting Search Bar option
+        search_bar.grid_remove()  # Hide search bar
 
 # Create main window
 window = Tk()
@@ -86,4 +72,3 @@ input_field.grid(row=0, column=1, sticky=W)
 
 # Start the main event loop
 window.mainloop()
-
