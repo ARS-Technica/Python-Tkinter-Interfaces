@@ -2,6 +2,7 @@
 In this code, a drop down menu offers users two possible widget options to attach to the foot of a text widget: a Status Bar or a Search Bar.  The objective of this code is create the functions that will toggle between the two options.  First, the functions will check if the other option is currently visible.  If the alternative option is visible it will be destoryed.  Then, the functions will create their respective widgets.  Finally, each function will destory itself if its associated checkbutton is deselected in the drop down menu, leaving no visible widget at the footer of the text widget.
 """
 
+
 from tkinter import *
 
 # Global variable for status bar message
@@ -13,15 +14,16 @@ def toggle_status_bar():
         # Change search bar message to "Status Bar"
         status_bar.config(text="Status Bar")
         # Deselect search bar check button
-        search_bar_checkbutton.deselect()
+        if search_bar_var.get() == 1:
+            search_bar_var.set(0)
     else:
         # Toggle status bar visibility
         if status_bar.winfo_ismapped():
             status_bar.grid_remove()  # Remove status bar
-            status_bar_var.set(False)  # Deselect status bar check button
+            status_bar_var.set(0)  # Deselect status bar check button
         else:
             status_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show status bar
-            status_bar_var.set(True)  # Select status bar check button
+            status_bar_var.set(1)  # Select status bar check button
 
 def toggle_search_bar():
     # Check if status bar is already visible
@@ -29,15 +31,16 @@ def toggle_search_bar():
         # Change status bar message to "Search Bar"
         status_bar.config(text="Search Bar")
         # Deselect status bar check button
-        status_bar_checkbutton.deselect()
+        if status_bar_var.get() == 1:
+            status_bar_var.set(0)
     else:
         # Toggle search bar visibility
         if search_bar.winfo_ismapped():
             search_bar.grid_remove()  # Remove search bar
-            search_bar_var.set(False)  # Deselect search bar check button
+            search_bar_var.set(0)  # Deselect search bar check button
         else:
             search_bar.grid(row=2, column=0, columnspan=2, sticky=W)  # Show search bar
-            search_bar_var.set(True)  # Select search bar check button
+            search_bar_var.set(1)  # Select search bar check button
 
 # Create main window
 window = Tk()
@@ -51,12 +54,10 @@ options_menu = Menu(menu_bar, tearoff=False)
 menu_bar.add_cascade(label="Options", menu=options_menu)
 
 # Create check buttons for status bar and search bar in the options menu
-status_bar_var = BooleanVar()
-status_bar_var.set(False)
+status_bar_var = IntVar()
 status_bar_checkbutton = options_menu.add_checkbutton(label="Status bar", variable=status_bar_var, command=toggle_status_bar)
 
-search_bar_var = BooleanVar()
-search_bar_var.set(False)
+search_bar_var = IntVar()
 search_bar_checkbutton = options_menu.add_checkbutton(label="Search bar", variable=search_bar_var, command=toggle_search_bar)
 
 # Create text widget
