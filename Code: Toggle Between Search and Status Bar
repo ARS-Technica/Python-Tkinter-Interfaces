@@ -51,11 +51,11 @@ menu_bar.add_cascade(label="Options", menu=options_menu)
 # Create check buttons for status bar and search bar in the options menu
 status_bar_var = BooleanVar()
 status_bar_var.set(False)
-options_menu.add_checkbutton(label="Status bar", variable=status_bar_var, command=toggle_status_bar)
+status_bar_checkbutton = options_menu.add_checkbutton(label="Status bar", variable=status_bar_var, command=toggle_status_bar)
 
 search_bar_var = BooleanVar()
 search_bar_var.set(False)
-options_menu.add_checkbutton(label="Search bar", variable=search_bar_var, command=toggle_search_bar)
+search_bar_checkbutton = options_menu.add_checkbutton(label="Search bar", variable=search_bar_var, command=toggle_search_bar)
 
 # Create text widget
 text_widget = Text(window)
@@ -78,4 +78,4 @@ input_field = Entry(search_bar)
 input_field.grid(row=0, column=1, sticky=W)
 
 # Start the main event loop
-window.mainloop()
+window.mainloop() 
