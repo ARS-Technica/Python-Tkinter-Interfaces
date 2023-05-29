@@ -10,9 +10,9 @@ status_bar_message = "Status Bar"
 
 def toggle_status_bar():
     # Check if search bar is already visible
-    if search_bar.winfo_ismapped():
+    if search_bar.grid_info():
         # Change search bar message to "Status Bar"
-        status_bar.config(text="Status Bar")
+        search_bar_label.config(text="Status Bar")
         # Deselect search bar check button
         if search_bar_var.get() == 1:
             search_bar_var.set(0)
@@ -20,7 +20,7 @@ def toggle_status_bar():
         search_bar.grid_remove()
     else:
         # Toggle status bar visibility
-        if status_bar.winfo_ismapped():
+        if status_bar.grid_info():
             status_bar.grid_remove()  # Remove status bar
             status_bar_var.set(0)  # Deselect status bar check button
         else:
@@ -29,7 +29,7 @@ def toggle_status_bar():
 
 def toggle_search_bar():
     # Check if status bar is already visible
-    if status_bar.winfo_ismapped():
+    if status_bar.grid_info():
         # Change status bar message to "Search Bar"
         status_bar.config(text="Search Bar")
         # Deselect status bar check button
@@ -39,7 +39,7 @@ def toggle_search_bar():
         status_bar.grid_remove()
     else:
         # Toggle search bar visibility
-        if search_bar.winfo_ismapped():
+        if search_bar.grid_info():
             search_bar.grid_remove()  # Remove search bar
             search_bar_var.set(0)  # Deselect search bar check button
         else:
@@ -87,4 +87,3 @@ input_field.grid(row=0, column=1, sticky=W)
 # Start the main event loop
 window.mainloop()
 
- 
