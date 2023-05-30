@@ -35,6 +35,9 @@ def toggle_search_bar():
 def update_status_bar_message(new_message):
     status_bar.config(text=new_message)
 
+def select_message(item_label):
+    update_status_bar_message(item_label)
+
 # Create main window
 window = Tk()
 
@@ -52,6 +55,15 @@ status_bar_checkbutton = options_menu.add_checkbutton(label="Status bar", variab
 
 search_bar_var = IntVar()
 search_bar_checkbutton = options_menu.add_checkbutton(label="Search bar", variable=search_bar_var, command=toggle_search_bar)
+
+# Create "Messages" heading in the menu bar
+messages_menu = Menu(menu_bar, tearoff=False)
+menu_bar.add_cascade(label="Messages", menu=messages_menu)
+
+# Create three items in the messages menu
+messages_menu.add_command(label="Item 1", command=lambda: select_message("Item 1"))
+messages_menu.add_command(label="Item 2", command=lambda: select_message("Item 2"))
+messages_menu.add_command(label="Item 3", command=lambda: select_message("Item 3"))
 
 # Create text widget
 text_widget = Text(window)
@@ -75,9 +87,6 @@ input_field.grid(row=0, column=1, sticky=W)
 # Call toggle_status_bar function to show the status bar by default
 toggle_status_bar()
 
-# Example usage: Change the status bar message to "New Message"
-update_status_bar_message("New Message")
-
 # Start the main event loop
 window.mainloop()
- 
+
