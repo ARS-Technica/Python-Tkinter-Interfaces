@@ -1,0 +1,41 @@
+# -*- coding: utf-8 -*-
+"""
+Spacing out Buttons with Frames
+"""
+
+from tkinter import Tk, Button, Frame
+
+# Create a function to handle button clicks
+def button_click():
+    print("Button clicked")
+
+# Create the main window
+root = Tk()
+
+# Define the main color for the buttons
+main_color = "red"
+
+# Create a frame for the first button group
+frame1 = Frame(root)
+frame1.pack(pady=10)
+
+# Create the buttons for the first group
+button1 = Button(frame1, text="Button 1", command=button_click, background=main_color)
+button1.pack(side="left", padx=10)
+
+button2 = Button(frame1, text="Button 2", command=button_click, background=main_color)
+button2.pack(side="left", padx=10)
+
+# Create a frame for the second button group
+frame2 = Frame(root)
+frame2.pack(pady=10)
+
+# Create the buttons for the second group
+button3 = Button(frame2, text="Button 3", command=button_click, background=main_color)
+button3.pack(side="left", padx=10)
+
+button4 = Button(frame2, text="Button 4", command=button_click, background=main_color)
+button4.pack(side="left", padx=10)
+
+# Run the main window loop
+root.mainloop()
