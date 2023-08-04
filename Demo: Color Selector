@@ -41,22 +41,21 @@ def save_file():
 root = tk.Tk()
 root.title("Text Editor")
 
-# Create a toolbar frame
-toolbar = ttk.Frame(root)
-toolbar.grid(row=0, column=0, columnspan=2, sticky="W")
+# Create a menubar
+menubar = tk.Menu(root)
+root.config(menu=menubar)
 
-# Create buttons on the toolbar
-dark_mode_button = ttk.Button(toolbar, text="Toggle Dark Mode", command=toggle_dark_mode)
-dark_mode_button.pack(side="left", padx=5, pady=5)
+# Create "Options" menu
+options_menu = tk.Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Options", menu=options_menu)
+options_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
+options_menu.add_command(label="Change Color Scheme", command=choose_color_scheme)
 
-color_scheme_button = ttk.Button(toolbar, text="Change Color Scheme", command=choose_color_scheme)
-color_scheme_button.pack(side="left", padx=5, pady=5)
-
-open_button = ttk.Button(toolbar, text="Open", command=open_file)
-open_button.pack(side="left", padx=5, pady=5)
-
-save_button = ttk.Button(toolbar, text="Save", command=save_file)
-save_button.pack(side="left", padx=5, pady=5)
+# Create "Files" menu
+files_menu = tk.Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Files", menu=files_menu)
+files_menu.add_command(label="Open", command=open_file)
+files_menu.add_command(label="Save", command=save_file)
 
 # Create a text widget
 text_widget = tk.Text(root, wrap="word")
