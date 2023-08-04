@@ -32,20 +32,31 @@ def apply_color_scheme(scheme_name):
     scheme = color_schemes.get(scheme_name)
     if scheme:
         text_widget.config(bg=scheme["bg"], fg=scheme["fg"])
-        button_frame.config(bg=scheme["frame"])
-        status_bar.config(bg=scheme["frame"])
-        root.config(bg=scheme["frame"])
+        button_frame.config(background=scheme["frame"])
+        status_bar.config(background=scheme["frame"])
+        root.config(background=scheme["frame"])
         for widget in [dark_mode_button, color_scheme_button, open_button, save_button]:
-            widget.config(style="TButton", foreground=scheme["fg"], background=scheme["bg"])
+            widget.config(foreground=scheme["fg"], background=scheme["bg"])
+
+def apply_color_scheme(scheme):
+    """Apply a selected color scheme to the text editor and other widgets."""
+    text_widget.config(bg=scheme["text_bg"], fg=scheme["text_fg"])
+    button_frame.config(style="Custom.TFrame", background=scheme["frame"])
+    status_bar.config(style="CustomStatus.TLabel", background=scheme["frame"])
+    root.config(style="Custom.TFrame", background=scheme["frame"])
+    for widget in [dark_mode_button, custom_palette_button, open_button, save_button]:
+        widget.config(style="Custom.TButton", foreground="black", background=scheme["frame"])
+
 
 def apply_custom_palette(chosen_color):
     """Apply a custom color palette to the text editor and other widgets."""
     text_widget.config(bg=chosen_color)
-    button_frame.config(bg=chosen_color)
-    status_bar.config(bg=chosen_color)
-    root.config(bg=chosen_color)
+    button_frame.config(style="TFrame", background=chosen_color)
+    status_bar.config(style="CustomStatus.TLabel", background=chosen_color)
+    root.config(style="Custom.TFrame", background=chosen_color)
     for widget in [dark_mode_button, color_scheme_button, open_button, save_button]:
-        widget.config(style="TButton", foreground="black", background=chosen_color)
+        widget.config(style="Custom.TButton", foreground="black", background=chosen_color)
+
 
 def open_file():
     """Open a text file and display its content in the text editor."""
@@ -67,6 +78,19 @@ def save_file():
 # Create the main window
 root = tk.Tk()
 root.title("Text Editor")
+
+# Create a style for the themed widgets
+style = ttk.Style()
+
+# Configure style for the "TButton" widget
+style.configure("Custom.TButton", foreground="black", font=("Helvetica", 12))
+
+# Configure style for the "CustomStatus.TLabel" widget (status bar)
+style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12))
+
+# Configure style for the "Custom.TFrame" widget (button_frame and root)
+style.configure("Custom.TFrame", background="gray")
+
 
 # Create a menubar
 menubar = tk.Menu(root)
@@ -93,7 +117,7 @@ files_menu.add_command(label="Save", command=save_file)
 
 # Create a frame for buttons
 button_frame = ttk.Frame(root)
-button_frame.grid(row=0, column=0, columnspan=2, pady=5)
+button_frame.grid(row=0, column=0, columnspan=2, pady=5, sticky="EW")
 
 # Create buttons
 dark_mode_button = ttk.Button(button_frame, text="Toggle Dark Mode", command=toggle_dark_mode)
@@ -134,3 +158,7 @@ apply_color_scheme("Default")
 
 # Run the application
 root.mainloop()
+
+
+
+
