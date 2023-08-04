@@ -1,15 +1,23 @@
 import tkinter as tk
 from tkinter import ttk, colorchooser, filedialog
 
+# Define color schemes
+color_schemes = {
+    "Default": {"bg": "white", "fg": "black", "frame": "gray"},
+    "Dark": {"bg": "black", "fg": "white", "frame": "darkgray"},
+    "Ocean": {"bg": "#007acc", "fg": "white", "frame": "#005fa3"},
+    "Forest": {"bg": "#116611", "fg": "white", "frame": "#0a440a"},
+}
+
 def toggle_dark_mode():
     """Toggle Dark Mode by changing background and text colors."""
     global is_dark_mode
     if is_dark_mode:
-        text_widget.config(bg="white", fg="black")
+        apply_color_scheme("Default")
         status_var.set("Light Mode")
         is_dark_mode = False
     else:
-        text_widget.config(bg="black", fg="white")
+        apply_color_scheme("Dark")
         status_var.set("Dark Mode")
         is_dark_mode = True
 
@@ -17,8 +25,27 @@ def choose_custom_palette():
     """Change the color scheme of the text editor using a color chooser."""
     chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
     if chosen_color:
-        text_widget.config(bg=chosen_color)
-        status_var.set("Custom Palette Applied")
+        apply_custom_palette(chosen_color)
+
+def apply_color_scheme(scheme_name):
+    """Apply a predefined color scheme to the text editor and other widgets."""
+    scheme = color_schemes.get(scheme_name)
+    if scheme:
+        text_widget.config(bg=scheme["bg"], fg=scheme["fg"])
+        button_frame.config(bg=scheme["frame"])
+        status_bar.config(bg=scheme["frame"])
+        root.config(bg=scheme["frame"])
+        for widget in [dark_mode_button, color_scheme_button, open_button, save_button]:
+            widget.config(style="TButton", foreground=scheme["fg"], background=scheme["bg"])
+
+def apply_custom_palette(chosen_color):
+    """Apply a custom color palette to the text editor and other widgets."""
+    text_widget.config(bg=chosen_color)
+    button_frame.config(bg=chosen_color)
+    status_bar.config(bg=chosen_color)
+    root.config(bg=chosen_color)
+    for widget in [dark_mode_button, color_scheme_button, open_button, save_button]:
+        widget.config(style="TButton", foreground="black", background=chosen_color)
 
 def open_file():
     """Open a text file and display its content in the text editor."""
@@ -50,6 +77,13 @@ options_menu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Options", menu=options_menu)
 options_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
 options_menu.add_command(label="Custom Palette", command=choose_custom_palette)
+options_menu.add_separator()
+
+# Create "Color Scheme" submenu
+color_scheme_menu = tk.Menu(options_menu, tearoff=0)
+options_menu.add_cascade(label="Color Scheme", menu=color_scheme_menu)
+for scheme_name in color_schemes:
+    color_scheme_menu.add_command(label=scheme_name, command=lambda name=scheme_name: apply_color_scheme(name))
 
 # Create "Files" menu
 files_menu = tk.Menu(menubar, tearoff=0)
@@ -94,6 +128,9 @@ root.grid_columnconfigure(0, weight=1)
 
 # Set default Dark Mode state
 is_dark_mode = False
+
+# Apply default color scheme
+apply_color_scheme("Default")
 
 # Run the application
 root.mainloop()
