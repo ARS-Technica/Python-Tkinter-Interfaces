@@ -13,12 +13,12 @@ def toggle_dark_mode():
         status_var.set("Dark Mode")
         is_dark_mode = True
 
-def choose_color_scheme():
+def choose_custom_palette():
     """Change the color scheme of the text editor using a color chooser."""
-    chosen_color = colorchooser.askcolor(title="Choose Color Scheme")[1]
+    chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
     if chosen_color:
         text_widget.config(bg=chosen_color)
-        status_var.set("Color Scheme Changed")
+        status_var.set("Custom Palette Applied")
 
 def open_file():
     """Open a text file and display its content in the text editor."""
@@ -49,7 +49,7 @@ root.config(menu=menubar)
 options_menu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Options", menu=options_menu)
 options_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
-options_menu.add_command(label="Change Color Scheme", command=choose_color_scheme)
+options_menu.add_command(label="Custom Palette", command=choose_custom_palette)
 
 # Create "Files" menu
 files_menu = tk.Menu(menubar, tearoff=0)
@@ -63,7 +63,7 @@ button_frame.grid(row=0, column=0, columnspan=2, pady=5)
 
 # Create buttons
 dark_mode_button = ttk.Button(button_frame, text="Toggle Dark Mode", command=toggle_dark_mode)
-color_scheme_button = ttk.Button(button_frame, text="Change Color Scheme", command=choose_color_scheme)
+color_scheme_button = ttk.Button(button_frame, text="Choose Custom Palette", command=choose_custom_palette)
 open_button = ttk.Button(button_frame, text="Open", command=open_file)
 save_button = ttk.Button(button_frame, text="Save", command=save_file)
 
