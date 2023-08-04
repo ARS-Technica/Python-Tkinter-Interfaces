@@ -57,6 +57,22 @@ menubar.add_cascade(label="Files", menu=files_menu)
 files_menu.add_command(label="Open", command=open_file)
 files_menu.add_command(label="Save", command=save_file)
 
+# Create a frame for buttons
+button_frame = ttk.Frame(root)
+button_frame.grid(row=0, column=0, columnspan=2, pady=5)
+
+# Create buttons
+dark_mode_button = ttk.Button(button_frame, text="Toggle Dark Mode", command=toggle_dark_mode)
+color_scheme_button = ttk.Button(button_frame, text="Change Color Scheme", command=choose_color_scheme)
+open_button = ttk.Button(button_frame, text="Open", command=open_file)
+save_button = ttk.Button(button_frame, text="Save", command=save_file)
+
+# Grid layout for buttons
+dark_mode_button.grid(row=0, column=0, padx=5)
+color_scheme_button.grid(row=0, column=1, padx=5)
+open_button.grid(row=0, column=2, padx=5)
+save_button.grid(row=0, column=3, padx=5)
+
 # Create a text widget
 text_widget = tk.Text(root, wrap="word")
 text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
