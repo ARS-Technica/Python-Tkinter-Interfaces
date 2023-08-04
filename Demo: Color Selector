@@ -9,6 +9,7 @@ color_schemes = {
     "Forest": {"bg": "#116611", "fg": "white", "frame": "#0a440a"},
 }
 
+
 def toggle_dark_mode():
     """Toggle Dark Mode by changing background and text colors."""
     global is_dark_mode
@@ -21,6 +22,7 @@ def toggle_dark_mode():
         status_var.set("Dark Mode")
         is_dark_mode = True
 
+
 def choose_custom_palette():
     """Change the color scheme of the text editor using a color chooser."""
     chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
@@ -28,14 +30,44 @@ def choose_custom_palette():
         apply_custom_palette(chosen_color)
 
 
-def apply_color_scheme(scheme):
+def apply_color_scheme(scheme_name):
     """Apply a selected color scheme to the text editor and other widgets."""
-    text_widget.config(bg=scheme["text_bg"], fg=scheme["text_fg"])
-    button_frame.config(style="Custom.TFrame", background=scheme["frame"])
-    status_bar.config(style="CustomStatus.TLabel", background=scheme["frame"])
-    root.config(style="Custom.TFrame", background=scheme["frame"])
-    for widget in [dark_mode_button, custom_palette_button, open_button, save_button]:
-        widget.config(style="Custom.TButton", foreground="black", background=scheme["frame"])
+    scheme = color_schemes[scheme_name]
+
+    text_widget.config(bg=scheme["bg"], fg=scheme["fg"])
+
+    # Configure background colors for button_frame, status_bar, and root
+    button_frame_style = ttk.Style()
+    button_frame_style.configure("Custom.TFrame", background=scheme["frame"])
+    button_frame_style.map("Custom.TFrame",
+                           background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
+
+    status_bar_style = ttk.Style()
+    status_bar_style.configure("CustomStatus.TLabel", background=scheme["frame"])
+    status_bar_style.map("CustomStatus.TLabel",
+                         background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
+
+    root_style = ttk.Style()
+    root_style.configure("Custom.TFrame", background=scheme["frame"])
+    root_style.map("Custom.TFrame",
+                   background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
+
+    # Configure foreground and background colors for buttons and labels
+    custom_button_style = ttk.Style()
+    custom_button_style.configure("Custom.TButton",
+                                  foreground=scheme["fg"],
+                                  background=scheme["frame"])
+
+    custom_label_style = ttk.Style()
+    custom_label_style.configure("Custom.TLabel",
+                                  foreground=scheme["fg"],
+                                  background=scheme["frame"])
+
+    # Update existing buttons and labels
+    dark_mode_button.configure(style="Custom.TButton")
+    color_scheme_button.configure(style="Custom.TButton")
+    open_button.configure(style="Custom.TButton")
+    save_button.configure(style="Custom.TButton")
 
 
 def apply_custom_palette(chosen_color):
@@ -110,10 +142,10 @@ button_frame = ttk.Frame(root)
 button_frame.grid(row=0, column=0, columnspan=2, pady=5, sticky="EW")
 
 # Create buttons
-dark_mode_button = ttk.Button(button_frame, text="Toggle Dark Mode", command=toggle_dark_mode)
-color_scheme_button = ttk.Button(button_frame, text="Choose Custom Palette", command=choose_custom_palette)
-open_button = ttk.Button(button_frame, text="Open", command=open_file)
-save_button = ttk.Button(button_frame, text="Save", command=save_file)
+dark_mode_button = ttk.Button(button_frame, text="Toggle Dark Mode", command=toggle_dark_mode, style="Custom.TButton")
+color_scheme_button = ttk.Button(button_frame, text="Choose Custom Palette", command=choose_custom_palette, style="Custom.TButton")
+open_button = ttk.Button(button_frame, text="Open", command=open_file, style="Custom.TButton")
+save_button = ttk.Button(button_frame, text="Save", command=save_file, style="Custom.TButton")
 
 # Grid layout for buttons
 dark_mode_button.grid(row=0, column=0, padx=5)
