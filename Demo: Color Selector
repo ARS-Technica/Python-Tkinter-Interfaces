@@ -6,9 +6,11 @@ def toggle_dark_mode():
     global is_dark_mode
     if is_dark_mode:
         text_widget.config(bg="white", fg="black")
+        status_var.set("Light Mode")
         is_dark_mode = False
     else:
         text_widget.config(bg="black", fg="white")
+        status_var.set("Dark Mode")
         is_dark_mode = True
 
 def choose_color_scheme():
@@ -16,6 +18,7 @@ def choose_color_scheme():
     chosen_color = colorchooser.askcolor(title="Choose Color Scheme")[1]
     if chosen_color:
         text_widget.config(bg=chosen_color)
+        status_var.set("Color Scheme Changed")
 
 def open_file():
     """Open a text file and display its content in the text editor."""
@@ -24,6 +27,7 @@ def open_file():
         with open(file_path, "r") as file:
             text_widget.delete(1.0, tk.END)
             text_widget.insert(tk.END, file.read())
+        status_var.set(f"Opened: {file_path}")
 
 def save_file():
     """Save the content of the text editor to a text file."""
@@ -31,6 +35,7 @@ def save_file():
     if file_path:
         with open(file_path, "w") as file:
             file.write(text_widget.get(1.0, tk.END))
+        status_var.set(f"Saved: {file_path}")
 
 # Create the main window
 root = tk.Tk()
@@ -61,6 +66,12 @@ text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
 scrollbar = tk.Scrollbar(root, command=text_widget.yview)
 scrollbar.grid(row=1, column=2, sticky="NS")
 text_widget.config(yscrollcommand=scrollbar.set)
+
+# Create a status bar
+status_var = tk.StringVar()
+status_var.set("Light Mode")
+status_bar = ttk.Label(root, textvariable=status_var, anchor="w")
+status_bar.grid(row=2, column=0, columnspan=3, sticky="EW")
 
 # Configure grid layout behavior
 root.grid_rowconfigure(1, weight=1)
