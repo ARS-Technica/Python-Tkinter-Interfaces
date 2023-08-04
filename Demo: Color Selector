@@ -47,6 +47,11 @@ def apply_color_scheme(scheme_name):
     status_bar_style.map("CustomStatus.TLabel",
                          background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
 
+    empty_space_style = ttk.Style()
+    empty_space_style.configure("Custom.TFrame.TLabel", background=scheme["frame"])
+    empty_space_style.map("Custom.TFrame.TLabel",
+                          background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
+
     root_style = ttk.Style()
     root_style.configure("Custom.TFrame", background=scheme["frame"])
     root_style.map("Custom.TFrame",
@@ -63,11 +68,13 @@ def apply_color_scheme(scheme_name):
                                   foreground=scheme["fg"],
                                   background=scheme["frame"])
 
-    # Update existing buttons and labels
+    # Update existing buttons, labels, and empty space
     dark_mode_button.configure(style="Custom.TButton")
     color_scheme_button.configure(style="Custom.TButton")
     open_button.configure(style="Custom.TButton")
     save_button.configure(style="Custom.TButton")
+    empty_space.configure(style="Custom.TFrame.TLabel")
+
 
 
 def apply_custom_palette(chosen_color):
@@ -174,6 +181,10 @@ root.grid_columnconfigure(0, weight=1)
 
 # Set default Dark Mode state
 is_dark_mode = False
+
+# Create an empty space label
+empty_space = ttk.Label(button_frame)
+empty_space.grid(row=0, column=4, padx=5)
 
 # Apply default color scheme
 apply_color_scheme("Default")
