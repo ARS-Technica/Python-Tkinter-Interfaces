@@ -36,21 +36,11 @@ def apply_color_scheme(scheme_name):
 
     text_widget.config(bg=scheme["bg"], fg=scheme["fg"])
 
-    # Configure background colors for button_frame, status_bar, and root
+    # Configure background color for button_frame and root
     button_frame_style = ttk.Style()
     button_frame_style.configure("Custom.TFrame", background=scheme["frame"])
     button_frame_style.map("Custom.TFrame",
                            background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
-
-    status_bar_style = ttk.Style()
-    status_bar_style.configure("CustomStatus.TLabel", background=scheme["frame"])
-    status_bar_style.map("CustomStatus.TLabel",
-                         background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
-
-    empty_space_style = ttk.Style()
-    empty_space_style.configure("Custom.TFrame.TLabel", background=scheme["frame"])
-    empty_space_style.map("Custom.TFrame.TLabel",
-                          background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
 
     root_style = ttk.Style()
     root_style.configure("Custom.TFrame", background=scheme["frame"])
@@ -73,8 +63,6 @@ def apply_color_scheme(scheme_name):
     color_scheme_button.configure(style="Custom.TButton")
     open_button.configure(style="Custom.TButton")
     save_button.configure(style="Custom.TButton")
-    empty_space.configure(style="Custom.TFrame.TLabel")
-
 
 
 def apply_custom_palette(chosen_color):
@@ -144,8 +132,8 @@ menubar.add_cascade(label="Files", menu=files_menu)
 files_menu.add_command(label="Open", command=open_file)
 files_menu.add_command(label="Save", command=save_file)
 
-# Create a frame for buttons
-button_frame = ttk.Frame(root)
+# Create a frame for buttons with background color
+button_frame = ttk.Frame(root, style="Custom.TFrame")
 button_frame.grid(row=0, column=0, columnspan=2, pady=5, sticky="EW")
 
 # Create buttons
@@ -182,6 +170,10 @@ root.grid_columnconfigure(0, weight=1)
 # Set default Dark Mode state
 is_dark_mode = False
 
+# Create an empty label as a separator
+separator_label = ttk.Label(button_frame)
+separator_label.grid(row=0, column=2, padx=5)
+
 # Create an empty space label
 empty_space = ttk.Label(button_frame)
 empty_space.grid(row=0, column=4, padx=5)
@@ -192,6 +184,6 @@ apply_color_scheme("Default")
 # Run the application
 root.mainloop()
 
-
+ 
 
 
