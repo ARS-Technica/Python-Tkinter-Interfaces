@@ -30,39 +30,43 @@ def choose_custom_palette():
         apply_custom_palette(chosen_color)
 
 
-def apply_color_scheme(scheme_name):
-    """Apply a selected color scheme to the text editor and other widgets."""
-    scheme = color_schemes[scheme_name]
 
-    text_widget.config(bg=scheme["bg"], fg=scheme["fg"])
+def apply_color_scheme():
+    """Apply the selected color scheme to the text editor and other widgets."""
+    scheme_name = selected_scheme.get()
 
-    # Configure background color for button_frame and root
-    button_frame_style = ttk.Style()
-    button_frame_style.configure("Custom.TFrame", background=scheme["frame"])
-    button_frame_style.map("Custom.TFrame",
-                           background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
+    if scheme_name in color_schemes:
+        scheme = color_schemes[scheme_name]
 
-    root_style = ttk.Style()
-    root_style.configure("Custom.TFrame", background=scheme["frame"])
-    root_style.map("Custom.TFrame",
-                   background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
+        text_widget.config(bg=scheme["bg"], fg=scheme["fg"])
 
-    # Configure foreground and background colors for buttons and labels
-    custom_button_style = ttk.Style()
-    custom_button_style.configure("Custom.TButton",
-                                  foreground=scheme["fg"],
-                                  background=scheme["frame"])
+        # Configure background color for button_frame and root
+        button_frame_style = ttk.Style()
+        button_frame_style.configure("Custom.TFrame", background=scheme["frame"])
+        button_frame_style.map("Custom.TFrame",
+                               background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
 
-    custom_label_style = ttk.Style()
-    custom_label_style.configure("Custom.TLabel",
-                                  foreground=scheme["fg"],
-                                  background=scheme["frame"])
+        root_style = ttk.Style()
+        root_style.configure("Custom.TFrame", background=scheme["frame"])
+        root_style.map("Custom.TFrame",
+                       background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
 
-    # Update existing buttons, labels, and empty space
-    dark_mode_button.configure(style="Custom.TButton")
-    color_scheme_button.configure(style="Custom.TButton")
-    open_button.configure(style="Custom.TButton")
-    save_button.configure(style="Custom.TButton")
+        # Configure foreground and background colors for buttons and labels
+        custom_button_style = ttk.Style()
+        custom_button_style.configure("Custom.TButton",
+                                      foreground=scheme["fg"],
+                                      background=scheme["frame"])
+
+        custom_label_style = ttk.Style()
+        custom_label_style.configure("Custom.TLabel",
+                                      foreground=scheme["fg"],
+                                      background=scheme["frame"])
+
+        # Update existing buttons, labels, and empty space
+        dark_mode_button.configure(style="Custom.TButton")
+        color_scheme_button.configure(style="Custom.TButton")
+        open_button.configure(style="Custom.TButton")
+        save_button.configure(style="Custom.TButton")
 
 
 def apply_custom_palette(chosen_color):
@@ -123,9 +127,28 @@ options_menu.add_separator()
 # Create "Color Scheme" submenu
 color_scheme_menu = tk.Menu(options_menu, tearoff=0)
 options_menu.add_cascade(label="Color Scheme", menu=color_scheme_menu)
-for scheme_name in color_schemes:
-    color_scheme_menu.add_command(label=scheme_name, command=lambda name=scheme_name: apply_color_scheme(name))
 
+# Create a variable to track the selected color scheme
+selected_scheme = tk.StringVar()
+
+"""
+for scheme_name in color_schemes:
+    color_scheme_menu.add_checkbutton(
+        label=scheme_name, 
+        variable=selected_scheme,
+        onvalue=scheme_name,
+        command=lambda name=scheme_name: apply_color_scheme(name))
+"""
+
+# Add checkbuttons for each color scheme
+for scheme_name in color_schemes:
+    color_scheme_menu.add_checkbutton(
+        label=scheme_name,
+        variable=selected_scheme,
+        onvalue=scheme_name,
+        command=apply_color_scheme  # No need to pass the scheme_name parameter
+    )
+    
 # Create "Files" menu
 files_menu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Files", menu=files_menu)
@@ -179,7 +202,7 @@ empty_space = ttk.Label(button_frame)
 empty_space.grid(row=0, column=4, padx=5)
 
 # Apply default color scheme
-apply_color_scheme("Default")
+apply_color_scheme()
 
 # Run the application
 root.mainloop()
