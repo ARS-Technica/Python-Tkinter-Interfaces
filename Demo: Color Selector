@@ -1,3 +1,5 @@
+
+
 import tkinter as tk
 from tkinter import ttk, colorchooser, filedialog
 
@@ -75,9 +77,9 @@ def apply_custom_palette(chosen_color):
     button_frame.config(style="TFrame", background=chosen_color)
     status_bar.config(style="CustomStatus.TLabel", background=chosen_color)
     root.config(style="Custom.TFrame", background=chosen_color)
+    
     for widget in [dark_mode_button, color_scheme_button, open_button, save_button]:
         widget.config(style="Custom.TButton", foreground="black", background=chosen_color)
-
 
 def open_file():
     """Open a text file and display its content in the text editor."""
@@ -131,14 +133,8 @@ options_menu.add_cascade(label="Color Scheme", menu=color_scheme_menu)
 # Create a variable to track the selected color scheme
 selected_scheme = tk.StringVar()
 
-"""
-for scheme_name in color_schemes:
-    color_scheme_menu.add_checkbutton(
-        label=scheme_name, 
-        variable=selected_scheme,
-        onvalue=scheme_name,
-        command=lambda name=scheme_name: apply_color_scheme(name))
-"""
+# Create a variable to track the selected color scheme
+selected_scheme = tk.StringVar(value="Default")  # Set the initial value to "Default"
 
 # Add checkbuttons for each color scheme
 for scheme_name in color_schemes:
