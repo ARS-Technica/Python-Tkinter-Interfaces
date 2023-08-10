@@ -1,6 +1,6 @@
 
 
-import tkinter as tk
+from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
 # Define color schemes
@@ -10,6 +10,7 @@ color_schemes = {
     "Ocean": {"bg": "#007acc", "fg": "white", "frame": "#005fa3"},
     "Forest": {"bg": "#116611", "fg": "white", "frame": "#0a440a"},
 }
+
 
 
 def toggle_dark_mode():
@@ -114,27 +115,23 @@ style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12
 # Configure style for the "Custom.TFrame" widget (button_frame and root)
 style.configure("Custom.TFrame", background="gray")
 
-
 # Create a menubar
-menubar = tk.Menu(root)
+menubar = Menu(root)
 root.config(menu=menubar)
 
 # Create "Options" menu
-options_menu = tk.Menu(menubar, tearoff=0)
+options_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Options", menu=options_menu)
 options_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
 options_menu.add_command(label="Custom Palette", command=choose_custom_palette)
 options_menu.add_separator()
 
 # Create "Color Scheme" submenu
-color_scheme_menu = tk.Menu(options_menu, tearoff=0)
+color_scheme_menu = Menu(options_menu, tearoff=0)
 options_menu.add_cascade(label="Color Scheme", menu=color_scheme_menu)
 
 # Create a variable to track the selected color scheme
-selected_scheme = tk.StringVar()
-
-# Create a variable to track the selected color scheme
-selected_scheme = tk.StringVar(value="Default")  # Set the initial value to "Default"
+selected_scheme = StringVar(value="Default")  # Set the initial value to "Default"
 
 # Add checkbuttons for each color scheme
 for scheme_name in color_schemes:
@@ -142,11 +139,11 @@ for scheme_name in color_schemes:
         label=scheme_name,
         variable=selected_scheme,
         onvalue=scheme_name,
-        command=apply_color_scheme  # No need to pass the scheme_name parameter
+        command=apply_color_scheme
     )
-    
+
 # Create "Files" menu
-files_menu = tk.Menu(menubar, tearoff=0)
+files_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Files", menu=files_menu)
 files_menu.add_command(label="Open", command=open_file)
 files_menu.add_command(label="Save", command=save_file)
