@@ -1,3 +1,9 @@
+ 
+
+
+
+
+
 
 
 
@@ -54,7 +60,12 @@ def apply_color_scheme(scheme_name=None):
         label_style = ttk.Style()
         label_style.configure("Custom.TLabel", foreground=scheme["fg"], background=scheme["frame"])
 
+        # Update the selected_scheme variable only if a different scheme is selected
+        if scheme_name != selected_scheme.get():
+            selected_scheme.set("Default")
+            #apply_color_scheme("Default")
     else:
+        # Apply the "Default" color scheme when no color scheme is selected
         apply_color_scheme("Default")
 
 def apply_custom_palette(chosen_color):
