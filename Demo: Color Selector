@@ -23,13 +23,14 @@ def toggle_dark_mode():
     """Toggle Dark Mode by changing background and text colors."""
     global is_dark_mode
     if is_dark_mode:
-        apply_color_scheme("Default")
+        apply_color_scheme()  # Simply call the function without any arguments
         status_var.set("Light Mode")
         is_dark_mode = False
     else:
-        apply_color_scheme("Dark")
+        apply_color_scheme("Dark")  # Apply Dark color scheme
         status_var.set("Dark Mode")
         is_dark_mode = True
+
 
 def choose_custom_palette():
     """Change the color scheme of the text editor using a color chooser."""
@@ -38,11 +39,12 @@ def choose_custom_palette():
         apply_custom_palette(chosen_color)
 
 #def apply_color_scheme(scheme_name=None):
-def apply_color_scheme():
+def apply_color_scheme(scheme_name=None):
     """Apply the selected color scheme to the text editor and other widgets."""
-    scheme_name = selected_scheme.get()
+    if scheme_name is None:
+        scheme_name = selected_scheme.get()
 
-    if scheme_name == "":
+    if not scheme_name:
         scheme_name = "Default"
 
     if scheme_name in color_schemes:
@@ -64,7 +66,7 @@ def apply_color_scheme():
         label_style = ttk.Style()
         label_style.configure("Custom.TLabel", foreground=scheme["fg"], background=scheme["frame"])
 
-        
+
 def apply_custom_palette(chosen_color):
     """Apply a custom color palette to the text editor and other widgets."""
     text_widget.config(bg=chosen_color)
