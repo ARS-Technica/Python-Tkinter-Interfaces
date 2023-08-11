@@ -1,7 +1,6 @@
 
 
 
-
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
@@ -12,8 +11,6 @@ color_schemes = {
     "Ocean": {"bg": "#007acc", "fg": "white", "frame": "#005fa3"},
     "Forest": {"bg": "#116611", "fg": "white", "frame": "#0a440a"},
 }
-
-
 
 def toggle_dark_mode():
     """Toggle Dark Mode by changing background and text colors."""
@@ -27,13 +24,11 @@ def toggle_dark_mode():
         status_var.set("Dark Mode")
         is_dark_mode = True
 
-
 def choose_custom_palette():
     """Change the color scheme of the text editor using a color chooser."""
     chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
     if chosen_color:
         apply_custom_palette(chosen_color)
-
 
 def apply_color_scheme(scheme_name=None):
     """Apply the selected color scheme to the text editor and other widgets."""
@@ -45,37 +40,22 @@ def apply_color_scheme(scheme_name=None):
 
         text_widget.config(bg=scheme["bg"], fg=scheme["fg"])
 
-        # Configure background color for button_frame and root
         button_frame_style = ttk.Style()
         button_frame_style.configure("Custom.TFrame", background=scheme["frame"])
-        button_frame_style.map("Custom.TFrame",
-                               background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
-
         root_style = ttk.Style()
-        root_style.configure("Custom.TFrame", background=scheme["frame"])
-        root_style.map("Custom.TFrame",
-                       background=[("active", scheme["frame"]), ("pressed", scheme["frame"])])
+        root_style.configure("Custom.Toplevel", background=scheme["frame"])
 
-        # Configure foreground and background colors for buttons and labels
-        custom_button_style = ttk.Style()
-        custom_button_style.configure("Custom.TButton",
-                                      foreground=scheme["fg"],
-                                      background=scheme["frame"])
+        status_bar_style = ttk.Style()
+        status_bar_style.configure("CustomStatus.TLabel", background=scheme["frame"])
 
-        custom_label_style = ttk.Style()
-        custom_label_style.configure("Custom.TLabel",
-                                      foreground=scheme["fg"],
-                                      background=scheme["frame"])
+        button_style = ttk.Style()
+        button_style.configure("Custom.TButton", foreground=scheme["fg"], background=scheme["frame"])
 
-        # Update existing buttons, labels, and empty space
-        dark_mode_button.configure(style="Custom.TButton")
-        color_scheme_button.configure(style="Custom.TButton")
-        open_button.configure(style="Custom.TButton")
-        save_button.configure(style="Custom.TButton")
+        label_style = ttk.Style()
+        label_style.configure("Custom.TLabel", foreground=scheme["fg"], background=scheme["frame"])
 
-    else:  # Apply the "Default" color scheme when no color scheme is selected
+    else:
         apply_color_scheme("Default")
-
 
 def apply_custom_palette(chosen_color):
     """Apply a custom color palette to the text editor and other widgets."""
@@ -105,7 +85,7 @@ def save_file():
         status_var.set(f"Saved: {file_path}")
 
 # Create the main window
-root = tk.Tk()
+root = Tk()
 root.title("Text Editor")
 
 # Create a style for the themed widgets
@@ -136,16 +116,21 @@ color_scheme_menu = Menu(options_menu, tearoff=0)
 options_menu.add_cascade(label="Color Scheme", menu=color_scheme_menu)
 
 # Create a variable to track the selected color scheme
-selected_scheme = StringVar(value="Default")  # Set the initial value to "Default"
+selected_scheme = StringVar()
+
+# Create a dictionary to map checkbutton labels to their corresponding scheme names
+checkbutton_labels_to_schemes = {}
 
 # Add checkbuttons for each color scheme
 for scheme_name in color_schemes:
-    color_scheme_menu.add_checkbutton(
-        label=scheme_name,
-        variable=selected_scheme,
-        onvalue=scheme_name,
-        command=apply_color_scheme
-    )
+    if scheme_name != "Default":  # Skip "Default" color scheme
+        checkbutton = color_scheme_menu.add_checkbutton(
+            label=scheme_name,
+            variable=selected_scheme,
+            onvalue=scheme_name,
+            command=lambda scheme=scheme_name: apply_color_scheme(scheme)
+        )
+        checkbutton_labels_to_schemes[checkbutton] = scheme_name
 
 # Create "Files" menu
 files_menu = Menu(menubar, tearoff=0)
@@ -170,16 +155,16 @@ open_button.grid(row=0, column=2, padx=5)
 save_button.grid(row=0, column=3, padx=5)
 
 # Create a text widget
-text_widget = tk.Text(root, wrap="word")
+text_widget = Text(root, wrap="word")
 text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
 
 # Add a scrollbar
-scrollbar = tk.Scrollbar(root, command=text_widget.yview)
+scrollbar = Scrollbar(root, command=text_widget.yview)
 scrollbar.grid(row=1, column=2, sticky="NS")
 text_widget.config(yscrollcommand=scrollbar.set)
 
 # Create a status bar
-status_var = tk.StringVar()
+status_var = StringVar()
 status_var.set("Light Mode")
 status_bar = ttk.Label(root, textvariable=status_var, anchor="w")
 status_bar.grid(row=2, column=0, columnspan=3, sticky="EW")
@@ -206,5 +191,4 @@ apply_color_scheme()
 root.mainloop()
 
  
-
 
