@@ -3,6 +3,10 @@
 
 
 
+
+
+
+
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
@@ -33,14 +37,14 @@ def choose_custom_palette():
     if chosen_color:
         apply_custom_palette(chosen_color)
 
-def apply_color_scheme(scheme_name=None):
+#def apply_color_scheme(scheme_name=None):
+def apply_color_scheme():
     """Apply the selected color scheme to the text editor and other widgets."""
-    if scheme_name is None:
-        scheme_name = selected_scheme.get()
-    
+    scheme_name = selected_scheme.get()
+
     if scheme_name == "":
         scheme_name = "Default"
-    
+
     if scheme_name in color_schemes:
         scheme = color_schemes[scheme_name]
 
@@ -60,11 +64,7 @@ def apply_color_scheme(scheme_name=None):
         label_style = ttk.Style()
         label_style.configure("Custom.TLabel", foreground=scheme["fg"], background=scheme["frame"])
 
-        # Update the selected_scheme variable only if a different scheme is selected
-        if scheme_name != selected_scheme.get():
-            selected_scheme.set(scheme_name)
-
-            
+        
 def apply_custom_palette(chosen_color):
     """Apply a custom color palette to the text editor and other widgets."""
     text_widget.config(bg=chosen_color)
@@ -136,7 +136,7 @@ for scheme_name in color_schemes:
             label=scheme_name,
             variable=selected_scheme,
             onvalue=scheme_name,
-            command=lambda scheme=scheme_name: apply_color_scheme(scheme)
+            command=lambda scheme=scheme_name: apply_color_scheme()
         )
         checkbutton_labels_to_schemes[checkbutton] = scheme_name
 
