@@ -35,11 +35,48 @@ def choose_custom_palette():
     chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
     if chosen_color:
         apply_custom_palette(chosen_color)
+ 
+def toggle_color_scheme():
+    """Toggle between the selected color scheme and the Default color scheme."""
+    current_scheme = selected_scheme.get()
+    if current_scheme == "":
+        current_scheme = "Default"
+    new_scheme = "Dark" if current_scheme == "Default" else "Default"
+    apply_color_scheme(new_scheme)
 
 def apply_color_scheme(scheme_name=None):
     """Apply the selected color scheme to the text editor and other widgets."""
     if scheme_name is None:
         scheme_name = selected_scheme.get()
+    
+    if scheme_name in color_schemes:
+        scheme = color_schemes[scheme_name]
+
+        text_widget.config(bg=scheme["bg"], fg=scheme["fg"])
+
+        button_frame_style = ttk.Style()
+        button_frame_style.configure("Custom.TFrame", background=scheme["frame"])
+        root_style = ttk.Style()
+        root_style.configure("Custom.Toplevel", background=scheme["frame"])
+
+        status_bar_style = ttk.Style()
+        status_bar_style.configure("CustomStatus.TLabel", background=scheme["frame"])
+
+        button_style = ttk.Style()
+        button_style.configure("Custom.TButton", foreground=scheme["fg"], background=scheme["frame"])
+
+        label_style = ttk.Style()
+        label_style.configure("Custom.TLabel", foreground=scheme["fg"], background=scheme["frame"])
+
+        selected_scheme.set(scheme_name)
+    
+ 
+def apply_color_scheme(scheme_name=None):
+    """Apply the selected color scheme to the text editor and other widgets."""
+    scheme_name = selected_scheme.get()
+    
+    if scheme_name is None:
+        scheme_name = "Default"   
 
     if scheme_name in color_schemes:
         scheme = color_schemes[scheme_name]
@@ -62,12 +99,8 @@ def apply_color_scheme(scheme_name=None):
 
         # Update the selected_scheme variable only if a different scheme is selected
         if scheme_name != selected_scheme.get():
-            selected_scheme.set("Default")
-            #apply_color_scheme("Default")
-    else:
-        # Apply the "Default" color scheme when no color scheme is selected
-        apply_color_scheme("Default")
-
+            selected_scheme.set(scheme_name)
+            
 def apply_custom_palette(chosen_color):
     """Apply a custom color palette to the text editor and other widgets."""
     text_widget.config(bg=chosen_color)
