@@ -1,0 +1,38 @@
+"""
+An attempt to create a drop-down menu continaing Checkbuttons that revert to a default value when no Checkbuttons are active.
+"""
+
+import tkinter as tk
+
+def reset_checkbuttons():
+    for var in checkbutton_vars:
+        var.set(False)
+
+# Create the main window
+root = tk.Tk()
+root.title("Checkbutton Menu Example")
+
+# Create a drop-down menu
+menu_bar = tk.Menu(root)
+root.config(menu=menu_bar)
+
+# Create a submenu for checkbuttons
+submenu = tk.Menu(menu_bar, tearoff=0)
+menu_bar.add_cascade(label="Options", menu=submenu)
+
+# Create BooleanVar variables for checkbuttons
+checkbutton_vars = []
+options = ["Option 1", "Option 2", "Option 3"]
+
+for option in options:
+    var = tk.BooleanVar()
+    checkbutton_vars.append(var)
+    submenu.add_checkbutton(label=option, variable=var)
+
+# Add a reset button
+submenu.add_separator()
+submenu.add_command(label="Reset Checkbuttons", command=reset_checkbuttons)
+
+# Start the main loop
+root.mainloop()
+
