@@ -1,5 +1,6 @@
 """
-Fixed checkmarks that weren't appearing beside the checkbuttons in the menu.
+Removed the Reset "Reset Checkbuttons" checkbutton.
+This is where the problems begin.  
 """
 
 import tkinter as tk
@@ -14,11 +15,20 @@ def checkbutton_selected(index):
             change_canvas_color(colors[i])
         else:
             var.set(False)
+    
+    update_canvas_color()
 
-def reset_checkbuttons():
-    for var in checkbutton_vars:
-        var.set(False)
-    change_canvas_color(default_color)
+def update_canvas_color():
+    active_index = None
+    for i, var in enumerate(checkbutton_vars):
+        if var.get():
+            active_index = i
+            break
+
+    if active_index is None:
+        change_canvas_color(default_color)
+    else:
+        change_canvas_color(colors[active_index])
 
 # Create the main window
 root = tk.Tk()
@@ -41,10 +51,6 @@ for option in options:
     checkbutton_vars.append(var)
     submenu.add_checkbutton(label=option, variable=var, command=lambda idx=options.index(option): checkbutton_selected(idx))
 
-# Add a reset button
-submenu.add_separator()
-submenu.add_command(label="Reset Checkbuttons", command=reset_checkbuttons)
-
 # Create a canvas
 default_color = "white"
 colors = ["red", "green", "blue"]
@@ -53,5 +59,4 @@ canvas.pack()
 
 # Start the main loop
 root.mainloop()
-
 
