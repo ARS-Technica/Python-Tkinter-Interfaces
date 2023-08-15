@@ -39,7 +39,7 @@ options = ["Red", "Green", "Blue"]
 for option in options:
     var = tk.BooleanVar()
     checkbutton_vars.append(var)
-    submenu.add_radiobutton(label=option, variable=var, command=lambda idx=options.index(option): checkbutton_selected(idx), indicatoron=0)
+    submenu.add_checkbutton(label=option, variable=var, command=lambda idx=options.index(option): checkbutton_selected(idx))
 
 # Add a reset button
 submenu.add_separator()
@@ -53,4 +53,5 @@ canvas.pack()
 
 # Start the main loop
 root.mainloop()
+
 
