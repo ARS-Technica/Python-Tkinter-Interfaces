@@ -1,4 +1,9 @@
-import tkinter as tk
+
+"""
+Rewriting code to use "from tkinter import *" rather than "import tkinter as tk" for consistency.
+"""
+
+from tkinter import *
 
 def change_canvas_color(color):
     canvas.config(bg=color)
@@ -23,15 +28,15 @@ def update_canvas_color():
         change_canvas_color(colors[active_indices[0]])
 
 # Create the main window
-root = tk.Tk()
+root = Tk()
 root.title("Checkbutton Menu Example")
 
 # Create a drop-down menu
-menu_bar = tk.Menu(root)
+menu_bar = Menu(root)
 root.config(menu=menu_bar)
 
 # Create a submenu for checkbuttons
-submenu = tk.Menu(menu_bar, tearoff=0)
+submenu = Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label="Options", menu=submenu)
 
 # Create BooleanVar variables for checkbuttons
@@ -39,14 +44,14 @@ checkbutton_vars = []
 options = ["Red", "Green", "Blue"]
 
 for option in options:
-    var = tk.BooleanVar()
+    var = BooleanVar()
     checkbutton_vars.append(var)
     submenu.add_checkbutton(label=option, variable=var, command=lambda idx=options.index(option): checkbutton_selected(idx))
 
 # Create a canvas
 default_color = "white"
 colors = ["red", "green", "blue"]
-canvas = tk.Canvas(root, bg=default_color, width=200, height=200)
+canvas = Canvas(root, bg=default_color, width=200, height=200)
 canvas.pack()
 
 # Start the main loop
