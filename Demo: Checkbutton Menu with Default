@@ -1,9 +1,3 @@
-
-"""
-When all of the checkbuttons are deactivated the color scheme revert back to "Default".
-Not currently working.
-"""
-
 import tkinter as tk
 
 def change_canvas_color(color):
@@ -17,7 +11,7 @@ def checkbutton_selected(index):
                 v.set(False)
         change_canvas_color(colors[index])
     else:
-        var.set(True)
+        var.set(False)
         update_canvas_color()
 
 def update_canvas_color():
