@@ -1,6 +1,6 @@
+
 """
-Removed the Reset "Reset Checkbuttons" checkbutton.
-This is where the problems begin.  
+When no checkbutton is selected, this code DOES NOT set the canvas back to the default color. 
 """
 
 import tkinter as tk
@@ -19,16 +19,12 @@ def checkbutton_selected(index):
     update_canvas_color()
 
 def update_canvas_color():
-    active_index = None
-    for i, var in enumerate(checkbutton_vars):
-        if var.get():
-            active_index = i
-            break
-
-    if active_index is None:
+    active_indices = [i for i, var in enumerate(checkbutton_vars) if var.get()]
+    
+    if not active_indices:
         change_canvas_color(default_color)
     else:
-        change_canvas_color(colors[active_index])
+        change_canvas_color(colors[active_indices[0]])
 
 # Create the main window
 root = tk.Tk()
