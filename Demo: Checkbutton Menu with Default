@@ -1,6 +1,5 @@
-
 """
-Rewriting code to use "from tkinter import *" rather than "import tkinter as tk" for consistency.
+A drop-down menu featuring checkbuttons that revert to a default value when they are all deactivated.
 """
 
 from tkinter import *
@@ -52,7 +51,7 @@ for option in options:
 default_color = "white"
 colors = ["red", "green", "blue"]
 canvas = Canvas(root, bg=default_color, width=200, height=200)
-canvas.pack()
+canvas.grid(row=0, column=0, columnspan=len(options))
 
 # Start the main loop
 root.mainloop()
