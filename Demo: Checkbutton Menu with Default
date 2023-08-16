@@ -1,12 +1,8 @@
-
 """
-Rather than iterating over the options list in the line "for option in options:", iterate over the keys of the color_schemes dictionary
+Modified to remove the function change_canvas_color
 """
 
 from tkinter import *
-
-def change_canvas_color(color):
-    canvas.config(bg=color)
 
 def checkbutton_selected(scheme_name):
     var = checkbutton_vars[scheme_name]
@@ -14,7 +10,7 @@ def checkbutton_selected(scheme_name):
         for name, v in checkbutton_vars.items():
             if name != scheme_name:
                 v.set(False)
-        change_canvas_color(color_schemes[scheme_name])
+        canvas.config(bg=color_schemes[scheme_name])
     else:
         var.set(False)
         update_canvas_color()
@@ -23,9 +19,9 @@ def update_canvas_color():
     active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
     
     if not active_scheme_names:
-        change_canvas_color(default_color_scheme["Default"])
+        canvas.config(bg=default_color_scheme["Default"])
     else:
-        change_canvas_color(color_schemes[active_scheme_names[0]])
+        canvas.config(bg=color_schemes[active_scheme_names[0]])
 
 # Create the main window
 root = Tk()
@@ -59,3 +55,4 @@ canvas.grid(row=0, column=0, columnspan=len(color_schemes))
 
 # Start the main loop
 root.mainloop()
+
