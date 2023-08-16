@@ -1,6 +1,6 @@
 
 """
-Modify the code so that the colors list is a dictionary named color_schemes
+Rather than iterating over the options list in the line "for option in options:", iterate over the keys of the color_schemes dictionary
 """
 
 from tkinter import *
@@ -8,24 +8,24 @@ from tkinter import *
 def change_canvas_color(color):
     canvas.config(bg=color)
 
-def checkbutton_selected(index):
-    var = checkbutton_vars[index]
+def checkbutton_selected(scheme_name):
+    var = checkbutton_vars[scheme_name]
     if var.get():
-        for i, v in enumerate(checkbutton_vars):
-            if i != index:
+        for name, v in checkbutton_vars.items():
+            if name != scheme_name:
                 v.set(False)
-        change_canvas_color(color_schemes[options[index]])
+        change_canvas_color(color_schemes[scheme_name])
     else:
         var.set(False)
         update_canvas_color()
 
 def update_canvas_color():
-    active_indices = [i for i, var in enumerate(checkbutton_vars) if var.get()]
+    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
     
-    if not active_indices:
+    if not active_scheme_names:
         change_canvas_color(default_color_scheme["Default"])
     else:
-        change_canvas_color(color_schemes[options[active_indices[0]]])
+        change_canvas_color(color_schemes[active_scheme_names[0]])
 
 # Create the main window
 root = Tk()
@@ -40,25 +40,22 @@ submenu = Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label="Options", menu=submenu)
 
 # Create BooleanVar variables for checkbuttons
-checkbutton_vars = []
-options = ["Red", "Green", "Blue"]
-
-for option in options:
-    var = BooleanVar()
-    checkbutton_vars.append(var)
-    submenu.add_checkbutton(label=option, variable=var, command=lambda idx=options.index(option): checkbutton_selected(idx))
-
-# Create a canvas
-default_color_scheme = {"Default": "white"}
+checkbutton_vars = {}
 color_schemes = {
     "Red": "red",
     "Green": "green",
     "Blue": "blue"
 }
+default_color_scheme = {"Default": "white"}
 
+for scheme_name in color_schemes:
+    var = BooleanVar()
+    checkbutton_vars[scheme_name] = var
+    submenu.add_checkbutton(label=scheme_name, variable=var, command=lambda name=scheme_name: checkbutton_selected(name))
+
+# Create a canvas
 canvas = Canvas(root, bg=default_color_scheme["Default"], width=200, height=200)
-canvas.grid(row=0, column=0, columnspan=len(options))
+canvas.grid(row=0, column=0, columnspan=len(color_schemes))
 
 # Start the main loop
 root.mainloop()
-
