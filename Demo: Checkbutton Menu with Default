@@ -1,5 +1,5 @@
 """
-Modified to remove the function change_canvas_color
+Added seperately defined checkbutton to the Options Menu called "Dark Mode"
 """
 
 from tkinter import *
@@ -10,7 +10,10 @@ def checkbutton_selected(scheme_name):
         for name, v in checkbutton_vars.items():
             if name != scheme_name:
                 v.set(False)
-        canvas.config(bg=color_schemes[scheme_name])
+        if scheme_name == "Dark Mode":
+            canvas.config(bg=dark_mode_scheme["Dark Mode"])  # Set canvas background to gray
+        else:
+            canvas.config(bg=color_schemes[scheme_name])
     else:
         var.set(False)
         update_canvas_color()
@@ -42,12 +45,20 @@ color_schemes = {
     "Green": "green",
     "Blue": "blue"
 }
+
+dark_mode_scheme = {"Dark Mode": "gray"}
+
 default_color_scheme = {"Default": "white"}
 
 for scheme_name in color_schemes:
     var = BooleanVar()
     checkbutton_vars[scheme_name] = var
     submenu.add_checkbutton(label=scheme_name, variable=var, command=lambda name=scheme_name: checkbutton_selected(name))
+
+# Add "Dark Mode" checkbutton
+var_dark_mode = BooleanVar()
+checkbutton_vars["Dark Mode"] = var_dark_mode
+submenu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambda name="Dark Mode": checkbutton_selected(name))
 
 # Create a canvas
 canvas = Canvas(root, bg=default_color_scheme["Default"], width=200, height=200)
