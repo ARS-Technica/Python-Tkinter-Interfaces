@@ -1,5 +1,6 @@
+
 """
-A drop-down menu featuring checkbuttons that revert to a default value when they are all deactivated.
+Modify the code so that the colors list is a dictionary named color_schemes
 """
 
 from tkinter import *
@@ -13,7 +14,7 @@ def checkbutton_selected(index):
         for i, v in enumerate(checkbutton_vars):
             if i != index:
                 v.set(False)
-        change_canvas_color(colors[index])
+        change_canvas_color(color_schemes[options[index]])
     else:
         var.set(False)
         update_canvas_color()
@@ -22,9 +23,9 @@ def update_canvas_color():
     active_indices = [i for i, var in enumerate(checkbutton_vars) if var.get()]
     
     if not active_indices:
-        change_canvas_color(default_color)
+        change_canvas_color(default_color_scheme["Default"])
     else:
-        change_canvas_color(colors[active_indices[0]])
+        change_canvas_color(color_schemes[options[active_indices[0]]])
 
 # Create the main window
 root = Tk()
@@ -48,9 +49,14 @@ for option in options:
     submenu.add_checkbutton(label=option, variable=var, command=lambda idx=options.index(option): checkbutton_selected(idx))
 
 # Create a canvas
-default_color = "white"
-colors = ["red", "green", "blue"]
-canvas = Canvas(root, bg=default_color, width=200, height=200)
+default_color_scheme = {"Default": "white"}
+color_schemes = {
+    "Red": "red",
+    "Green": "green",
+    "Blue": "blue"
+}
+
+canvas = Canvas(root, bg=default_color_scheme["Default"], width=200, height=200)
 canvas.grid(row=0, column=0, columnspan=len(options))
 
 # Start the main loop
