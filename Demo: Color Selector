@@ -1,36 +1,39 @@
- 
-
-
-
-
-
-
-
-
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
+# Create BooleanVar variables for checkbuttons
+checkbutton_vars = {}
+
 # Define color schemes
 color_schemes = {
-    "Default": {"bg": "white", "fg": "black", "frame": "gray"},
-    "Dark": {"bg": "black", "fg": "white", "frame": "darkgray"},
-    "Ocean": {"bg": "#007acc", "fg": "white", "frame": "#005fa3"},
-    "Forest": {"bg": "#116611", "fg": "white", "frame": "#0a440a"},
+    "Red": "red",
+    "Green": "green",
+    "Blue": "blue"
 }
+dark_mode_scheme = {"Dark Mode": "gray"}
+default_color_scheme = {"Default": "white"}
 
-
-def toggle_dark_mode():
-    """Toggle Dark Mode by changing background and text colors."""
-    global is_dark_mode
-    if is_dark_mode:
-        apply_color_scheme()  # Simply call the function without any arguments
-        status_var.set("Light Mode")
-        is_dark_mode = False
+def checkbutton_selected(scheme_name):
+    var = checkbutton_vars[scheme_name]
+    if var.get():
+        for name, v in checkbutton_vars.items():
+            if name != scheme_name:
+                v.set(False)
+        if scheme_name == "Dark Mode":
+            text_widget.config(bg=dark_mode_scheme["Dark Mode"])  # Set text widget background to gray
+        else:
+            text_widget.config(bg=color_schemes[scheme_name])
     else:
-        apply_color_scheme("Dark")  # Apply Dark color scheme
-        status_var.set("Dark Mode")
-        is_dark_mode = True
+        var.set(False)
+        update_text_widget_color()
 
+def update_text_widget_color():
+    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
+    
+    if not active_scheme_names:
+        text_widget.config(bg=default_color_scheme["Default"])
+    else:
+        text_widget.config(bg=color_schemes[active_scheme_names[0]])
 
 def choose_custom_palette():
     """Change the color scheme of the text editor using a color chooser."""
@@ -38,45 +41,14 @@ def choose_custom_palette():
     if chosen_color:
         apply_custom_palette(chosen_color)
 
-#def apply_color_scheme(scheme_name=None):
-def apply_color_scheme(scheme_name=None):
-    """Apply the selected color scheme to the text editor and other widgets."""
-    if scheme_name is None:
-        scheme_name = selected_scheme.get()
-
-    if not scheme_name:
-        scheme_name = "Default"
-
-    if scheme_name in color_schemes:
-        scheme = color_schemes[scheme_name]
-
-        text_widget.config(bg=scheme["bg"], fg=scheme["fg"])
-
-        button_frame_style = ttk.Style()
-        button_frame_style.configure("Custom.TFrame", background=scheme["frame"])
-        root_style = ttk.Style()
-        root_style.configure("Custom.Toplevel", background=scheme["frame"])
-
-        status_bar_style = ttk.Style()
-        status_bar_style.configure("CustomStatus.TLabel", background=scheme["frame"])
-
-        button_style = ttk.Style()
-        button_style.configure("Custom.TButton", foreground=scheme["fg"], background=scheme["frame"])
-
-        label_style = ttk.Style()
-        label_style.configure("Custom.TLabel", foreground=scheme["fg"], background=scheme["frame"])
-
-
 def apply_custom_palette(chosen_color):
     """Apply a custom color palette to the text editor and other widgets."""
     text_widget.config(bg=chosen_color)
     button_frame.config(style="TFrame", background=chosen_color)
     status_bar.config(style="CustomStatus.TLabel", background=chosen_color)
     root.config(style="Custom.TFrame", background=chosen_color)
-    
-    for widget in [dark_mode_button, color_scheme_button, open_button, save_button]:
-        widget.config(style="Custom.TButton", foreground="black", background=chosen_color)
 
+# File Menu Functions
 def open_file():
     """Open a text file and display its content in the text editor."""
     file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
@@ -110,43 +82,35 @@ style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12
 # Configure style for the "Custom.TFrame" widget (button_frame and root)
 style.configure("Custom.TFrame", background="gray")
 
-# Create a menubar
-menubar = Menu(root)
-root.config(menu=menubar)
-
-# Create "Options" menu
-options_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Options", menu=options_menu)
-options_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
-options_menu.add_command(label="Custom Palette", command=choose_custom_palette)
-options_menu.add_separator()
-
-# Create "Color Scheme" submenu
-color_scheme_menu = Menu(options_menu, tearoff=0)
-options_menu.add_cascade(label="Color Scheme", menu=color_scheme_menu)
-
-# Create a variable to track the selected color scheme
-selected_scheme = StringVar()
-
-# Create a dictionary to map checkbutton labels to their corresponding scheme names
-checkbutton_labels_to_schemes = {}
-
-# Add checkbuttons for each color scheme
-for scheme_name in color_schemes:
-    if scheme_name != "Default":  # Skip "Default" color scheme
-        checkbutton = color_scheme_menu.add_checkbutton(
-            label=scheme_name,
-            variable=selected_scheme,
-            onvalue=scheme_name,
-            command=lambda scheme=scheme_name: apply_color_scheme()
-        )
-        checkbutton_labels_to_schemes[checkbutton] = scheme_name
+# Create a drop-down menu
+menu_bar = Menu(root)
+root.config(menu=menu_bar)
 
 # Create "Files" menu
 files_menu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Files", menu=files_menu)
 files_menu.add_command(label="Open", command=open_file)
 files_menu.add_command(label="Save", command=save_file)
+
+# Create "Options" menu
+submenu = Menu(menu_bar, tearoff=0)
+menu_bar.add_cascade(label="Options", menu=submenu)
+
+options_menu.add_command(label="Custom Palette", command=choose_custom_palette)
+
+options_menu.add_separator()
+
+for scheme_name in color_schemes:
+    var = BooleanVar()
+    checkbutton_vars[scheme_name] = var
+    submenu.add_checkbutton(label=scheme_name, variable=var, command=lambda name=scheme_name: checkbutton_selected(name))
+
+submenu.add_separator()
+
+# Add "Dark Mode" checkbutton
+var_dark_mode = BooleanVar()
+checkbutton_vars["Dark Mode"] = var_dark_mode
+submenu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambda name="Dark Mode": checkbutton_selected(name))
 
 # Create a frame for buttons with background color
 button_frame = ttk.Frame(root, style="Custom.TFrame")
@@ -165,7 +129,7 @@ open_button.grid(row=0, column=2, padx=5)
 save_button.grid(row=0, column=3, padx=5)
 
 # Create a text widget
-text_widget = Text(root, wrap="word")
+text_widget = Text(root, bg=default_color_scheme["Default"], width=30, height=10)
 text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
 
 # Add a scrollbar
@@ -183,9 +147,6 @@ status_bar.grid(row=2, column=0, columnspan=3, sticky="EW")
 root.grid_rowconfigure(1, weight=1)
 root.grid_columnconfigure(0, weight=1)
 
-# Set default Dark Mode state
-is_dark_mode = False
-
 # Create an empty label as a separator
 separator_label = ttk.Label(button_frame)
 separator_label.grid(row=0, column=2, padx=5)
@@ -197,8 +158,6 @@ empty_space.grid(row=0, column=4, padx=5)
 # Apply default color scheme
 apply_color_scheme()
 
-# Run the application
+# Start the main loop
 root.mainloop()
-
- 
 
