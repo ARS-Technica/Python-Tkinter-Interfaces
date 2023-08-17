@@ -54,8 +54,8 @@ def open_file():
     file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
     if file_path:
         with open(file_path, "r") as file:
-            text_widget.delete(1.0, tk.END)
-            text_widget.insert(tk.END, file.read())
+            text_widget.delete(1.0, END)
+            text_widget.insert(END, file.read())
         status_var.set(f"Opened: {file_path}")
 
 def save_file():
@@ -63,7 +63,7 @@ def save_file():
     file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
     if file_path:
         with open(file_path, "w") as file:
-            file.write(text_widget.get(1.0, tk.END))
+            file.write(text_widget.get(1.0, END))
         status_var.set(f"Saved: {file_path}")
 
 # Create the main window
@@ -87,18 +87,14 @@ menu_bar = Menu(root)
 root.config(menu=menu_bar)
 
 # Create "Files" menu
-files_menu = Menu(menubar, tearoff=0)
-menubar.add_cascade(label="Files", menu=files_menu)
+files_menu = Menu(menu_bar, tearoff=0)
+menu_bar.add_cascade(label="Files", menu=files_menu)
 files_menu.add_command(label="Open", command=open_file)
 files_menu.add_command(label="Save", command=save_file)
 
 # Create "Options" menu
 submenu = Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label="Options", menu=submenu)
-
-options_menu.add_command(label="Custom Palette", command=choose_custom_palette)
-
-options_menu.add_separator()
 
 for scheme_name in color_schemes:
     var = BooleanVar()
@@ -117,16 +113,14 @@ button_frame = ttk.Frame(root, style="Custom.TFrame")
 button_frame.grid(row=0, column=0, columnspan=2, pady=5, sticky="EW")
 
 # Create buttons
-dark_mode_button = ttk.Button(button_frame, text="Toggle Dark Mode", command=toggle_dark_mode, style="Custom.TButton")
 color_scheme_button = ttk.Button(button_frame, text="Choose Custom Palette", command=choose_custom_palette, style="Custom.TButton")
 open_button = ttk.Button(button_frame, text="Open", command=open_file, style="Custom.TButton")
 save_button = ttk.Button(button_frame, text="Save", command=save_file, style="Custom.TButton")
 
 # Grid layout for buttons
-dark_mode_button.grid(row=0, column=0, padx=5)
-color_scheme_button.grid(row=0, column=1, padx=5)
-open_button.grid(row=0, column=2, padx=5)
-save_button.grid(row=0, column=3, padx=5)
+color_scheme_button.grid(row=0, column=0, padx=5)
+open_button.grid(row=0, column=1, padx=5)
+save_button.grid(row=0, column=2, padx=5)
 
 # Create a text widget
 text_widget = Text(root, bg=default_color_scheme["Default"], width=30, height=10)
@@ -149,14 +143,7 @@ root.grid_columnconfigure(0, weight=1)
 
 # Create an empty label as a separator
 separator_label = ttk.Label(button_frame)
-separator_label.grid(row=0, column=2, padx=5)
-
-# Create an empty space label
-empty_space = ttk.Label(button_frame)
-empty_space.grid(row=0, column=4, padx=5)
-
-# Apply default color scheme
-apply_color_scheme()
+separator_label.grid(row=0, column=3, padx=5)
 
 # Start the main loop
 root.mainloop()
