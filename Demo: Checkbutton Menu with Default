@@ -1,8 +1,18 @@
 """
-Added seperately defined checkbutton to the Options Menu called "Dark Mode"
+Made the canvas widget a text widget
 """
 
 from tkinter import *
+
+# Create BooleanVar variables for checkbuttons
+checkbutton_vars = {}
+color_schemes = {
+    "Red": "red",
+    "Green": "green",
+    "Blue": "blue"
+}
+dark_mode_scheme = {"Dark Mode": "gray"}
+default_color_scheme = {"Default": "white"}
 
 def checkbutton_selected(scheme_name):
     var = checkbutton_vars[scheme_name]
@@ -11,20 +21,20 @@ def checkbutton_selected(scheme_name):
             if name != scheme_name:
                 v.set(False)
         if scheme_name == "Dark Mode":
-            canvas.config(bg=dark_mode_scheme["Dark Mode"])  # Set canvas background to gray
+            text_widget.config(bg=dark_mode_scheme["Dark Mode"])  # Set text widget background to gray
         else:
-            canvas.config(bg=color_schemes[scheme_name])
+            text_widget.config(bg=color_schemes[scheme_name])
     else:
         var.set(False)
-        update_canvas_color()
+        update_text_widget_color()
 
-def update_canvas_color():
+def update_text_widget_color():
     active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
     
     if not active_scheme_names:
-        canvas.config(bg=default_color_scheme["Default"])
+        text_widget.config(bg=default_color_scheme["Default"])
     else:
-        canvas.config(bg=color_schemes[active_scheme_names[0]])
+        text_widget.config(bg=color_schemes[active_scheme_names[0]])
 
 # Create the main window
 root = Tk()
@@ -38,32 +48,21 @@ root.config(menu=menu_bar)
 submenu = Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label="Options", menu=submenu)
 
-# Create BooleanVar variables for checkbuttons
-checkbutton_vars = {}
-color_schemes = {
-    "Red": "red",
-    "Green": "green",
-    "Blue": "blue"
-}
-
-dark_mode_scheme = {"Dark Mode": "gray"}
-
-default_color_scheme = {"Default": "white"}
-
 for scheme_name in color_schemes:
     var = BooleanVar()
     checkbutton_vars[scheme_name] = var
     submenu.add_checkbutton(label=scheme_name, variable=var, command=lambda name=scheme_name: checkbutton_selected(name))
+
+submenu.add_separator()
 
 # Add "Dark Mode" checkbutton
 var_dark_mode = BooleanVar()
 checkbutton_vars["Dark Mode"] = var_dark_mode
 submenu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambda name="Dark Mode": checkbutton_selected(name))
 
-# Create a canvas
-canvas = Canvas(root, bg=default_color_scheme["Default"], width=200, height=200)
-canvas.grid(row=0, column=0, columnspan=len(color_schemes))
+# Create a text widget
+text_widget = Text(root, bg=default_color_scheme["Default"], width=30, height=10)
+text_widget.grid(row=0, column=0, columnspan=len(color_schemes))
 
 # Start the main loop
 root.mainloop()
-
