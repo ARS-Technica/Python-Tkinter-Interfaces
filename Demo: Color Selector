@@ -1,8 +1,9 @@
+"""
+Removing checkbutton_vars dictionary to make code more straightforward
+"""
+
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
-
-# Create BooleanVar variables for checkbuttons
-checkbutton_vars = {}
 
 # Define color schemes
 color_schemes = {
@@ -14,35 +15,18 @@ dark_mode_scheme = {"Dark Mode": "gray"}
 default_color_scheme = {"Default": "white"}
 
 def checkbutton_selected(scheme_name):
-    var = checkbutton_vars[scheme_name]
-    if var.get():
-        for name, v in checkbutton_vars.items():
-            if name != scheme_name:
-                v.set(False)
-        if scheme_name == "Dark Mode":
-            text_widget.config(bg=dark_mode_scheme["Dark Mode"])  # Set text widget background to gray
+    for name, checkbutton in checkbuttons.items():
+        if name == scheme_name:
+            checkbutton.config(bg=color_schemes[scheme_name])
         else:
-            text_widget.config(bg=color_schemes[scheme_name])
-    else:
-        var.set(False)
-        update_text_widget_color()
-
-def update_text_widget_color():
-    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
-    
-    if not active_scheme_names:
-        text_widget.config(bg=default_color_scheme["Default"])
-    else:
-        text_widget.config(bg=color_schemes[active_scheme_names[0]])
+            checkbutton.config(bg=default_color_scheme["Default"])
 
 def choose_custom_palette():
-    """Change the color scheme of the text editor using a color chooser."""
     chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
     if chosen_color:
         apply_custom_palette(chosen_color)
 
 def apply_custom_palette(chosen_color):
-    """Apply a custom color palette to the text editor and other widgets."""
     text_widget.config(bg=chosen_color)
     button_frame.config(style="TFrame", background=chosen_color)
     status_bar.config(style="CustomStatus.TLabel", background=chosen_color)
@@ -97,9 +81,12 @@ submenu = Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label="Options", menu=submenu)
 
 for scheme_name in color_schemes:
-    var = BooleanVar()
-    checkbutton_vars[scheme_name] = var
-    submenu.add_checkbutton(label=scheme_name, variable=var, command=lambda name=scheme_name: checkbutton_selected(name))
+    checkbutton = submenu.add_checkbutton(
+        label=scheme_name,
+        command=lambda name=scheme_name: checkbutton_selected(name)
+    )
+    checkbutton.config(bg=default_color_scheme["Default"])
+    checkbuttons[scheme_name] = checkbutton
 
 submenu.add_separator()
 
@@ -123,7 +110,7 @@ open_button.grid(row=0, column=1, padx=5)
 save_button.grid(row=0, column=2, padx=5)
 
 # Create a text widget
-text_widget = Text(root, bg=default_color_scheme["Default"], width=30, height=10)
+text_widget = Text(root, bg=default_color_scheme["Default"], width=30, height=30)
 text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
 
 # Add a scrollbar
@@ -133,7 +120,7 @@ text_widget.config(yscrollcommand=scrollbar.set)
 
 # Create a status bar
 status_var = StringVar()
-status_var.set("Light Mode")
+status_var.set("Text Editor Ready")
 status_bar = ttk.Label(root, textvariable=status_var, anchor="w")
 status_bar.grid(row=2, column=0, columnspan=3, sticky="EW")
 
