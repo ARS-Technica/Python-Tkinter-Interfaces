@@ -1,10 +1,3 @@
-
-"""
-Changed "Choose Custom Palette" to be a checkbutton that displays a checkmark while active.  
-When the checkbutton is deactivated, I want the application's user interface to 
-revert to the Default color scheme.
-"""
-
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
@@ -41,7 +34,7 @@ def update_text_widget_color():
         text_widget.config(bg=default_color_scheme["Default"])
     else:
         text_widget.config(bg=color_schemes[active_scheme_names[0]])
-    
+
 def choose_custom_palette():
     """Toggle the custom color palette based on the state of the checkbutton."""
     if custom_palette_var.get():
@@ -51,17 +44,27 @@ def choose_custom_palette():
     else:
         apply_default_palette()
 
+def apply_custom_palette(chosen_color):
+    """Apply a custom color palette to the text editor and other widgets."""
+    text_widget.config(bg=chosen_color)
+    button_frame.config(style="TFrame", background=chosen_color)
+    status_bar.config(style="CustomStatus.TLabel", background=chosen_color)
+    root.config(style="Custom.TFrame", background=chosen_color)
+    
+    color_scheme_button.config(style="Custom.TButton", background=chosen_color)
+    open_button.config(style="Custom.TButton", background=chosen_color)
+    save_button.config(style="Custom.TButton", background=chosen_color)
+
 def apply_default_palette():
-    """Apply the default color palette to the text editor and other widgets."""
+    """Apply the default color scheme to the text editor and other widgets."""
     text_widget.config(bg=default_color_scheme["Default"])
-    button_frame["style"] = "Custom.TFrame"
-    status_bar["style"] = "CustomStatus.TLabel"
-    root.configure(background=default_color_scheme["Default"])
-
-    for widget in [dark_mode_button, color_scheme_button, open_button, save_button]:
-        widget["style"] = "Custom.TButton"
-
-    root.option_add("*TButton*foreground", "black")
+    button_frame.config(style="TFrame", background=default_color_scheme["Default"])
+    status_bar.config(style="CustomStatus.TLabel", background=default_color_scheme["Default"])
+    root.config(style="Custom.TFrame", background=default_color_scheme["Default"])
+    
+    color_scheme_button.config(style="Custom.TButton", background=default_color_scheme["Default"])
+    open_button.config(style="Custom.TButton", background=default_color_scheme["Default"])
+    save_button.config(style="Custom.TButton", background=default_color_scheme["Default"])
 
 def apply_custom_palette(chosen_color):
     """Apply a custom color palette to the text editor and other widgets."""
@@ -141,6 +144,7 @@ checkbutton_vars["Dark Mode"] = var_dark_mode
 submenu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambda name="Dark Mode": checkbutton_selected(name))
 
 # Add "Choose Custom Palette" option
+# Create a BooleanVar for the custom palette checkbutton
 custom_palette_var = BooleanVar()
 submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
 
