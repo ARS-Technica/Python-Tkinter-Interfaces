@@ -1,7 +1,3 @@
-"""
-Added Custom Pallette option to the Drop-Down Menu
-"""
-
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
@@ -45,12 +41,37 @@ def choose_custom_palette():
     if chosen_color:
         apply_custom_palette(chosen_color)
 
+'''
 def apply_custom_palette(chosen_color):
     """Apply a custom color palette to the text editor and other widgets."""
     text_widget.config(bg=chosen_color)
     button_frame.config(style="TFrame", background=chosen_color)
     status_bar.config(style="CustomStatus.TLabel", background=chosen_color)
-    root.config(style="Custom.TFrame", background=chosen_color)
+    #root.config(style="Custom.TFrame", background=chosen_color)
+'''
+'''
+def apply_custom_palette(chosen_color):
+    """Apply a custom color palette to the text editor and other widgets."""
+    text_widget.config(bg=chosen_color)
+    button_frame.config(style="TFrame", background=chosen_color)
+    status_bar.config(style="CustomStatus.TLabel", background=chosen_color)
+'''
+def apply_custom_palette(chosen_color):
+    """Apply a custom color palette to the text editor and other widgets."""
+    text_widget.config(bg=chosen_color)
+    button_frame["style"] = "Custom.TFrame"
+    status_bar["style"] = "CustomStatus.TLabel"
+    root.configure(background=chosen_color)
+
+    for widget in [dark_mode_button, color_scheme_button, open_button, save_button]:
+        widget["style"] = "Custom.TButton"
+
+    root.option_add("*TButton*foreground", "black")
+
+    for scheme_name, var in checkbutton_vars.items():
+        if var.get():
+            checkbutton_selected(scheme_name)
+            break
 
 # File Menu Functions
 def open_file():
