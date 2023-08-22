@@ -1,5 +1,3 @@
-
-
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
@@ -46,6 +44,15 @@ def choose_custom_palette():
     else:
         apply_default_palette()
 
+
+# Create a style for the themed widgets
+style = ttk.Style()
+
+# Configure style for the "Custom.TButton" widget
+style.configure("Custom.TButton",
+                background=default_color_scheme["Default"],
+                font=("Helvetica", 12))
+        
 def apply_default_palette():
     """Apply the default color scheme to the buttons."""
     text_widget.config(background=default_color_scheme["Default"])
@@ -56,7 +63,8 @@ def apply_default_palette():
     
     for widget in [color_scheme_button, open_button, save_button]:
         #widget.config(style="Custom.TButton", background=default_color_scheme["Default"])
-        widget.config(style="Custom.TButton", bg=default_color_scheme["Default"])
+        #widget.config(style="Custom.TButton", bg=default_color_scheme["Default"])
+        #widget.configure(style="Custom.TButton")
 
     root.option_add("*TButton*foreground", "black")
 
