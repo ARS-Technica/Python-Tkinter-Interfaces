@@ -64,7 +64,7 @@ def apply_default_palette():
     for widget in [color_scheme_button, open_button, save_button]:
         #widget.config(style="Custom.TButton", background=default_color_scheme["Default"])
         #widget.config(style="Custom.TButton", bg=default_color_scheme["Default"])
-        #widget.configure(style="Custom.TButton")
+        widget.configure(style="Custom.TButton")
 
     root.option_add("*TButton*foreground", "black")
 
@@ -76,15 +76,18 @@ def apply_default_palette():
     status_bar["style"] = "CustomStatus.TLabel"
     root.configure(background=default_color_scheme["Default"])
 
-def apply_custom_palette(chosen_color):
-    """Apply a custom color palette to the text editor and other widgets."""
-    text_widget.config(bg=chosen_color)
-    #button_frame["style"] = "TFrame"  # Remove custom style to use default style
-    #status_bar["style"] = "CustomStatus.TLabel"
-    root.configure(background=chosen_color)
 
+def apply_custom_palette(chosen_color):
+    """Apply a custom color palette to the buttons."""
+    custom_theme = f"custom_theme_{chosen_color}"
+    
+    # Check if the custom theme exists, create it if not
+    if custom_theme not in style.theme_names():
+        root.tk.call('ttk::style', 'theme', 'create', custom_theme, 'custom', '-background', chosen_color)
+    
+    # Apply the custom theme to the buttons
     for widget in [color_scheme_button, open_button, save_button]:
-        widget["style"] = "TButton"  # Remove custom style to use default style
+        widget.tk.call('ttk::style', 'configure', widget.winfo_class(), '-theme', custom_theme)
 
     root.option_add("*TButton*foreground", "black")
 
