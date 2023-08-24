@@ -104,7 +104,7 @@ def choose_custom_palette():
         else:
             text_widget.config(bg=default_color_scheme["Default"])
 '''
-
+'''
 def choose_custom_palette():
     """Toggle the custom color palette based on the state of the checkbutton."""
     print("choose_custom_palette function called")  # Debug statement
@@ -134,6 +134,115 @@ def choose_custom_palette():
             text_widget.config(bg=color_schemes[active_color_scheme])
         else:
             text_widget.config(bg=default_color_scheme["Default"])
+'''
+'''
+def choose_custom_palette():
+    """Toggle the custom color palette based on the state of the checkbutton."""
+    if custom_palette_var.get():
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+        if chosen_color:
+            if var_dark_mode.get():
+                text_widget.config(bg=chosen_color)
+            else:
+                update_text_widget_color()
+    else:
+        active_color_scheme = None
+        for scheme_name, var in checkbutton_vars.items():
+            if var.get() and scheme_name != "Dark Mode":
+                active_color_scheme = scheme_name
+                break
+        
+        if var_dark_mode.get():
+            text_widget.config(bg=dark_mode_scheme["Dark Mode"])
+        elif active_color_scheme:
+            text_widget.config(bg=color_schemes[active_color_scheme])
+        else:
+            text_widget.config(bg=default_color_scheme["Default"])
+'''
+'''
+def choose_custom_palette():
+    """Toggle the custom color palette based on the state of the checkbutton."""
+    if custom_palette_var.get():
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+        if chosen_color:
+            active_color_scheme = None
+            for scheme_name, var in checkbutton_vars.items():
+                if var.get() and scheme_name != "Dark Mode":
+                    active_color_scheme = scheme_name
+                    break
+            
+            if active_color_scheme:
+                text_widget.config(bg=chosen_color)
+            elif var_dark_mode.get():
+                text_widget.config(bg=chosen_color)
+    else:
+        active_color_scheme = None
+        for scheme_name, var in checkbutton_vars.items():
+            if var.get() and scheme_name != "Dark Mode":
+                active_color_scheme = scheme_name
+                break
+        
+        if var_dark_mode.get():
+            text_widget.config(bg=dark_mode_scheme["Dark Mode"])
+        elif active_color_scheme:
+            text_widget.config(bg=color_schemes[active_color_scheme])
+        else:
+            text_widget.config(bg=default_color_scheme["Default"])
+'''
+'''
+def choose_custom_palette():
+    """Toggle the custom color palette based on the state of the checkbutton."""
+    if custom_palette_var.get():
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+        if chosen_color:
+            text_widget.config(bg=chosen_color)
+            update_text_widget_color()  # Update the text widget color based on active schemes
+    else:
+        active_color_scheme = None
+        for scheme_name, var in checkbutton_vars.items():
+            if var.get() and scheme_name != "Dark Mode":
+                active_color_scheme = scheme_name
+                break
+        
+        if var_dark_mode.get():
+            text_widget.config(bg=dark_mode_scheme["Dark Mode"])
+        elif active_color_scheme:
+            text_widget.config(bg=color_schemes[active_color_scheme])
+        else:
+            text_widget.config(bg=default_color_scheme["Default"])
+'''
+
+def choose_custom_palette():
+    """Toggle the custom color palette based on the state of the checkbutton."""
+    print("choose_custom_palette function called")  # Debug statement
+
+    if custom_palette_var.get():
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+        print("Chosen color:", chosen_color)  # Debug statement
+
+        if chosen_color:
+            if var_dark_mode.get():
+                text_widget.config(bg=chosen_color)
+            else:
+                active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get() and name != "Dark Mode"]
+                if active_scheme_names:
+                    text_widget.config(bg=chosen_color)
+    else:
+        active_color_scheme = None
+        for scheme_name, var in checkbutton_vars.items():
+            if var.get() and scheme_name != "Dark Mode":
+                active_color_scheme = scheme_name
+                break
+        
+        if var_dark_mode.get():
+            text_widget.config(bg=dark_mode_scheme["Dark Mode"])
+        elif active_color_scheme:
+            text_widget.config(bg=color_schemes[active_color_scheme])
+        else:
+            text_widget.config(bg=default_color_scheme["Default"])
+
+    print("choose_custom_palette function completed")  # Debug statement
+
 
 # File Menu Functions
 def open_file():
