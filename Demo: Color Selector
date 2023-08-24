@@ -34,7 +34,8 @@ def update_text_widget_color():
         text_widget.config(bg=default_color_scheme["Default"])
     else:
         text_widget.config(bg=color_schemes[active_scheme_names[0]])
-        
+
+'''        
 def choose_custom_palette():
     """Toggle the custom color palette based on the state of the checkbutton."""
     if custom_palette_var.get():
@@ -47,6 +48,33 @@ def choose_custom_palette():
     else:
         if var_dark_mode.get():
             text_widget.config(bg=dark_mode_scheme["Dark Mode"])
+        else:
+            text_widget.config(bg=default_color_scheme["Default"])
+'''
+
+def choose_custom_palette():
+    """Toggle the custom color palette based on the state of the checkbutton."""
+    if custom_palette_var.get():
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+        if chosen_color:
+            if var_dark_mode.get():
+                text_widget.config(bg=chosen_color)
+            else:
+                for scheme_name, var in checkbutton_vars.items():
+                    if var.get() and scheme_name != "Dark Mode":
+                        text_widget.config(bg=chosen_color)
+                        break
+    else:
+        active_color_scheme = None
+        for scheme_name, var in checkbutton_vars.items():
+            if var.get() and scheme_name != "Dark Mode":
+                active_color_scheme = scheme_name
+                break
+        
+        if var_dark_mode.get():
+            text_widget.config(bg=dark_mode_scheme["Dark Mode"])
+        elif active_color_scheme:
+            text_widget.config(bg=color_schemes[active_color_scheme])
         else:
             text_widget.config(bg=default_color_scheme["Default"])
 
