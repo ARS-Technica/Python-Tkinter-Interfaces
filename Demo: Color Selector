@@ -1,8 +1,3 @@
-"""
-Why does  the line "widget.config(style="Custom.TButton", bg=default_color_scheme["Default"])"
-throw the error "_tkinter.TclError: unknown option "-bg""                   
-"""
-
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
@@ -39,64 +34,15 @@ def update_text_widget_color():
         text_widget.config(bg=default_color_scheme["Default"])
     else:
         text_widget.config(bg=color_schemes[active_scheme_names[0]])
-
+        
 def choose_custom_palette():
     """Toggle the custom color palette based on the state of the checkbutton."""
     if custom_palette_var.get():
         chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
         if chosen_color:
-            apply_custom_palette(chosen_color)
+            text_widget.config(bg=chosen_color)
     else:
-        apply_default_palette()
-
-
-# Create a style for the themed widgets
-style = ttk.Style()
-
-# Configure style for the "Custom.TButton" widget
-style.configure("Custom.TButton",
-                background=default_color_scheme["Default"],
-                font=("Helvetica", 12))
-        
-def apply_default_palette():
-    """Apply the default color scheme to the buttons."""
-    text_widget.config(background=default_color_scheme["Default"])
-    #color_scheme_button.config(style="Custom.TButton", background=default_color_scheme["Default"])
-    #open_button.config(style="Custom.TButton", background=default_color_scheme["Default"])
-    #save_button.config(style="Custom.TButton", background=default_color_scheme["Default"])
-    root.configure(background=default_color_scheme["Default"])
-    
-    for widget in [color_scheme_button, open_button, save_button]:
-        #widget.config(style="Custom.TButton", background=default_color_scheme["Default"])
-        #widget.config(style="Custom.TButton", bg=default_color_scheme["Default"])
-        widget.configure(style="Custom.TButton")
-
-    root.option_add("*TButton*foreground", "black")
-
-    for scheme_name, var in checkbutton_vars.items():
-        var.set(False)
-
-    text_widget.config(bg=default_color_scheme["Default"])
-    button_frame["style"] = "TFrame"
-    status_bar["style"] = "CustomStatus.TLabel"
-    root.configure(background=default_color_scheme["Default"])
-
-def apply_custom_palette(chosen_color):
-    """Apply a custom color palette to the text editor and other widgets."""
-    text_widget.config(bg=chosen_color)
-    #button_frame["style"] = "TFrame"  # Remove custom style to use default style
-    #status_bar["style"] = "CustomStatus.TLabel"
-    root.configure(background=chosen_color)
-
-    for widget in [color_scheme_button, open_button, save_button]:
-        widget["style"] = "TButton"  # Remove custom style to use default style
-
-    root.option_add("*TButton*foreground", "black")
-
-    for scheme_name, var in checkbutton_vars.items():
-        if var.get():
-            checkbutton_selected(scheme_name)
-            break
+        text_widget.config(bg=default_color_scheme["Default"])
 
 # File Menu Functions
 def open_file():
@@ -162,7 +108,7 @@ submenu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambd
 # Create a BooleanVar for the custom palette checkbutton
 custom_palette_var = BooleanVar()
 submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
-
+ 
 # Create a frame for buttons with background color
 button_frame = ttk.Frame(root, style="Custom.TFrame")
 button_frame.grid(row=0, column=0, columnspan=2, pady=5, sticky="EW")
