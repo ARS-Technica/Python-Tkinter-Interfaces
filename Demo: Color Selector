@@ -130,7 +130,6 @@ checkbutton_vars["Dark Mode"] = var_dark_mode
 submenu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambda name="Dark Mode": checkbutton_selected(name))
 
 # Add "Choose Custom Palette" option
-# Create a BooleanVar for the custom palette checkbutton
 custom_palette_var = BooleanVar()
 submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var)
 
