@@ -131,10 +131,7 @@ submenu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambd
 
 # Add "Choose Custom Palette" option
 custom_palette_var = BooleanVar()
-submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var)
-
-# Bind the choose_custom_palette function to the trace of the custom_palette_var
-custom_palette_var.trace("w", lambda *args: choose_custom_palette())
+submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
 
 # Create a frame for buttons with background color
 button_frame = ttk.Frame(root, style="Custom.TFrame")
