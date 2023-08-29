@@ -37,6 +37,7 @@ def checkbutton_selected(scheme_name):
             var.set(False)
             update_text_widget_color()
 
+'''
 def update_text_widget_color():
     active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
     
@@ -44,6 +45,24 @@ def update_text_widget_color():
         text_widget.config(bg=default_color_scheme["Default"])
     else:
         text_widget.config(bg=color_schemes[active_scheme_names[0]])
+'''
+
+def update_text_widget_color():
+    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
+    
+    if not active_scheme_names:
+        text_widget.config(bg=default_color_scheme["Default"])
+    else:
+        active_color = None
+        for name in active_scheme_names:
+            if name in color_schemes:
+                active_color = color_schemes[name]
+                break
+
+        if active_color:
+            text_widget.config(bg=active_color)
+        else:
+            text_widget.config(bg=default_color_scheme["Default"])
         
 def choose_custom_palette(*args):
     """Toggle the custom color palette based on the state of the checkbutton."""
@@ -129,27 +148,7 @@ submenu.add_separator()
 var_dark_mode = BooleanVar()
 checkbutton_vars["Dark Mode"] = var_dark_mode
 submenu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambda name="Dark Mode": checkbutton_selected(name))
-
-'''
-# Add "Choose Custom Palette" option
-custom_palette_var = BooleanVar()
-submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var)
-
-# Bind the choose_custom_palette function to the trace of the custom_palette_var
-custom_palette_var.trace("w", lambda *args: choose_custom_palette())
-'''
-
-'''
-# Add "Choose Custom Palette" option
-custom_palette_var = BooleanVar()
-submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
-'''
-'''
-def set_custom_color():
-    chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
-    if chosen_color:
-        text_widget.config(bg=chosen_color)
-'''
+ 
 # Add "Choose Custom Palette" option
 custom_palette_var = BooleanVar()
 submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
