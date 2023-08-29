@@ -29,7 +29,6 @@ def checkbutton_selected(scheme_name):
         update_text_widget_color()
 '''
 
-
 def checkbutton_selected(scheme_name):
     var = checkbutton_vars[scheme_name]
     
@@ -53,8 +52,6 @@ def checkbutton_selected(scheme_name):
         else:
             var.set(False)
             update_text_widget_color()
-
-
 
 def update_text_widget_color():
     active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
