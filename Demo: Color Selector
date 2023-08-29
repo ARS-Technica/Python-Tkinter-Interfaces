@@ -221,3 +221,4 @@ separator_label.grid(row=0, column=3, padx=5)
 
 # Start the main loop
 root.mainloop()
+
