@@ -62,8 +62,8 @@ def update_text_widget_color():
         if active_color:
             text_widget.config(bg=active_color)
         else:
-            text_widget.config(bg=default_color_scheme["Default"])
-        
+            text_widget.config(bg=default_color_scheme["Default"])    
+
 def choose_custom_palette(*args):
     """Toggle the custom color palette based on the state of the checkbutton."""
     print("choose_custom_palette function called")  # Debug statement
