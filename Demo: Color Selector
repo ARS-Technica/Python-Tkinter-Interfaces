@@ -73,13 +73,13 @@ def choose_custom_palette(*args):
             if var_dark_mode.get():
                 text_widget.config(bg=chosen_color)
             else:
-                active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get() and name != "Dark Mode"]
+                active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get() and name != "Dark Mode" and name != "Choose Custom Palette"]
                 if active_scheme_names:
                     text_widget.config(bg=chosen_color)
     else:
         active_color_scheme = None
         for scheme_name, var in checkbutton_vars.items():
-            if var.get() and scheme_name != "Dark Mode":
+            if var.get() and scheme_name != "Dark Mode" and scheme_name != "Choose Custom Palette":
                 active_color_scheme = scheme_name
                 break
         
