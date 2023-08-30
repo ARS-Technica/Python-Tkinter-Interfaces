@@ -81,8 +81,7 @@ def choose_custom_palette(*args):
 
 def choose_custom_palette(*args):
     global original_text_bg  # Use the global variable to store the original color
-    print("choose_custom_palette function called")  # Debug statement
-
+    
     if custom_palette_var.get():
         if original_text_bg is None:
             original_text_bg = text_widget.cget("bg")  # Store the current color
@@ -93,8 +92,6 @@ def choose_custom_palette(*args):
             original_text_bg = None  # Reset the original color variable
         else:
             update_text_widget_color()  # If no original color, update as usual
-
-    print("choose_custom_palette function completed")  # Debug statement
 
 # File Menu Functions
 def open_file():
