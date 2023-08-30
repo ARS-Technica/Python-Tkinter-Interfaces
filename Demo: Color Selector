@@ -55,43 +55,34 @@ def update_text_widget_color():
             text_widget.config(bg=default_color_scheme["Default"])    
 
 original_text_bg = None  # Variable to store the original text widget background color
-'''
+last_active_color_scheme = None  # Variable to store the last active color scheme
+
 def choose_custom_palette(*args):
-    """Toggle the custom color palette based on the state of the checkbutton."""
+    global original_text_bg, last_active_color_scheme  # Use the global variables
     print("choose_custom_palette function called")  # Debug statement
 
     if custom_palette_var.get():
-        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
-        print("Chosen color:", chosen_color)  # Debug statement
-
-        if chosen_color:
-            if var_dark_mode.get():
-                text_widget.config(bg=chosen_color)
-            else:
-                active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get() and name != "Dark Mode" and name != "Choose Custom Palette"]
-                if active_scheme_names:
-                    text_widget.config(bg=chosen_color)
-                else:
-                    text_widget.config(bg=chosen_color)  # Set background color to the chosen custom color
-    else:
-        update_text_widget_color()  # Restore the appropriate background color
-
-    print("choose_custom_palette function completed")  # Debug statement
-'''
-
-def choose_custom_palette(*args):
-    global original_text_bg  # Use the global variable to store the original color
-    
-    if custom_palette_var.get():
         if original_text_bg is None:
             original_text_bg = text_widget.cget("bg")  # Store the current color
+            last_active_color_scheme = get_active_color_scheme()  # Store the last active color scheme
         choose_custom_color()  # Call the color selection function
     else:
-        if original_text_bg:
+        if last_active_color_scheme and checkbutton_vars[last_active_color_scheme].get():
+            choose_custom_color()  # If the last active color scheme is still active, restore the custom color
+        elif original_text_bg:
             text_widget.config(bg=original_text_bg)  # Restore the original color
             original_text_bg = None  # Reset the original color variable
+            last_active_color_scheme = None  # Reset the last active color scheme variable
         else:
             update_text_widget_color()  # If no original color, update as usual
+
+    print("choose_custom_palette function completed")  # Debug statement
+
+def get_active_color_scheme():
+    for scheme_name, var in checkbutton_vars.items():
+        if var.get() and scheme_name != "Dark Mode" and scheme_name != "Choose Custom Palette":
+            return scheme_name
+    return None
 
 # File Menu Functions
 def open_file():
