@@ -54,29 +54,47 @@ def update_text_widget_color():
         else:
             text_widget.config(bg=default_color_scheme["Default"])    
 
-def choose_custom_color():
-    chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
-    if chosen_color:
-        if var_dark_mode.get():
-            text_widget.config(bg=chosen_color)
-        else:
-            active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get() and name != "Dark Mode" and name != "Choose Custom Palette"]
-            if active_scheme_names:
-                text_widget.config(bg=chosen_color)
-            else:
-                text_widget.config(bg=chosen_color)
-
+original_text_bg = None  # Variable to store the original text widget background color
+'''
 def choose_custom_palette(*args):
     """Toggle the custom color palette based on the state of the checkbutton."""
     print("choose_custom_palette function called")  # Debug statement
 
     if custom_palette_var.get():
-        choose_custom_color()
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+        print("Chosen color:", chosen_color)  # Debug statement
+
+        if chosen_color:
+            if var_dark_mode.get():
+                text_widget.config(bg=chosen_color)
+            else:
+                active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get() and name != "Dark Mode" and name != "Choose Custom Palette"]
+                if active_scheme_names:
+                    text_widget.config(bg=chosen_color)
+                else:
+                    text_widget.config(bg=chosen_color)  # Set background color to the chosen custom color
     else:
         update_text_widget_color()  # Restore the appropriate background color
 
     print("choose_custom_palette function completed")  # Debug statement
+'''
 
+def choose_custom_palette(*args):
+    global original_text_bg  # Use the global variable to store the original color
+    print("choose_custom_palette function called")  # Debug statement
+
+    if custom_palette_var.get():
+        if original_text_bg is None:
+            original_text_bg = text_widget.cget("bg")  # Store the current color
+        choose_custom_color()  # Call the color selection function
+    else:
+        if original_text_bg:
+            text_widget.config(bg=original_text_bg)  # Restore the original color
+            original_text_bg = None  # Reset the original color variable
+        else:
+            update_text_widget_color()  # If no original color, update as usual
+
+    print("choose_custom_palette function completed")  # Debug statement
 
 # File Menu Functions
 def open_file():
@@ -150,21 +168,12 @@ button_frame = ttk.Frame(root, style="Custom.TFrame")
 button_frame.grid(row=0, column=0, columnspan=2, pady=5, sticky="EW")
 
 # Create buttons
-# color_scheme_button = ttk.Button(button_frame, text="Choose Custom Palette", command=choose_custom_palette, style="Custom.TButton")
-'''
-color_scheme_button = ttk.Button(button_frame, text="Choose Custom Palette", style="Custom.TButton")
-color_scheme_button.bind("<Button-1>", choose_custom_palette)
-'''
-
-color_scheme_button = ttk.Button(button_frame, text="Choose Custom Palette", command=choose_custom_palette, style="Custom.TButton")
-color_scheme_button.bind("<Button-1>", choose_custom_palette)
 open_button = ttk.Button(button_frame, text="Open", command=open_file, style="Custom.TButton")
 save_button = ttk.Button(button_frame, text="Save", command=save_file, style="Custom.TButton")
 
 # Grid layout for buttons
-color_scheme_button.grid(row=0, column=0, padx=5)
-open_button.grid(row=0, column=1, padx=5)
-save_button.grid(row=0, column=2, padx=5)
+open_button.grid(row=0, column=0, padx=5)
+save_button.grid(row=0, column=1, padx=5)
 
 # Create a text widget
 text_widget = Text(root, bg=default_color_scheme["Default"], width=30, height=30)
@@ -186,8 +195,8 @@ root.grid_rowconfigure(1, weight=1)
 root.grid_columnconfigure(0, weight=1)
 
 # Create an empty label as a separator
-separator_label = ttk.Label(button_frame)
-separator_label.grid(row=0, column=3, padx=5)
+#separator_label = ttk.Label(button_frame)
+#separator_label.grid(row=0, column=3, padx=5)
 
 # Start the main loop
 root.mainloop()
