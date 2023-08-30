@@ -37,16 +37,6 @@ def checkbutton_selected(scheme_name):
             var.set(False)
             update_text_widget_color()
 
-'''
-def update_text_widget_color():
-    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
-    
-    if not active_scheme_names:
-        text_widget.config(bg=default_color_scheme["Default"])
-    else:
-        text_widget.config(bg=color_schemes[active_scheme_names[0]])
-'''
-
 def update_text_widget_color():
     active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
     
@@ -158,14 +148,12 @@ button_frame = ttk.Frame(root, style="Custom.TFrame")
 button_frame.grid(row=0, column=0, columnspan=2, pady=5, sticky="EW")
 
 # Create buttons
-color_scheme_button = ttk.Button(button_frame, text="Choose Custom Palette", command=choose_custom_palette, style="Custom.TButton")
 open_button = ttk.Button(button_frame, text="Open", command=open_file, style="Custom.TButton")
 save_button = ttk.Button(button_frame, text="Save", command=save_file, style="Custom.TButton")
 
 # Grid layout for buttons
-color_scheme_button.grid(row=0, column=0, padx=5)
-open_button.grid(row=0, column=1, padx=5)
-save_button.grid(row=0, column=2, padx=5)
+open_button.grid(row=0, column=0, padx=5)
+save_button.grid(row=0, column=1, padx=5)
 
 # Create a text widget
 text_widget = Text(root, bg=default_color_scheme["Default"], width=30, height=30)
@@ -187,8 +175,8 @@ root.grid_rowconfigure(1, weight=1)
 root.grid_columnconfigure(0, weight=1)
 
 # Create an empty label as a separator
-separator_label = ttk.Label(button_frame)
-separator_label.grid(row=0, column=3, padx=5)
+#separator_label = ttk.Label(button_frame)
+#separator_label.grid(row=0, column=3, padx=5)
 
 # Start the main loop
 root.mainloop()
