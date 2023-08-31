@@ -26,6 +26,7 @@ def checkbutton_selected(scheme_name):
             set_custom_color()
         else:
             active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
+            update_text_widget_color()  # Restore the appropriate background color
     else:
         if var.get():
             custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
@@ -43,8 +44,10 @@ def checkbutton_selected(scheme_name):
 
 def update_text_widget_color():
     active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
-    
-    if not active_scheme_names:
+
+    if custom_palette_var.get() and active_color_scheme:
+        text_widget.config(bg=active_color_scheme)
+    elif not active_scheme_names:
         text_widget.config(bg=default_color_scheme["Default"])
     else:
         active_color = None
@@ -56,7 +59,7 @@ def update_text_widget_color():
         if active_color:
             text_widget.config(bg=active_color)
         else:
-            text_widget.config(bg=default_color_scheme["Default"])    
+            text_widget.config(bg=default_color_scheme["Default"])
 
 active_color_scheme = None
 
@@ -69,19 +72,11 @@ def choose_custom_palette(*args):
 
         if chosen_color:
             active_color_scheme = chosen_color
-            if var_dark_mode.get():
-                text_widget.config(bg=chosen_color)
-            else:
-                active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get() and name != "Dark Mode" and name != "Choose Custom Palette"]
-                if active_scheme_names:
-                    text_widget.config(bg=chosen_color)
-                else:
-                    text_widget.config(bg=chosen_color)  # Set background color to the chosen custom color
+            text_widget.config(bg=chosen_color)
     else:
-        if active_color_scheme:
-            text_widget.config(bg=active_color_scheme)  # Restore the active color scheme
-        else:
-            update_text_widget_color()  # Revert to the appropriate background color
+        if active_color_scheme and custom_palette_var.get() == 0:
+            update_text_widget_color()  # Restore the appropriate background color
+            active_color_scheme = None
 
 # File Menu Functions
 def open_file():
