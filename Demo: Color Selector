@@ -57,6 +57,7 @@ def update_text_widget_color():
 original_text_bg = None  # Variable to store the original text widget background color
 last_active_color_scheme = None  # Variable to store the last active color scheme
 
+'''
 def choose_custom_palette(*args):
     global original_text_bg, last_active_color_scheme  # Use the global variables
     print("choose_custom_palette function called")  # Debug statement
@@ -75,6 +76,32 @@ def choose_custom_palette(*args):
             last_active_color_scheme = None  # Reset the last active color scheme variable
         else:
             update_text_widget_color()  # If no original color, update as usual
+
+    print("choose_custom_palette function completed")  # Debug statement
+'''
+
+def choose_custom_palette(*args):
+    global original_text_bg, last_active_color_scheme  # Use the global variables
+    print("choose_custom_palette function called")  # Debug statement
+
+    if custom_palette_var.get():
+        if original_text_bg is None:
+            original_text_bg = text_widget.cget("bg")  # Store the current color
+            last_active_color_scheme = get_active_color_scheme()  # Store the last active color scheme
+        choose_custom_color()  # Call the color selection function
+    else:
+        if last_active_color_scheme and checkbutton_vars[last_active_color_scheme].get():
+            choose_custom_color()  # If the last active color scheme is still active, restore the custom color
+        else:
+            if var_dark_mode.get():
+                text_widget.config(bg=dark_mode_scheme["Dark Mode"])
+            elif original_text_bg:
+                text_widget.config(bg=original_text_bg)  # Restore the original color
+            else:
+                update_text_widget_color()  # If no original color, update as usual
+
+            original_text_bg = None  # Reset the original color variable
+            last_active_color_scheme = None  # Reset the last active color scheme variable
 
     print("choose_custom_palette function completed")  # Debug statement
 
