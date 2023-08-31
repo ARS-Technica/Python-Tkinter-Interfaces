@@ -12,8 +12,9 @@ color_schemes = {
 }
 dark_mode_scheme = {"Dark Mode": "gray"}
 default_color_scheme = {"Default": "white"}
- 
+
 def checkbutton_selected(scheme_name):
+    global active_color_scheme
     var = checkbutton_vars[scheme_name]
     
     if scheme_name == "Choose Custom Palette":
@@ -23,6 +24,8 @@ def checkbutton_selected(scheme_name):
                 v.set(False)
         if custom_palette_var.get():
             set_custom_color()
+        else:
+            active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
     else:
         if var.get():
             custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
@@ -33,6 +36,7 @@ def checkbutton_selected(scheme_name):
                 text_widget.config(bg=dark_mode_scheme["Dark Mode"])  # Set text widget background to gray
             else:
                 text_widget.config(bg=color_schemes[scheme_name])
+            active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
         else:
             var.set(False)
             update_text_widget_color()
@@ -54,44 +58,30 @@ def update_text_widget_color():
         else:
             text_widget.config(bg=default_color_scheme["Default"])    
 
-original_text_bg = None  # Variable to store the original text widget background color
-last_active_color_scheme = None  # Variable to store the last active color scheme
-dark_mode_active = False  # Track Dark Mode separately
+active_color_scheme = None
 
 def choose_custom_palette(*args):
-    global original_text_bg, last_active_color_scheme, dark_mode_active
+    global active_color_scheme
 
     if custom_palette_var.get():
-        if original_text_bg is None:
-            original_text_bg = text_widget.cget("bg")  # Store the current color
-            last_active_color_scheme = get_active_color_scheme()  # Store the last active color scheme
-        choose_custom_color()  # Call the color selection function
-    else:
-        if last_active_color_scheme and checkbutton_vars[last_active_color_scheme].get():
-            if dark_mode_active:
-                text_widget.config(bg=dark_mode_scheme["Dark Mode"])
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+        print("Chosen color:", chosen_color)  # Debug statement
+
+        if chosen_color:
+            active_color_scheme = chosen_color
+            if var_dark_mode.get():
+                text_widget.config(bg=chosen_color)
             else:
-                text_widget.config(bg=color_schemes[last_active_color_scheme])
-        elif dark_mode_active:
-            text_widget.config(bg=dark_mode_scheme["Dark Mode"])
+                active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get() and name != "Dark Mode" and name != "Choose Custom Palette"]
+                if active_scheme_names:
+                    text_widget.config(bg=chosen_color)
+                else:
+                    text_widget.config(bg=chosen_color)  # Set background color to the chosen custom color
+    else:
+        if active_color_scheme:
+            text_widget.config(bg=active_color_scheme)  # Restore the active color scheme
         else:
-            text_widget.config(bg=default_color_scheme["Default"])
-
-        original_text_bg = None  # Reset the original color variable
-        last_active_color_scheme = None  # Reset the last active color scheme variable
-
-def choose_custom_color():
-    chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
-    if chosen_color:
-        text_widget.config(bg=chosen_color)
-        original_text_bg = None  # Reset the original color variable
-        last_active_color_scheme = None  # Reset the last active color scheme variable
-
-def get_active_color_scheme():
-    for scheme_name, var in checkbutton_vars.items():
-        if var.get() and scheme_name != "Dark Mode" and scheme_name != "Choose Custom Palette":
-            return scheme_name
-    return None
+            update_text_widget_color()  # Revert to the appropriate background color
 
 # File Menu Functions
 def open_file():
@@ -190,10 +180,6 @@ status_bar.grid(row=2, column=0, columnspan=3, sticky="EW")
 # Configure grid layout behavior
 root.grid_rowconfigure(1, weight=1)
 root.grid_columnconfigure(0, weight=1)
-
-# Create an empty label as a separator
-#separator_label = ttk.Label(button_frame)
-#separator_label.grid(row=0, column=3, padx=5)
 
 # Start the main loop
 root.mainloop()
