@@ -47,6 +47,8 @@ def update_text_widget_color():
 
     if custom_palette_var.get() and active_color_scheme:
         text_widget.config(bg=active_color_scheme)
+    elif var_dark_mode.get():
+        text_widget.config(bg=dark_mode_scheme["Dark Mode"])
     elif not active_scheme_names:
         text_widget.config(bg=default_color_scheme["Default"])
     else:
@@ -72,10 +74,16 @@ def choose_custom_palette(*args):
 
         if chosen_color:
             active_color_scheme = chosen_color
-            text_widget.config(bg=chosen_color)
+            if var_dark_mode.get():
+                text_widget.config(bg=chosen_color)
+            else:
+                update_text_widget_color()  # Use the active color scheme
     else:
         if active_color_scheme and custom_palette_var.get() == 0:
-            update_text_widget_color()  # Restore the appropriate background color
+            if var_dark_mode.get():
+                text_widget.config(bg=dark_mode_scheme["Dark Mode"])  # Restore dark mode color
+            else:
+                update_text_widget_color()  # Restore the appropriate background color
             active_color_scheme = None
 
 # File Menu Functions
