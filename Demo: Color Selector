@@ -56,10 +56,10 @@ def update_text_widget_color():
 
 original_text_bg = None  # Variable to store the original text widget background color
 last_active_color_scheme = None  # Variable to store the last active color scheme
+dark_mode_active = False  # Track Dark Mode separately
 
-'''
 def choose_custom_palette(*args):
-    global original_text_bg, last_active_color_scheme  # Use the global variables
+    global original_text_bg, last_active_color_scheme, dark_mode_active
 
     if custom_palette_var.get():
         if original_text_bg is None:
@@ -68,44 +68,17 @@ def choose_custom_palette(*args):
         choose_custom_color()  # Call the color selection function
     else:
         if last_active_color_scheme and checkbutton_vars[last_active_color_scheme].get():
-            if last_active_color_scheme == "Dark Mode":
+            if dark_mode_active:
                 text_widget.config(bg=dark_mode_scheme["Dark Mode"])
             else:
                 text_widget.config(bg=color_schemes[last_active_color_scheme])
-        elif var_dark_mode.get():
+        elif dark_mode_active:
             text_widget.config(bg=dark_mode_scheme["Dark Mode"])
         else:
-            text_widget.config(bg=default_color_scheme["Default"])  # Revert to the default color scheme
+            text_widget.config(bg=default_color_scheme["Default"])
 
         original_text_bg = None  # Reset the original color variable
         last_active_color_scheme = None  # Reset the last active color scheme variable
-'''
-
-def choose_custom_palette(*args):
-    global original_text_bg, last_active_color_scheme  # Use the global variables
-
-    if custom_palette_var.get():
-        if original_text_bg is None:
-            original_text_bg = text_widget.cget("bg")  # Store the current color
-            last_active_color_scheme = get_active_color_scheme()  # Store the last active color scheme
-        choose_custom_color()  # Call the color selection function
-    else:
-        if last_active_color_scheme and checkbutton_vars[last_active_color_scheme].get():
-            if last_active_color_scheme == "Dark Mode":
-                text_widget.config(bg=dark_mode_scheme["Dark Mode"])
-            else:
-                text_widget.config(bg=color_schemes[last_active_color_scheme])
-        elif var_dark_mode.get():
-            text_widget.config(bg=dark_mode_scheme["Dark Mode"])
-        else:
-            text_widget.config(bg=default_color_scheme["Default"])  # Revert to the default color scheme
-
-        original_text_bg = None  # Reset the original color variable
-        last_active_color_scheme = None  # Reset the last active color scheme variable
-
-        # Check if Dark Mode was active before
-        if var_dark_mode.get():
-            text_widget.config(bg=dark_mode_scheme["Dark Mode"])
 
 def choose_custom_color():
     chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
