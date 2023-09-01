@@ -104,23 +104,6 @@ def save_file():
             file.write(text_widget.get(1.0, END))
         status_var.set(f"Saved: {file_path}")
 
-def create_window():
-    # Create the main window
-    root = Tk()
-    root.title("Text Editor")
-    
-    create_style()
-    create_menus(root)
-    create_button_frame(root)
-    create_text_widget(root)
-    create_status_bar(root)
-   
-    # Configure grid layout behavior
-    root.grid_rowconfigure(1, weight=1)
-    root.grid_columnconfigure(0, weight=1)
-
-    return root    
-
 def create_style():
     # Create a style for the themed widgets
     style = ttk.Style()
@@ -138,6 +121,9 @@ def create_style():
     style.configure("Custom.TFrame", background="gray")
 
 def create_menus(root):
+    global custom_palette_var
+    global var_dark_mode
+    
     # Create a drop-down menu
     menu_bar = Menu(root)
     root.config(menu=menu_bar)
@@ -199,6 +185,23 @@ def create_status_bar(root):
     status_var.set("Text Editor Ready")
     status_bar = ttk.Label(root, textvariable=status_var, anchor="w")
     status_bar.grid(row=2, column=0, columnspan=3, sticky="EW")
+
+def create_window():
+    # Create the main window
+    root = Tk()
+    root.title("Text Editor")
+    
+    create_style()
+    create_menus(root)
+    create_button_frame(root)
+    create_text_widget(root)
+    create_status_bar(root)
+   
+    # Configure grid layout behavior
+    root.grid_rowconfigure(1, weight=1)
+    root.grid_columnconfigure(0, weight=1)
+
+    return root    
 
 # Create the main window
 if __name__ == "__main__":
