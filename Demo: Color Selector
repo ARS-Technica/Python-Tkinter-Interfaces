@@ -104,86 +104,109 @@ def save_file():
             file.write(text_widget.get(1.0, END))
         status_var.set(f"Saved: {file_path}")
 
+def create_window():
+    # Create the main window
+    root = Tk()
+    root.title("Text Editor")
+    
+    create_style()
+    create_menus(root)
+    create_button_frame(root)
+    create_text_widget(root)
+    create_status_bar(root)
+   
+    # Configure grid layout behavior
+    root.grid_rowconfigure(1, weight=1)
+    root.grid_columnconfigure(0, weight=1)
+
+    return root    
+
+def create_style():
+    # Create a style for the themed widgets
+    style = ttk.Style()
+    
+    # Create a style for the themed widgets
+    style = ttk.Style()
+    
+    # Configure style for the "TButton" widget
+    style.configure("Custom.TButton", foreground="black", font=("Helvetica", 12))
+    
+    # Configure style for the "CustomStatus.TLabel" widget (status bar)
+    style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12))
+    
+    # Configure style for the "Custom.TFrame" widget (button_frame and root)
+    style.configure("Custom.TFrame", background="gray")
+
+def create_menus(root):
+    # Create a drop-down menu
+    menu_bar = Menu(root)
+    root.config(menu=menu_bar)
+    
+    # Create "Files" menu
+    files_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Files", menu=files_menu)
+    files_menu.add_command(label="Open", command=open_file)
+    files_menu.add_command(label="Save", command=save_file)
+    
+    # Create "Options" menu
+    submenu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Options", menu=submenu)
+    
+    for scheme_name in color_schemes:
+        var = BooleanVar()
+        checkbutton_vars[scheme_name] = var
+        submenu.add_checkbutton(label=scheme_name, variable=var, command=lambda name=scheme_name: checkbutton_selected(name))
+    
+    submenu.add_separator()
+    
+    # Add "Dark Mode" checkbutton
+    var_dark_mode = BooleanVar()
+    checkbutton_vars["Dark Mode"] = var_dark_mode
+    submenu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambda name="Dark Mode": checkbutton_selected(name))
+     
+    # Add "Choose Custom Palette" option
+    custom_palette_var = BooleanVar()
+    submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
+
+def create_button_frame(root):
+    # Create a frame for buttons with background color
+    button_frame = ttk.Frame(root, style="Custom.TFrame")
+    button_frame.grid(row=0, column=0, columnspan=2, pady=5, sticky="EW")
+    
+    # Create buttons
+    open_button = ttk.Button(button_frame, text="Open", command=open_file, style="Custom.TButton")
+    save_button = ttk.Button(button_frame, text="Save", command=save_file, style="Custom.TButton")
+    
+    # Grid layout for buttons
+    open_button.grid(row=0, column=0, padx=5)
+    save_button.grid(row=0, column=1, padx=5)
+
+def create_text_widget(root):
+    # Create a text widget
+    text_widget = Text(root, bg=default_color_scheme["Default"], width=30, height=30)
+    text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
+    
+    # Add a scrollbar
+    scrollbar = Scrollbar(root, command=text_widget.yview)
+    scrollbar.grid(row=1, column=2, sticky="NS")
+    text_widget.config(yscrollcommand=scrollbar.set)
+    
+    return text_widget
+
+def create_status_bar(root):
+    # Create a status bar
+    status_var = StringVar()
+    status_var.set("Text Editor Ready")
+    status_bar = ttk.Label(root, textvariable=status_var, anchor="w")
+    status_bar.grid(row=2, column=0, columnspan=3, sticky="EW")
+
 # Create the main window
-root = Tk()
-root.title("Text Editor")
+if __name__ == "__main__":
+    #checkbutton_vars = {}
 
-# Create a style for the themed widgets
-style = ttk.Style()
+    root = create_window()
+    text_widget = create_text_widget(root)
 
-# Create a style for the themed widgets
-style = ttk.Style()
-
-# Configure style for the "TButton" widget
-style.configure("Custom.TButton", foreground="black", font=("Helvetica", 12))
-
-# Configure style for the "CustomStatus.TLabel" widget (status bar)
-style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12))
-
-# Configure style for the "Custom.TFrame" widget (button_frame and root)
-style.configure("Custom.TFrame", background="gray")
-
-# Create a drop-down menu
-menu_bar = Menu(root)
-root.config(menu=menu_bar)
-
-# Create "Files" menu
-files_menu = Menu(menu_bar, tearoff=0)
-menu_bar.add_cascade(label="Files", menu=files_menu)
-files_menu.add_command(label="Open", command=open_file)
-files_menu.add_command(label="Save", command=save_file)
-
-# Create "Options" menu
-submenu = Menu(menu_bar, tearoff=0)
-menu_bar.add_cascade(label="Options", menu=submenu)
-
-for scheme_name in color_schemes:
-    var = BooleanVar()
-    checkbutton_vars[scheme_name] = var
-    submenu.add_checkbutton(label=scheme_name, variable=var, command=lambda name=scheme_name: checkbutton_selected(name))
-
-submenu.add_separator()
-
-# Add "Dark Mode" checkbutton
-var_dark_mode = BooleanVar()
-checkbutton_vars["Dark Mode"] = var_dark_mode
-submenu.add_checkbutton(label="Dark Mode", variable=var_dark_mode, command=lambda name="Dark Mode": checkbutton_selected(name))
- 
-# Add "Choose Custom Palette" option
-custom_palette_var = BooleanVar()
-submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
-
-# Create a frame for buttons with background color
-button_frame = ttk.Frame(root, style="Custom.TFrame")
-button_frame.grid(row=0, column=0, columnspan=2, pady=5, sticky="EW")
-
-# Create buttons
-open_button = ttk.Button(button_frame, text="Open", command=open_file, style="Custom.TButton")
-save_button = ttk.Button(button_frame, text="Save", command=save_file, style="Custom.TButton")
-
-# Grid layout for buttons
-open_button.grid(row=0, column=0, padx=5)
-save_button.grid(row=0, column=1, padx=5)
-
-# Create a text widget
-text_widget = Text(root, bg=default_color_scheme["Default"], width=30, height=30)
-text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
-
-# Add a scrollbar
-scrollbar = Scrollbar(root, command=text_widget.yview)
-scrollbar.grid(row=1, column=2, sticky="NS")
-text_widget.config(yscrollcommand=scrollbar.set)
-
-# Create a status bar
-status_var = StringVar()
-status_var.set("Text Editor Ready")
-status_bar = ttk.Label(root, textvariable=status_var, anchor="w")
-status_bar.grid(row=2, column=0, columnspan=3, sticky="EW")
-
-# Configure grid layout behavior
-root.grid_rowconfigure(1, weight=1)
-root.grid_columnconfigure(0, weight=1)
-
-# Start the main loop
-root.mainloop()
+    # Start the main loop
+    root.mainloop()
 
