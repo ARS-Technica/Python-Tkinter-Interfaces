@@ -1,14 +1,53 @@
+
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
-# Define color schemes
+# Define color schemes as nested dictionaries
 color_schemes = {
-    "Red": "red",
-    "Green": "green",
-    "Blue": "blue"
+    "Red": {
+        "canvas_color": "red",
+        "main_color": "#8b475d",
+        "second_color": "#c77b95",
+        "selection_highlight": "#d25f80",
+        "text_color": "black",
+    },
+    "Green": {
+        "canvas_color": "green",
+        "main_color": "#FF6B35",
+        "second_color": "#FFABAB",
+        "selection_highlight": "#FF4D00",
+        "text_color": "black",
+    },
+    "Blue": {
+        "canvas_color": "blue",
+        "main_color": "#683a03",
+        "second_color": "#b56700",
+        "selection_highlight": "#ea5f00",
+        "text_color": "black",
+    }
 }
-dark_mode_scheme = {"Dark Mode": "gray"}
-default_color_scheme = {"Default": "white"}
+
+# Define dark mode scheme as a nested dictionary
+dark_mode_scheme = {    
+    "Dark Mode": {
+        "canvas_color": "gray",
+        "main_color": "#000000",
+        "second_color": "#373737",  # "SystemButtonFace",
+        "selection_highlight": "dark green",
+        "text_color": "green",    
+    }
+}
+
+# Define default color scheme as a nested dictionary
+default_color_scheme = {
+    "Default": {
+        "canvas_color": "white",
+        "main_color": "SystemButtonFace",
+        "second_color": "White",  # "SystemButtonFace",
+        "selection_highlight": "#999999",
+        "text_color": "black",
+    }
+}
 
 # Create BooleanVar variables for checkbuttons
 checkbutton_vars = {}
@@ -212,3 +251,4 @@ if __name__ == "__main__":
 
     # Start the main loop
     root.mainloop()
+
