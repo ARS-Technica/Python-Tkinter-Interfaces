@@ -1,9 +1,6 @@
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
-# Create BooleanVar variables for checkbuttons
-checkbutton_vars = {}
-
 # Define color schemes
 color_schemes = {
     "Red": "red",
@@ -12,6 +9,9 @@ color_schemes = {
 }
 dark_mode_scheme = {"Dark Mode": "gray"}
 default_color_scheme = {"Default": "white"}
+
+# Create BooleanVar variables for checkbuttons
+checkbutton_vars = {}
 
 def checkbutton_selected(scheme_name):
     global active_color_scheme
@@ -70,7 +70,6 @@ def choose_custom_palette(*args):
 
     if custom_palette_var.get():
         chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
-        print("Chosen color:", chosen_color)  # Debug statement
 
         if chosen_color:
             active_color_scheme = chosen_color
@@ -187,6 +186,8 @@ def create_status_bar(root):
     status_bar.grid(row=2, column=0, columnspan=3, sticky="EW")
 
 def create_window():
+    global text_widget
+    
     # Create the main window
     root = Tk()
     root.title("Text Editor")
@@ -196,6 +197,8 @@ def create_window():
     create_button_frame(root)
     create_text_widget(root)
     create_status_bar(root)
+    
+    text_widget = create_text_widget(root)
    
     # Configure grid layout behavior
     root.grid_rowconfigure(1, weight=1)
@@ -203,12 +206,9 @@ def create_window():
 
     return root    
 
-# Create the main window
-if __name__ == "__main__":
-    #checkbutton_vars = {}
-
+if __name__ == "__main__":  
+    # Create the main window
     root = create_window()
-    text_widget = create_text_widget(root)
 
     # Start the main loop
     root.mainloop()
