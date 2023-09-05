@@ -1,4 +1,3 @@
-
 from tkinter import *
 from tkinter import ttk, colorchooser, filedialog
 
@@ -73,9 +72,9 @@ def checkbutton_selected(scheme_name):
                 if name != scheme_name and name != "Choose Custom Palette":
                     value.set(False)
             if scheme_name == "Dark Mode":
-                text_widget.config(bg=dark_mode_scheme["Dark Mode"])  # Set text widget background to gray
+                text_widget.config(bg=dark_mode_scheme["Dark Mode"]["canvas_color"])  # Set text widget background to gray
             else:
-                text_widget.config(bg=color_schemes[scheme_name])
+                text_widget.config(bg=color_schemes[scheme_name]["canvas_color"])
             active_color_scheme = None  # Deactivate custom palette, reset active_color_scheme
         else:
             var.set(False)
@@ -87,20 +86,20 @@ def update_text_widget_color():
     if custom_palette_var.get() and active_color_scheme:
         text_widget.config(bg=active_color_scheme)
     elif dark_mode_var.get():
-        text_widget.config(bg=dark_mode_scheme["Dark Mode"])
+        text_widget.config(bg=dark_mode_scheme["Dark Mode"]["canvas_color"])
     elif not active_scheme_names:
-        text_widget.config(bg=default_color_scheme["Default"])
+        text_widget.config(bg=default_color_scheme["Default"]["canvas_color"])
     else:
         active_color = None
         for name in active_scheme_names:
             if name in color_schemes:
-                active_color = color_schemes[name]
+                active_color = color_schemes[name]["canvas_color"]
                 break
 
         if active_color:
             text_widget.config(bg=active_color)
         else:
-            text_widget.config(bg=default_color_scheme["Default"])
+            text_widget.config(bg=default_color_scheme["Default"]["canvas_color"])
 
 active_color_scheme = None
 
@@ -119,11 +118,11 @@ def choose_custom_palette(*args):
     else:
         if active_color_scheme and custom_palette_var.get() == 0:
             if dark_mode_var.get():
-                text_widget.config(bg=dark_mode_scheme["Dark Mode"])  # Restore dark mode color
+                text_widget.config(bg=dark_mode_scheme["Dark Mode"]["canvas_color"])  # Restore dark mode color
             else:
                 update_text_widget_color()  # Restore the appropriate background color
             active_color_scheme = None
-
+ 
 # File Menu Functions
 def open_file():
     """Open a text file and display its content in the text editor."""
@@ -207,7 +206,7 @@ def create_button_frame(root):
 
 def create_text_widget(root):
     # Create a text widget
-    text_widget = Text(root, bg=default_color_scheme["Default"], width=30, height=30)
+    text_widget = Text(root, bg=default_color_scheme["Default"]["canvas_color"], width=30, height=30)
     text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
     
     # Add a scrollbar
