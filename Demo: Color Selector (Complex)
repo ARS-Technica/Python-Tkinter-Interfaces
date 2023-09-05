@@ -141,6 +141,46 @@ def save_file():
             file.write(text_widget.get(1.0, END))
         status_var.set(f"Saved: {file_path}")
 
+
+
+
+
+
+
+
+# Create the Status Bar
+def create_status_bar(window):
+    #is_status_bar_visible = True
+
+    global status_bar
+    status_bar = ttk.Frame(window)
+    status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+    global status_bar_label
+    status_bar_label = Label(status_bar, text=status_bar_message, fg=color_schemes[name]["text_color"], bg=color_schemes[name]["main_color"])
+    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+
+status_bar_message = "Status Bar"
+
+def update_status_bar_message(new_message):
+    status_bar_message = new_message
+    status_bar_label.config(text=status_bar_message)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def create_style():
     # Create a style for the themed widgets
     style = ttk.Style()
@@ -154,16 +194,16 @@ def create_style():
     # Configure style for the "CustomStatus.TLabel" widget (status bar)
     style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12))
     
-    # Configure style for the "Custom.TFrame" widget (button_frame and root)
+    # Configure style for the "Custom.TFrame" widget (button_frame and window)
     style.configure("Custom.TFrame", background="gray")
 
-def create_menus(root):
+def create_menus(window):
     global custom_palette_var
     global dark_mode_var
     
     # Create a drop-down menu
-    menu_bar = Menu(root)
-    root.config(menu=menu_bar)
+    menu_bar = Menu(window)
+    window.config(menu=menu_bar)
     
     # Create "Files" menu
     files_menu = Menu(menu_bar, tearoff=0)
@@ -191,9 +231,9 @@ def create_menus(root):
     custom_palette_var = BooleanVar()
     submenu.add_checkbutton(label="Choose Custom Palette", variable=custom_palette_var, command=choose_custom_palette)
 
-def create_button_frame(root):
+def create_button_frame(window):
     # Create a frame for buttons with background color
-    button_frame = ttk.Frame(root, style="Custom.TFrame")
+    button_frame = ttk.Frame(window, style="Custom.TFrame")
     button_frame.grid(row=0, column=0, columnspan=2, pady=5, sticky="EW")
     
     # Create buttons
@@ -204,50 +244,50 @@ def create_button_frame(root):
     open_button.grid(row=0, column=0, padx=5)
     save_button.grid(row=0, column=1, padx=5)
 
-def create_text_widget(root):
+def create_text_widget(window):
     # Create a text widget
-    text_widget = Text(root, bg=default_color_scheme["Default"]["canvas_color"], width=30, height=30)
+    text_widget = Text(window, bg=default_color_scheme["Default"]["canvas_color"], width=30, height=30)
     text_widget.grid(row=1, column=0, columnspan=2, sticky="NSEW")
     
     # Add a scrollbar
-    scrollbar = Scrollbar(root, command=text_widget.yview)
+    scrollbar = Scrollbar(window, command=text_widget.yview)
     scrollbar.grid(row=1, column=2, sticky="NS")
     text_widget.config(yscrollcommand=scrollbar.set)
     
     return text_widget
 
-def create_status_bar(root):
+def create_status_bar(window):
     # Create a status bar
     status_var = StringVar()
     status_var.set("Text Editor Ready")
-    status_bar = ttk.Label(root, textvariable=status_var, anchor="w")
+    status_bar = ttk.Label(window, textvariable=status_var, anchor="w")
     status_bar.grid(row=2, column=0, columnspan=3, sticky="EW")
 
 def create_window():
     global text_widget
     
     # Create the main window
-    root = Tk()
-    root.title("Text Editor")
+    window = Tk()
+    window.title("Text Editor")
     
     create_style()
-    create_menus(root)
-    create_button_frame(root)
-    create_text_widget(root)
-    create_status_bar(root)
+    create_menus(window)
+    create_button_frame(window)
+    create_text_widget(window)
+    create_status_bar(window)
     
-    text_widget = create_text_widget(root)
+    text_widget = create_text_widget(window)
    
     # Configure grid layout behavior
-    root.grid_rowconfigure(1, weight=1)
-    root.grid_columnconfigure(0, weight=1)
+    window.grid_rowconfigure(1, weight=1)
+    rowindowot.grid_columnconfigure(0, weight=1)
 
     return root    
 
 if __name__ == "__main__":  
     # Create the main window
-    root = create_window()
+    window = create_window()
 
     # Start the main loop
-    root.mainloop()
+    window.mainloop()
 
