@@ -90,16 +90,44 @@ def update_text_widget_color():
     elif not active_scheme_names:
         text_widget.config(bg=default_color_scheme["Default"]["canvas_color"])
     else:
-        active_color = None
+        canvas_color = None
+        main_color = None
+        second_color = None
+        selection_highlight = None
+        text_color = None      
+        
         for name in active_scheme_names:
             if name in color_schemes:
-                active_color = color_schemes[name]["canvas_color"]
+                canvas_color = color_schemes[name]["canvas_color"]
+                main_color = color_schemes[name]["main_color"]
+                second_color = color_schemes[name]["second_color"]
+                selection_highlight = color_schemes[name]["selection_highlight"]
+                text_color = color_schemes[name]["text_color"]                      
                 break
 
-        if active_color:
-            text_widget.config(bg=active_color)
+        # Update the colors of the GUI elements
+        window.config(bg=main_color)
+        #toolbar_frame.config(bg=main_color)
+        #linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+        #text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+        status_bar_label.config(bg=main_color, fg=text_color)
+        #search_bar.config(bg=main_color)
+        #search_bar_button_frame_left.config(bg=main_color)
+        #search_bar_button_frame_right.config(bg=main_color)
+        #search_label.config(bg=main_color, fg=text_color)
+        #search_entry.config(bg=second_color)
+
+        #create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+        if canvas_color:
+            text_widget.config(bg=canvas_color)
+            search_label.config(bg=main_color, fg=text_color)
+            
         else:
             text_widget.config(bg=default_color_scheme["Default"]["canvas_color"])
+
+
+
 
 active_color_scheme = None
 
@@ -280,7 +308,7 @@ def create_window():
    
     # Configure grid layout behavior
     window.grid_rowconfigure(1, weight=1)
-    rowindowot.grid_columnconfigure(0, weight=1)
+    window.grid_columnconfigure(0, weight=1)
 
     return root    
 
