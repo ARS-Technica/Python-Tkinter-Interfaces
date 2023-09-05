@@ -105,28 +105,29 @@ def update_text_widget_color():
                 text_color = color_schemes[name]["text_color"]                      
                 break
 
-        # Update the colors of the GUI elements
-        window.config(bg=main_color)
-        #toolbar_frame.config(bg=main_color)
-        #linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
-        #text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
-        status_bar_label.config(bg=main_color, fg=text_color)
-        #search_bar.config(bg=main_color)
-        #search_bar_button_frame_left.config(bg=main_color)
-        #search_bar_button_frame_right.config(bg=main_color)
-        #search_label.config(bg=main_color, fg=text_color)
-        #search_entry.config(bg=second_color)
-
-        #create_text_line_numbers(linenumbers_canvas, text, text_color)
-
         if canvas_color:
             text_widget.config(bg=canvas_color)
             search_label.config(bg=main_color, fg=text_color)
             
+            
+            # Update the colors of the GUI elements
+            window.config(bg=main_color)
+            #toolbar_frame.config(bg=main_color)
+            #linenumbers_canvas.config(bg=main_color, selectforeground=text_color)
+            #text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+            status_bar_label.config(bg=main_color, fg=text_color)
+            #search_bar.config(bg=main_color)
+            #search_bar_button_frame_left.config(bg=main_color)
+            #search_bar_button_frame_right.config(bg=main_color)
+            #search_label.config(bg=main_color, fg=text_color)
+            #search_entry.config(bg=second_color)
+    
+            #create_text_line_numbers(linenumbers_canvas, text, text_color)
+
+            
         else:
             text_widget.config(bg=default_color_scheme["Default"]["canvas_color"])
-
-
+            
 
 
 active_color_scheme = None
@@ -318,4 +319,3 @@ if __name__ == "__main__":
 
     # Start the main loop
     window.mainloop()
-
