@@ -4,10 +4,14 @@ A demonstration of how the text formatting section of a text editor's toolbar sh
 
 from tkinter import *
 from tkinter import ttk
+from tkinter.font import families
 
 # Set default font
 current_font = "Helvetica"
 current_size = 16
+is_bold = False
+is_italic = False
+is_underline = False
 
 # Function to change the font
 def change_font():
@@ -27,7 +31,7 @@ def change_font():
     font_families.config(yscrollcommand=scrollbar.set)
     scrollbar.config(command=font_families.yview)
 
-    fonts = list(font.families())
+    fonts = families()
     fonts.sort()
     for font_family in fonts:
         font_families.insert(END, font_family)
@@ -50,7 +54,7 @@ def change_font():
         if current_size == int(size):
             font_sizes.selection_set(font_sizes.size()-1)
 
-    # Function to set the font and close the window   
+    # Function to set the font and close the window
     def set_font():
         global current_font
         global current_size
@@ -65,27 +69,65 @@ def change_font():
     set_font_button = Button(font_window, text="Set Font", font=("Helvetica", 14), command=set_font)
     set_font_button.pack(pady=10)
 
+# Function to toggle bold text
+def toggle_bold():
+    global is_bold
+    is_bold = not is_bold
+    update_text_formatting()
+
+# Function to toggle italic text
+def toggle_italic():
+    global is_italic
+    is_italic = not is_italic
+    update_text_formatting()
+
+# Function to toggle underline text
+def toggle_underline():
+    global is_underline
+    is_underline = not is_underline
+    update_text_formatting()
+
+# Function to update text formatting
+def update_text_formatting():
+    font = (current_font, current_size)
+    if is_bold:
+        font += ("bold",)
+    if is_italic:
+        font += ("italic",)
+    if is_underline:
+        my_text.tag_configure("underline", underline=True)
+        my_text.tag_add("underline", my_text.index(INSERT))
+    else:
+        my_text.tag_remove("underline", "1.0", END)
+    my_text.configure(font=font)
+
 # Create the main window
 root = Tk()
 root.title("Text Editor")
 
 # Create a Text widget
 my_text = Text(root, font=(current_font, current_size))
-my_text.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+my_text.pack(fill="both", expand=True)
 
-# Create a toolbar with formatting options
+# Create a toolbar with formatting options at the top
 toolbar = ttk.Frame(root)
-toolbar.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+toolbar.pack(side="top", fill="x")
 
-# Add a "Change Font" button to the toolbar
-change_font_button = Button(toolbar, text="Change Font", command=change_font)
-change_font_button.pack(side="left")
+# Create a font dropdown menu
+font_var = StringVar()
+font_var.set(current_font)
+font_dropdown = ttk.Combobox(toolbar, textvariable=font_var, values=families(), state="readonly")
+font_dropdown.grid(row=0, column=0, padx=5)
+font_dropdown.bind("<<ComboboxSelected>>", lambda event: change_font())
 
-# Add more formatting options to the toolbar as needed
+# Create bold, italic, and underline buttons
+bold_button = Button(toolbar, text="Bold", command=toggle_bold)
+italic_button = Button(toolbar, text="Italic", command=toggle_italic)
+underline_button = Button(toolbar, text="Underline", command=toggle_underline)
 
-# Configure grid weights for resizing
-root.grid_rowconfigure(0, weight=1)
-root.grid_columnconfigure(0, weight=1)
+bold_button.grid(row=0, column=1, padx=5)
+italic_button.grid(row=0, column=2, padx=5)
+underline_button.grid(row=0, column=3, padx=5)
 
 # Start the main event loop
 root.mainloop()
