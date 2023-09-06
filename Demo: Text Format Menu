@@ -105,11 +105,7 @@ def update_text_formatting():
 root = Tk()
 root.title("Text Editor")
 
-# Create a Text widget
-my_text = Text(root, font=(current_font, current_size))
-my_text.pack(fill="both", expand=True)
-
-# Create a toolbar with formatting options at the top
+# Create a toolbar with formatting options above the text widget
 toolbar = ttk.Frame(root)
 toolbar.pack(side="top", fill="x")
 
@@ -128,6 +124,10 @@ underline_button = Button(toolbar, text="Underline", command=toggle_underline)
 bold_button.grid(row=0, column=1, padx=5)
 italic_button.grid(row=0, column=2, padx=5)
 underline_button.grid(row=0, column=3, padx=5)
+
+# Create a Text widget
+my_text = Text(root, font=(current_font, current_size))
+my_text.pack(fill="both", expand=True)
 
 # Start the main event loop
 root.mainloop()
