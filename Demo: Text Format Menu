@@ -1,1 +1,92 @@
+"""
+A demonstration of how the text formatting section of a text editor's toolbar should work.
+"""
+
+from tkinter import *
+from tkinter import ttk
+
+# Set default font
+current_font = "Helvetica"
+current_size = 16
+
+# Function to change the font
+def change_font():
+    global current_font
+    global current_size
+    font_window = Toplevel()
+    font_window.geometry("400x400")
+    font_window.title("Font")
+
+    # Create font families listbox
+    font_family_label = Label(font_window, text="Font Family", font=("Helvetica", 14))
+    font_family_label.pack(pady=10)
+    font_families = Listbox(font_window, width=30, height=10, font=("Helvetica", 12))
+    font_families.pack()
+    scrollbar = Scrollbar(font_window, orient="vertical")
+    scrollbar.pack(side="right", fill="y")
+    font_families.config(yscrollcommand=scrollbar.set)
+    scrollbar.config(command=font_families.yview)
+
+    fonts = list(font.families())
+    fonts.sort()
+    for font_family in fonts:
+        font_families.insert(END, font_family)
+        if current_font == font_family:
+            font_families.selection_set(font_families.size()-1)
+
+    # Create font sizes listbox
+    font_size_label = Label(font_window, text="Font Size", font=("Helvetica", 14))
+    font_size_label.pack(pady=10)
+    font_sizes = Listbox(font_window, width=30, height=10, font=("Helvetica", 12))
+    font_sizes.pack()
+    scrollbar = Scrollbar(font_window, orient="vertical")
+    scrollbar.pack(side="right", fill="y")
+    font_sizes.config(yscrollcommand=scrollbar.set)
+    scrollbar.config(command=font_sizes.yview)
+
+    sizes = ["8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72"]
+    for size in sizes:
+        font_sizes.insert(END, size)
+        if current_size == int(size):
+            font_sizes.selection_set(font_sizes.size()-1)
+
+    # Function to set the font and close the window   
+    def set_font():
+        global current_font
+        global current_size
+        if font_families.curselection():
+            current_font = font_families.get(font_families.curselection())
+        if font_sizes.curselection():
+            current_size = int(font_sizes.get(font_sizes.curselection()))
+        my_text.configure(font=(current_font, current_size))
+        font_window.destroy()
+
+    # Create set font button
+    set_font_button = Button(font_window, text="Set Font", font=("Helvetica", 14), command=set_font)
+    set_font_button.pack(pady=10)
+
+# Create the main window
+root = Tk()
+root.title("Text Editor")
+
+# Create a Text widget
+my_text = Text(root, font=(current_font, current_size))
+my_text.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+# Create a toolbar with formatting options
+toolbar = ttk.Frame(root)
+toolbar.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
+# Add a "Change Font" button to the toolbar
+change_font_button = Button(toolbar, text="Change Font", command=change_font)
+change_font_button.pack(side="left")
+
+# Add more formatting options to the toolbar as needed
+
+# Configure grid weights for resizing
+root.grid_rowconfigure(0, weight=1)
+root.grid_columnconfigure(0, weight=1)
+
+# Start the main event loop
+root.mainloop()
 
