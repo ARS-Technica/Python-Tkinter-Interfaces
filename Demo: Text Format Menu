@@ -31,9 +31,9 @@ def change_font():
     font_families.config(yscrollcommand=scrollbar.set)
     scrollbar.config(command=font_families.yview)
 
-    fonts = families()
-    fonts.sort()
-    for font_family in fonts:
+    font_families_list = list(families())  # Convert to list
+    font_families_list.sort()
+    for font_family in font_families_list:
         font_families.insert(END, font_family)
         if current_font == font_family:
             font_families.selection_set(font_families.size()-1)
