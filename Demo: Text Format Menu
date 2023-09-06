@@ -17,57 +17,11 @@ is_underline = False
 def change_font():
     global current_font
     global current_size
-    font_window = Toplevel()
-    font_window.geometry("400x400")
-    font_window.title("Font")
-
-    # Create font families listbox
-    font_family_label = Label(font_window, text="Font Family", font=("Helvetica", 14))
-    font_family_label.pack(pady=10)
-    font_families = Listbox(font_window, width=30, height=10, font=("Helvetica", 12))
-    font_families.pack()
-    scrollbar = Scrollbar(font_window, orient="vertical")
-    scrollbar.pack(side="right", fill="y")
-    font_families.config(yscrollcommand=scrollbar.set)
-    scrollbar.config(command=font_families.yview)
-
-    font_families_list = list(families())  # Convert to list
-    font_families_list.sort()
-    for font_family in font_families_list:
-        font_families.insert(END, font_family)
-        if current_font == font_family:
-            font_families.selection_set(font_families.size()-1)
-
-    # Create font sizes listbox
-    font_size_label = Label(font_window, text="Font Size", font=("Helvetica", 14))
-    font_size_label.pack(pady=10)
-    font_sizes = Listbox(font_window, width=30, height=10, font=("Helvetica", 12))
-    font_sizes.pack()
-    scrollbar = Scrollbar(font_window, orient="vertical")
-    scrollbar.pack(side="right", fill="y")
-    font_sizes.config(yscrollcommand=scrollbar.set)
-    scrollbar.config(command=font_sizes.yview)
-
-    sizes = ["8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72"]
-    for size in sizes:
-        font_sizes.insert(END, size)
-        if current_size == int(size):
-            font_sizes.selection_set(font_sizes.size()-1)
-
-    # Function to set the font and close the window
-    def set_font():
-        global current_font
-        global current_size
-        if font_families.curselection():
-            current_font = font_families.get(font_families.curselection())
-        if font_sizes.curselection():
-            current_size = int(font_sizes.get(font_sizes.curselection()))
-        my_text.configure(font=(current_font, current_size))
-        font_window.destroy()
-
-    # Create set font button
-    set_font_button = Button(font_window, text="Set Font", font=("Helvetica", 14), command=set_font)
-    set_font_button.pack(pady=10)
+    selected_font = font_var.get()
+    selected_size = size_var.get()
+    current_font = selected_font
+    current_size = int(selected_size)
+    my_text.configure(font=(current_font, current_size))
 
 # Function to toggle bold text
 def toggle_bold():
@@ -94,39 +48,58 @@ def update_text_formatting():
         font += ("bold",)
     if is_italic:
         font += ("italic",)
+
+    # Create a tag for underlining
     if is_underline:
         my_text.tag_configure("underline", underline=True)
-        my_text.tag_add("underline", my_text.index(INSERT))
     else:
-        my_text.tag_remove("underline", "1.0", END)
-    my_text.configure(font=font)
+        my_text.tag_configure("underline", underline=False)
+
+    # Apply the font and underlining tag to selected text
+    my_text.tag_add("font_tag", "1.0", "end")
+    my_text.tag_remove("underline", "1.0", "end")
+    if is_underline:
+        my_text.tag_add("underline", my_text.index(INSERT), my_text.index(INSERT))
+    
+    # Apply the tags
+    my_text.tag_configure("font_tag", font=font)
 
 # Create the main window
 root = Tk()
 root.title("Text Editor")
 
+# Set the fixed window size
+root.geometry("800x600")
+
 # Create a toolbar with formatting options above the text widget
 toolbar = ttk.Frame(root)
 toolbar.pack(side="top", fill="x")
 
-# Create a font dropdown menu
+# Create font dropdown menu
 font_var = StringVar()
 font_var.set(current_font)
 font_dropdown = ttk.Combobox(toolbar, textvariable=font_var, values=families(), state="readonly")
 font_dropdown.grid(row=0, column=0, padx=5)
 font_dropdown.bind("<<ComboboxSelected>>", lambda event: change_font())
 
+# Create font size dropdown menu
+size_var = StringVar()
+size_var.set(str(current_size))
+size_dropdown = ttk.Combobox(toolbar, textvariable=size_var, values=["8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72"], state="readonly")
+size_dropdown.grid(row=0, column=1, padx=5)
+size_dropdown.bind("<<ComboboxSelected>>", lambda event: change_font())
+
 # Create bold, italic, and underline buttons
 bold_button = Button(toolbar, text="Bold", command=toggle_bold)
 italic_button = Button(toolbar, text="Italic", command=toggle_italic)
 underline_button = Button(toolbar, text="Underline", command=toggle_underline)
 
-bold_button.grid(row=0, column=1, padx=5)
-italic_button.grid(row=0, column=2, padx=5)
-underline_button.grid(row=0, column=3, padx=5)
+bold_button.grid(row=0, column=2, padx=5)
+italic_button.grid(row=0, column=3, padx=5)
+underline_button.grid(row=0, column=4, padx=5)
 
-# Create a Text widget
-my_text = Text(root, font=(current_font, current_size))
+# Create a Text widget with a fixed size
+my_text = Text(root, font=(current_font, current_size), width=100, height=30)
 my_text.pack(fill="both", expand=True)
 
 # Start the main event loop
