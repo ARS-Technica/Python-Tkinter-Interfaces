@@ -64,6 +64,23 @@ def update_text_formatting():
     # Apply the tags
     my_text.tag_configure("font_tag", font=font)
 
+# Function to insert a special character
+def insert_special_character():
+    character_map = Toplevel(root)
+    character_map.title("Character Map")
+
+    # Define a list of special characters
+    special_characters = ["★", "❤", "✔", "✉", "✈", "✿", "♫", "☀", "☎", "♛", "♞", "♣", "♠", "♦", "♥"]
+
+    # Create buttons for each special character
+    for char in special_characters:
+        char_button = Button(character_map, text=char, command=lambda c=char: insert_character(c))
+        char_button.pack(side="left", padx=5, pady=5)
+
+# Function to insert a character into the Text widget
+def insert_character(char):
+    my_text.insert(INSERT, char)
+
 # Create the main window
 root = Tk()
 root.title("Text Editor")
@@ -97,6 +114,10 @@ underline_button = Button(toolbar, text="Underline", command=toggle_underline)
 bold_button.grid(row=0, column=2, padx=5)
 italic_button.grid(row=0, column=3, padx=5)
 underline_button.grid(row=0, column=4, padx=5)
+
+# Create a "Insert Special Character" button
+special_char_button = Button(toolbar, text="Insert Special Character", command=insert_special_character)
+special_char_button.grid(row=0, column=5, padx=5)
 
 # Create a Text widget with a fixed size
 my_text = Text(root, font=(current_font, current_size), width=100, height=30)
