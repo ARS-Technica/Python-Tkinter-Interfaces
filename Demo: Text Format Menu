@@ -66,20 +66,8 @@ def update_text_formatting():
 
 # Function to insert a special character
 def insert_special_character():
-    character_map = Toplevel(root)
-    character_map.title("Character Map")
-
-    # Define a list of special characters
-    special_characters = ["★", "❤", "✔", "✉", "✈", "✿", "♫", "☀", "☎", "♛", "♞", "♣", "♠", "♦", "♥"]
-
-    # Create buttons for each special character
-    for char in special_characters:
-        char_button = Button(character_map, text=char, command=lambda c=char: insert_character(c))
-        char_button.pack(side="left", padx=5, pady=5)
-
-# Function to insert a character into the Text widget
-def insert_character(char):
-    my_text.insert(INSERT, char)
+    selected_char = special_char_var.get()
+    my_text.insert(INSERT, selected_char)
 
 # Create the main window
 root = Tk()
@@ -115,9 +103,16 @@ bold_button.grid(row=0, column=2, padx=5)
 italic_button.grid(row=0, column=3, padx=5)
 underline_button.grid(row=0, column=4, padx=5)
 
-# Create a "Insert Special Character" button
+# Create a special character dropdown menu
+special_characters = ["★", "❤", "✔", "✉", "✈", "✿", "♫", "☀", "☎", "♛", "♞", "♣", "♠", "♦", "♥"]
+special_char_var = StringVar()
+special_char_var.set(special_characters[0])
+special_char_dropdown = ttk.Combobox(toolbar, textvariable=special_char_var, values=special_characters, state="readonly")
+special_char_dropdown.grid(row=0, column=5, padx=5)
+
+# Create an "Insert Special Character" button
 special_char_button = Button(toolbar, text="Insert Special Character", command=insert_special_character)
-special_char_button.grid(row=0, column=5, padx=5)
+special_char_button.grid(row=0, column=6, padx=5)
 
 # Create a Text widget with a fixed size
 my_text = Text(root, font=(current_font, current_size), width=100, height=30)
