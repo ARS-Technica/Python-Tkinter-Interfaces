@@ -1,0 +1,540 @@
+# -*- coding: utf-8 -*-
+"""
+Attempt at creating a working example of a toolbar of buttons
+featuring a rollover effect.  Specifically designed to work
+with my current ongoing project, Advanced Text Editor (on Grid).
+"""
+
+import os
+import sys
+from tkinter import *
+from tkinter import filedialog
+from tkinter import font
+from tkinter import messagebox
+from tkinter import colorchooser
+import tkinter.ttk as ttk
+import win32print
+import win32api
+
+
+def create_custom_text(window):
+    global text
+
+    text_editor_frame = Frame(window)
+    
+    text = Text(
+        text_editor_frame,
+        font=("Helvetica", 16),
+        selectbackground="yellow",
+        selectforeground="black",
+        undo=True,
+        padx=5,
+        pady=5,
+        wrap="none",
+    )
+    
+    def proxy(*args):
+        cmd = (text._orig,) + args
+        result = text.tk.call(cmd)
+
+        if (
+            args[0] in ("insert", "replace", "delete")
+            or args[0:3] == ("mark", "set", "insert")
+            or args[0:2] == ("xview", "moveto")
+            or args[0:2] == ("xview", "scroll")
+            or args[0:2] == ("yview", "moveto")
+            or args[0:2] == ("yview", "scroll")
+        ):
+            text.event_generate("<<Change>>", when="tail")
+
+        return result
+
+    text._orig = text._w + "_orig"
+    text.tk.call("rename", text._w, text._orig)
+    text.tk.createcommand(text._w, proxy)
+
+    vertical_scrollbar = Scrollbar(
+        text_editor_frame, orient="vertical", command=text.yview
+    )
+    text.configure(yscrollcommand=vertical_scrollbar.set)
+    horizontal_scrollbar = Scrollbar(
+        text_editor_frame, orient="horizontal", command=text.xview
+    )
+    text.configure(xscrollcommand=horizontal_scrollbar.set)
+
+    text.grid(row=0, column=0, sticky="nsew")
+    vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+    horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+
+    text_editor_frame.grid_rowconfigure(0, weight=1)
+    text_editor_frame.grid_columnconfigure(0, weight=1)
+
+    text_editor_frame.grid(row=1, column=1, sticky="nsew", padx=2, pady=2)
+    text_editor_frame.grid_rowconfigure(0, weight=1)  # Set row weight to 1 to allow vertical expansion
+    text_editor_frame.grid_columnconfigure(0, weight=1)  # Set column weight to 1 to allow horizontal expansion
+
+    # Configure grid weights for window and the text widget
+    window.grid_rowconfigure(0, weight=0)
+    window.grid_rowconfigure(1, weight=1)
+    window.grid_columnconfigure(0, weight=0)
+    window.grid_columnconfigure(1, weight=1)
+ 
+    return text
+
+# Create the Status Bar
+def create_status_bar(window):
+    is_status_bar_visible = True
+
+    global status_bar
+    status_bar = ttk.Frame(window)
+    status_bar.grid(row=4, column=1, sticky="WE", pady=5)
+
+    global status_bar_label
+    status_bar_label = Label(status_bar, text=status_bar_message, fg=text_color, bg=main_color)
+    status_bar_label.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+ 
+status_bar_message = "Status Bar"
+
+def update_status_bar_message(new_message):
+    status_bar_message = new_message
+    status_bar_label.config(text=status_bar_message)
+
+
+
+# Define color schemes as nested dictionaries
+color_schemes = {
+    "Arctic Breeze": {
+        "main_color": "#87CEEB",
+        "second_color": "#ADD8E6",
+        "selection_highlight": "#B0E0E6",
+        "text_color": "#333333",
+    },
+    "Cherry Blossom": {
+        "main_color": "#FF85A2",
+        "second_color": "#FFC3A0",
+        "selection_highlight": "#FF4D6D",
+        "text_color": "#331F30",
+    },
+    "Cool Mint": {
+        "main_color": "#4ae0c0",
+        "second_color": "#80ffe0",
+        "selection_highlight": "#2ee0c0",
+        "text_color": "#1e1e1e",
+    }, 
+    "Vintage Rose": {
+        "main_color": "#8b475d",
+        "second_color": "#c77b95",
+        "selection_highlight": "#d25f80",
+        "text_color": "#f1f0eb",
+    },
+    "Default": {
+        "main_color": "SystemButtonFace",
+        "second_color": "White", #"SystemButtonFace"
+        "selection_highlight": "#999999",
+        "text_color": "black",
+    },
+    "Night Mode": {
+        "main_color": "#000000",
+        "second_color": "#373737",
+        "selection_highlight": "dark green",
+        "text_color": "green",
+    },
+}
+
+# --------------- New Scheme Toggle Functions from Demo Color Selector X --------------- #
+ 
+# Add this variable to track the active color scheme
+active_color_scheme = None
+
+# Create BooleanVar variables for checkbuttons
+checkbutton_vars = {}
+
+# Default Color Scheme
+main_color = "SystemButtonFace"
+second_color = "White"
+selection_highlight = "#999999"
+text_color = "black"
+
+# Modify your existing function to update the toolbar button colors
+def update_toolbar_button_colors():
+    for button in tool_bar_button_frame_left.winfo_children():
+        button.configure(bg=main_color, fg=text_color)
+    for button in tool_bar_button_frame_center.winfo_children():
+        button.configure(bg=main_color, fg=text_color)
+    for button in tool_bar_button_frame_right.winfo_children():
+        button.configure(bg=main_color, fg=text_color)
+
+def checkbutton_selected(scheme_name):
+    """
+    Function to allow custom color schemes to be both activated and deactivated
+    using their checkbuttons. Additionally, ensure that when 'Choose Custom Palette'
+    is deactivated, it reverts to the Default color scheme, and only one color 
+    scheme's checkbutton is active at a time in the Options Menu."
+    """
+    global active_color_scheme, custom_color
+    global main_color, second_color, selection_highlight, text_color
+
+    # Get the current state of the "Choose Custom Palette" checkbutton
+    custom_palette_active = custom_palette_var.get()
+
+    if scheme_name == "Choose Custom Palette":
+        if custom_palette_active:
+            # Activate custom palette
+            set_custom_color()
+            active_color_scheme = None  # Deactivate any active color scheme
+        else:
+            # Deactivate custom palette, revert to active color scheme or default
+            custom_color = None
+            if active_color_scheme is not None:
+                scheme_name = active_color_scheme
+            else:
+                scheme_name = "Default"  # You can set a default color scheme here
+
+    # Handle custom color scheme selection
+    if scheme_name != "Choose Custom Palette":
+        var = checkbutton_vars[scheme_name]
+        if var.get():
+            if active_color_scheme != scheme_name:
+                # Activate the selected color scheme, deactivate others
+                custom_palette_var.set(False)  # Deactivate "Choose Custom Palette"
+                active_color_scheme = scheme_name
+
+                # Set the color scheme
+                main_color = color_schemes[scheme_name]["main_color"]
+                second_color = color_schemes[scheme_name]["second_color"]
+                selection_highlight = color_schemes[scheme_name]["selection_highlight"]
+                text_color = color_schemes[scheme_name]["text_color"]
+
+                # Update the colors of GUI elements
+                window.config(bg=main_color)
+                toolbar_frame.config(bg=main_color)
+                
+                # Update the status bar message
+                status_bar_label.config(text=f"{scheme_name} color scheme activated       ")                
+                # Schedule a task to reset the status bar message after 5 seconds (5000 milliseconds)
+                window.after(5000, lambda: status_bar_label.config(text="Ready       "))
+
+                if custom_palette_active:
+                    # If custom palette is active, use custom color
+                    text.config(bg=custom_color, insertbackground=text_color, selectforeground=selection_highlight)
+                else:
+                    text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+
+                status_bar_label.config(bg=main_color, fg=text_color)
+                
+                # Update the colors of toolbar buttons
+                update_toolbar_button_colors()
+
+        else:
+            # Deactivate the selected color scheme, clear its checkbutton
+            active_color_scheme = None
+            var.set(False)
+
+    # Deactivate checkbuttons of other color schemes
+    for name, var in checkbutton_vars.items():
+        if name != "Choose Custom Palette" and name != scheme_name:
+            var.set(False)
+
+    # If no color scheme is selected, revert to Default color scheme
+    if active_color_scheme is None:
+        scheme_name = "Default"
+        main_color = color_schemes[scheme_name]["main_color"]
+        second_color = color_schemes[scheme_name]["second_color"]
+        selection_highlight = color_schemes[scheme_name]["selection_highlight"]
+        text_color = color_schemes[scheme_name]["text_color"]
+
+        window.config(bg=main_color)
+        toolbar_frame.config(bg=main_color)
+
+        if custom_palette_active:
+            text.config(bg=custom_color, insertbackground=text_color, selectforeground=selection_highlight)
+        else:
+            text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
+
+        status_bar_label.config(bg=main_color, fg=text_color)
+        search_bar.config(bg=main_color)
+        search_bar_button_frame_left.config(bg=main_color)
+        search_bar_button_frame_right.config(bg=main_color)
+        search_label.config(bg=main_color, fg=text_color)
+
+        if custom_palette_active:
+            search_entry.config(bg=custom_color)
+        else:
+            search_entry.config(bg=second_color)
+
+    # Update the "Choose Custom Palette" checkbutton to reflect its state
+    custom_palette_var.set(custom_palette_active)
+
+# Update the update_text_widget_color function
+def update_text_widget_color():
+    active_scheme_names = [name for name, var in checkbutton_vars.items() if var.get()]
+
+    if custom_color:
+        text_widget.config(bg=custom_color)
+    #elif dark_mode_var.get():
+    elif night_mode_var.get():
+        text_widget.config(bg=color_schemes["Night Mode"]["second_color"])
+    elif not active_scheme_names:
+        text_widget.config(bg=color_schemes["Default"]["second_color"])
+    else:
+        active_color = None
+        for name in active_scheme_names:
+            if name in color_schemes:
+                active_color = color_schemes[name]["second_color"]
+                break
+
+        if active_color:
+            text_widget.config(bg=active_color)
+        else:
+            text_widget.config(bg=default_color_scheme["Default"]["second_color"])
+
+custom_color = None
+
+def choose_custom_palette(*args):
+    global custom_color
+
+    if custom_palette_var.get():
+        chosen_color = colorchooser.askcolor(title="Choose Custom Palette")[1]
+
+        if chosen_color:
+            custom_color = chosen_color
+            text.config(bg=custom_color)  # Change the background color to the custom color
+            
+        else:
+            custom_color = None
+    else:
+        custom_color = None
+        update_text_widget_color()  # Restore the appropriate background color
+           
+# --------------- End Scheme Toggle Functions from Demo Color Selector X --------------- #
+
+def create_menu(window):
+    # Create a drop-down menu
+    menu_bar = Menu(window)
+    window.config(menu=menu_bar)
+ 
+    # Create "Options" menu
+    options_menu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Options", menu=options_menu)
+ 
+    # Create a BooleanVar for the 'Night Mode' 
+    global night_mode_var  
+    night_mode_var = BooleanVar()
+    checkbutton_vars["Night Mode"] = night_mode_var
+    
+    # Add a checkbutton for "Night Mode" color scheme in the Options menu
+    options_menu.add_checkbutton(
+        label="Night Mode",
+        variable=checkbutton_vars["Night Mode"],
+        command=lambda: checkbutton_selected("Night Mode"))
+  
+    # Create a BooleanVar for the "Night Mode" checkbutton
+    default_mode_var = BooleanVar(value=True)
+    checkbutton_vars["Default"] = default_mode_var
+    
+    # Add a checkbutton for "Night Mode" color scheme in the Options menu
+    options_menu.add_checkbutton(
+        label="Default Color Scheme",
+        variable=checkbutton_vars["Default"],
+        onvalue=True, 
+        offvalue=False,
+        command=lambda: checkbutton_selected("Default"))
+
+    # Create a submenu for Color Schemes
+    color_scheme_submenu = Menu(options_menu, tearoff=False)
+
+    # Add the submenu to the Options Menu
+    options_menu.add_cascade(label="Color Schemes", menu=color_scheme_submenu)
+
+    # Toggles each individual color scheme on or off 
+    # Create Color Scheme checkbuttons in a submenu of the Options menu
+    for scheme_name in color_schemes:
+        if scheme_name != "Default" and scheme_name != "Night Mode":
+            var = BooleanVar()
+            checkbutton_vars[scheme_name] = var     #MUST be inside for loop
+            color_scheme_submenu.add_checkbutton(
+                label=scheme_name,
+                variable=var,
+                command=lambda name=scheme_name: checkbutton_selected(name))
+
+    # Change the background color of the Text Widget 
+    global custom_palette_var
+    custom_palette_var = BooleanVar()
+    
+    # Add an entry for "Choose Custom Palette" to the Options men
+    options_menu.add_checkbutton(label="Choose Custom Palette",
+        variable=custom_palette_var, 
+        command=lambda: choose_custom_palette() if custom_palette_var.get() else choose_custom_palette(None))
+
+
+# ***************** Format Menu Functions: Font Styling
+
+def bold_it(): pass
+def italics_it(): pass
+def underline_it(): pass
+def strike_it(): pass 
+
+'''
+def create_style():
+    # Create a style for the themed widgets
+    style = ttk.Style()
+    
+    # Configure style for the "TButton" widget
+    style.configure("Custom.TButton", foreground="black", font=("Helvetica", 12))
+    
+    # Configure style for the "CustomStatus.TLabel" widget (status bar)
+    style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12))
+    
+    # Configure style for the "Custom.TFrame" widget (button_frame and window)
+    style.configure("Custom.TFrame", background="gray")
+
+def create_toolbar(window):
+    global toolbar_frame
+    toolbar_frame = Frame(window, bd=5, highlightthickness=0)
+
+    # Create a custom style font
+    custom_font = ("Helvetica", 12)
+
+    bold_button = Button(toolbar_frame, text="Bold", font=custom_font, fg="black")
+    bold_button.grid(row=0, column=0, padx=2, pady=0)
+
+    italic_button = Button(toolbar_frame, text="Italic", font=custom_font, fg="black")
+    italic_button.grid(row=0, column=1, padx=2, pady=0)
+
+    underline_button = Button(toolbar_frame, text="Underline", font=custom_font, fg="black")
+    underline_button.grid(row=0, column=2, padx=2, pady=0)
+
+    toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
+    toolbar_frame.config(padx=0, pady=0)
+'''
+  
+# Create the Toolbar
+def create_toolbar(window):  
+    """
+    main_color = "SystemButtonFace"
+    second_color = "White"
+    selection_highlight = "#999999"
+    text_color = "black"
+    """
+    
+    def on_exit(e):
+        e.widget['background'] = main_color #second_color #text_color
+        e.widget['foreground'] = text_color #second_color         
+
+    def on_enter(e):
+        e.widget['background'] = text_color #second_color
+        e.widget['foreground'] = main_color #second_color #text_color 
+
+    # Create Button Groups
+    global toolbar_frame
+
+    toolbar_frame = Frame(window, bd=5, height=25, highlightthickness=0)  
+    #toolbar_frame.grid(row=0, column=1, sticky="nw")
+    toolbar_frame.grid(row=0, column=1, columnspan=2, sticky="nw")
+    toolbar_frame.config(padx=0, pady=0)  
+
+    # Start with a pair of frames to provide horizontal padding to buttons
+
+    global tool_bar_button_frame_left
+    # Contains bold_button, italics_button, underline_button   
+    tool_bar_button_frame_left = Frame(toolbar_frame, bg=main_color)
+    tool_bar_button_frame_left.configure(bg=main_color) 
+    tool_bar_button_frame_left.grid(row=0, column=1, padx=0, pady=0, sticky="w")
+    # Leave tool_bar_button_frame_left padx at 0 to keep buttons flush with the text widget.
+
+    global tool_bar_button_frame_center
+    # Contains search_all_button
+    tool_bar_button_frame_center = Frame(toolbar_frame, bg=main_color)
+    tool_bar_button_frame_center.configure(bg=main_color) 
+    tool_bar_button_frame_center.grid(row=0, column=2, padx=15, pady=0, sticky="w")
+
+    global tool_bar_button_frame_right
+    # Contains search_all_button
+    tool_bar_button_frame_right = Frame(toolbar_frame, bg=main_color)
+    tool_bar_button_frame_right.configure(bg=main_color) 
+    tool_bar_button_frame_right.grid(row=0, column=3, padx=15, pady=0, sticky="w")
+
+    # Add Buttons to Toolbar Frame
+
+    # Bold Button
+    bold_button = Button(tool_bar_button_frame_left, text="B", font=("Helvetica", 12, "bold"), 
+                         bd=0, padx=5, pady=5, command=bold_it, relief="flat", borderwidth=0)
+    bold_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    bold_button.pack(side="left", padx=2, pady=2)
+    bold_button.bind("<Enter>", on_enter)
+    bold_button.bind("<Leave>", on_exit)
+
+    # Italics Button
+    italics_button = Button(tool_bar_button_frame_left, text="I", font=("Helvetica", 12, "italic"),
+                           bd=0, padx=5, pady=5, command=italics_it, relief="flat", borderwidth=0)
+    italics_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    italics_button.pack(side="left", padx=2, pady=2)
+    italics_button.bind("<Enter>", on_enter)
+    italics_button.bind("<Leave>", on_exit)
+
+    # Underline Button
+    underline_button = Button(tool_bar_button_frame_left, text="U", font=("Helvetica", 12, "underline"),
+                              bd=0, padx=5, pady=5, command=underline_it, relief="flat", borderwidth=0)
+    underline_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    underline_button.pack(side="left", padx=2, pady=2)
+    underline_button.bind("<Enter>", on_enter)
+    underline_button.bind("<Leave>", on_exit)
+    
+    # Redo Button
+    redo_button = Button(tool_bar_button_frame_right, text="Redo",
+                         bd=0, padx=5, pady=5, command=text.edit_redo, relief="flat", borderwidth=0)
+    redo_button.pack(side="left", padx=2, pady=2)
+    redo_button.config(bg=main_color, fg=text_color,
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    redo_button.bind("<Enter>", on_enter)
+    redo_button.bind("<Leave>", on_exit)
+
+    # Undo Button
+    undo_button = Button(tool_bar_button_frame_right, text="Undo", 
+                         bd=0, padx=5, pady=5, command=text.edit_undo, relief="flat", borderwidth=0)
+    undo_button.config(bg=main_color, fg=text_color, 
+                       highlightbackground=main_color, highlightcolor=selection_highlight)
+    undo_button.pack(side="left", padx=2, pady=2)
+    undo_button.bind("<Enter>", on_enter)
+    undo_button.bind("<Leave>", on_exit)
+
+    # Set the weight of row 0 and row 1 to 1, so that they both expand evenly
+    window.grid_rowconfigure(0, weight=1)   
+
+def create_window():
+    global text_widget
+    global window
+
+    # Create main window
+    window = Tk()
+    window.title("Text Editor")
+    window.geometry("1200x690")
+    window.resizable(True,True)
+
+    window.grid_columnconfigure(1, weight=1)
+    window.grid_rowconfigure(0, weight=0, minsize=0)
+    window.grid_rowconfigure(1, weight=1, minsize=0)
+																								       
+    # Create text widget
+    text_widget = create_custom_text(window)
+
+    # Create the status bar
+    create_status_bar(window)
+
+    # Create the drop-down menu
+    create_menu(window)
+    
+    create_toolbar(window) 
+    
+    # Call update_toolbar_button_colors initially to set the colors
+    update_toolbar_button_colors()
+
+    # Start the main event loop
+    window.mainloop()
+
+if __name__ == "__main__":
+    create_window()
+
