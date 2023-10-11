@@ -72,8 +72,6 @@ def update_status_bar_message(new_message):
     status_bar_message = new_message
     status_bar_label.config(text=status_bar_message)
 
-
-
 # Define color schemes as nested dictionaries
 color_schemes = {
     "Arctic Breeze": {
@@ -136,6 +134,10 @@ def update_toolbar_button_colors():
         button.configure(bg=main_color, fg=text_color)
     for button in tool_bar_button_frame_right.winfo_children():
         button.configure(bg=main_color, fg=text_color)
+        
+    tool_bar_button_frame_left.configure(bg=main_color) 
+    tool_bar_button_frame_center.configure(bg=main_color) 
+    tool_bar_button_frame_right.configure(bg=main_color)         
 
 def checkbutton_selected(scheme_name):
     """
@@ -346,50 +348,9 @@ def bold_it(): pass
 def italics_it(): pass
 def underline_it(): pass
 def strike_it(): pass 
-
-'''
-def create_style():
-    # Create a style for the themed widgets
-    style = ttk.Style()
-    
-    # Configure style for the "TButton" widget
-    style.configure("Custom.TButton", foreground="black", font=("Helvetica", 12))
-    
-    # Configure style for the "CustomStatus.TLabel" widget (status bar)
-    style.configure("CustomStatus.TLabel", foreground="black", font=("Helvetica", 12))
-    
-    # Configure style for the "Custom.TFrame" widget (button_frame and window)
-    style.configure("Custom.TFrame", background="gray")
-
-def create_toolbar(window):
-    global toolbar_frame
-    toolbar_frame = Frame(window, bd=5, highlightthickness=0)
-
-    # Create a custom style font
-    custom_font = ("Helvetica", 12)
-
-    bold_button = Button(toolbar_frame, text="Bold", font=custom_font, fg="black")
-    bold_button.grid(row=0, column=0, padx=2, pady=0)
-
-    italic_button = Button(toolbar_frame, text="Italic", font=custom_font, fg="black")
-    italic_button.grid(row=0, column=1, padx=2, pady=0)
-
-    underline_button = Button(toolbar_frame, text="Underline", font=custom_font, fg="black")
-    underline_button.grid(row=0, column=2, padx=2, pady=0)
-
-    toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="nw")
-    toolbar_frame.config(padx=0, pady=0)
-'''
   
 # Create the Toolbar
 def create_toolbar(window):  
-    """
-    main_color = "SystemButtonFace"
-    second_color = "White"
-    selection_highlight = "#999999"
-    text_color = "black"
-    """
-    
     def on_exit(e):
         e.widget['background'] = main_color #second_color #text_color
         e.widget['foreground'] = text_color #second_color         
@@ -432,10 +393,8 @@ def create_toolbar(window):
     # Bold Button
     bold_button = Button(tool_bar_button_frame_left, text="B", font=("Helvetica", 12, "bold"), 
                          bd=0, padx=5, pady=5, command=bold_it, relief="flat", borderwidth=0)
-    #bold_button.config(bg=main_color, fg=text_color, 
-                       #highlightbackground=main_color, highlightcolor=selection_highlight)
     bold_button.config(bg=main_color, fg=text_color, 
-                   highlightbackground=main_color, highlightcolor=main_color, borderwidth=0)
+                   highlightbackground=main_color, highlightcolor=selection_highlight, borderwidth=0)
     bold_button.pack(side="left", padx=2, pady=2)
     bold_button.bind("<Enter>", on_enter)
     bold_button.bind("<Leave>", on_exit)
@@ -444,7 +403,7 @@ def create_toolbar(window):
     italics_button = Button(tool_bar_button_frame_left, text="I", font=("Helvetica", 12, "italic"),
                            bd=0, padx=5, pady=5, command=italics_it, relief="flat", borderwidth=0)
     italics_button.config(bg=main_color, fg=text_color, 
-                       highlightbackground=main_color, highlightcolor=main_color, borderwidth=0)
+                       highlightbackground=main_color, highlightcolor=selection_highlight, borderwidth=0)
     italics_button.pack(side="left", padx=2, pady=2)
     italics_button.bind("<Enter>", on_enter)
     italics_button.bind("<Leave>", on_exit)
@@ -453,7 +412,7 @@ def create_toolbar(window):
     underline_button = Button(tool_bar_button_frame_left, text="U", font=("Helvetica", 12, "underline"),
                               bd=0, padx=5, pady=5, command=underline_it, relief="flat", borderwidth=0)
     underline_button.config(bg=main_color, fg=text_color, 
-                       highlightbackground=main_color, highlightcolor=main_color, borderwidth=0)
+                       highlightbackground=main_color, highlightcolor=selection_highlight, borderwidth=0)
     underline_button.pack(side="left", padx=2, pady=2)
     underline_button.bind("<Enter>", on_enter)
     underline_button.bind("<Leave>", on_exit)
@@ -463,7 +422,7 @@ def create_toolbar(window):
                          bd=0, padx=5, pady=5, command=text.edit_redo, relief="flat", borderwidth=0)
     redo_button.pack(side="left", padx=2, pady=2)
     redo_button.config(bg=main_color, fg=text_color,
-                       highlightbackground=main_color, highlightcolor=main_color, borderwidth=0)
+                       highlightbackground=main_color, highlightcolor=selection_highlight, borderwidth=0)
     redo_button.bind("<Enter>", on_enter)
     redo_button.bind("<Leave>", on_exit)
 
@@ -471,7 +430,7 @@ def create_toolbar(window):
     undo_button = Button(tool_bar_button_frame_right, text="Undo", 
                          bd=0, padx=5, pady=5, command=text.edit_undo, relief="flat", borderwidth=0)
     undo_button.config(bg=main_color, fg=text_color, 
-                       highlightbackground=main_color, highlightcolor=main_color, borderwidth=0)
+                       highlightbackground=main_color, highlightcolor=selection_highlight, borderwidth=0)
     undo_button.pack(side="left", padx=2, pady=2)
     undo_button.bind("<Enter>", on_enter)
     undo_button.bind("<Leave>", on_exit)
