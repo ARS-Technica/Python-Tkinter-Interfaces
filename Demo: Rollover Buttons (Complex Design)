@@ -5,16 +5,9 @@ featuring a rollover effect.  Specifically designed to work
 with my current ongoing project, Advanced Text Editor (on Grid).
 """
 
-import os
-import sys
 from tkinter import *
-from tkinter import filedialog
-from tkinter import font
-from tkinter import messagebox
 from tkinter import colorchooser
 import tkinter.ttk as ttk
-import win32print
-import win32api
 
 
 def create_custom_text(window):
