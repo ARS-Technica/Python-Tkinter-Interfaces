@@ -59,7 +59,8 @@ def create_status_bar(window):
     is_status_bar_visible = True
 
     global status_bar
-    status_bar = ttk.Frame(window)
+    #status_bar = ttk.Frame(window)
+    status_bar = Frame(window, background=main_color)
     status_bar.grid(row=4, column=1, sticky="WE", pady=5)
 
     global status_bar_label
@@ -195,6 +196,7 @@ def checkbutton_selected(scheme_name):
                 else:
                     text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
 
+                status_bar.config(bg=main_color)
                 status_bar_label.config(bg=main_color, fg=text_color)
                 
                 # Update the colors of toolbar buttons
@@ -226,6 +228,7 @@ def checkbutton_selected(scheme_name):
         else:
             text.config(bg=second_color, insertbackground=text_color, selectforeground=selection_highlight)
 
+        status_bar.config(bg=main_color)
         status_bar_label.config(bg=main_color, fg=text_color)
         search_bar.config(bg=main_color)
         search_bar_button_frame_left.config(bg=main_color)
@@ -348,7 +351,7 @@ def bold_it(): pass
 def italics_it(): pass
 def underline_it(): pass
 def strike_it(): pass 
-  
+
 # Create the Toolbar
 def create_toolbar(window):  
     def on_exit(e):
