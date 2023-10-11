@@ -26,26 +26,6 @@ def create_custom_text(window):
         wrap="none",
     )
     
-    def proxy(*args):
-        cmd = (text._orig,) + args
-        result = text.tk.call(cmd)
-
-        if (
-            args[0] in ("insert", "replace", "delete")
-            or args[0:3] == ("mark", "set", "insert")
-            or args[0:2] == ("xview", "moveto")
-            or args[0:2] == ("xview", "scroll")
-            or args[0:2] == ("yview", "moveto")
-            or args[0:2] == ("yview", "scroll")
-        ):
-            text.event_generate("<<Change>>", when="tail")
-
-        return result
-
-    text._orig = text._w + "_orig"
-    text.tk.call("rename", text._w, text._orig)
-    text.tk.createcommand(text._w, proxy)
-
     vertical_scrollbar = Scrollbar(
         text_editor_frame, orient="vertical", command=text.yview
     )
