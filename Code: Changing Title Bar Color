@@ -1,0 +1,29 @@
+# -*- coding: utf-8 -*-
+"""
+Changing the title bar color of tkinter windows
+Source: https://www.youtube.com/watch?v=36PpT4Z22Os&ab_channel=TechWithTim
+
+"""
+
+import customtkinter as ctk
+
+try:
+    from ctypes import windll, byref, sizeof, c_int  #If running Windows
+except:
+    pass
+
+app = ctk.CTk(fg_color = 'red')
+app.geometry('300x200')
+
+try:
+    # Identify the window you're targeting
+    HWND = windll.user32.GetParent(app.winfo_id())
+    # Choose color
+    title_bar_color = 0x00FF0000    # Color Format 0x00BBGGRR
+    # Change the Title Bar 
+    windll.dwmapi.DwmSetWindowAttribute(HWND, 35, byref(c_int(title_bar_color)), sizeof(c_int))
+    # 35 is the Title Bar color attribute
+except:
+    pass
+
+app.mainloop()
