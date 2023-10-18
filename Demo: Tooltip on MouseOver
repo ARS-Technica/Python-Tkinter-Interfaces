@@ -5,37 +5,40 @@ A demonstration of how to create Tooltips that appear on mouseover of a button
 
 from tkinter import *
 
-def show_tooltip(event, text, tooltip_label):
-    tooltip_label.config(text=text)
-    tooltip_label.place(x=root.winfo_pointerx(), y=root.winfo_pointery())
+def create_tooltips(root):
+    def show_tooltip(event, text, tooltip_label):
+        tooltip_label.config(text=text)
+        tooltip_label.place(x=root.winfo_pointerx(), y=root.winfo_pointery())
 
-def hide_tooltip(event, tooltip_label):
-    tooltip_label.place_forget()
+    def hide_tooltip(event, tooltip_label):
+        tooltip_label.place_forget()
 
-def create_tooltip(widget, text):
-    tooltip_label = Label(root, background="lightyellow", relief="solid", borderwidth=1)
-    tooltip_label.place_forget()
-    
-    widget.bind("<Enter>", lambda event, text=text: show_tooltip(event, text, tooltip_label))
-    widget.bind("<Leave>", lambda event: hide_tooltip(event, tooltip_label))
+    def create_tooltip(widget, text):
+        tooltip_label = Label(root, background="lightyellow", relief="solid", borderwidth=1)
+        tooltip_label.place_forget()
+        
+        widget.bind("<Enter>", lambda event, text=text: show_tooltip(event, text, tooltip_label))
+        widget.bind("<Leave>", lambda event: hide_tooltip(event, tooltip_label))
 
-root = Tk()
-root.geometry("400x200")
-root.title("Tooltips for Multiple Buttons")
+    # Define a list of button texts and their corresponding tooltips
+    button_data = [
+        ("Button 1", "This is the first button."),
+        ("Button 2", "This is the second button."),
+        ("Button 3", "This is the third button."),
+    ]
 
-# Define a list of button texts and their corresponding tooltips
-button_data = [
-    ("Button 1", "This is the first button."),
-    ("Button 2", "This is the second button."),
-    ("Button 3", "This is the third button."),
-]
+    # Create and pack the buttons with tooltips
+    for text, tooltip_text in button_data:
+        button = Button(root, text=text)
+        button.pack(pady=10)
+        create_tooltip(button, tooltip_text)
 
-# Create and pack the buttons with tooltips
-for text, tooltip_text in button_data:
-    button = Button(root, text=text)
-    button.pack(pady=10)
-    create_tooltip(button, tooltip_text)
+    root.mainloop()
 
-root.mainloop()
+if __name__ == "__main__":
+    root = Tk()
+    root.geometry("400x200")
+    root.title("Tooltips for Multiple Buttons")
 
+    create_tooltips(root)
 
