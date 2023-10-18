@@ -7,8 +7,11 @@ from tkinter import *
 
 def create_tooltips(root):
     def show_tooltip(event, text, tooltip_label):
+        x, y, _, _ = event.widget.bbox("insert")
+        x += event.widget.winfo_rootx() + 25
+        y += event.widget.winfo_rooty() + 30
         tooltip_label.config(text=text)
-        tooltip_label.place(x=root.winfo_pointerx(), y=root.winfo_pointery())
+        tooltip_label.place(x=x, y=y)
 
     def hide_tooltip(event, tooltip_label):
         tooltip_label.place_forget()
@@ -16,7 +19,7 @@ def create_tooltips(root):
     def create_tooltip(widget, text):
         tooltip_label = Label(root, background="lightyellow", relief="solid", borderwidth=1)
         tooltip_label.place_forget()
-        
+
         widget.bind("<Enter>", lambda event, text=text: show_tooltip(event, text, tooltip_label))
         widget.bind("<Leave>", lambda event: hide_tooltip(event, tooltip_label))
 
@@ -30,7 +33,7 @@ def create_tooltips(root):
     # Create and pack the buttons with tooltips
     for text, tooltip_text in button_data:
         button = Button(root, text=text)
-        button.pack(pady=10)
+        button.pack(padx=10, pady=10)
         create_tooltip(button, tooltip_text)
 
     root.mainloop()
@@ -41,4 +44,6 @@ if __name__ == "__main__":
     root.title("Tooltips for Multiple Buttons")
 
     create_tooltips(root)
+
+
 
