@@ -6,22 +6,33 @@ A demonstration of how to create Tooltips that appear on mouseover of a button
 from tkinter import *
 
 def create_tooltips(root):
+    # Define a function to show the tooltip when the mouse  the button.
     def show_tooltip(event, text, tooltip_label):
+        # Calculate the position for the tooltip relative to the button
         x, y, _, _ = event.widget.bbox("insert")
-        x += event.widget.winfo_rootx() + 30
-        y += event.widget.winfo_rooty() + 15
+        x += event.widget.winfo_rootx() + 25
+        y += event.widget.winfo_rooty() + 30
+        
+        # Set the tooltip text and position
         tooltip_label.config(text=text)
         tooltip_label.place(x=x, y=y)
-        tooltip_label.lift()  # Raise the tooltip to the top
+        tooltip_label.lift()  # Raise the tooltip to the top of the stacking order
+        #tooltip_label.grab_set()  # Make sure the tooltip is in the foreground
 
+    # Define a function to hide the tooltip when the mouse leaves the button.
     def hide_tooltip(event, tooltip_label):
+        # Hide the tooltip
         tooltip_label.place_forget()
 
     def create_tooltip(widget, text):
+        # Create a Label widget to display the tooltip
         tooltip_label = Label(root, background="lightyellow", relief="solid", borderwidth=1)
+        # Initially hide the tooltip.
         tooltip_label.place_forget()
 
+        # Bind the "<Enter>" event (mouse entering the button) to the show_tooltip function
         widget.bind("<Enter>", lambda event, text=text: show_tooltip(event, text, tooltip_label))
+        # Bind the "<Leave>" event (mouse leaving the button) to the hide_tooltip function
         widget.bind("<Leave>", lambda event: hide_tooltip(event, tooltip_label))
 
     # Define a list of button texts and their corresponding tooltips
@@ -34,16 +45,18 @@ def create_tooltips(root):
     # Create and pack the buttons with tooltips
     for text, tooltip_text in button_data:
         button = Button(root, text=text)
-        button.pack(padx=10, pady=10)
+        button.grid(padx=10, pady=10)
         create_tooltip(button, tooltip_text)
 
-    root.mainloop()
 
 if __name__ == "__main__":
+    # Create the main Tkinter window
     root = Tk()
     root.geometry("400x200")
     root.title("Tooltips for Multiple Buttons")
 
+    # Call the function to create tooltips
     create_tooltips(root)
 
+    root.mainloop()
 
