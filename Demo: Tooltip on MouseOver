@@ -12,6 +12,7 @@ def create_tooltips(root):
         y += event.widget.winfo_rooty() + 30
         tooltip_label.config(text=text)
         tooltip_label.place(x=x, y=y)
+        tooltip_label.lift()  # Raise the tooltip to the top
 
     def hide_tooltip(event, tooltip_label):
         tooltip_label.place_forget()
@@ -44,6 +45,4 @@ if __name__ == "__main__":
     root.title("Tooltips for Multiple Buttons")
 
     create_tooltips(root)
-
-
 
