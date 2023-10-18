@@ -5,40 +5,37 @@ A demonstration of how to create Tooltips that appear on mouseover of a button
 
 from tkinter import *
 
-# Define a function to show the tooltip when the mouse  the button.
-def show_tooltip(event):
+def show_tooltip(event, text, tooltip_label):
+    tooltip_label.config(text=text)
     tooltip_label.place(x=root.winfo_pointerx(), y=root.winfo_pointery())
 
-# Define a function to hide the tooltip when the mouse leaves the button.
-def hide_tooltip(event):
+def hide_tooltip(event, tooltip_label):
     tooltip_label.place_forget()
 
-# Create the main Tkinter window.
+def create_tooltip(widget, text):
+    tooltip_label = Label(root, background="lightyellow", relief="solid", borderwidth=1)
+    tooltip_label.place_forget()
+    
+    widget.bind("<Enter>", lambda event, text=text: show_tooltip(event, text, tooltip_label))
+    widget.bind("<Leave>", lambda event: hide_tooltip(event, tooltip_label))
+
 root = Tk()
+root.geometry("400x200")
+root.title("Tooltips for Multiple Buttons")
 
-# Set the initial size of the window.
-root.geometry("200x200")
+# Define a list of button texts and their corresponding tooltips
+button_data = [
+    ("Button 1", "This is the first button."),
+    ("Button 2", "This is the second button."),
+    ("Button 3", "This is the third button."),
+]
 
-# Set the title of the window.
-root.title("Demo of Tooltip on MouseOver")
+# Create and pack the buttons with tooltips
+for text, tooltip_text in button_data:
+    button = Button(root, text=text)
+    button.pack(pady=10)
+    create_tooltip(button, tooltip_text)
 
-# Create a button widget with the text "Hover Me" and place it in the window.
-button = Button(root, text="Hover Over Me")
-button.pack(pady=20)
-
-# Create a Label widget to display the tooltip.
-tooltip_label = Label(root, text="This is a tooltip!", background="lightyellow", relief="solid", borderwidth=1)
-
-# Initially hide the tooltip.
-tooltip_label.place_forget()
-
-# Bind the "<Enter>" event (mouse entering the button) to the show_tooltip function.
-button.bind("<Enter>", show_tooltip)
-
-# Bind the "<Leave>" event (mouse leaving the button) to the hide_tooltip function.
-
-button.bind("<Leave>", hide_tooltip)
-
-# Start the main event loop, which keeps the GUI application running.
 root.mainloop()
+
 
