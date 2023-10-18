@@ -8,8 +8,8 @@ from tkinter import *
 def create_tooltips(root):
     def show_tooltip(event, text, tooltip_label):
         x, y, _, _ = event.widget.bbox("insert")
-        x += event.widget.winfo_rootx() + 25
-        y += event.widget.winfo_rooty() + 30
+        x += event.widget.winfo_rootx() + 30
+        y += event.widget.winfo_rooty() + 15
         tooltip_label.config(text=text)
         tooltip_label.place(x=x, y=y)
         tooltip_label.lift()  # Raise the tooltip to the top
@@ -45,4 +45,5 @@ if __name__ == "__main__":
     root.title("Tooltips for Multiple Buttons")
 
     create_tooltips(root)
+
 
