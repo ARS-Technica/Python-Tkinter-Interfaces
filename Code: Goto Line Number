@@ -1,22 +1,22 @@
-"""
-A function that asks a user for a line number THEN scrolls the text widget down
-to that line number and highlights the line.  Good for editing lengthy texts.
-"""
-
 import tkinter as tk
+from tkinter import simpledialog
 
-def scroll_and_highlight_text(text_widget, line_number):
-    # Ensure the line number is within a valid range
-    if 1 <= line_number <= int(text_widget.index('end-1c').split('.')[0]):
-        # Scroll to the line (line_number - 1)
-        text_widget.see(f"{line_number}.0")
-        # Highlight the line (line_number - 1)
-        start_index = f"{line_number}.0"
-        end_index = f"{line_number + 1}.0"
-        text_widget.tag_add("highlight", start_index, end_index)
-        text_widget.tag_configure("highlight", background="yellow")  # You can customize the highlight color
-    else:
-        print("Line number is out of range")
+def scroll_and_highlight_text(text_widget):
+    # Ask the user for a line number
+    line_number = simpledialog.askinteger("Line Number", "Enter the line number:")
+    
+    if line_number is not None:
+        # Ensure the line number is within a valid range
+        if 1 <= line_number <= int(text_widget.index('end-1c').split('.')[0]):
+            # Scroll to the line (line_number - 1)
+            text_widget.see(f"{line_number}.0")
+            # Highlight the line (line_number - 1)
+            start_index = f"{line_number}.0"
+            end_index = f"{line_number + 1}.0"
+            text_widget.tag_add("highlight", start_index, end_index)
+            text_widget.tag_configure("highlight", background="yellow")  # You can customize the highlight color
+        else:
+            print("Line number is out of range")
 
 # Create a tkinter window and a text widget
 window = tk.Tk()
@@ -26,8 +26,8 @@ text_widget.pack()
 # Insert some text into the text widget
 text_widget.insert("1.0", "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\n")
 
-# Example: Scroll to line 3 and highlight it
-scroll_and_highlight_text(text_widget, 3)
+# Example: Scroll to and highlight the user-specified line
+scroll_and_highlight_text(text_widget)
 
 # Start the tkinter main loop
 window.mainloop()
