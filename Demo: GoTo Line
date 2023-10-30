@@ -28,6 +28,7 @@ def clear_highlighting(text_widget):
 def scroll_to_next_line(text_widget):
     current_line = text_widget.index(tk.INSERT).split('.')[0]
     next_line = str(int(current_line) + 1)
+    clear_highlighting(text_widget)  # Clear highlighting from the current line
     scroll_and_highlight_text(text_widget, int(next_line))
 
 def create_menu_with_scroll_option(window, text_widget):
