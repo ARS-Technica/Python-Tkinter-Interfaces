@@ -48,6 +48,21 @@ def scroll_to_next_line(text_widget):
         # Scroll and highlight the next line
         scroll_to_line(text_widget, next_line)
 
+def scroll_to_previous_line(text_widget):
+    if previous_highlighted_line is None:
+        # If there's no previous highlight, start from the first line
+        scroll_to_line(text_widget, 1)
+    else:
+        # Get the current line number
+        current_line = int(previous_highlighted_line)
+        # Calculate the previous line number
+        previous_line = current_line - 1
+        if previous_line < 1:
+            # Wrap around to the last line if at the beginning
+            previous_line = int(text_widget.index('end-1c').split('.')[0])
+        # Scroll and highlight the previous line
+        scroll_to_line(text_widget, previous_line)
+
 def clear_highlighting(text_widget):
     # Remove the "highlight" tag from the entire text widget
     text_widget.tag_remove("highlight", "1.0", "end")
@@ -72,6 +87,9 @@ def create_menu_with_scroll_option(window, text_widget):
     # Add an item to the submenu that calls scroll_to_next_line
     submenu.add_command(label="Scroll to Next Line", command=lambda: scroll_to_next_line(text_widget))
     
+    # Add an item to the submenu that calls scroll_to_previous_line
+    submenu.add_command(label="Scroll to Previous Line", command=lambda: scroll_to_previous_line(text_widget))
+    
     # Add an item to the submenu that calls clear_highlighting
     submenu.add_command(label="Clear Highlighting", command=lambda: clear_highlighting(text_widget))
 
@@ -84,7 +102,7 @@ def create_window():
     # Insert some text into the text widget
     text_widget.insert("1.0", "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\n")
     
-    # Create a menu with "Scroll to Line," "Scroll to Next Line," and "Clear Highlighting" options
+    # Create a menu with "Scroll to Line," "Scroll to Next Line," "Scroll to Previous Line," and "Clear Highlighting" options
     create_menu_with_scroll_option(window, text_widget)
     
     # Start the tkinter main loop
