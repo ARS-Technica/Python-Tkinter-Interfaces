@@ -7,29 +7,53 @@ to that line number and highlights the line.  Good for editing lengthy texts.
 import tkinter as tk
 from tkinter import simpledialog
 
-def scroll_and_highlight_text(text_widget, line_number):
-    if line_number is not None:
-        # Ensure the line number is within a valid range
-        if 1 <= line_number <= int(text_widget.index('end-1c').split('.')[0]):
-            # Scroll to the line (line_number - 1)
-            text_widget.see(f"{line_number}.0")
-            # Highlight the line (line_number - 1)
-            start_index = f"{line_number}.0"
-            end_index = f"{line_number + 1}.0"
-            text_widget.tag_add("highlight", start_index, end_index)
-            text_widget.tag_configure("highlight", background="yellow")  # You can customize the highlight color
-        else:
-            print("Line number is out of range")
+# Store the previously highlighted line number
+previous_highlighted_line = None
+
+def goto_line():   
+    # Ask the user for a line number
+    line_number = simpledialog.askinteger("Line Number", "Enter the line number:")
+    
+    return line_number
+
+def scroll_to_line(text_widget, line_number):
+    # Ensure the line number is within a valid range
+    total_lines = int(text_widget.index('end-1c').split('.')[0])
+    if 1 <= line_number <= total_lines:
+        # Clear previous highlighting
+        clear_highlighting(text_widget)
+        # Scroll to the line (line_number - 1)
+        text_widget.see(f"{line_number}.0")
+        # Highlight the line (line_number - 1)
+        start_index = f"{line_number}.0"
+        end_index = f"{line_number + 1}.0"
+        text_widget.tag_add("highlight", start_index, end_index)
+        text_widget.tag_configure("highlight", background="yellow")  # You can customize the highlight color
+        # Update the previously highlighted line
+        global previous_highlighted_line
+        previous_highlighted_line = line_number
+
+def scroll_to_next_line(text_widget):
+    if previous_highlighted_line is None:
+        # If there's no previous highlight, start from the first line
+        scroll_to_line(text_widget, 1)
+    else:
+        # Get the current line number
+        current_line = int(previous_highlighted_line)
+        # Calculate the next line number
+        next_line = current_line + 1
+        if next_line > int(text_widget.index('end-1c').split('.')[0]):
+            # Wrap around to the first line if at the end
+            next_line = 1
+        # Scroll and highlight the next line
+        scroll_to_line(text_widget, next_line)
 
 def clear_highlighting(text_widget):
     # Remove the "highlight" tag from the entire text widget
     text_widget.tag_remove("highlight", "1.0", "end")
-
-def scroll_to_next_line(text_widget):
-    current_line = text_widget.index(tk.INSERT).split('.')[0]
-    next_line = str(int(current_line) + 1)
-    clear_highlighting(text_widget)  # Clear highlighting from the current line
-    scroll_and_highlight_text(text_widget, int(next_line))
+    # Reset the previous highlighted line
+    global previous_highlighted_line
+    previous_highlighted_line = None
 
 def create_menu_with_scroll_option(window, text_widget):
     # Create menu_bar
@@ -42,26 +66,30 @@ def create_menu_with_scroll_option(window, text_widget):
     # Add the submenu to the menu_bar
     menu_bar.add_cascade(label="Options", menu=submenu)
     
-    # Add an item to the submenu that calls scroll_and_highlight_text
-    submenu.add_command(label="Scroll to Line", command=lambda: scroll_and_highlight_text(text_widget, simpledialog.askinteger("Line Number", "Enter the line number:")))
+    # Add an item to the submenu that calls scroll_to_line
+    submenu.add_command(label="Scroll to Line", command=lambda: scroll_to_line(text_widget, goto_line()))
+    
+    # Add an item to the submenu that calls scroll_to_next_line
+    submenu.add_command(label="Scroll to Next Line", command=lambda: scroll_to_next_line(text_widget))
     
     # Add an item to the submenu that calls clear_highlighting
     submenu.add_command(label="Clear Highlighting", command=lambda: clear_highlighting(text_widget))
 
-    # Add an item to the submenu to scroll to the next line
-    submenu.add_command(label="Scroll to Next Line", command=lambda: scroll_to_next_line(text_widget))
+def create_window():
+    # Create a tkinter window and a text widget
+    window = tk.Tk()
+    text_widget = tk.Text(window)
+    text_widget.pack()
+    
+    # Insert some text into the text widget
+    text_widget.insert("1.0", "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\n")
+    
+    # Create a menu with "Scroll to Line," "Scroll to Next Line," and "Clear Highlighting" options
+    create_menu_with_scroll_option(window, text_widget)
+    
+    # Start the tkinter main loop
+    window.mainloop()   
 
-# Create a tkinter window and a text widget
-window = tk.Tk()
-text_widget = tk.Text(window)
-text_widget.pack()
-
-# Insert some text into the text widget
-text_widget.insert("1.0", "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\n")
-
-# Create a menu with "Scroll to Line" and "Clear Highlighting" options
-create_menu_with_scroll_option(window, text_widget)
-
-# Start the tkinter main loop
-window.mainloop()
+if __name__ == "__main__":
+    create_window()
 
