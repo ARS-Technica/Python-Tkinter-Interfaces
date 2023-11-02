@@ -54,6 +54,7 @@ def find_and_replace():
             text_widget.insert(start, replace_term_entry)
             start = end
             text_widget.tag_remove("found", start, end)
+            break  # Stop after finding and replacing the first instance
     
     def replace_all():
         text_widget = text
