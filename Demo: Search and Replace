@@ -12,7 +12,7 @@ def find_and_replace():
     replace_term = StringVar()
     match_case = IntVar()
     whole_words = IntVar()
-    
+     
     def find():
         find_text = find_term.get()
         if not find_text:
@@ -65,7 +65,7 @@ def find_and_replace():
             text.delete('1.0', 'end')
             text.insert('1.0', updated_content)
             find_all()
-    
+
     Label(dialog, text="Find: ").grid(row=0, column=0, padx=5, pady=5, sticky=W)
     Entry(dialog, textvariable=find_term).grid(row=0, column=1, padx=5, pady=5)
     Button(dialog, text="Find", command=find, width=10).grid(row=0, column=2, padx=5, pady=5)
@@ -76,8 +76,8 @@ def find_and_replace():
     Button(dialog, text="Replace", command=replace, width=10).grid(row=1, column=2, padx=5, pady=5)
     Button(dialog, text="Replace All", command=replace_all, width=10).grid(row=1, column=3, padx=5, pady=5)
     
-    Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=W)
-    Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=2, column=2, columnspan=2, padx=5, pady=5, sticky=W)
+    Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=0, column=4, padx=5, pady=5, sticky=W)
+    Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=1, column=4, padx=5, pady=5, sticky=W)
     
     find_term.set('')
     replace_term.set('')
