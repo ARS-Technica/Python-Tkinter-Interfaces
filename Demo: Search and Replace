@@ -13,73 +13,61 @@ def find_and_replace():
     match_case = IntVar()
     whole_words = IntVar()
     
-    COUNT = IntVar()
-    COUNT.set(0)
-    
     def find():
-        find_text = find_term.get()
-        if not find_text:
-            return
-        options = ''
-        if match_case.get():
-            options += 'd'
-        if whole_words.get():
-            options += 'w'
-        text.tag_remove('found', '1.0', END)
-        idx = '1.0'
-        while 1:
-            idx = text.search(find_text, idx, nocase=not match_case.get(), stopindex=END, count=options)
-            if not idx:
+        text_widget = text
+        find_term_entry = find_term.get()
+        start = "1.0"
+        while True:
+            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+            if not start:
                 break
-            lastidx = f"{idx}+{len(find_text)}c"
-            text.tag_add('found', idx, lastidx)
-            idx = lastidx
-        text.tag_config('found', foreground='green', background='yellow')
-
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.tag_add("found", start, end)
+            start = end
+        text_widget.tag_config("found", background="yellow", foreground="green")
+    
     def find_all():
-        find()
+        text_widget = text
+        find_term_entry = find_term.get()
+        start = "1.0"
+        while True:
+            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+            if not start:
+                break
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.tag_add("found", start, end)
+            start = end
+        text_widget.tag_config("found", background="yellow", foreground="green")
     
     def replace():
         text_widget = text
         find_term_entry = find_term.get()
         replace_term_entry = replace_term.get()
-        options = ""
-    
-        if match_case.get():
-            options += 'd'
-    
-        if whole_words.get():
-            options += 'w'
-        
-        if find_term_entry:
-            while True:
-                start = text_widget.search(find_term_entry, "1.0", stopindex="end", count=COUNT, options=options)
-                if not start:
-                    break
-                end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-                text_widget.delete(start, end)
-                text_widget.insert(start, replace_term_entry)
+        start = "1.0"
+        while True:
+            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+            if not start:
+                break
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.delete(start, end)
+            text_widget.insert(start, replace_term_entry)
+            start = end
+            text_widget.tag_remove("found", start, end)
     
     def replace_all():
         text_widget = text
         find_term_entry = find_term.get()
         replace_term_entry = replace_term.get()
-        options = ""
-    
-        if match_case.get():
-            options += 'd'
-    
-        if whole_words.get():
-            options += 'w'
-    
-        if find_term_entry:
-            while True:
-                start = text_widget.search(find_term_entry, "1.0", stopindex="end", count=COUNT, options=options)
-                if not start:
-                    break
-                end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-                text_widget.delete(start, end)
-                text_widget.insert(start, replace_term_entry)
+        start = "1.0"
+        while True:
+            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+            if not start:
+                break
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.delete(start, end)
+            text_widget.insert(start, replace_term_entry)
+            start = end
+            text_widget.tag_remove("found", start, end)
     
     Label(dialog, text="Find: ").grid(row=0, column=0, padx=5, pady=5, sticky=W)
     Entry(dialog, textvariable=find_term).grid(row=0, column=1, padx=5, pady=5)
@@ -99,8 +87,6 @@ def find_and_replace():
 
 root = Tk()
 text = Text(root)
-#text.insert('1.0', '''Type your text here''')
-
 # Test text for the purposes of debugging
 text.insert("end", "one\ntwo\nthree\n")
 text.insert("end", "four\n", ("bigfont",))
@@ -108,7 +94,6 @@ text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nthree two")
 text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
 text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
-
 text.pack(side=BOTTOM)
 
 menu_bar = Menu(root)
