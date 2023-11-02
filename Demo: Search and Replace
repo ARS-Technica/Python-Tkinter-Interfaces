@@ -24,6 +24,7 @@ def find_and_replace():
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
             text_widget.tag_add("found", start, end)
             start = end
+            break  # Stop after finding the first instance
         text_widget.tag_config("found", background="yellow", foreground="green")
     
     def find_all():
@@ -87,13 +88,7 @@ def find_and_replace():
 
 root = Tk()
 text = Text(root)
-# Test text for the purposes of debugging
-text.insert("end", "one\ntwo\nthree\n")
-text.insert("end", "four\n", ("bigfont",))
-text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nthree two")
-text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
-text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
+text.insert('1.0', '''Type your text here''')
 text.pack(side=BOTTOM)
 
 menu_bar = Menu(root)
