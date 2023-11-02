@@ -1,0 +1,26 @@
+"""
+A Simple set of Functions to act as a Search and Replace feature inside a Notebook app.
+"""
+
+from tkinter import *
+from tkinter import simpledialog
+
+root = Tk()
+text = Text(root)
+text.insert('1.0', '''Type your text here''')
+text.pack(side=BOTTOM)
+
+def find_and_replace():
+    find_str = simpledialog.askstring("Find", "Enter the text to find:")
+    replace_str = simpledialog.askstring("Replace", "Enter the replacement text:")
+    if find_str and replace_str:
+        text.replace('1.0', END, text.get('1.0', END).replace(find_str, replace_str))
+
+menu_bar = Menu(root)
+root.config(menu=menu_bar)
+submenu = Menu(menu_bar, tearoff=0)
+menu_bar.add_cascade(label="Options", menu=submenu)
+submenu.add_command(label="Search and Replace", command=find_and_replace)
+
+root.mainloop()
+
