@@ -3,6 +3,7 @@ A Simple set of Functions to act as a Search and Replace feature inside a Notebo
 """
 
 from tkinter import *
+import re # Necessary for the "Whole Words" checkbox
 
 def find_and_replace():
     """
@@ -22,23 +23,31 @@ def find_and_replace():
         """
         Function to find and highlight the next occurrence of a search term
         """
-        text_widget = text  # Reference to the main text widget
-        find_term_entry = find_term.get()  # Get the text to find
-        start = "1.0"  # Start searching from the beginning
+        text_widget = text
+        find_term_entry = find_term.get()
+        start = "1.0"
 
         while True:
-            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+            # Is the "Whole Words" checkbox active?
+            if whole_words.get():  # Check if "Whole Words" is active
+                pattern = r'\b' + re.escape(find_term_entry) + r'\b'
+                # The \b anchor is the regular expression pattern to match the search term as a whole word.
+            else:
+                pattern = re.escape(find_term_entry)
+    
+            start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
+
             if not start:
                 break
 
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-            text_widget.tag_add("found", start, end)  # Highlight the found text
+            text_widget.tag_add("found", start, end)
             start = end
 
             break  # Stop after finding the first instance
 
         text_widget.tag_config("found", background="yellow", foreground="green")
-    
+
     def find_all():
         """
         Function to find and highlight all occurrences of a search term
