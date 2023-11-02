@@ -5,72 +5,102 @@ A Simple set of Functions to act as a Search and Replace feature inside a Notebo
 from tkinter import *
 
 def find_and_replace():
+    """
+    Function to create the "Find and Replace" dialog pop-up box
+    """
+    # Create a new dialog window
     dialog = Toplevel(root)
     dialog.title("Find and Replace")
     
+    # Variables to store the text for find, replace, and checkbox states
     find_term = StringVar()
     replace_term = StringVar()
     match_case = IntVar()
     whole_words = IntVar()
-    
+
     def find():
-        text_widget = text
-        find_term_entry = find_term.get()
-        start = "1.0"
+        """
+        Function to find and highlight the next occurrence of a search term
+        """
+        text_widget = text  # Reference to the main text widget
+        find_term_entry = find_term.get()  # Get the text to find
+        start = "1.0"  # Start searching from the beginning
+
         while True:
             start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
             if not start:
                 break
+
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-            text_widget.tag_add("found", start, end)
+            text_widget.tag_add("found", start, end)  # Highlight the found text
             start = end
+
             break  # Stop after finding the first instance
+
         text_widget.tag_config("found", background="yellow", foreground="green")
     
     def find_all():
+        """
+        Function to find and highlight all occurrences of a search term
+        """
         text_widget = text
         find_term_entry = find_term.get()
         start = "1.0"
+
         while True:
             start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
             if not start:
                 break
+
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
             text_widget.tag_add("found", start, end)
             start = end
+
         text_widget.tag_config("found", background="yellow", foreground="green")
     
     def replace():
+        """
+        Function to find and replace the next occurrence of a search term 
+        """
         text_widget = text
         find_term_entry = find_term.get()
         replace_term_entry = replace_term.get()
         start = "1.0"
+
         while True:
             start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
             if not start:
                 break
+
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
             text_widget.delete(start, end)
             text_widget.insert(start, replace_term_entry)
             start = end
             text_widget.tag_remove("found", start, end)
+            
             break  # Stop after finding and replacing the first instance
-    
+
     def replace_all():
+        """
+        Function to find and replace all occurrences of a search term 
+        """
         text_widget = text
         find_term_entry = find_term.get()
         replace_term_entry = replace_term.get()
         start = "1.0"
+
         while True:
             start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
             if not start:
                 break
+
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
             text_widget.delete(start, end)
             text_widget.insert(start, replace_term_entry)
             start = end
             text_widget.tag_remove("found", start, end)
     
+    # Create labels, entry fields, buttons, and checkboxes in the dialog window
     Label(dialog, text="Find: ").grid(row=0, column=0, padx=5, pady=5, sticky=W)
     Entry(dialog, textvariable=find_term).grid(row=0, column=1, padx=5, pady=5)
     Button(dialog, text="Find", command=find, width=10).grid(row=0, column=2, padx=5, pady=5)
@@ -84,19 +114,30 @@ def find_and_replace():
     Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=0, column=4, padx=5, pady=5, sticky=W)
     Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=1, column=4, padx=5, pady=5, sticky=W)
     
-    find_term.set('')
-    replace_term.set('')
+    find_term.set('')  # Set the default values for find text field
+    replace_term.set('') # Set the default values for replace text field
 
-root = Tk()
-text = Text(root)
-text.insert('1.0', '''Type your text here''')
-text.pack(side=BOTTOM)
+def create_window():
+    """
+    Function to create the main application window
+    """
+    global root  # Make 'root' a global variable
+    global text  # Make 'text' a global variable
 
-menu_bar = Menu(root)
-root.config(menu=menu_bar)
-submenu = Menu(menu_bar, tearoff=0)
-menu_bar.add_cascade(label="Options", menu=submenu)
-submenu.add_command(label="Search and Replace", command=find_and_replace)
+    root = Tk()
+    text = Text(root)
+    text.insert('1.0', '''Type your text here''')
+    text.pack(side=BOTTOM)
+    
+    menu_bar = Menu(root)
+    root.config(menu=menu_bar)
+    submenu = Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Options", menu=submenu)
+    submenu.add_command(label="Search and Replace", command=find_and_replace) 
 
-root.mainloop()
+    # Start the main event loop
+    root.mainloop()
+
+if __name__ == "__main__":
+    create_window()
 
