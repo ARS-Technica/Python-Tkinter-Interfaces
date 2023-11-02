@@ -12,7 +12,10 @@ def find_and_replace():
     replace_term = StringVar()
     match_case = IntVar()
     whole_words = IntVar()
-     
+    
+    COUNT = IntVar()
+    COUNT.set(0)
+    
     def find():
         find_text = find_term.get()
         if not find_text:
@@ -37,35 +40,47 @@ def find_and_replace():
         find()
     
     def replace():
-        find_text = find_term.get()
-        replace_text = replace_term.get()
-        if find_text and replace_text:
-            options = ''
-            if match_case.get():
-                options += 'd'
-            if whole_words.get():
-                options += 'w'
-            text_content = text.get('1.0', 'end-1c')
-            updated_content = text_content.replace(find_text, replace_text)
-            text.delete('1.0', 'end')
-            text.insert('1.0', updated_content)
-            find()
+        text_widget = text
+        find_term_entry = find_term.get()
+        replace_term_entry = replace_term.get()
+        options = ""
+    
+        if match_case.get():
+            options += 'd'
+    
+        if whole_words.get():
+            options += 'w'
+        
+        if find_term_entry:
+            while True:
+                start = text_widget.search(find_term_entry, "1.0", stopindex="end", count=COUNT, options=options)
+                if not start:
+                    break
+                end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+                text_widget.delete(start, end)
+                text_widget.insert(start, replace_term_entry)
     
     def replace_all():
-        find_text = find_term.get()
-        replace_text = replace_term.get()
-        if find_text and replace_text:
-            options = ''
-            if match_case.get():
-                options += 'd'
-            if whole_words.get():
-                options += 'w'
-            text_content = text.get('1.0', 'end-1c')
-            updated_content = text_content.replace(find_text, replace_text)
-            text.delete('1.0', 'end')
-            text.insert('1.0', updated_content)
-            find_all()
-
+        text_widget = text
+        find_term_entry = find_term.get()
+        replace_term_entry = replace_term.get()
+        options = ""
+    
+        if match_case.get():
+            options += 'd'
+    
+        if whole_words.get():
+            options += 'w'
+    
+        if find_term_entry:
+            while True:
+                start = text_widget.search(find_term_entry, "1.0", stopindex="end", count=COUNT, options=options)
+                if not start:
+                    break
+                end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+                text_widget.delete(start, end)
+                text_widget.insert(start, replace_term_entry)
+    
     Label(dialog, text="Find: ").grid(row=0, column=0, padx=5, pady=5, sticky=W)
     Entry(dialog, textvariable=find_term).grid(row=0, column=1, padx=5, pady=5)
     Button(dialog, text="Find", command=find, width=10).grid(row=0, column=2, padx=5, pady=5)
@@ -81,26 +96,19 @@ def find_and_replace():
     
     find_term.set('')
     replace_term.set('')
-    
-    find_term_entry = find_term.get()
-    replace_term_entry = replace_term.get()
-    
-    if match_case.get():
-        options += 'd'
-    if whole_words.get():
-        options += 'w'
-    
-    if find_term_entry:
-        find()
-    
-    find_term.trace("w", lambda name, index, mode: find())
-    find_term.trace("w", lambda name, index, mode: find_all())
-    find_term.trace("w", lambda name, index, mode: replace())
-    find_term.trace("w", lambda name, index, mode: replace_all())
 
 root = Tk()
 text = Text(root)
-text.insert('1.0', '''Type your text here''')
+#text.insert('1.0', '''Type your text here''')
+
+# Test text for the purposes of debugging
+text.insert("end", "one\ntwo\nthree\n")
+text.insert("end", "four\n", ("bigfont",))
+text.insert("end", "five\nsecond two\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nthree two")
+text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfour two")
+text.insert("end", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfive two")
+
 text.pack(side=BOTTOM)
 
 menu_bar = Menu(root)
