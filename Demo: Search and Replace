@@ -108,6 +108,10 @@ def find_and_replace():
             text_widget.insert(start, replace_term_entry)
             start = end
             text_widget.tag_remove("found", start, end)
+            
+    def clear_highlighting():
+        text_widget.tag_remove("found", "1.0", "end")
+
     
     # Create labels, entry fields, buttons, and checkboxes in the dialog window
     Label(dialog, text="Find: ").grid(row=0, column=0, padx=5, pady=5, sticky=W)
@@ -123,6 +127,10 @@ def find_and_replace():
     Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=0, column=4, padx=5, pady=5, sticky=W)
     Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=1, column=4, padx=5, pady=5, sticky=W)
     
+
+    # Bind the clear_highlighting function to the <FocusOut> event of the "Find" text field
+    # find_term.bind("<KeyRelease>", lambda event: clear_highlighting()) 
+
     find_term.set('')  # Set the default values for find text field
     replace_term.set('') # Set the default values for replace text field
 
