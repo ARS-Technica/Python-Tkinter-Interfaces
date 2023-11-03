@@ -100,18 +100,19 @@ def find_and_replace():
             return
         find_term_entry = find_term.get()
         replace_term_entry = replace_term.get()
+        
+        # Check if "In Selection" checkbox is active
+        if in_selection.get() and text_widget.tag_ranges("sel"):
+            sel_start, sel_end = text_widget.tag_ranges("sel")
+        else:
+            sel_start, sel_end = "1.0", "end"
     
-        start = text_widget.index("sel.first" if in_selection.get() else "1.0")
-    
+        start = sel_start
         while True:
-            if in_selection.get():
-                end = text_widget.index("sel.last")
-            else:
-                start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
-                if not start:
-                    break
-                end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-    
+            start = text_widget.search(find_term_entry, start, stopindex=sel_end, nocase=not match_case.get())
+            if not start:
+                break
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
             text_widget.delete(start, end)
             text_widget.insert(start, replace_term_entry)
             start = end
