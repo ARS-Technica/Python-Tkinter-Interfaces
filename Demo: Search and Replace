@@ -3,18 +3,17 @@ A Simple set of Functions to act as a Search and Replace feature inside a Notebo
 """
 
 from tkinter import *
-import re  # Necessary for the "Whole Words" checkbox
+import re
 
 def find_and_replace():
-    # Create a new dialog window
     dialog = Toplevel(root)
     dialog.title("Find and Replace")
 
-    # Variables to store the text for find, replace, and checkbox states
     find_term = StringVar()
     replace_term = StringVar()
     match_case = IntVar()
     whole_words = IntVar()
+    in_selection = IntVar()
     text_widget = None
 
     def set_text_widget(widget):
@@ -22,14 +21,16 @@ def find_and_replace():
         text_widget = widget
 
     def find():
-        # Function to find and highlight the next occurrence of a search term
         nonlocal text_widget
         if not text_widget:
             return
-
         clear_highlighting()
         find_term_entry = find_term.get()
         start = "1.0"
+
+        search_range = "1.0"
+        if in_selection.get():
+            search_range = text_widget.tag_ranges("sel")
 
         while True:
             if whole_words.get():
@@ -37,78 +38,76 @@ def find_and_replace():
             else:
                 pattern = re.escape(find_term_entry)
 
-            start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
+            start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end", searchdata=search_range)
 
             if not start:
                 break
-
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
             text_widget.tag_add("found", start, end)
             start = end
-
             break
-
         text_widget.tag_config("found", background="yellow", foreground="green")
 
     def find_all():
-        # Function to find and highlight all occurrences of a search term
         nonlocal text_widget
         if not text_widget:
             return
-
         clear_highlighting()
         find_term_entry = find_term.get()
         start = "1.0"
 
+        search_range = "1.0"
+        if in_selection.get():
+            search_range = text_widget.tag_ranges("sel")
+
         while True:
-            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end", searchdata=search_range)
             if not start:
                 break
-
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
             text_widget.tag_add("found", start, end)
             start = end
-
         text_widget.tag_config("found", background="yellow", foreground="green")
 
     def replace():
-        # Function to find and replace the next occurrence of a search term
         nonlocal text_widget
         if not text_widget:
             return
-
         find_term_entry = find_term.get()
         replace_term_entry = replace_term.get()
         start = "1.0"
 
+        search_range = "1.0"
+        if in_selection.get():
+            search_range = text_widget.tag_ranges("sel")
+
         while True:
-            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end", searchdata=search_range)
             if not start:
                 break
-
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
             text_widget.delete(start, end)
             text_widget.insert(start, replace_term_entry)
             start = end
             text_widget.tag_remove("found", start, end)
-
             break
 
     def replace_all():
-        # Function to find and replace all occurrences of a search term
         nonlocal text_widget
         if not text_widget:
             return
-
         find_term_entry = find_term.get()
         replace_term_entry = replace_term.get()
         start = "1.0"
 
+        search_range = "1.0"
+        if in_selection.get():
+            search_range = text_widget.tag_ranges("sel")
+
         while True:
-            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end", searchdata=search_range)
             if not start:
                 break
-
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
             text_widget.delete(start, end)
             text_widget.insert(start, replace_term_entry)
@@ -116,32 +115,45 @@ def find_and_replace():
             text_widget.tag_remove("found", start, end)
 
     def clear_highlighting():
-        # Function to clear the highlighting
         nonlocal text_widget
         if text_widget:
             text_widget.tag_remove("found", "1.0", "end")
 
     def clear_highlighting_on_keyrelease(event):
-        # Function to clear highlighting when "Find" text field is cleared
         if not find_term.get():
             clear_highlighting()
+
+    def find_keybinding(event):
+        if event.keysym == "Return":
+            find()
+
+    def replace_keybinding(event):
+        if event.keysym == "Return":
+            replace()
 
     Label(dialog, text="Find: ").grid(row=0, column=0, padx=5, pady=5, sticky=W)
     entry_find = Entry(dialog, textvariable=find_term)
     entry_find.grid(row=0, column=1, padx=5, pady=5)
+    entry_find.bind("<KeyRelease>", clear_highlighting_on_keyrelease)
+    entry_find.bind("<Return>", find_keybinding)
     Button(dialog, text="Find", command=find, width=10).grid(row=0, column=2, padx=5, pady=5)
     Button(dialog, text="Find All", command=find_all, width=10).grid(row=0, column=3, padx=5, pady=5)
 
     Label(dialog, text="Replace: ").grid(row=1, column=0, padx=5, pady=5, sticky=W)
-    Entry(dialog, textvariable=replace_term).grid(row=1, column=1, padx=5, pady=5)
+    entry_replace = Entry(dialog, textvariable=replace_term)
+    entry_replace.grid(row=1, column=1, padx=5, pady=5)
+    entry_replace.bind("<KeyRelease>", clear_highlighting_on_keyrelease)
+    entry_replace.bind("<Return>", replace_keybinding)
     Button(dialog, text="Replace", command=replace, width=10).grid(row=1, column=2, padx=5, pady=5)
     Button(dialog, text="Replace All", command=replace_all, width=10).grid(row=1, column=3, padx=5, pady=5)
 
     Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=0, column=4, padx=5, pady=5, sticky=W)
     Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=1, column=4, padx=5, pady=5, sticky=W)
 
-    # Bind the clear_highlighting_on_keyrelease function to the <KeyRelease> event of the "Find" text field
-    entry_find.bind("<KeyRelease>", clear_highlighting_on_keyrelease)
+    in_selection_checkbox = Checkbutton(dialog, text="In Selection", variable=in_selection)
+    in_selection_checkbox.grid(row=2, column=1, padx=5, pady=5, columnspan=3, sticky=W)
+
+    Button(dialog, text="Clear Highlighting", command=clear_highlighting, width=15).grid(row=3, column=1, columnspan=3, padx=5, pady=5)
 
     find_term.set('')
     replace_term.set('')
