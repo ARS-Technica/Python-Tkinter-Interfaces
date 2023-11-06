@@ -4,10 +4,10 @@ import re
 def find_and_replace():
     dialog = Toplevel(root)
     dialog.title("Find and Replace")
-    
-    dialog.grab_set()  # Make the dialog box modal
-    # Ensures the dialog box remains in focus and the text widget's highlighting remains visible.
 
+    # Prevent the dialog box from taking the focus
+    #dialog.grab_set() # Doesn't work
+    
     find_term = StringVar()
     replace_term = StringVar()
     match_case = IntVar()
@@ -177,10 +177,6 @@ def find_and_replace():
     def replace_keybinding(event):
         if event.keysym == "Return":
             replace()
-    
-    def close_dialog():
-        dialog.grab_release()
-        dialog.destroy()
 
     Label(dialog, text="Find: ").grid(row=0, column=0, padx=5, pady=5, sticky=W)
     entry_find = Entry(dialog, textvariable=find_term)
@@ -204,14 +200,6 @@ def find_and_replace():
     in_selection_checkbox.grid(row=2, column=1, padx=5, pady=5, columnspan=3, sticky=W)
 
     Button(dialog, text="Clear Highlighting", command=clear_highlighting, width=15).grid(row=3, column=1, columnspan=3, padx=5, pady=5)
-    
-    # Create a "Close" button in the dialog to close it
-    Button(dialog, text="Close", command=close_dialog, width=10).grid(row=3, column=3, padx=5, pady=5)
-
-
-    # Bind the clear_highlighting function to the <FocusOut> event of the "Find" text field
-    find_term_entry.bind("<FocusOut>", lambda event, widget=text: clear_highlighting())
-    # The text widget's highlighting remains visible.
 
     find_term.set('')
     replace_term.set('')
@@ -223,7 +211,10 @@ def create_window():
     global text
 
     root = Tk()
-    text = Text(root)
+    text = Text(root, exportselection = False) 
+    text.config(inactiveselect = text.cget("selectbackground"))
+    text.pack(fill = "both", expand = True)
+    #https://stackoverflow.com/questions/66583030/how-to-keep-text-selection-visible-in-a-text-area-even-though-not-focused-in-tki
     text.insert('1.0', '''Type your text here. This is just a hypothetical test. ttttttt.''')
     text.pack(side=BOTTOM)
 
