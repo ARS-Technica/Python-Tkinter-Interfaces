@@ -2,7 +2,6 @@
 A Simple set of Functions to act as a Search and Replace feature inside a Notebook app.
 """
 
-
 from tkinter import *
 import re
 
@@ -101,17 +100,18 @@ def find_and_replace():
             return
         find_term_entry = find_term.get()
         replace_term_entry = replace_term.get()
-
-        start = "1.0"
-        if in_selection.get():
-            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
-            start = sel_start
-
+    
+        start = text_widget.index("sel.first" if in_selection.get() else "1.0")
+    
         while True:
-            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
-            if not start:
-                break
-            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            if in_selection.get():
+                end = text_widget.index("sel.last")
+            else:
+                start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+                if not start:
+                    break
+                end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+    
             text_widget.delete(start, end)
             text_widget.insert(start, replace_term_entry)
             start = end
