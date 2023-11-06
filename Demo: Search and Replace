@@ -1,7 +1,3 @@
-"""
-A Simple set of Functions to act as a Search and Replace feature inside a Notebook app.
-"""
-
 from tkinter import *
 import re
 
