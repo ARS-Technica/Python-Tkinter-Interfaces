@@ -90,6 +90,7 @@ def find_and_replace():
             text_widget.tag_remove("found", start, end)
             break
 
+    '''
     def replace_all():
         nonlocal text_widget
         if not text_widget:
@@ -102,11 +103,9 @@ def find_and_replace():
             end = text_widget.index("sel.last")
         else:
             start = text_widget.index("1.0")
-            end = text_widget.index(text_widget.end())
-
     
         while True:
-            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex=end)
             if not start:
                 break
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
@@ -115,6 +114,23 @@ def find_and_replace():
             text_widget.insert(start, replace_term_entry)
             start = end
             text_widget.tag_remove("found", start, end)
+    '''
+    
+    def replace_all():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        find_term_entry = find_term.get()
+        replace_term_entry = replace_term.get()
+    
+        if in_selection.get():
+            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
+        else:
+            sel_start, sel_end = "1.0", "end"
+    
+        text_widget.tag_remove("found", sel_start, sel_end)
+        text_widget.replace(sel_start, sel_end, text_widget.get(sel_start, sel_end).replace(find_term_entry, replace_term_entry))
+        # Use the replace method to replace all instances of find_term_entry at once.
 
     def clear_highlighting():
         nonlocal text_widget
@@ -167,7 +183,7 @@ def create_window():
 
     root = Tk()
     text = Text(root)
-    text.insert('1.0', '''Type your text here''')
+    text.insert('1.0', '''Type your text here. This is just a hypothetical test. ttttttt.''')
     text.pack(side=BOTTOM)
 
     menu_bar = Menu(root)
