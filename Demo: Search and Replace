@@ -116,6 +116,7 @@ def find_and_replace():
             text_widget.tag_remove("found", start, end)
     '''
     
+    '''
     def replace_all():
         nonlocal text_widget
         if not text_widget:
@@ -130,6 +131,31 @@ def find_and_replace():
     
         text_widget.tag_remove("found", sel_start, sel_end)
         text_widget.replace(sel_start, sel_end, text_widget.get(sel_start, sel_end).replace(find_term_entry, replace_term_entry))
+    '''
+
+    def replace_all():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        find_term_entry = find_term.get()
+        replace_term_entry = replace_term.get()
+    
+        if in_selection.get():
+            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
+        else:
+            sel_start, sel_end = "1.0", "end"
+    
+        selected_text = text_widget.get(sel_start, sel_end)
+        if match_case.get():
+            # Perform replacement with case sensitivity
+            replaced_text = selected_text.replace(find_term_entry, replace_term_entry)
+        else:
+            # Perform replacement case-insensitively
+            regex = re.compile(re.escape(find_term_entry), re.IGNORECASE)
+            replaced_text = regex.sub(replace_term_entry, selected_text)
+    
+        text_widget.tag_remove("found", sel_start, sel_end)
+        text_widget.replace(sel_start, sel_end, replaced_text)
         # Use the replace method to replace all instances of find_term_entry at once.
 
     def clear_highlighting():
