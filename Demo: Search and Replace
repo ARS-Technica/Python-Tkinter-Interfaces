@@ -102,6 +102,8 @@ def find_and_replace():
             end = text_widget.index("sel.last")
         else:
             start = text_widget.index("1.0")
+            end = text_widget.index(text_widget.end())
+
     
         while True:
             start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
