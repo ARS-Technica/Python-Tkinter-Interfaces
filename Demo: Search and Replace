@@ -16,6 +16,77 @@ def find_and_replace():
         nonlocal text_widget
         text_widget = widget
     
+    global last_found_position
+    last_found_position = "1.0"
+    
+    '''
+    def find():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        clear_highlighting()
+        find_term_entry = find_term.get()
+        global last_found_position  # Declare last_found_position as global
+    
+        if not last_found_position:
+            last_found_position = "1.0"
+    
+        while True:
+            if whole_words.get():
+                pattern = r'\b' + re.escape(find_term_entry) + r'\b'
+            else:
+                pattern = re.escape(find_term_entry)
+    
+            start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
+    
+            if not start:
+                break
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.tag_add("found", start, end)
+            last_found_position = text_widget.index(f"{end}+1c")  # Update last_found_position
+            break
+    
+        text_widget.tag_config("found", background="yellow", foreground="green")
+    '''
+    
+    def find():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        clear_highlighting()
+        find_term_entry = find_term.get()
+        global last_found_position  # Declare last_found_position as global
+    
+        if not last_found_position:
+            last_found_position = "1.0"
+    
+        while True:
+            whole_word_pattern = r'\b' + re.escape(find_term_entry) + r'\b'
+            non_whole_word_pattern = re.escape(find_term_entry)
+            
+            # First, search for whole word matches
+            start = text_widget.search(whole_word_pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
+    
+            if start:
+                end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+                text_widget.tag_add("found", start, end)
+                last_found_position = text_widget.index(f"{end}+1c")  # Update last_found_position
+                break
+    
+            # If no whole word matches are found, look for non-whole word matches
+            start = text_widget.search(non_whole_word_pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
+    
+            if start:
+                end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+                text_widget.tag_add("found", start, end)
+                last_found_position = text_widget.index(f"{end}+1c")  # Update last_found_position
+                break
+    
+        text_widget.tag_config("found", background="yellow", foreground="green")
+
+    
+
+    '''
     def find():
         nonlocal text_widget
         if not text_widget:
@@ -44,7 +115,7 @@ def find_and_replace():
             break
     
         text_widget.tag_config("found", background="yellow", foreground="green")
-
+    '''
     '''
     def find_all():
         nonlocal text_widget
@@ -75,6 +146,8 @@ def find_and_replace():
             return
         clear_highlighting()
         find_term_entry = find_term.get()
+        whole_word_pattern = r'\b' + re.escape(find_term_entry) + r'\b'
+        non_whole_word_pattern = re.escape(find_term_entry)
     
         start = "1.0"
         if in_selection.get():
@@ -82,12 +155,8 @@ def find_and_replace():
             start = sel_start
     
         while True:
-            if whole_words.get():
-                pattern = r'\b' + re.escape(find_term_entry) + r'\b'
-            else:
-                pattern = re.escape(find_term_entry)
-    
-            start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
+            # Find and highlight whole word instances
+            start = text_widget.search(whole_word_pattern, start, nocase=not match_case.get(), stopindex="end")
     
             if not start:
                 break
@@ -95,8 +164,26 @@ def find_and_replace():
             text_widget.tag_add("found", start, end)
             start = end
     
-        text_widget.tag_config("found", background="yellow", foreground="green")
+        # Reset the start position
+        start = "1.0" if not in_selection.get() else sel_start
     
+        while True:
+            # Find and highlight non-whole word instances
+            start = text_widget.search(non_whole_word_pattern, start, nocase=not match_case.get(), stopindex="end")
+    
+            if not start:
+                break
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+    
+            # Check if the found text intersects with an existing "found" tag (previously found whole word)
+            overlapping_tags = text_widget.tag_names(start)
+            if "found" not in overlapping_tags:
+                text_widget.tag_add("found", start, end)
+    
+            start = end
+    
+        text_widget.tag_config("found", background="yellow", foreground="green")
+   
     def replace():
         nonlocal text_widget
         if not text_widget:
