@@ -4,9 +4,6 @@ import re
 def find_and_replace():
     dialog = Toplevel(root)
     dialog.title("Find and Replace")
-
-    # Prevent the dialog box from taking the focus
-    #dialog.grab_set() # Doesn't work
     
     find_term = StringVar()
     replace_term = StringVar()
@@ -18,37 +15,6 @@ def find_and_replace():
     def set_text_widget(widget):
         nonlocal text_widget
         text_widget = widget
-
-    '''
-    def find():
-        nonlocal text_widget
-        if not text_widget:
-            return
-        clear_highlighting()
-        find_term_entry = find_term.get()
-
-        start = "1.0"
-        if in_selection.get():
-            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
-            start = sel_start
-
-        while True:
-            if whole_words.get():
-                pattern = r'\b' + re.escape(find_term_entry) + r'\b'
-            else:
-                pattern = re.escape(find_term_entry)
-
-            start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
-
-            if not start:
-                break
-            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-            text_widget.tag_add("found", start, end)
-            start = end
-            break
-
-        text_widget.tag_config("found", background="yellow", foreground="green")
-    '''
     
     def find():
         nonlocal text_widget
@@ -78,73 +44,8 @@ def find_and_replace():
             break
     
         text_widget.tag_config("found", background="yellow", foreground="green")
-    
-    
-    
-    
-    '''
-    #works
-    def find():
-        nonlocal text_widget
-        if not text_widget:
-            return
-        clear_highlighting()
-        find_term_entry = find_term.get()
-    
-        start = "1.0"
-        if in_selection.get():
-            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
-            start = sel_start
-    
-        while True:
-            pattern = re.escape(find_term_entry)
-            if whole_words.get():
-                pattern = fr'\b{pattern}\b'
-    
-            start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
-    
-            if not start:
-                break
-            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-            text_widget.tag_add("found", start, end)
-            start = end
-            break
-    
-        text_widget.tag_config("found", background="yellow", foreground="green")
-    '''
-    
-    '''
-    #works
-    def find():
-        nonlocal text_widget
-        if not text_widget:
-            return
-        clear_highlighting()
-        find_term_entry = find_term.get()
-    
-        start = "1.0"
-        if in_selection.get():
-            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
-            start = sel_start
-    
-        while True:
-            pattern = re.escape(find_term_entry)
-            if whole_words.get():
-                pattern = r'\y' + pattern + r'\y'
-    
-            start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
-    
-            if not start:
-                break
-            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-            text_widget.tag_add("found", start, end)
-            start = end
-            break
-    
-        text_widget.tag_config("found", background="yellow", foreground="green")
-    '''
 
-
+    '''
     def find_all():
         nonlocal text_widget
         if not text_widget:
@@ -166,7 +67,36 @@ def find_and_replace():
             start = end
 
         text_widget.tag_config("found", background="yellow", foreground="green")
-
+    '''
+    
+    def find_all():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        clear_highlighting()
+        find_term_entry = find_term.get()
+    
+        start = "1.0"
+        if in_selection.get():
+            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
+            start = sel_start
+    
+        while True:
+            if whole_words.get():
+                pattern = r'\b' + re.escape(find_term_entry) + r'\b'
+            else:
+                pattern = re.escape(find_term_entry)
+    
+            start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
+    
+            if not start:
+                break
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.tag_add("found", start, end)
+            start = end
+    
+        text_widget.tag_config("found", background="yellow", foreground="green")
+    
     def replace():
         nonlocal text_widget
         if not text_widget:
@@ -296,9 +226,6 @@ def find_and_replace():
     Checkbutton(dialog, text="In Selection", variable=in_selection).grid(row=0, column=4, padx=5, pady=5, sticky=W)
     Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=1, column=4, padx=5, pady=5, sticky=W)
     Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=2, column=4, padx=5, pady=5, sticky=W)
-
-    # Bind the clear_highlighting function to the <FocusOut> event of the "Find" text field
-    # find_term.bind("<KeyRelease>", lambda event: clear_highlighting()) 
 
     find_term.set('')  # Set the default values for find text field
     replace_term.set('') # Set the default values for replace text field
