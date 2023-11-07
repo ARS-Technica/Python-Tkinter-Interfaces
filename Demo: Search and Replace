@@ -194,12 +194,14 @@ def find_and_replace():
     Button(dialog, text="Replace", command=replace, width=10).grid(row=1, column=2, padx=5, pady=5)
     Button(dialog, text="Replace All", command=replace_all, width=10).grid(row=1, column=3, padx=5, pady=5)
 
-    Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=0, column=4, padx=5, pady=5, sticky=W)
-    Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=1, column=4, padx=5, pady=5, sticky=W)
-    in_selection_checkbox = Checkbutton(dialog, text="In Selection", variable=in_selection)
-    in_selection_checkbox.grid(row=2, column=4, padx=5, pady=5, columnspan=3, sticky=W)
+    Checkbutton(dialog, text="In Selection", variable=in_selection).grid(row=0, column=4, padx=5, pady=5, sticky=W)
+    Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=1, column=4, padx=5, pady=5, sticky=W)
+    Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=2, column=4, padx=5, pady=5, sticky=W)
+    
+    #in_selection_checkbox = Checkbutton(dialog, text="In Selection", variable=in_selection)
+    #in_selection_checkbox.grid(row=2, column=4, padx=5, pady=5, columnspan=3, sticky=W)
 
-    Button(dialog, text="Clear Highlighting", command=clear_highlighting, width=15).grid(row=2, column=2, columnspan=2, padx=5, pady=5)
+    Button(dialog, text="Clear Highlighting", command=clear_highlighting, width=23).grid(row=2, column=2, columnspan=2, padx=5, pady=5)
     
     # Bind the clear_highlighting function to the <FocusOut> event of the "Find" text field
     # find_term.bind("<KeyRelease>", lambda event: clear_highlighting()) 
