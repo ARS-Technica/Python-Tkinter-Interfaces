@@ -195,14 +195,17 @@ def find_and_replace():
     Button(dialog, text="Replace All", command=replace_all, width=10).grid(row=1, column=3, padx=5, pady=5)
 
     Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=0, column=4, padx=5, pady=5, sticky=W)
-
+    Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=1, column=4, padx=5, pady=5, sticky=W)
     in_selection_checkbox = Checkbutton(dialog, text="In Selection", variable=in_selection)
-    in_selection_checkbox.grid(row=2, column=1, padx=5, pady=5, columnspan=3, sticky=W)
+    in_selection_checkbox.grid(row=2, column=4, padx=5, pady=5, columnspan=3, sticky=W)
 
-    Button(dialog, text="Clear Highlighting", command=clear_highlighting, width=15).grid(row=3, column=1, columnspan=3, padx=5, pady=5)
+    Button(dialog, text="Clear Highlighting", command=clear_highlighting, width=15).grid(row=2, column=2, columnspan=2, padx=5, pady=5)
+    
+    # Bind the clear_highlighting function to the <FocusOut> event of the "Find" text field
+    # find_term.bind("<KeyRelease>", lambda event: clear_highlighting()) 
 
-    find_term.set('')
-    replace_term.set('')
+    find_term.set('')  # Set the default values for find text field
+    replace_term.set('') # Set the default values for replace text field
 
     set_text_widget(text)
 
@@ -211,7 +214,7 @@ def create_window():
     global text
 
     root = Tk()
-    text = Text(root, exportselection = False) 
+    text = Text(root)  #, exportselection = False) <-- This stops Finds from being highlighted
     text.config(inactiveselect = text.cget("selectbackground"))
     text.pack(fill = "both", expand = True)
     #https://stackoverflow.com/questions/66583030/how-to-keep-text-selection-visible-in-a-text-area-even-though-not-focused-in-tki
