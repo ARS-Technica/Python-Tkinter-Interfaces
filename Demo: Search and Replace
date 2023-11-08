@@ -31,7 +31,10 @@ def find_and_replace():
             last_found_position = "1.0"
     
         while True:
-            pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
+            if whole_words.get():
+                pattern = rf'\b{re.escape(find_term_entry)}\B|\B{re.escape(find_term_entry)}\b|\B{re.escape(find_term_entry)}\B'
+            else:
+                pattern = re.escape(find_term_entry)
     
             start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
     
