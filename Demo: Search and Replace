@@ -32,8 +32,8 @@ def find_and_replace():
             last_found_position = "1.0"
     
         while True:
-            pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
-
+            pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
+    
             start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
     
             if not start:
@@ -59,7 +59,7 @@ def find_and_replace():
             start = sel_start
     
         while True:
-            pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
+            pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
     
             start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
     
@@ -71,6 +71,7 @@ def find_and_replace():
             start = text_widget.index(end)
     
         text_widget.tag_config("found", background="yellow", foreground="green")
+
    
     def replace():
         nonlocal text_widget
