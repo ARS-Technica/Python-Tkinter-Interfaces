@@ -18,7 +18,31 @@ def find_and_replace():
    
     global last_found_position
     last_found_position = "1.0"
+
+    """
+    Match a whole word in a string using dynamic regex
+    https://stackoverflow.com/questions/29996079/match-a-whole-word-in-a-string-using-dynamic-regex
     
+    Why not use a word boundary?
+    
+    match_string = r'\b' + word + r'\b'
+    match_string = r'\b{}\b'.format(word)
+    match_string = rf'\b{word}\b'          # Python 3.7+ required
+    
+    If you have a list of words (say, in a words variable) to be matched as a whole word, use
+
+    match_string = r'\b(?:{})\b'.format('|'.join(words))
+    match_string = rf'\b(?:{"|".join(words)})\b'         # Python 3.7+ required
+    If the words to be matched as whole words may start/end with special characters, \b won't work, use unambiguous word boundaries:
+    
+    match_string = r'(?<!\w){}(?!\w)'.format(re.escape(word))
+    match_string = r'(?<!\w)(?:{})(?!\w)'.format("|".join(map(re.escape, words))) 
+    If the word boundaries are whitespace chars or start/end of string, use whitespace boundaries, (?<!\S)...(?!\S):
+    
+    match_string = r'(?<!\S){}(?!\S)'.format(word)
+    match_string = r'(?<!\S)(?:{})(?!\S)'.format("|".join(map(re.escape, words))) 
+    """
+
     def find():
         nonlocal text_widget
         if not text_widget:
@@ -32,6 +56,14 @@ def find_and_replace():
     
         while True:
             if whole_words.get():
+                #pattern = r'(?<!\b)' + re.escape(find_term_entry) + r'(?!\b)'
+                # Highlights nothing when active
+                #pattern = r'(?<!\S)' + re.escape(find_term_entry) + r'(?!\S)'
+                # Highlights nothing when active
+                #pattern = r'(?<!\w)' + re.escape(find_term_entry) + r'(?!\w)'
+                #pattern = r'(?<!\y)' + re.escape(find_term_entry) + r'(?!\y)' # r'\y'
+                #pattern = r'\y' + re.escape(find_term_entry) + r'\y'
+                #pattern = r'\b' + find_term_entry + r'\b'
                 pattern = rf'\b{re.escape(find_term_entry)}\B|\B{re.escape(find_term_entry)}\b|\B{re.escape(find_term_entry)}\B'
             else:
                 pattern = re.escape(find_term_entry)
@@ -61,7 +93,15 @@ def find_and_replace():
             start = sel_start
     
         while True:
-            pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
+                #pattern = r'(?<!\b)' + re.escape(find_term_entry) + r'(?!\b)'
+                # Highlights nothing when active
+                #pattern = r'(?<!\S)' + re.escape(find_term_entry) + r'(?!\S)'
+                # Highlights nothing when active
+                #pattern = r'(?<!\w)' + re.escape(find_term_entry) + r'(?!\w)'
+                #pattern = r'(?<!\y)' + re.escape(find_term_entry) + r'(?!\y)' # r'\y'
+                #pattern = r'\y' + re.escape(find_term_entry) + r'\y'
+                #pattern = r'\b' + find_term_entry + r'\b'
+                pattern = rf'\b{re.escape(find_term_entry)}\B|\B{re.escape(find_term_entry)}\b|\B{re.escape(find_term_entry)}\B'
     
             start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
     
