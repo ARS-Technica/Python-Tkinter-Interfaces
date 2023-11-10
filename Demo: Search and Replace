@@ -1,3 +1,4 @@
+
 from tkinter import *
 import re
 
@@ -49,7 +50,7 @@ def find_and_replace():
     
         text_widget.tag_config("found", background="yellow", foreground="green")
     '''
-
+    '''
     def find():
         nonlocal text_widget
         if not text_widget:
@@ -79,25 +80,6 @@ def find_and_replace():
             break
     
         text_widget.tag_config("found", background="yellow", foreground="green")
-
-    '''
-    def find_all():
-        search_text = search_entry.get()
-        
-        if search_text:
-            start_pos = "1.0"
-            while True:
-                pos = text.search(search_text, start_pos, stopindex="end")
-                if not pos:
-                    break
-                end_pos = f"{pos}+{len(search_text)}c"
-                text.tag_add("found", pos, end_pos)
-                start_pos = end_pos
-            text.tag_configure("found", background="yellow")
-        # If text hasn't been entered into the Entry widget, display an error message
-        else:
-            messagebox.showerror("Search", "Please enter text before searching")
-    '''
     
     def find_all():
         nonlocal text_widget
@@ -124,50 +106,60 @@ def find_and_replace():
             start = end
     
         text_widget.tag_config("found", background="yellow", foreground="green")
-
-    # Defining a function to search for the next occurrence of the search term
-    def find_next():
-        """
-        The search function finds all the positions of the search term in the text
-        and compiles them into a list called search_positions. It also highlights
-        the first instance of the search term and sets the current_result_index
-        variable to -1.
-        """
-            
-        # Declaring global variables
-        global current_result_index
-        global search_positions
+    '''
+   
+    def find():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        clear_highlighting()
+        find_term_entry = find_term.get()
+        global last_found_position
     
-        # Retrieving the search term from the Entry widget
-        search_text = search_entry.get()
+        if not last_found_position:
+            last_found_position = "1.0"
     
-        # Searching for the search term in the Text widget and storing the positions in a list
-        if search_text:
-            start_pos = "1.0"
-            if not search_positions:
-                search_positions = []
-                while True:
-                    pos = text.search(search_text, start_pos, stopindex="end")
-                    if not pos:
-                        break
-                    end_pos = f"{pos}+{len(search_text)}c"
-                    text.tag_add("found", pos, end_pos)
-                    start_pos = end_pos
-                    search_positions.append(pos)
-                # Configuring the "found" tag with a yellow background
-                text.tag_configure("found", background="yellow")
-                # Setting the current_result_index variable to 0 highlights SECOND instance
-                current_result_index = -1
-            # Highlighting the next occurrence of the search term
-            if current_result_index < len(search_positions) - 1:
-                current_result_index += 1
-            else:
-                current_result_index = 0
-            next_result()
-        # If text hasn't been entered into the Entry widget, display an error message
-        else:
-            messagebox.showerror("Search", "Please enter text before searching")
-
+        while True:
+            pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
+    
+            start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
+    
+            if not start:
+                break
+    
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.tag_add("found", start, end)
+            last_found_position = text_widget.index(end)
+            break
+    
+        text_widget.tag_config("found", background="yellow", foreground="green")
+    
+    def find_all():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        clear_highlighting()
+        find_term_entry = find_term.get()
+    
+        start = "1.0"
+        if in_selection.get():
+            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
+            start = sel_start
+    
+        while True:
+            pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
+    
+            start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
+    
+            if not start:
+                break
+    
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.tag_add("found", start, end)
+            start = text_widget.index(end)
+    
+        text_widget.tag_config("found", background="yellow", foreground="green")
+   
     def replace():
         nonlocal text_widget
         if not text_widget:
@@ -269,7 +261,7 @@ def create_window():
     text.config(inactiveselect = text.cget("selectbackground"))
     text.pack(fill = "both", expand = True)
     #https://stackoverflow.com/questions/66583030/how-to-keep-text-selection-visible-in-a-text-area-even-though-not-focused-in-tki
-    text.insert('1.0', '''Type your text here. This is just a hypothetical test. ttttttt.''')
+    text.insert('1.0', '''Type your text here. This is just a hypothetical test on online. ttttttt.''')
     text.pack(side=BOTTOM)
 
     menu_bar = Menu(root)
