@@ -18,30 +18,37 @@ def find_and_replace():
    
     global last_found_position
     last_found_position = "1.0"
-
-    """
-    Match a whole word in a string using dynamic regex
-    https://stackoverflow.com/questions/29996079/match-a-whole-word-in-a-string-using-dynamic-regex
+    '''
+    def find():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        clear_highlighting()
+        find_term_entry = find_term.get()
+        global last_found_position
     
-    Why not use a word boundary?
+        if not last_found_position:
+            last_found_position = "1.0"
     
-    match_string = r'\b' + word + r'\b'
-    match_string = r'\b{}\b'.format(word)
-    match_string = rf'\b{word}\b'          # Python 3.7+ required
+        while True:
+            pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
     
-    If you have a list of words (say, in a words variable) to be matched as a whole word, use
-
-    match_string = r'\b(?:{})\b'.format('|'.join(words))
-    match_string = rf'\b(?:{"|".join(words)})\b'         # Python 3.7+ required
-    If the words to be matched as whole words may start/end with special characters, \b won't work, use unambiguous word boundaries:
+            if not last_found_position.startswith("1.0"):
+                # If the current position is not at the beginning, start from the beginning of the text
+                last_found_position = "1.0"
     
-    match_string = r'(?<!\w){}(?!\w)'.format(re.escape(word))
-    match_string = r'(?<!\w)(?:{})(?!\w)'.format("|".join(map(re.escape, words))) 
-    If the word boundaries are whitespace chars or start/end of string, use whitespace boundaries, (?<!\S)...(?!\S):
+            start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
     
-    match_string = r'(?<!\S){}(?!\S)'.format(word)
-    match_string = r'(?<!\S)(?:{})(?!\S)'.format("|".join(map(re.escape, words))) 
-    """
+            if not start:
+                break
+    
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.tag_add("found", start, end)
+            last_found_position = text_widget.index(f"{end}+1c")
+            break
+    
+        text_widget.tag_config("found", background="yellow", foreground="green")
+    '''
 
     def find():
         nonlocal text_widget
@@ -55,18 +62,11 @@ def find_and_replace():
             last_found_position = "1.0"
     
         while True:
-            if whole_words.get():
-                #pattern = r'(?<!\b)' + re.escape(find_term_entry) + r'(?!\b)'
-                # Highlights nothing when active
-                #pattern = r'(?<!\S)' + re.escape(find_term_entry) + r'(?!\S)'
-                # Highlights nothing when active
-                #pattern = r'(?<!\w)' + re.escape(find_term_entry) + r'(?!\w)'
-                #pattern = r'(?<!\y)' + re.escape(find_term_entry) + r'(?!\y)' # r'\y'
-                #pattern = r'\y' + re.escape(find_term_entry) + r'\y'
-                #pattern = r'\b' + find_term_entry + r'\b'
-                pattern = rf'\b{re.escape(find_term_entry)}\B|\B{re.escape(find_term_entry)}\b|\B{re.escape(find_term_entry)}\B'
-            else:
-                pattern = re.escape(find_term_entry)
+            pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
+    
+            if not last_found_position.startswith("1.0"):
+                # If the current position is not at the beginning, start from the beginning of the text
+                last_found_position = "1.0"
     
             start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
     
@@ -79,6 +79,7 @@ def find_and_replace():
             break
     
         text_widget.tag_config("found", background="yellow", foreground="green")
+
     
     def find_all():
         nonlocal text_widget
@@ -93,15 +94,7 @@ def find_and_replace():
             start = sel_start
     
         while True:
-                #pattern = r'(?<!\b)' + re.escape(find_term_entry) + r'(?!\b)'
-                # Highlights nothing when active
-                #pattern = r'(?<!\S)' + re.escape(find_term_entry) + r'(?!\S)'
-                # Highlights nothing when active
-                #pattern = r'(?<!\w)' + re.escape(find_term_entry) + r'(?!\w)'
-                #pattern = r'(?<!\y)' + re.escape(find_term_entry) + r'(?!\y)' # r'\y'
-                #pattern = r'\y' + re.escape(find_term_entry) + r'\y'
-                #pattern = r'\b' + find_term_entry + r'\b'
-                pattern = rf'\b{re.escape(find_term_entry)}\B|\B{re.escape(find_term_entry)}\b|\B{re.escape(find_term_entry)}\B'
+            pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
     
             start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
     
