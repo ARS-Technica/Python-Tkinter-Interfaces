@@ -80,6 +80,24 @@ def find_and_replace():
     
         text_widget.tag_config("found", background="yellow", foreground="green")
 
+    '''
+    def find_all():
+        search_text = search_entry.get()
+        
+        if search_text:
+            start_pos = "1.0"
+            while True:
+                pos = text.search(search_text, start_pos, stopindex="end")
+                if not pos:
+                    break
+                end_pos = f"{pos}+{len(search_text)}c"
+                text.tag_add("found", pos, end_pos)
+                start_pos = end_pos
+            text.tag_configure("found", background="yellow")
+        # If text hasn't been entered into the Entry widget, display an error message
+        else:
+            messagebox.showerror("Search", "Please enter text before searching")
+    '''
     
     def find_all():
         nonlocal text_widget
@@ -106,7 +124,50 @@ def find_and_replace():
             start = end
     
         text_widget.tag_config("found", background="yellow", foreground="green")
-   
+
+    # Defining a function to search for the next occurrence of the search term
+    def find_next():
+        """
+        The search function finds all the positions of the search term in the text
+        and compiles them into a list called search_positions. It also highlights
+        the first instance of the search term and sets the current_result_index
+        variable to -1.
+        """
+            
+        # Declaring global variables
+        global current_result_index
+        global search_positions
+    
+        # Retrieving the search term from the Entry widget
+        search_text = search_entry.get()
+    
+        # Searching for the search term in the Text widget and storing the positions in a list
+        if search_text:
+            start_pos = "1.0"
+            if not search_positions:
+                search_positions = []
+                while True:
+                    pos = text.search(search_text, start_pos, stopindex="end")
+                    if not pos:
+                        break
+                    end_pos = f"{pos}+{len(search_text)}c"
+                    text.tag_add("found", pos, end_pos)
+                    start_pos = end_pos
+                    search_positions.append(pos)
+                # Configuring the "found" tag with a yellow background
+                text.tag_configure("found", background="yellow")
+                # Setting the current_result_index variable to 0 highlights SECOND instance
+                current_result_index = -1
+            # Highlighting the next occurrence of the search term
+            if current_result_index < len(search_positions) - 1:
+                current_result_index += 1
+            else:
+                current_result_index = 0
+            next_result()
+        # If text hasn't been entered into the Entry widget, display an error message
+        else:
+            messagebox.showerror("Search", "Please enter text before searching")
+
     def replace():
         nonlocal text_widget
         if not text_widget:
