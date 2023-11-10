@@ -15,26 +15,28 @@ def find_and_replace():
     def set_text_widget(widget):
         nonlocal text_widget
         text_widget = widget
-   
+        # Now, text_widget is accessible within this function
+
     global last_found_position
     last_found_position = "1.0"
- 
+    
     def find():
-        global text_widget, last_found_position
+        nonlocal text_widget
         if not text_widget:
             return
         clear_highlighting()
         find_term_entry = find_term.get()
+        global last_found_position
+    
         if not last_found_position:
             last_found_position = "1.0"
     
         while True:
             pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
-    
+
             start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
     
             if not start:
-                last_found_position = "1.0"  # Reset to the beginning
                 break
     
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
@@ -45,7 +47,7 @@ def find_and_replace():
         text_widget.tag_config("found", background="yellow", foreground="green")
     
     def find_all():
-        global text_widget, last_found_position
+        nonlocal text_widget
         if not text_widget:
             return
         clear_highlighting()
@@ -62,7 +64,6 @@ def find_and_replace():
             start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
     
             if not start:
-                last_found_position = "1.0"  # Reset to the beginning
                 break
     
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
@@ -161,17 +162,16 @@ def find_and_replace():
     find_term.set('')  # Set the default values for find text field
     replace_term.set('') # Set the default values for replace text field
 
-    set_text_widget(text)
+    set_text_widget(text)  # Call set_text_widget with the Text widget instance
 
 def create_window():
     global root
     global text
 
     root = Tk()
-    text = Text(root)  #, exportselection = False) <-- This stops Finds from being highlighted
-    text.config(inactiveselect = text.cget("selectbackground"))
-    text.pack(fill = "both", expand = True)
-    #https://stackoverflow.com/questions/66583030/how-to-keep-text-selection-visible-in-a-text-area-even-though-not-focused-in-tki
+    text = Text(root)  # Your Text widget
+    text.config(inactiveselect=text.cget("selectbackground"))
+    text.pack(fill="both", expand=True)
     text.insert('1.0', '''Type your text here. This is just a hypothetical test on online. ttttttt.''')
     text.pack(side=BOTTOM)
 
