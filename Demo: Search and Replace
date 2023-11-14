@@ -2,6 +2,9 @@ from tkinter import *
 import re
 
 def create_search_replace_dialog():
+    global last_found_position
+    last_found_position = "1.0"
+
     def set_text_widget(widget):
         nonlocal text_widget
         text_widget = widget
@@ -16,10 +19,7 @@ def create_search_replace_dialog():
             return
         clear_highlighting()
         find_term_entry = find_term.get()
-        global last_found_position
-
-        if not last_found_position:
-            last_found_position = "1.0"
+        last_found_position = "1.0"
 
         while True:
             pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     text = Text(root)
     text.config(inactiveselect=text.cget("selectbackground"))
     text.grid(row=0, column=0, columnspan=4, sticky="nsew")
-    text.insert('1.0', '''Type your text here. This is just a hypothetical test on online. ttttttt.''')
+    text.insert('1.0', '''Type your text here. This is just a hypothetical test online. ttttttt.''')
 
     menu_bar = Menu(root)
     root.config(menu=menu_bar)
@@ -171,3 +171,4 @@ if __name__ == "__main__":
     submenu.add_command(label="Search and Replace", command=create_search_replace_dialog)
 
     root.mainloop()
+
