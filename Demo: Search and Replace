@@ -7,17 +7,15 @@ def find_whole_words(text, word, match_case=True):
     matches = re.finditer(pattern, text, flags=flags)
     return [match.span() for match in matches]
 
-'''
 global last_found_position
 last_found_position = "1.0"
 
-def find():
-    nonlocal text_widget
+def find_in_text(text_widget, find_term, whole_words, match_case, in_selection, last_found_position):
+
     if not text_widget:
         return
     clear_highlighting()
     find_term_entry = find_term.get()
-    global last_found_position
 
     if not last_found_position:
         last_found_position = "1.0"
@@ -36,8 +34,36 @@ def find():
         break
 
     text_widget.tag_config("found", background="yellow", foreground="green")
-'''
 
+def find_all_in_text(text_widget, find_term, whole_words, match_case, in_selection):
+
+    if not text_widget:
+        return
+    clear_highlighting()
+    find_term_entry = find_term.get()
+
+    start = "1.0"
+    if in_selection.get():
+        sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
+        start = sel_start
+
+    while True:
+        pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
+
+        start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
+
+        if not start:
+            break
+
+        end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+        text_widget.tag_add("found", start, end)
+        start = text_widget.index(end)
+
+    text_widget.tag_config("found", background="yellow", foreground="green")
+
+
+
+'''
 def find_in_text(text_widget, find_term, whole_words, match_case, in_selection, last_found_position):
     clear_highlighting(text_widget)
     find_term_entry = find_term.get()
@@ -82,6 +108,7 @@ def find_all_in_text(text_widget, find_term, whole_words, match_case, in_selecti
             break
 
     text_widget.tag_config("found", background="yellow", foreground="green")
+'''
 
 def create_search_replace_dialog(root, text_widget):
     dialog = Toplevel(root)
