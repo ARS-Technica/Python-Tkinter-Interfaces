@@ -14,7 +14,7 @@ def find_in_text(text_widget, find_term, whole_words, match_case, in_selection, 
 
     if not text_widget:
         return
-    clear_highlighting()
+    clear_highlighting(text_widget)
     find_term_entry = find_term.get()
 
     if not last_found_position:
