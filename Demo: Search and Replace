@@ -137,10 +137,33 @@ def find_and_replace():
         text_widget.replace(sel_start, sel_end, replaced_text)
         # Use the replace method to replace all instances of find_term_entry at once.
 
+    '''
     def clear_highlighting():
         nonlocal text_widget
         if text_widget:
             text_widget.tag_remove("found", "1.0", "end")
+    '''
+    
+        # Clear Find results to start over
+    def clear_highlighting(event=None):
+        nonlocal text_widget
+        
+        # "event=None" is the secret sauce that makes keybinding work
+        global last_found_position
+        #global search_positions
+    
+        # Check Current tags
+        if "found" in text_widget.tag_names():
+            # Remove results highlighting
+            text_widget.tag_remove("found", "1.0", "end")
+            # Reset global variables to default for new search
+    
+            #search_positions = []
+            #current_result_index = -1
+            last_found_position = "1.0"
+    
+        # Clear search results with clear_find_results upon entering new text in widget
+        # search_entry.bind("<KeyRelease>", clear_find_results)
 
     def clear_highlighting_on_keyrelease(event):
         if not find_term.get():
@@ -175,6 +198,11 @@ def find_and_replace():
     Checkbutton(dialog, text="In Selection", variable=in_selection).grid(row=0, column=4, padx=5, pady=5, sticky=W)
     Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=1, column=4, padx=5, pady=5, sticky=W)
     Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=2, column=4, padx=5, pady=5, sticky=W)
+
+
+    # When search_entry looses and regains focus, the text field and the text widget highlighting clears
+    entry_find.bind("<FocusIn>", lambda event: (clear_highlighting(), event.widget.delete(0, "end")))
+
 
     find_term.set('')  # Set the default values for find text field
     replace_term.set('') # Set the default values for replace text field
