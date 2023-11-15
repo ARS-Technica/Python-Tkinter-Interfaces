@@ -1,186 +1,202 @@
 from tkinter import *
-import re 
+import re
 
-def find_whole_words(text, word, match_case=True):
-    flags = 0 if match_case else re.IGNORECASE
-    pattern = rf'\b{re.escape(word)}\b'
-    matches = re.finditer(pattern, text, flags=flags)
-    return [match.span() for match in matches]
-
-'''
-global last_found_position
-last_found_position = "1.0"
-
-def find():
-    nonlocal text_widget
-    if not text_widget:
-        return
-    clear_highlighting()
-    find_term_entry = find_term.get()
-    global last_found_position
-
-    if not last_found_position:
-        last_found_position = "1.0"
-
-    while True:
-        pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
-
-        start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
-
-        if not start:
-            break
-
-        end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-        text_widget.tag_add("found", start, end)
-        last_found_position = text_widget.index(end)
-        break
-
-    text_widget.tag_config("found", background="yellow", foreground="green")
-'''
-
-'''
-def find_in_text(text_widget, find_term, whole_words, match_case, in_selection, last_found_position):
-    clear_highlighting(text_widget)
-    find_term_entry = find_term.get()
-
-    if not last_found_position:
-        last_found_position = "1.0"
-
-    while True:
-        pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
-
-        start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
-
-        if not start:
-            break
-
-        end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-        text_widget.tag_add("found", start, end)
-        last_found_position = text_widget.index(end)
-        break
-
-    text_widget.tag_config("found", background="yellow", foreground="green")
-'''
-
-def find_in_text(text_widget, find_term, whole_words, match_case, in_selection, last_found_position):
-    clear_highlighting(text_widget)
-    find_term_entry = find_term.get()
-
-    if not last_found_position:
-        last_found_position = "1.0"
-
-    while True:
-        pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
-
-        start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
-
-        if not start:
-            break
-
-        end = text_widget.index(f"{start}+{len(find_term_entry)}c")
-        text_widget.tag_add("found", start, end)
-        last_found_position = text_widget.index(f"{end}+1c")  # Move to the next character
-
-        break
-
-    text_widget.tag_config("found", background="yellow", foreground="green")
-
-
-def find_all_in_text(text_widget, find_term, whole_words, match_case, in_selection):
-    clear_highlighting(text_widget)
-    find_term_entry = find_term.get()
-    start = "1.0"
-
-    if in_selection.get():
-        sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
-        start = sel_start
-
-    while True:
-        pattern = rf'\b{re.escape(find_term_entry)}\b' if whole_words.get() else re.escape(find_term_entry)
-        indices = find_whole_words(text_widget.get(start, "end-1c"), find_term_entry, match_case.get())
-        if indices:
-            start_index, end_index = indices[0]
-            start = f"{start}+{start_index}c"
-            end = f"{start}+{end_index}c"
-            text_widget.tag_add("found", start, end)
-            start = end
-        else:
-            break
-
-    text_widget.tag_config("found", background="yellow", foreground="green")
-
-def create_search_replace_dialog(root, text_widget):
+def find_and_replace():
     dialog = Toplevel(root)
     dialog.title("Find and Replace")
-
+    
     find_term = StringVar()
     replace_term = StringVar()
     match_case = IntVar()
     whole_words = IntVar()
     in_selection = IntVar()
+    text_widget = None
+
+    def set_text_widget(widget):
+        nonlocal text_widget
+        text_widget = widget
+        # Now, text_widget is accessible within this function
+
+    # Cribbed from earlier failed version
+    def find_whole_words(text, word, match_case=True):
+        flags = 0 if match_case else re.IGNORECASE
+        pattern = rf'\b{re.escape(word)}\b'
+        matches = re.finditer(pattern, text, flags=flags)
+        return [match.span() for match in matches]
 
     global last_found_position
     last_found_position = "1.0"
+    
+    def find():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        clear_highlighting()
+        find_term_entry = find_term.get()
+        global last_found_position
+    
+        if not last_found_position:
+            last_found_position = "1.0"
+    
+        while True:
+            if whole_words.get():
+                indices = find_whole_words(text_widget.get("1.0", "end-1c"), find_term_entry, match_case.get())
+                if indices:
+                    start, end = indices[0]
+                    start = f"1.0+{start}c"
+                    end = f"1.0+{end}c"
+                    text_widget.tag_add("found", start, end)
+                    last_found_position = end
+            else:
+                pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
+    
+                start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
+    
+                if not start:
+                    break
+    
+                end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+                text_widget.tag_add("found", start, end)
+                last_found_position = text_widget.index(f"{end}+1c")  # Move to the next character
+    
+            break
+    
+        text_widget.tag_config("found", background="yellow", foreground="green")
+
+    def find_all():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        clear_highlighting()
+        find_term_entry = find_term.get()
+    
+        start = "1.0"
+        if in_selection.get():
+            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
+            start = sel_start
+    
+        while True:
+            pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
+    
+            start = text_widget.search(pattern, start, nocase=not match_case.get(), stopindex="end")
+    
+            if not start:
+                break
+    
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.tag_add("found", start, end)
+            start = text_widget.index(end)
+    
+        text_widget.tag_config("found", background="yellow", foreground="green")
+
+    def replace():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        find_term_entry = find_term.get()
+        replace_term_entry = replace_term.get()
+
+        start = "1.0"
+        if in_selection.get():
+            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
+            start = sel_start
+
+        while True:
+            start = text_widget.search(find_term_entry, start, nocase=not match_case.get(), stopindex="end")
+            if not start:
+                break
+            end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            text_widget.delete(start, end)
+            text_widget.insert(start, replace_term_entry)
+            start = end
+            text_widget.tag_remove("found", start, end)
+            break
+
+    def replace_all():
+        nonlocal text_widget
+        if not text_widget:
+            return
+        find_term_entry = find_term.get()
+        replace_term_entry = replace_term.get()
+    
+        if in_selection.get():
+            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
+        else:
+            sel_start, sel_end = "1.0", "end"
+    
+        selected_text = text_widget.get(sel_start, sel_end)
+        if match_case.get():
+            # Perform replacement with case sensitivity
+            replaced_text = selected_text.replace(find_term_entry, replace_term_entry)
+        else:
+            # Perform replacement case-insensitively
+            regex = re.compile(re.escape(find_term_entry), re.IGNORECASE)
+            replaced_text = regex.sub(replace_term_entry, selected_text)
+    
+        text_widget.tag_remove("found", sel_start, sel_end)
+        text_widget.replace(sel_start, sel_end, replaced_text)
+        # Use the replace method to replace all instances of find_term_entry at once.
+
+    def clear_highlighting():
+        nonlocal text_widget
+        if text_widget:
+            text_widget.tag_remove("found", "1.0", "end")
+
+    def clear_highlighting_on_keyrelease(event):
+        if not find_term.get():
+            clear_highlighting()
+
+    def find_keybinding(event):
+        if event.keysym == "Return":
+            find()
+
+    def replace_keybinding(event):
+        if event.keysym == "Return":
+            replace()
 
     Label(dialog, text="Find: ").grid(row=0, column=0, padx=5, pady=5, sticky=W)
     entry_find = Entry(dialog, textvariable=find_term)
     entry_find.grid(row=0, column=1, padx=5, pady=5)
-    entry_find.bind("<KeyRelease>", lambda event: clear_highlighting_on_keyrelease(event, find_term, text_widget))
-    entry_find.bind("<Return>", lambda event: find_keybinding(event, find_term, whole_words, match_case, in_selection, last_found_position, text_widget))
-    Button(dialog, text="Find", command=lambda: find_in_text(text_widget, find_term, whole_words, match_case, in_selection, last_found_position), width=10).grid(row=0, column=2, padx=5, pady=5)
-    Button(dialog, text="Find All", command=lambda: find_all_in_text(text_widget, find_term, whole_words, match_case, in_selection), width=10).grid(row=0, column=3, padx=5, pady=5)
+    entry_find.bind("<KeyRelease>", clear_highlighting_on_keyrelease)
+    entry_find.bind("<Return>", find_keybinding)
+    Button(dialog, text="Find", command=find, width=10).grid(row=0, column=2, padx=5, pady=5)
+    Button(dialog, text="Find All", command=find_all, width=10).grid(row=0, column=3, padx=5, pady=5)
 
     Label(dialog, text="Replace: ").grid(row=1, column=0, padx=5, pady=5, sticky=W)
     entry_replace = Entry(dialog, textvariable=replace_term)
     entry_replace.grid(row=1, column=1, padx=5, pady=5)
-    entry_replace.bind("<KeyRelease>", lambda event: clear_highlighting_on_keyrelease(event, find_term, text_widget))
-    entry_replace.bind("<Return>", lambda event: replace_keybinding(event, find_term, replace_term, whole_words, in_selection, text_widget))
-    Button(dialog, text="Replace", command=lambda: replace_in_text(text_widget, find_term, replace_term, match_case, in_selection), width=10).grid(row=1, column=2, padx=5, pady=5)
-    Button(dialog, text="Replace All", command=lambda: replace_all_in_text(text_widget, find_term, replace_term, match_case, in_selection), width=10).grid(row=1, column=3, padx=5, pady=5)
+    entry_replace.bind("<KeyRelease>", clear_highlighting_on_keyrelease)
+    entry_replace.bind("<Return>", replace_keybinding)
+    Button(dialog, text="Replace", command=replace, width=10).grid(row=1, column=2, padx=5, pady=5)
+    Button(dialog, text="Replace All", command=replace_all, width=10).grid(row=1, column=3, padx=5, pady=5)
 
-    Button(dialog, text="Clear Highlighting", command=lambda: clear_highlighting(text_widget), width=23).grid(row=2, column=2, columnspan=2, padx=5, pady=5)
+    Button(dialog, text="Clear Highlighting", command=clear_highlighting, width=23).grid(row=2, column=2, columnspan=2, padx=5, pady=5)
 
     Checkbutton(dialog, text="In Selection", variable=in_selection).grid(row=0, column=4, padx=5, pady=5, sticky=W)
     Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=1, column=4, padx=5, pady=5, sticky=W)
     Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=2, column=4, padx=5, pady=5, sticky=W)
 
     find_term.set('')  # Set the default values for find text field
-    replace_term.set('')  # Set the default values for replace text field
+    replace_term.set('') # Set the default values for replace text field
 
-    return dialog
-
-def clear_highlighting(text_widget):
-    if text_widget:
-        text_widget.tag_remove("found", "1.0", "end")
-
-def clear_highlighting_on_keyrelease(event, find_term, text_widget):
-    if not find_term.get():
-        clear_highlighting(text_widget)
-
-def find_keybinding(event, find_term, whole_words, match_case, in_selection, last_found_position, text_widget):
-    if event.keysym == "Return":
-        find_in_text(text_widget, find_term, whole_words, match_case, in_selection, last_found_position)
-
-def replace_keybinding(event, find_term, replace_term, whole_words, in_selection, text_widget):
-    if event.keysym == "Return":
-        replace_in_text(text_widget, find_term, replace_term, whole_words, in_selection)
+    set_text_widget(text)  # Call set_text_widget with the Text widget instance
 
 def create_window():
     global root
     global text
 
     root = Tk()
-    text = Text(root)
+    text = Text(root)  # Your Text widget
     text.config(inactiveselect=text.cget("selectbackground"))
     text.pack(fill="both", expand=True)
-    text.insert('1.0', '''Type your text here. This is just a hypothetical test online. ttttttt.''')
+    text.insert('1.0', '''Type your text here. This is just a hypothetical test on online. ttttttt.''')
     text.pack(side=BOTTOM)
 
     menu_bar = Menu(root)
     root.config(menu=menu_bar)
     submenu = Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Options", menu=submenu)
-    submenu.add_command(label="Search and Replace", command=lambda: create_search_replace_dialog(root, text))
+    submenu.add_command(label="Search and Replace", command=find_and_replace)
 
     root.mainloop()
 
