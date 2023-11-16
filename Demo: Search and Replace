@@ -1,10 +1,13 @@
 from tkinter import *
 import re
 
+# Define the function for find and replace
 def find_and_replace():
+    # Create a new dialog window
     dialog = Toplevel(root)
     dialog.title("Find and Replace")
     
+    # Initialize variables for find and replace terms, match case, whole words, in selection, and text widget
     find_term = StringVar()
     replace_term = StringVar()
     match_case = IntVar()
@@ -12,25 +15,29 @@ def find_and_replace():
     in_selection = IntVar()
     text_widget = None
 
+    # Function to set the text widget
     def set_text_widget(widget):
         nonlocal text_widget
         text_widget = widget
         # Now, text_widget is accessible within this function
 
-    # Cribbed from earlier failed version
+    # Function to find whole words in a given text
     def find_whole_words(text, word, match_case=True):
         flags = 0 if match_case else re.IGNORECASE
         pattern = rf'\b{re.escape(word)}\b'
         matches = re.finditer(pattern, text, flags=flags)
         return [match.span() for match in matches]
 
+    # Global variable to keep track of the last found position
     global last_found_position
     last_found_position = "1.0"
     
+    # Function to find the next occurrence of the search term
     def find():
         nonlocal text_widget
         if not text_widget:
             return
+        # Clear previous highlighting
         clear_highlighting()
         find_term_entry = find_term.get()
         global last_found_position
@@ -39,15 +46,18 @@ def find_and_replace():
             last_found_position = "1.0"
     
         while True:
+            # Check if whole words option is selected
             if whole_words.get():
                 indices = find_whole_words(text_widget.get("1.0", "end-1c"), find_term_entry, match_case.get())
                 if indices:
                     start, end = indices[0]
                     start = f"1.0+{start}c"
                     end = f"1.0+{end}c"
+                    # Highlight the found term
                     text_widget.tag_add("found", start, end)
                     last_found_position = end
             else:
+                # Search for the term and highlight it
                 pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
     
                 start = text_widget.search(pattern, last_found_position, nocase=not match_case.get(), stopindex="end")
@@ -61,8 +71,10 @@ def find_and_replace():
     
             break
     
+        # Configure the tag for highlighting
         text_widget.tag_config("found", background="yellow", foreground="green")
 
+    # Function to find all occurrences of the search term
     def find_all():
         nonlocal text_widget
         if not text_widget:
@@ -87,8 +99,10 @@ def find_and_replace():
             text_widget.tag_add("found", start, end)
             start = text_widget.index(end)
     
+        # Configure the tag for highlighting
         text_widget.tag_config("found", background="yellow", foreground="green")
 
+    # Function to replace the current occurrence of the search term
     def replace():
         nonlocal text_widget
         if not text_widget:
@@ -106,12 +120,15 @@ def find_and_replace():
             if not start:
                 break
             end = text_widget.index(f"{start}+{len(find_term_entry)}c")
+            # Delete the found term
             text_widget.delete(start, end)
+            # Insert the replacement term
             text_widget.insert(start, replace_term_entry)
             start = end
             text_widget.tag_remove("found", start, end)
             break
 
+    # Function to replace all occurrences of the search term
     def replace_all():
         nonlocal text_widget
         if not text_widget:
@@ -137,34 +154,15 @@ def find_and_replace():
         text_widget.replace(sel_start, sel_end, replaced_text)
         # Use the replace method to replace all instances of find_term_entry at once.
 
-    '''
-    def clear_highlighting():
-        nonlocal text_widget
-        if text_widget:
-            text_widget.tag_remove("found", "1.0", "end")
-    '''
-    
-        # Clear Find results to start over
+    # Clear Find results to start over
     def clear_highlighting(event=None):
+        # "event=None" is the secret sauce that makes keybinding work
         nonlocal text_widget
         
-        # "event=None" is the secret sauce that makes keybinding work
-        global last_found_position
-        #global search_positions
-    
-        # Check Current tags
-        if "found" in text_widget.tag_names():
+        if text_widget:
             # Remove results highlighting
             text_widget.tag_remove("found", "1.0", "end")
-            # Reset global variables to default for new search
-    
-            #search_positions = []
-            #current_result_index = -1
-            last_found_position = "1.0"
-    
-        # Clear search results with clear_find_results upon entering new text in widget
-        # search_entry.bind("<KeyRelease>", clear_find_results)
-
+ 
     def clear_highlighting_on_keyrelease(event):
         if not find_term.get():
             clear_highlighting()
@@ -177,6 +175,7 @@ def find_and_replace():
         if event.keysym == "Return":
             replace()
 
+    # Create GUI elements for the find and replace dialog
     Label(dialog, text="Find: ").grid(row=0, column=0, padx=5, pady=5, sticky=W)
     entry_find = Entry(dialog, textvariable=find_term)
     entry_find.grid(row=0, column=1, padx=5, pady=5)
@@ -199,20 +198,22 @@ def find_and_replace():
     Checkbutton(dialog, text="Match Case", variable=match_case).grid(row=1, column=4, padx=5, pady=5, sticky=W)
     Checkbutton(dialog, text="Whole Words", variable=whole_words).grid(row=2, column=4, padx=5, pady=5, sticky=W)
 
-
     # When search_entry looses and regains focus, the text field and the text widget highlighting clears
     entry_find.bind("<FocusIn>", lambda event: (clear_highlighting(), event.widget.delete(0, "end")))
 
+    # Set default values for find and replace text fields
+    find_term.set('')  
+    replace_term.set('')
 
-    find_term.set('')  # Set the default values for find text field
-    replace_term.set('') # Set the default values for replace text field
+    # Call set_text_widget with the Text widget instance
+    set_text_widget(text)
 
-    set_text_widget(text)  # Call set_text_widget with the Text widget instance
-
+# Function to create the main window
 def create_window():
     global root
     global text
 
+    # Create the main window
     root = Tk()
     text = Text(root)  # Your Text widget
     text.config(inactiveselect=text.cget("selectbackground"))
@@ -220,14 +221,17 @@ def create_window():
     text.insert('1.0', '''Type your text here. This is just a hypothetical test on online. ttttttt.''')
     text.pack(side=BOTTOM)
 
+    # Create a menu bar
     menu_bar = Menu(root)
     root.config(menu=menu_bar)
     submenu = Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Options", menu=submenu)
     submenu.add_command(label="Search and Replace", command=find_and_replace)
 
+    # Start the main event loop
     root.mainloop()
 
+# Entry point of the program
 if __name__ == "__main__":
     create_window()
 
