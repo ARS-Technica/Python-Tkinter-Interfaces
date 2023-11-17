@@ -82,30 +82,20 @@ def find_and_replace():
         # Clear previous highlighting
         clear_highlighting()
         find_term_entry = find_term.get()
-        
-        # No need for the last_found_position variable
-        #start = "1.0"
-        
-        if in_selection.get():
-            sel_start, sel_end = text_widget.index("sel.first"), text_widget.index("sel.last")
-            start = sel_start
-        
-        else:
-            start = "1.0"
-
+    
+        start = text_widget.index("sel.first") if in_selection.get() else "1.0"
+    
         while True:
             # Check if whole words option is selected
             if whole_words.get():
-                #indices = find_whole_words(text_widget.get("1.0", "end-1c"), find_term_entry, match_case.get())
                 indices = find_whole_words(text_widget.get(start, "end-1c"), find_term_entry, match_case.get())
-                
+    
                 if indices:
-                    start, end = indices[0]
-                    start = f"1.0+{start}c"
-                    end = f"1.0+{end}c"
-                    # Highlight the found term
-                    text_widget.tag_add("found", start, end)
-                    last_found_position = end
+                    for start, end in indices:
+                        start = f"1.0+{start}c"
+                        end = f"1.0+{end}c"
+                        # Highlight the found term
+                        text_widget.tag_add("found", start, end)
             else:
                 # Search for the term and highlight it
                 pattern = rf'\y{re.escape(find_term_entry)}\y' if whole_words.get() else re.escape(find_term_entry)
@@ -118,11 +108,10 @@ def find_and_replace():
     
                 end = text_widget.index(f"{start}+{len(find_term_entry)}c")
                 text_widget.tag_add("found", start, end)
-                #last_found_position = text_widget.index(f"{end}+1c")  # Move to the next character
                 start = text_widget.index(end)
     
             break
-
+    
         # Configure the tag for highlighting
         text_widget.tag_config("found", background="yellow", foreground="green")
 
