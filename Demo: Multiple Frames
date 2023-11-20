@@ -14,6 +14,9 @@ options = tk.Frame(root, bg='gray')
 home_button = tk.Button(options, text='Home', font=('Arial', 13), bd=0, fg='#0097e8', activeforeground='#0097e8')
 home_button.place(x=0, y=0, width=125)
 
+home_indicator = tk.Label(options, bg='#0097e8')
+home_indicator.place(x=22, y=30, width=80, height=2)
+
 first_button = tk.Button(options, text='First', font=('Arial', 13), bd=0, fg='#0097e8', activeforeground='#0097e8')
 first_button.place(x=125, y=0, width=125)
 
@@ -30,6 +33,9 @@ options.pack(pady=5)
 options.pack_propagate(False)
 options.configure(width=500, height=35)
 
+
+main = tk.Frame(root, bg='gray')
+main.pack(fill=tk.BOTH, expand=True)
 
 root.mainloop()
 
