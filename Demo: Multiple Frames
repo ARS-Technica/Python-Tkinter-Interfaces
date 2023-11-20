@@ -1,12 +1,25 @@
+"""
+A demonstration of how to switch between multiple pages in a tkinter application.
+"""
+
 import tkinter as tk
 
 root = tk.Tk()
 root.geometry('500x500')
 root.title('TkinterHub')
 
-options_fn = tk.Frame(root)
+options = tk.Frame(root, bg='gray')
 
-options_fn.pack(pady=5)
-options_fn.pack_propagate(False)
+
+home_button = tk.Button(options, text='Home', font=('Arial', 13), bd=0, fg='#0097e8', activeforeground='#0097e8')
+home_button.place(x=0, y=0, width=125)
+
+
+options.pack(pady=5)
+
+
+options.pack_propagate(False)
+options.configure(width=500, height=35)
 
 root.mainloop()
+
