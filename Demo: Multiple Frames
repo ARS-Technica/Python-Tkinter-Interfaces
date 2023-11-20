@@ -1,0 +1,12 @@
+import tkinter as tk
+
+root = tk.Tk()
+root.geometry('500x500')
+root.title('TkinterHub')
+
+options_fn = tk.Frame(root)
+
+options_fn.pack(pady=5)
+options_fn.pack_propagate(False)
+
+root.mainloop()
