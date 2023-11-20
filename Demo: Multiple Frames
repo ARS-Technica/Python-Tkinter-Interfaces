@@ -14,12 +14,22 @@ options = tk.Frame(root, bg='gray')
 home_button = tk.Button(options, text='Home', font=('Arial', 13), bd=0, fg='#0097e8', activeforeground='#0097e8')
 home_button.place(x=0, y=0, width=125)
 
+first_button = tk.Button(options, text='First', font=('Arial', 13), bd=0, fg='#0097e8', activeforeground='#0097e8')
+first_button.place(x=125, y=0, width=125)
+
+second_button = tk.Button(options, text='Second', font=('Arial', 13), bd=0, fg='#0097e8', activeforeground='#0097e8')
+second_button.place(x=250, y=0, width=125)
+
+third_button = tk.Button(options, text='Third', font=('Arial', 13), bd=0, fg='#0097e8', activeforeground='#0097e8')
+third_button.place(x=375, y=0, width=125)
+
 
 options.pack(pady=5)
 
 
 options.pack_propagate(False)
 options.configure(width=500, height=35)
+
 
 root.mainloop()
 
