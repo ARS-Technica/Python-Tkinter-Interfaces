@@ -17,19 +17,29 @@ home_button.place(x=0, y=0, width=125)
 home_indicator = tk.Label(options, bg='#0097e8')
 home_indicator.place(x=22, y=30, width=80, height=2)
 
+
 first_button = tk.Button(options, text='First', font=('Arial', 13), bd=0, fg='#0097e8', activeforeground='#0097e8')
 first_button.place(x=125, y=0, width=125)
+
+first_indicator = tk.Label(options, bg='#0097e8')
+first_indicator.place(x=147, y=30, width=80, height=2)
+
 
 second_button = tk.Button(options, text='Second', font=('Arial', 13), bd=0, fg='#0097e8', activeforeground='#0097e8')
 second_button.place(x=250, y=0, width=125)
 
+second_indicator = tk.Label(options, bg='#0097e8')
+second_indicator.place(x=272, y=30, width=80, height=2)
+
+
 third_button = tk.Button(options, text='Third', font=('Arial', 13), bd=0, fg='#0097e8', activeforeground='#0097e8')
 third_button.place(x=375, y=0, width=125)
 
+third_indicator = tk.Label(options, bg='#0097e8')
+third_indicator.place(x=397, y=30, width=80, height=2)
+
 
 options.pack(pady=5)
-
-
 options.pack_propagate(False)
 options.configure(width=500, height=35)
 
