@@ -12,8 +12,8 @@ root.title('TkinterHub')
 
 def slider(indicator, page):
     # Hide indicator if button is NOT selected
-    for child in options.winfo_children():  # Use winfo_children to get all of a widget's child objects
-        if child.isinstance(child, tk.Label):   # If widget is a label
+    for child in options_frame.winfo_children():  # Use winfo_children to get all of a widget's child objects
+        if isinstance(child, tk.Label):         # If widget is a label
             child['bg'] = 'SystemButtonFace'    # root.cget("bg) for Linux
     
     indicator['bg'] = '#0097e8'
