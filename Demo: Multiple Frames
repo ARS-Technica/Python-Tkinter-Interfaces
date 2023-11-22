@@ -63,6 +63,16 @@ options.pack_propagate(False)
 options.configure(width=500, height=35)
 
 
+def home_page():
+    home_page = tk.Frame(main)
+    
+    home_page_label = tk.Label(home_page, text='Home Page',
+                               font=('Arial', 25), fg='#0097e8')
+    home_page_label.pack(pady=80)
+    
+    home_page.pack(fill=tk.BOTH, expand=True)
+
+
 main = tk.Frame(root)
 main.pack(fill=tk.BOTH, expand=True)
 
