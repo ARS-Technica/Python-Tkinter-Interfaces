@@ -10,7 +10,7 @@ root.geometry('500x500')
 root.title('TkinterHub')
 
 
-def slider(indicator):
+def slider(indicator, page):
     # Hide indicator if button is NOT selected
     for child in options.winfo_children():  # Use winfo_children to get all of a widget's child objects
         if child.isinstance(child, tk.Label):   # If widget is a label
@@ -18,13 +18,20 @@ def slider(indicator):
     
     indicator['bg'] = '#0097e8'
 
+    for frame in main_frame.winfo_children():
+        frame.destroy() # Erase previous contents of frame
+        root.update()   # Ensure that new content is shown in frame
+
+    page()  # Switch new page into main_frame
+
 
 options_frame = tk.Frame(root)
 
 
 home_button = tk.Button(options_frame, text='Home', font=('Arial', 13), bd=0, 
                         fg='#0097e8', activeforeground='#0097e8',
-                        command=lambda: slider(indicator=home_indicator))
+                        command=lambda: slider(indicator=home_indicator,
+                        page=home_page))
 home_button.place(x=0, y=0, width=125)
 
 home_indicator = tk.Label(options_frame, bg='#0097e8')
@@ -33,7 +40,8 @@ home_indicator.place(x=22, y=30, width=80, height=2)
 
 first_button = tk.Button(options_frame, text='First', font=('Arial', 13), bd=0,
                          fg='#0097e8', activeforeground='#0097e8',
-                         command=lambda: slider(indicator=first_indicator))
+                         command=lambda: slider(indicator=first_indicator,
+                         page=first_page))
 first_button.place(x=125, y=0, width=125)
 
 first_indicator = tk.Label(options_frame, bg='#0097e8')
@@ -42,7 +50,8 @@ first_indicator.place(x=147, y=30, width=80, height=2)
 
 second_button = tk.Button(options_frame, text='Second', font=('Arial', 13), bd=0, 
                           fg='#0097e8', activeforeground='#0097e8',
-                          command=lambda: slider(indicator=second_indicator))
+                          command=lambda: slider(indicator=second_indicator,
+                          page=second_page))
 second_button.place(x=250, y=0, width=125)
 
 second_indicator = tk.Label(options_frame, bg='#0097e8')
@@ -51,7 +60,8 @@ second_indicator.place(x=272, y=30, width=80, height=2)
 
 third_button = tk.Button(options_frame, text='Third', font=('Arial', 13), bd=0, 
                          fg='#0097e8', activeforeground='#0097e8',
-                         command=lambda: slider(indicator=third_indicator))
+                         command=lambda: slider(indicator=third_indicator,
+                         page=third_page))
 third_button.place(x=375, y=0, width=125)
 
 third_indicator = tk.Label(options_frame, bg='#0097e8')
@@ -64,7 +74,7 @@ options_frame.configure(width=500, height=35)
 
 
 def home_page():
-    home_page_frame = tk.Frame(main)
+    home_page_frame = tk.Frame(main_frame)
     
     home_page_label = tk.Label(home_page_frame, text='Home Page',
                                font=('Arial', 25), fg='#0097e8')
@@ -73,7 +83,7 @@ def home_page():
     home_page_frame.pack(fill=tk.BOTH, expand=True)
 
 def first_page():
-    first_page_frame = tk.Frame(main)
+    first_page_frame = tk.Frame(main_frame)
     
     first_page_label = tk.Label(first_page_frame, text='First Page',
                                font=('Arial', 25), fg='#0097e8')
@@ -82,7 +92,7 @@ def first_page():
     first_page_frame.pack(fill=tk.BOTH, expand=True)
 
 def second_page():
-    second_page_frame = tk.Frame(main)
+    second_page_frame = tk.Frame(main_frame)
     
     second_page_label = tk.Label(second_page_frame, text='Second Page',
                                font=('Arial', 25), fg='#0097e8')
@@ -91,16 +101,17 @@ def second_page():
     second_page_frame.pack(fill=tk.BOTH, expand=True)
 
 def third_page():
-    third_page_frame = tk.Frame(main)
+    third_page_frame = tk.Frame(main_frame)
     
-    third_page_label = tk.Label(home_page_frame, text='Third Page',
+    third_page_label = tk.Label(third_page_frame, text='Third Page',
                                font=('Arial', 25), fg='#0097e8')
     third_page_label.pack(pady=80)
     
     third_page_frame.pack(fill=tk.BOTH, expand=True)
 
-main = tk.Frame(root)
-main.pack(fill=tk.BOTH, expand=True)
+
+main_frame = tk.Frame(root)
+main_frame.pack(fill=tk.BOTH, expand=True)
 
 home_page()
 root.mainloop()
