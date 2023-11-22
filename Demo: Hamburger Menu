@@ -1,0 +1,24 @@
+"""
+A demonstration of how to make a simple hamburger menu common in mobile apps
+using only Python's Tkinter library.
+"""
+
+import tkinter as tk
+
+root = tk.Tk()
+root.title("Tkinter Hamburger Menu") 
+root.geometry("500x500")
+
+
+top_border_frame = tk.Frame(root, bg="orange", height=10)  # Purely aesthetic)
+top_border_frame.pack(fill=tk.X, side="top")
+
+
+navigation_frame = tk.Frame(root, bg="gray17", height=1000, width=300)
+navigation_frame.place(x=-300, y=0)
+tk.Label(navigation_frame, font="Bahnschrift 15", bg="orange", fg="black",
+         height=2, width=300, padx=20).place(x=0, y=0)
+
+
+root.mainloop()
+
