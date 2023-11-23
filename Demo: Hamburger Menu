@@ -1,3 +1,4 @@
+
 """
 A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
@@ -6,15 +7,37 @@ using only Python's Tkinter library.
 import tkinter as tk
 from tkinter import PhotoImage
 
+
+def create_hamburger_icon():
+    # Create a 32x32 image with a transparent background
+    icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(icon)
+
+    # Draw three parallel lines to represent the hamburger icon
+    draw.line((5, 12, 27, 12), fill="black", width=3)
+    draw.line((5, 18, 27, 18), fill="black", width=3)
+    draw.line((5, 24, 27, 24), fill="black", width=3)
+
+    # Convert the PIL Image to a Tkinter PhotoImage
+    icon_photo = ImageTk.PhotoImage(icon)
+
+    return icon_photo
+
+
 root = tk.Tk()
 root.title("Tkinter Hamburger Menu") 
 root.geometry("500x500")
 
 
-navIcon = PhotoImage(file="C:\Python\Python38-32\Programs\Tkinter\menu.png")
+# Create the hamburger icon with images
+#navIcon = PhotoImage(file="C:\Python\Python38-32\Programs\Tkinter\menu.png")
 closeIcon = PhotoImage(file="C:\Python\Python38-32\Programs\Tkinter\close.png")
+
+# Create the hamburger icon with Unicode
 # The hamburger icon (☰) is represented by the Unicode character text="\u2630"
 
+# Create the hamburger icon programmatically
+navIcon = create_hamburger_icon()
 
 top_border_frame = tk.Frame(root, bg="orange", height=10)  # Purely aesthetic)
 top_border_frame.pack(fill=tk.X, side="top")
