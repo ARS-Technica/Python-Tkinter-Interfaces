@@ -4,20 +4,35 @@ using only Python's Tkinter library.
 """
 
 import tkinter as tk
+from tkinter import PhotoImage
 
 root = tk.Tk()
 root.title("Tkinter Hamburger Menu") 
 root.geometry("500x500")
 
 
+navIcon = PhotoImage(file="C:\Python\Python38-32\Programs\Tkinter\menu.png")
+closeIcon = PhotoImage(file="C:\Python\Python38-32\Programs\Tkinter\close.png")
+# The hamburger icon (☰) is represented by the Unicode character text="\u2630"
+
+
 top_border_frame = tk.Frame(root, bg="orange", height=10)  # Purely aesthetic)
 top_border_frame.pack(fill=tk.X, side="top")
 
+header_label = tk.Label(top_border_frame, text="LOGO", font=('Arial', 13), bg="orange", fg="black", height=2, padx=20)
+header_label.pack(side="right")
 
-navigation_frame = tk.Frame(root, bg="gray17", height=1000, width=300)
+
+first_indicator = tk.Label(root, text="Insert \nWidget Here", font=('Arial', 26), bg="gray", fg="black")
+first_indicator.place(x=150, y=250)
+
+
+navigation_button = tk.Button(top_border_frame, image=navIcon, bg="orange", activebackground="orange", bd=0, padx=20)
+navigation_button.place(x=10, y=10)
+
+navigation_frame = tk.Frame(root, bg="gray", height=1000, width=300)
 navigation_frame.place(x=-300, y=0)
-tk.Label(navigation_frame, font="Bahnschrift 15", bg="orange", fg="black",
-         height=2, width=300, padx=20).place(x=0, y=0)
+tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=300, padx=20).place(x=0, y=0)
 
 
 root.mainloop()
