@@ -1,4 +1,3 @@
-
 """
 A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
@@ -7,6 +6,41 @@ using only Python's Tkinter library.
 import tkinter as tk
 from tkinter import PhotoImage
 from PIL import Image, ImageDraw, ImageTk  # For Close ("X") icon
+
+
+button_state = False
+
+def menu_toggle():
+    global button_state
+    if button_state is True:
+        # Create animated Navbar closing:
+        for x in range(301):
+            navigation_frame.place(x=-x, y=0)
+            top_border_frame.update()
+
+        # Resetting widget colors:
+        first_page.config(bg="white", fg="black")
+        header_label.config(bg="orange")
+        top_border_frame.config(bg="orange")
+        root.config(bg="white")
+
+        # Turning button OFF:
+        button_state = False
+    else:
+        # Make root dim:
+        first_page.config(bg="#252726", fg="#5F5A33")
+        header_label.config(bg="#252726")
+        top_border_frame.config(bg="#252726")
+        root.config(bg="#252726")
+
+        # Created animated Navbar opening:
+        for x in range(-300, 0):
+            navigation_frame.place(x=x, y=0)
+            top_border_frame.update()
+
+        # Turing button ON:
+        button_state = True
+
 
 def create_hamburger_icon():
     # Create a 32x32 image with a transparent background
@@ -58,23 +92,23 @@ close_icon = create_close_icon()
 top_border_frame = tk.Frame(root, bg="orange", height=10)  # Purely aesthetic)
 top_border_frame.pack(fill=tk.X, side="top")
 
-header_label = tk.Label(top_border_frame, text="LOGO", font=('Arial', 13), bg="orange", fg="black", height=2, padx=20)
+header_label = tk.Label(top_border_frame, text="LOGO", font=('Arial', 13, 'bold'), bg="orange", fg="black", height=2, padx=20)
 header_label.pack(side="right")
 
 
 # Main Body
-first_indicator = tk.Label(root, text="Insert \nWidget Here", font=('Arial', 26), bg="gray", fg="black")
-first_indicator.place(x=150, y=250)
+first_page = tk.Label(root, text="Insert \nWidget Here", font=('Arial', 26, 'bold'), bg="white", fg="black")
+first_page.place(x=150, y=250)
 
 
-navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20)
+navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 navigation_button.place(x=10, y=10)
 
 navigation_frame = tk.Frame(root, bg="gray", height=1000, width=300)
 navigation_frame.place(x=-300, y=0)
 tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=300, padx=20).place(x=0, y=0)
 
-close_button = tk.Button(navigation_frame, image=close_icon, bg="orange", activebackground="orange", bd=0, padx=20)
+close_button = tk.Button(navigation_frame, image=close_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 close_button.place(x=250, y=10)
 
 
