@@ -41,6 +41,12 @@ def menu_toggle():
         # Turing button ON:
         button_state = True
 
+def switch_page(page):
+    for frame in main_frame.winfo_children():
+        frame.destroy() # Erase previous contents of frame
+        root.update()   # Ensure that new content is shown in frame
+
+    page()  # Switch new page into main_frame
 
 def create_hamburger_icon():
     # Create a 32x32 image with a transparent background
@@ -97,26 +103,77 @@ header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"
 header_label.pack(side="right")
 
 
+"""
 # Main Body
 first_page = tk.Label(root, text="Insert \nWidget Here", font=("Arial", 26, "bold"), bg="white", fg="black")
 first_page.place(x=150, y=250)
+"""
+
+
+def home_page():
+    home_page_frame = tk.Frame(main_frame)
+
+    home_page_label = tk.Label(home_page_frame, text='Home Page',
+                               font=("Arial", 26, "bold"), bg="white", fg="black")
+    home_page_label.pack(pady=25)
+
+    text_widget = tk.Text(home_page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg")) 
+    text_widget.insert(tk.END, "Click on the menu above to change frames!")
+    text_widget.pack(pady=15)
+
+    home_page_frame.pack(fill=tk.BOTH, expand=True)
+
+def first_page():
+    first_page_frame = tk.Frame(main_frame)
+
+    first_page_label = tk.Label(first_page_frame, text='First Page',
+                               font=("Arial", 26, "bold"), bg="white", fg="black")
+    first_page_label.pack(pady=25)
+
+    first_page_frame.pack(fill=tk.BOTH, expand=True)
+
+def second_page():
+    second_page_frame = tk.Frame(main_frame)
+
+    second_page_label = tk.Label(second_page_frame, text='Second Page',
+                               font=("Arial", 26, "bold"), bg="white", fg="black")
+    second_page_label.pack(pady=25)
+
+    second_page_frame.pack(fill=tk.BOTH, expand=True)
+
+def third_page():
+    third_page_frame = tk.Frame(main_frame)
+
+    third_page_label = tk.Label(third_page_frame, text='Third Page',
+                               font=("Arial", 26, "bold"), bg="white", fg="black")
+    third_page_label.pack(pady=25)
+
+    third_page_frame.pack(fill=tk.BOTH, expand=True)
+
+
+main_frame = tk.Frame(root)
+main_frame.pack(fill=tk.BOTH, expand=True)
 
 
 navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 navigation_button.place(x=10, y=5)
 
 navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
-navigation_frame.place(x=-300, y=0)
+navigation_frame.place(x=-250, y=0)
 tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
+ 
 
-
-home_button = tk.Button(navigation_frame, text="Home", font=("Arial", 13, "bold"), bd=0, bg="white", fg="black")
+home_button = tk.Button(navigation_frame, text="Home", font=("Arial", 13, "bold"), 
+                        bd=0, bg="white", fg="black", command=lambda: switch_page(page=home_page))
 home_button.place(x=20, y=60)
-first_button = tk.Button(navigation_frame, text="First Page", font=("Arial", 13, "bold"), bd=0, bg="white", fg="black")
+first_button = tk.Button(navigation_frame, text="First Page", font=("Arial", 13, "bold"),
+                         bd=0, bg="white", fg="black", command=lambda: switch_page(page=first_page))
 first_button.place(x=20, y=85)
-second_button = tk.Button(navigation_frame, text="Second Page", font=("Arial", 13, "bold"), bd=0, bg="white", fg="black")
+second_button = tk.Button(navigation_frame, text="Second Page", font=("Arial", 13, "bold"),
+                          bd=0, bg="white", fg="black", command=lambda: switch_page(page=second_page))
 second_button.place(x=20, y=110)
-third_button = tk.Button(navigation_frame, text="Third Page", font=("Arial", 13, "bold"), bd=0, bg="white", fg="black")
+third_button = tk.Button(navigation_frame, text="Third Page", font=("Arial", 13, "bold"),
+                         bd=0, bg="white", fg="black", command=lambda: switch_page(page=third_page))
 third_button.place(x=20, y=135)
 
 
@@ -124,5 +181,5 @@ close_button = tk.Button(navigation_frame, image=close_icon, bg="orange", active
 close_button.place(x=150, y=5)
 
 
+home_page()
 root.mainloop()
-
