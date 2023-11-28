@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import PhotoImage
 from PIL import Image, ImageDraw, ImageTk
 
+
 button_state = False
 
 def menu_toggle():
@@ -22,6 +23,9 @@ def menu_toggle():
         top_border_frame.config(bg="orange")
         root.config(bg="white")
 
+        # Lifting navigation_frame to be above other frames
+        navigation_frame.lift()
+
         # Turning button OFF:
         button_state = False
     else:
@@ -35,6 +39,9 @@ def menu_toggle():
             navigation_frame.place(x=x, y=0)
             top_border_frame.update()
 
+        # Lifting navigation_frame to be above other frames
+        navigation_frame.lift()
+
         # Turning button ON:
         button_state = True
 
@@ -44,14 +51,16 @@ def menu_toggle():
         second_button.place(x=20, y=110)
         third_button.place(x=20, y=135)
 
-def switch_page(page_function):
-    # Destroy current page content
-    for widget in main_frame.winfo_children():
-        widget.destroy()
 
-    # Create and pack new page content
-    page_content = page_function(main_frame)
-    page_content.pack(fill=tk.BOTH, expand=True)
+current_page = None
+
+def switch_page(page_function):
+    global current_page
+    if current_page:
+        current_page.destroy()
+
+    current_page = page_function()
+    current_page.place(x=0, y=50)  # Adjust the placement as needed
 
 def create_hamburger_icon():
     icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
@@ -71,24 +80,24 @@ def create_close_icon():
     return icon_photo
 
 def create_page(title, content):
-    page_frame = tk.Frame(main_frame, bg="white")
-    page_label = tk.Label(page_frame, text=title, font=('Arial', 25), fg='#0097e8', bg="white")
-    page_label.pack(pady=25)
+    page_frame = tk.Frame(root, bg="white")
     text_widget = tk.Text(page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg"))
     text_widget.insert(tk.END, content)
     text_widget.pack(pady=15)
+    page_label = tk.Label(page_frame, text=title, font=('Arial', 25), fg='#0097e8', bg="white")
+    page_label.pack(pady=25)
     return page_frame
 
-def home_page(parent_frame):
-    return create_page('Home Page', "Click on the menu above to change frames.")
+def home_page():
+    return create_page('Home Page', "Click on the menu above to change frames!")
 
-def first_page(parent_frame):
+def first_page():
     return create_page('First Page', "Content for the first page.")
 
-def second_page(parent_frame):
+def second_page():
     return create_page('Second Page', "Content for the second page.")
 
-def third_page(parent_frame):
+def third_page():
     return create_page('Third Page', "Content for the third page.")
 
 root = tk.Tk()
@@ -107,10 +116,11 @@ header_label.pack(side="right")
 first_page = tk.Label(root, text="Insert \nWidget Here", font=("Arial", 26, "bold"), bg="white", fg="black")
 first_page.place(x=150, y=250)
 
-navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
+#navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
+navigation_button = tk.Button(top_border_frame, text="O", bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 navigation_button.place(x=10, y=5)
 
-main_frame = tk.Frame(root, bg="white")
+main_frame = tk.Frame(root, bg="white") 
 main_frame.place()
 
 navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
@@ -133,8 +143,8 @@ third_button = tk.Button(navigation_frame, text="Third Page", font=("Arial", 13,
                          bd=0, bg="white", fg="black", command=lambda: switch_page(third_page))
 third_button.place(x=-230, y=135)
 
-close_button = tk.Button(navigation_frame, image=close_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
+#close_button = tk.Button(navigation_frame, image=close_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
+close_button = tk.Button(navigation_frame, text="X", bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 close_button.place(x=150, y=5)
 
 root.mainloop()
-
