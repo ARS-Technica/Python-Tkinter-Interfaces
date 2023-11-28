@@ -5,7 +5,11 @@ using only Python's Tkinter library.
 
 import tkinter as tk
 from tkinter import PhotoImage
-from PIL import Image, ImageDraw, ImageTk  # For Close ("X") icon
+from PIL import Image, ImageDraw, ImageTk
+
+root = tk.Tk()
+root.geometry('500x500')
+root.title('Combined Tkinter Demonstration')
 
 button_state = False
 current_page = None
@@ -16,7 +20,7 @@ def menu_toggle():
         # Create animated Navbar closing:
         for x in range(251):
             navigation_frame.place(x=-x, y=0)
-            main_frame.place(x=0, y=60)
+            main_frame.place(x=-x, y=0)
             top_border_frame.update()
 
         # Resetting widget colors:
@@ -38,11 +42,11 @@ def menu_toggle():
 
         # Created animated Navbar opening:
         for x in range(-250, 0):
-            navigation_frame.place(x=x, y=60)
-            main_frame.place(x=0, y=0)
+            navigation_frame.place(x=x, y=0)
+            main_frame.place(x=x, y=0)
             top_border_frame.update()
 
-        # Turing button ON:
+        # Turning button ON:
         button_state = True
 
 def switch_page(page):
@@ -67,75 +71,8 @@ def create_hamburger_icon():
 
     return icon_photo
 
-def create_close_icon():
-    # Create a 32x32 image with a transparent background
-    icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(icon)
-
-    # Draw an X shape
-    draw.line((5, 5, 27, 27), fill="black", width=3)
-    draw.line((5, 27, 27, 5), fill="black", width=3)
-
-    # Convert the PIL Image to a Tkinter PhotoImage
-    icon_photo = ImageTk.PhotoImage(icon)
-
-    return icon_photo
-
-def home_page():
-    home_page_frame = tk.Frame(main_frame)
-
-    home_page_label = tk.Label(home_page_frame, text='Home Page',
-                               font=("Arial", 26, "bold"), bg="white", fg="black")
-    home_page_label.pack(pady=25)
-
-    text_widget = tk.Text(home_page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg")) 
-    text_widget.insert(tk.END, "Click on the menu above to change frames!")
-    text_widget.pack(pady=15)
-
-    home_page_frame.pack(fill=tk.BOTH, expand=True)
-
-    return home_page_frame
-
-def first_page():
-    first_page_frame = tk.Frame(main_frame)
-
-    first_page_label = tk.Label(first_page_frame, text='First Page',
-                               font=("Arial", 26, "bold"), bg="white", fg="black")
-    first_page_label.pack(pady=25)
-
-    first_page_frame.pack(fill=tk.BOTH, expand=True)
-
-    return first_page_frame
-
-def second_page():
-    second_page_frame = tk.Frame(main_frame)
-
-    second_page_label = tk.Label(second_page_frame, text='Second Page',
-                               font=("Arial", 26, "bold"), bg="white", fg="black")
-    second_page_label.pack(pady=25)
-
-    second_page_frame.pack(fill=tk.BOTH, expand=True)
-
-    return second_page_frame
-
-def third_page():
-    third_page_frame = tk.Frame(main_frame)
-
-    third_page_label = tk.Label(third_page_frame, text='Third Page',
-                               font=("Arial", 26, "bold"), bg="white", fg="black")
-    third_page_label.pack(pady=25)
-
-    third_page_frame.pack(fill=tk.BOTH, expand=True)
-
-    return third_page_frame
-
-root = tk.Tk()
-root.title("Tkinter Hamburger Menu") 
-root.geometry("500x500")
-
 # Create the hamburger icon programmatically
 menu_icon = create_hamburger_icon()
-close_icon = create_close_icon()
 
 top_border_frame = tk.Frame(root, bg="orange", height=10)  # Purely aesthetic)
 top_border_frame.pack(fill=tk.X, side="top")
@@ -143,11 +80,13 @@ top_border_frame.pack(fill=tk.X, side="top")
 header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"), bg="orange", fg="black", height=2, padx=20)
 header_label.pack(side="right")
 
-
 # Create a main frame beneath navigation_frame
 main_frame = tk.Frame(root, bg="white", height=1000, width=200)
 main_frame.place(x=-250, y=0)
- 
+
+# Main Body
+first_page = tk.Label(main_frame, text="Insert \nWidget Here", font=("Arial", 26, "bold"), bg="white", fg="black")
+first_page.place(x=150, y=250)
 
 navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 navigation_button.place(x=10, y=5)
@@ -155,8 +94,7 @@ navigation_button.place(x=10, y=5)
 navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
 navigation_frame.place(x=-250, y=0)
 
-#tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
-
+tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
 
 home_button = tk.Button(navigation_frame, text="Home", font=("Arial", 13, "bold"), 
                         bd=0, bg="white", fg="black", command=lambda: switch_page(home_page))
@@ -174,8 +112,7 @@ third_button = tk.Button(navigation_frame, text="Third Page", font=("Arial", 13,
                          bd=0, bg="white", fg="black", command=lambda: switch_page(third_page))
 third_button.place(x=20, y=135)
 
-
-close_button = tk.Button(navigation_frame, image=close_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
+close_button = tk.Button(navigation_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 close_button.place(x=150, y=5)
 
 root.mainloop()
