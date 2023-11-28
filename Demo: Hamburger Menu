@@ -24,6 +24,8 @@ def menu_toggle():
         top_border_frame.config(bg="orange")
         root.config(bg="white")
 
+
+
         button_state = False
     else:
         for x in range(-250, 0):
@@ -37,7 +39,20 @@ def menu_toggle():
         top_border_frame.config(bg="#252726")
         root.config(bg="#252726")
 
+        home_button.place(x=20 if button_state else -230, y=60)
+        first_button.place(x=20 if button_state else -230, y=85)
+        second_button.place(x=20 if button_state else -230, y=110)
+        third_button.place(x=20 if button_state else -230, y=135)
+
+
+
         button_state = True
+
+
+
+
+
+
 
 def switch_page(page):
     global current_page
@@ -113,38 +128,52 @@ top_border_frame.pack(fill=tk.X, side="top")
 header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"), bg="orange", fg="black", height=2, padx=20)
 header_label.pack(side="right")
 
+"""
+navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
+navigation_frame.place(x=-250, y=0)
+
+main_frame = tk.Frame(root, bg="white", height=1000, width=200)
+main_frame.place(x=0, y=top_border_frame.winfo_height())
+"""
+
 navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
 navigation_frame.place(x=0, y=top_border_frame.winfo_height())
 
 main_frame = tk.Frame(root, bg="white", height=1000, width=200)
-main_frame.place(x=0, y=top_border_frame.winfo_height())
+main_frame.place(x=-250, y=0)
+
 
 navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 navigation_button.place(x=10, y=5)
 
-																	 
-								   
+				  
+		   
 
 tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).pack()
 
 home_button = tk.Button(navigation_frame, text="Home", font=("Arial", 13, "bold"), 
                         bd=0, bg="white", fg="black", command=lambda: switch_page(home_page))
-home_button.pack()
+home_button.place(x=-230, y=60)
+#home_button.place(x=20, y=60)
 
 first_button = tk.Button(navigation_frame, text="First Page", font=("Arial", 13, "bold"),
                          bd=0, bg="white", fg="black", command=lambda: switch_page(first_page))
-first_button.pack()
+first_button.place(x=-230, y=85)
+#first_button.place(x=20, y=85)
 
 second_button = tk.Button(navigation_frame, text="Second Page", font=("Arial", 13, "bold"),
                           bd=0, bg="white", fg="black", command=lambda: switch_page(second_page))
-second_button.pack()
+second_button.place(x=-230, y=110)
+#second_button.place(x=20, y=110)
 
 third_button = tk.Button(navigation_frame, text="Third Page", font=("Arial", 13, "bold"),
                          bd=0, bg="white", fg="black", command=lambda: switch_page(third_page))
-third_button.pack()
+third_button.place(x=-230, y=135)
+#third_button.place(x=20, y=135)
 
 close_button = tk.Button(navigation_frame, image=close_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 close_button.pack()
+#close_button.place(x=150, y=5)
 
 root.mainloop()
 
