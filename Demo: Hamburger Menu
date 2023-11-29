@@ -196,3 +196,5 @@ if __name__ == "__main__":
     switch_page(home_page)  # Default landing page
     root.mainloop()
 
+
+
