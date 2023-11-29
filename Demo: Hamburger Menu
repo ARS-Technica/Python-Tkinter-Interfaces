@@ -84,6 +84,7 @@ def create_close_icon():
 
 def create_page(title, content):
     global page_frame
+    
     if page_frame:
         page_frame.destroy()  # Destroy the existing page_frame
 
