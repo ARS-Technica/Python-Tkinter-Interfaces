@@ -5,61 +5,10 @@ using only Python's Tkinter library.
 
 import tkinter as tk
 from tkinter import PhotoImage
-from PIL import Image, ImageDraw, ImageTk
+from PIL import Image, ImageDraw, ImageTk  # For Close ("X") icon
 
 button_state = False
 page_frame = None
-
-def menu_toggle():
-    global button_state
-    if button_state is True:
-        # Create animated Navbar closing:
-        for x in range(251):
-            navigation_frame.place(x=-x, y=0)
-            top_border_frame.update()
-
-        # Resetting widget colors:
-        header_label.config(bg="orange")
-        top_border_frame.config(bg="orange")
-        root.config(bg="white")
-
-        # Lifting navigation_frame to be above other frames
-        navigation_frame.lift()
-
-        # Turning button OFF:
-        button_state = False
-    else:
-        # Make root dim:
-        header_label.config(bg="#252726", fg="white")
-        top_border_frame.config(bg="#252726")
-        root.config(bg="#252726")
-
-        # Created animated Navbar opening:
-        for x in range(-250, 0):
-            navigation_frame.place(x=x, y=0)
-            top_border_frame.update()
-
-        # Lifting navigation_frame to be above other frames
-        navigation_frame.lift()
-
-        # Turning button ON:
-        button_state = True
-
-        # Animate button placement
-        home_button.place(x=20, y=60)
-        first_button.place(x=20, y=85)
-        second_button.place(x=20, y=110)
-        third_button.place(x=20, y=135)
-
-def switch_page(page_function):
-    global page_frame
-    if page_frame:
-        page_frame.destroy()  # Destroy the existing page_frame
-
-    page_frame = page_function()  # Create the new page
-    page_frame.pack(fill=tk.BOTH, expand=True)
-
-    navigation_frame.lift()  # Bring the navigation_frame to the top
 
 def create_hamburger_icon():
     icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
@@ -77,19 +26,62 @@ def create_close_icon():
     draw.line((5, 27, 27, 5), fill="black", width=3)
     icon_photo = ImageTk.PhotoImage(icon)
     return icon_photo
-"""
-def create_page(title, content):
-    page_frame = tk.Frame(root, bg="white")
-    text_widget = tk.Text(page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg"))
-    text_widget.insert(tk.END, content)
-    text_widget.pack(pady=15)
-    page_label = tk.Label(page_frame, text=title, font=('Arial', 25), fg='#0097e8', bg="white")
-    page_label.pack(pady=25)
-    return page_frame
 
-# Example useage:
-# return create_page('Third Page', "Content for the third page.")
-"""
+def menu_toggle():
+    global button_state
+    
+    if button_state is True:
+        # Create animated Navbar closing:
+        for x in range(251):
+            navigation_frame.place(x=-x, y=0)
+            right_navigation_frame.update()
+            top_border_frame.update()
+
+        # Resetting widget colors:
+        header_label.config(bg="orange")
+        top_border_frame.config(bg="orange")
+        root.config(bg="white")
+
+        # Lifting navigation_frame above other frames
+        navigation_frame.lift()
+
+        # Turning button OFF:
+        button_state = False
+    else:
+        # Dim the color scheme within the root frame:
+        header_label.config(bg="#252726", fg="white")
+        top_border_frame.config(bg="#252726")
+        root.config(bg="#252726")
+
+        # Created animated Navbar opening:
+        for x in range(-250, 0):
+            navigation_frame.place(x=x, y=0)
+            right_navigation_frame.update()
+            top_border_frame.update()
+
+        # Lifting navigation_frame to be above other frames
+        navigation_frame.lift()
+
+        # Turning button ON:
+        button_state = True
+
+        # Animate button placement
+        home_button.place(x=20, y=60)
+        first_button.place(x=20, y=85)
+        second_button.place(x=20, y=110)
+        third_button.place(x=20, y=135)
+
+def switch_page(page_function):
+    global page_frame
+    
+    if page_frame:
+        page_frame.destroy()  # Destroy the existing page_frame
+
+    page_frame = page_function()  # Create the new page
+    page_frame.pack(fill=tk.BOTH, expand=True)
+
+    navigation_frame.lift()  # Bring the navigation_frame to the top
+
 
 def home_page():
     home_page_frame = tk.Frame(root, bg="white")
@@ -100,7 +92,6 @@ def home_page():
     home_page_text = tk.Label(home_page_frame, text="Click on the menu above to change frames!", font=('Arial', 12), fg='#0097e8', bg="white")
     home_page_text.pack(pady=25)
     
-    #return create_page('Home Page', "Click on the menu above to change frames!")
     return home_page_frame  
 
 def first_page():
@@ -110,6 +101,7 @@ def first_page():
     first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg")) 
     first_page_text_widget.insert(tk.END, "Content for the first page.")
     first_page_text_widget.pack(pady=15)
+
     return first_page_frame
 
 def second_page():
@@ -121,6 +113,7 @@ def second_page():
     second_page_text_widget.pack(pady=15)
     second_page_label = tk.Label(second_page_frame, text='Second Page', font=('Arial', 25), fg='#0097e8', bg="white")
     second_page_label.pack(pady=25)
+
     return second_page_frame
 
 def third_page():
@@ -132,6 +125,7 @@ def third_page():
     third_page_text_widget.pack(pady=15)
     third_page_label = tk.Label(third_page_frame, text='Third Page', font=('Arial', 25), fg='#0097e8', bg="white")
     third_page_label.pack(pady=25)
+
     return third_page_frame
 
 
@@ -144,6 +138,8 @@ close_icon = create_close_icon()
 
 top_border_frame = tk.Frame(root, bg="orange", height=10)
 top_border_frame.pack(fill=tk.X, side="top")
+top_border_frame_2 = tk.Frame(root, bg="black", height=5)
+top_border_frame_2.pack(fill=tk.X, side="top")
 
 header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"), bg="orange", fg="black", height=2, padx=20)
 header_label.pack(side="right")
@@ -157,8 +153,17 @@ main_frame.place()
 navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
 navigation_frame.place(x=-250, y=0)
 
-# This line creates te orange strip at the top of the Navigation Frame:
-tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
+# This line creates te orange strip at the top of the Navigation Frame 
+navigation_top_border = tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
+
+navigation_top_border_frame = tk.Frame(navigation_frame, bg="black", height=5, width=250)
+navigation_top_border_frame.place(x=0, y=44)  # Adjusted height
+
+# Creates a vertical black border on the right side of the Navigation Frame
+right_navigation_frame = tk.Frame(navigation_frame, bg="black", width=5, height=1000)
+#right_navigation_frame.place(x=navigation_frame.winfo_width(), y=0)  # Adjusts the x-coordinate as needed
+right_navigation_frame.place(x=195, y=0) 
+right_navigation_frame.lift()  # Lift right_navigation_frame to the top
 
 
 # Initially place buttons off-screen
@@ -184,8 +189,8 @@ close_button.pack()
 close_button.place(x=150, y=5)
 
 
-switch_page(home_page)
-root.mainloop()
-
+if __name__ == "__main__":
+    switch_page(home_page)  # Default landing page
+    root.mainloop()
 
 
