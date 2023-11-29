@@ -27,6 +27,27 @@ def create_close_icon():
     icon_photo = ImageTk.PhotoImage(icon)
     return icon_photo
 
+def create_navigation_buttons(frame, switch_page_func):
+    buttons = []
+
+    home_button = tk.Button(frame, text="Home", font=("Arial", 13, "bold"), 
+                            bd=0, bg="white", fg="black", command=lambda: switch_page_func(home_page))
+    buttons.append(home_button)
+
+    first_button = tk.Button(frame, text="First Page", font=("Arial", 13, "bold"),
+                             bd=0, bg="white", fg="black", command=lambda: switch_page_func(first_page))
+    buttons.append(first_button)
+
+    second_button = tk.Button(frame, text="Second Page", font=("Arial", 13, "bold"),
+                              bd=0, bg="white", fg="black", command=lambda: switch_page_func(second_page))
+    buttons.append(second_button)
+
+    third_button = tk.Button(frame, text="Third Page", font=("Arial", 13, "bold"),
+                             bd=0, bg="white", fg="black", command=lambda: switch_page_func(third_page))
+    buttons.append(third_button)
+
+    return buttons
+
 def menu_toggle():
     global button_state
     
@@ -66,10 +87,8 @@ def menu_toggle():
         button_state = True
 
         # Animate button placement
-        home_button.place(x=20, y=60)
-        first_button.place(x=20, y=85)
-        second_button.place(x=20, y=110)
-        third_button.place(x=20, y=135)
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 
 def switch_page(page_function):
     global page_frame
@@ -81,7 +100,6 @@ def switch_page(page_function):
     page_frame.pack(fill=tk.BOTH, expand=True)
 
     navigation_frame.lift()  # Bring the navigation_frame to the top
-
 
 def home_page():
     home_page_frame = tk.Frame(root, bg="white")
@@ -153,44 +171,30 @@ main_frame.place()
 navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
 navigation_frame.place(x=-250, y=0)
 
-# This line creates te orange strip at the top of the Navigation Frame 
-navigation_top_border = tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
+# This line creates the orange strip at the top of the Navigation Frame
+tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
 
-navigation_top_border_frame = tk.Frame(navigation_frame, bg="black", height=5, width=250)
-navigation_top_border_frame.place(x=0, y=44)  # Adjusted height
+# This line creates the black line beneath the orange strip (adjust the height for thickness)
+line_frame = tk.Frame(navigation_frame, bg="black", height=5, width=250)
+line_frame.place(x=0, y=43)  # Adjusted height
 
 # Creates a vertical black border on the right side of the Navigation Frame
 right_navigation_frame = tk.Frame(navigation_frame, bg="black", width=5, height=1000)
-#right_navigation_frame.place(x=navigation_frame.winfo_width(), y=0)  # Adjusts the x-coordinate as needed
 right_navigation_frame.place(x=195, y=0) 
 right_navigation_frame.lift()  # Lift right_navigation_frame to the top
 
+# Create navigation buttons using the function
+navigation_buttons = create_navigation_buttons(navigation_frame, switch_page)
 
 # Initially place buttons off-screen
-home_button = tk.Button(navigation_frame, text="Home", font=("Arial", 13, "bold"), 
-                        bd=0, bg="white", fg="black", command=lambda: switch_page(home_page))
-home_button.place(x=-230, y=60)
-
-first_button = tk.Button(navigation_frame, text="First Page", font=("Arial", 13, "bold"),
-                         bd=0, bg="white", fg="black", command=lambda: switch_page(first_page))
-first_button.place(x=-230, y=85)
-
-second_button = tk.Button(navigation_frame, text="Second Page", font=("Arial", 13, "bold"),
-                          bd=0, bg="white", fg="black", command=lambda: switch_page(second_page))
-second_button.place(x=-230, y=110)
-
-third_button = tk.Button(navigation_frame, text="Third Page", font=("Arial", 13, "bold"),
-                         bd=0, bg="white", fg="black", command=lambda: switch_page(third_page))
-third_button.place(x=-230, y=135)
-
+for button in navigation_buttons:
+    button.place(x=-230, y=60 + navigation_buttons.index(button) * 25)
 
 close_button = tk.Button(navigation_frame, image=close_icon,  bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 close_button.pack()
 close_button.place(x=150, y=5)
 
-
 if __name__ == "__main__":
     switch_page(home_page)  # Default landing page
     root.mainloop()
-
 
