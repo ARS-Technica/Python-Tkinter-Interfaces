@@ -7,8 +7,8 @@ import tkinter as tk
 from tkinter import PhotoImage
 from PIL import Image, ImageDraw, ImageTk
 
-
 button_state = False
+page_frame = None
 
 def menu_toggle():
     global button_state
@@ -51,19 +51,15 @@ def menu_toggle():
         second_button.place(x=20, y=110)
         third_button.place(x=20, y=135)
 
-current_page = None
-page_frame = None
-
 def switch_page(page_function):
-    global current_page
-    if current_page:
-        current_page.lower()  # Lower the current page
+    global page_frame
+    if page_frame:
+        page_frame.destroy()  # Destroy the existing page_frame
 
-    current_page = page_function()  # Create the new page
-    current_page.pack(fill=tk.BOTH, expand=True)
+    page_frame = page_function()  # Create the new page
+    page_frame.pack(fill=tk.BOTH, expand=True)
 
     navigation_frame.lift()  # Bring the navigation_frame to the top
-
 
 def create_hamburger_icon():
     icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
@@ -81,13 +77,8 @@ def create_close_icon():
     draw.line((5, 27, 27, 5), fill="black", width=3)
     icon_photo = ImageTk.PhotoImage(icon)
     return icon_photo
-
+"""
 def create_page(title, content):
-    global page_frame
-    
-    if page_frame:
-        page_frame.destroy()  # Destroy the existing page_frame
-
     page_frame = tk.Frame(root, bg="white")
     text_widget = tk.Text(page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg"))
     text_widget.insert(tk.END, content)
@@ -96,18 +87,52 @@ def create_page(title, content):
     page_label.pack(pady=25)
     return page_frame
 
+# Example useage:
+# return create_page('Third Page', "Content for the third page.")
+"""
 
 def home_page():
-    return create_page('Home Page', "Click on the menu above to change frames!")
+    home_page_frame = tk.Frame(root, bg="white")
+
+    home_page_label = tk.Label(home_page_frame, text='Home Page', font=('Arial', 25), fg='#0097e8', bg="white")
+    home_page_label.pack(pady=25)
+    
+    home_page_text = tk.Label(home_page_frame, text="Click on the menu above to change frames!", font=('Arial', 12), fg='#0097e8', bg="white")
+    home_page_text.pack(pady=25)
+    
+    #return create_page('Home Page', "Click on the menu above to change frames!")
+    return home_page_frame  
 
 def first_page():
-    return create_page('First Page', "Content for the first page.")
+    first_page_frame = tk.Frame(root, bg="white")
+    first_page_label = tk.Label(first_page_frame, text='First Page', font=('Arial', 25), fg='#0097e8', bg="white")
+    first_page_label.pack(pady=25)
+    first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg")) 
+    first_page_text_widget.insert(tk.END, "Content for the first page.")
+    first_page_text_widget.pack(pady=15)
+    return first_page_frame
 
 def second_page():
-    return create_page('Second Page', "Content for the second page.")
+    second_page_frame = tk.Frame(root, bg="white")
+    second_page_label = tk.Label(second_page_frame, text='Second Page', font=('Arial', 25), fg='#0097e8', bg="white")
+    second_page_label.pack(pady=25)
+    second_page_text_widget = tk.Text(second_page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg")) 
+    second_page_text_widget.insert(tk.END, "Content for the second page.")
+    second_page_text_widget.pack(pady=15)
+    second_page_label = tk.Label(second_page_frame, text='Second Page', font=('Arial', 25), fg='#0097e8', bg="white")
+    second_page_label.pack(pady=25)
+    return second_page_frame
 
 def third_page():
-    return create_page('Third Page', "Content for the third page.")
+    third_page_frame = tk.Frame(root, bg="white")
+    third_page_label = tk.Label(third_page_frame, text='Third Page', font=('Arial', 25), fg='#0097e8', bg="white")
+    third_page_label.pack(pady=25)
+    third_page_text_widget = tk.Text(third_page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg")) 
+    third_page_text_widget.insert(tk.END, "Content for the third page.")
+    third_page_text_widget.pack(pady=15)
+    third_page_label = tk.Label(third_page_frame, text='Third Page', font=('Arial', 25), fg='#0097e8', bg="white")
+    third_page_label.pack(pady=25)
+    return third_page_frame
 
 
 root = tk.Tk()
@@ -123,7 +148,6 @@ top_border_frame.pack(fill=tk.X, side="top")
 header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"), bg="orange", fg="black", height=2, padx=20)
 header_label.pack(side="right")
  
-
 navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 navigation_button.place(x=10, y=5)
 
@@ -159,5 +183,9 @@ close_button = tk.Button(navigation_frame, image=close_icon,  bg="orange", activ
 close_button.pack()
 close_button.place(x=150, y=5)
 
+
+switch_page(home_page)
 root.mainloop()
+
+
 
