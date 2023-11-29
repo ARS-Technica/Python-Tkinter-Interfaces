@@ -53,14 +53,18 @@ def menu_toggle():
 
 
 current_page = None
+page_frame = None
 
 def switch_page(page_function):
     global current_page
     if current_page:
-        current_page.destroy()
+        current_page.lower()  # Lower the current page
 
-    current_page = page_function()
-    current_page.place(x=0, y=50)  # Adjust the placement as needed
+    current_page = page_function()  # Create the new page
+    current_page.pack(fill=tk.BOTH, expand=True)
+
+    navigation_frame.lift()  # Bring the navigation_frame to the top
+
 
 def create_hamburger_icon():
     icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
@@ -80,6 +84,10 @@ def create_close_icon():
     return icon_photo
 
 def create_page(title, content):
+    global page_frame
+    if page_frame:
+        page_frame.destroy()  # Destroy the existing page_frame
+
     page_frame = tk.Frame(root, bg="white")
     text_widget = tk.Text(page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg"))
     text_widget.insert(tk.END, content)
@@ -87,6 +95,7 @@ def create_page(title, content):
     page_label = tk.Label(page_frame, text=title, font=('Arial', 25), fg='#0097e8', bg="white")
     page_label.pack(pady=25)
     return page_frame
+
 
 def home_page():
     return create_page('Home Page', "Click on the menu above to change frames!")
@@ -112,10 +121,7 @@ top_border_frame.pack(fill=tk.X, side="top")
 
 header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"), bg="orange", fg="black", height=2, padx=20)
 header_label.pack(side="right")
-
-first_page = tk.Label(root, text="Insert \nWidget Here", font=("Arial", 26, "bold"), bg="white", fg="black")
-first_page.place(x=150, y=250)
-
+ 
 #navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 navigation_button = tk.Button(top_border_frame, text="O", bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 navigation_button.place(x=10, y=5)
@@ -148,3 +154,4 @@ close_button = tk.Button(navigation_frame, text="X", bg="orange", activebackgrou
 close_button.place(x=150, y=5)
 
 root.mainloop()
+
