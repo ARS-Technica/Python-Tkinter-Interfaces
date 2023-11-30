@@ -177,15 +177,15 @@ navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
 navigation_frame.place(x=-250, y=0)
 
  
-bottom_border_frame = tk.Frame(root, bg="black", height=5)
+bottom_border_frame = tk.Frame(root, bg="orange", height=5)
 bottom_border_frame.pack(fill=tk.X, side="bottom")
-bottom_border_frame_2 = tk.Frame(root, bg="orange", height=10)
+bottom_border_frame_2 = tk.Frame(root, bg="black", height=10)
 bottom_border_frame_2.pack(fill=tk.X, side="bottom")
 
-last_label = tk.Label(bottom_border_frame, text="Last", font=("Arial", 13, "bold"), bg="orange", fg="black", height=2, padx=20)
+last_label = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"), bg="orange", fg="black", bd=0, padx=20, pady=5)
 last_label.pack(side="left")
 
-next_label = tk.Label(bottom_border_frame, text="Next", font=("Arial", 13, "bold"), bg="orange", fg="black", height=2, padx=20)
+next_label = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"), bg="orange", fg="black", bd=0, padx=20, pady=5)
 next_label.pack(side="right")
 
 
