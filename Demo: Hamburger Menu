@@ -176,6 +176,19 @@ main_frame.place()
 navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
 navigation_frame.place(x=-250, y=0)
 
+ 
+bottom_border_frame = tk.Frame(root, bg="black", height=5)
+bottom_border_frame.pack(fill=tk.X, side="bottom")
+bottom_border_frame_2 = tk.Frame(root, bg="orange", height=10)
+bottom_border_frame_2.pack(fill=tk.X, side="bottom")
+
+last_label = tk.Label(bottom_border_frame, text="Last", font=("Arial", 13, "bold"), bg="orange", fg="black", height=2, padx=20)
+last_label.pack(side="left")
+
+next_label = tk.Label(bottom_border_frame, text="Next", font=("Arial", 13, "bold"), bg="orange", fg="black", height=2, padx=20)
+next_label.pack(side="right")
+
+
 # This line creates the orange strip at the top of the Navigation Frame
 tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
 
@@ -198,6 +211,7 @@ for button in navigation_buttons:
 close_button = tk.Button(navigation_frame, image=close_icon,  bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
 close_button.pack()
 close_button.place(x=150, y=5)
+
 
 if __name__ == "__main__":
     switch_page(home_page)  # Default landing page
