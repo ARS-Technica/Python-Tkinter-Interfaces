@@ -174,19 +174,28 @@ main_frame = tk.Frame(root, bg="white")
 main_frame.place()
 
 navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
-navigation_frame.place(x=-250, y=0)
+#navigation_frame.place(x=-250, y=0)
 
- 
+root.update_idletasks() # Force an update and then get the height
+navigation_frame.place(x=-250, y=main_frame.winfo_height())
+
+
+
 bottom_border_frame = tk.Frame(root, bg="orange", height=5)
 bottom_border_frame.pack(fill=tk.X, side="bottom")
+navigation_frame.lower(bottom_border_frame)   # Lift foot over the navigation_frame
 bottom_border_frame_2 = tk.Frame(root, bg="black", height=10)
 bottom_border_frame_2.pack(fill=tk.X, side="bottom")
+navigation_frame.lower(bottom_border_frame_2)   # Lift foot over the navigation_frame
 
 last_label = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"), bg="orange", fg="black", bd=0, padx=20, pady=5)
 last_label.pack(side="left")
 
 next_label = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"), bg="orange", fg="black", bd=0, padx=20, pady=5)
 next_label.pack(side="right")
+
+# Move the navigation_frame behind bottom_border_frame
+#navigation_frame.lower(bottom_border_frame) 
 
 
 # This line creates the orange strip at the top of the Navigation Frame
