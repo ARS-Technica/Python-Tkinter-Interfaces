@@ -3,12 +3,12 @@ A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
 """
 
-
 import tkinter as tk
 from tkinter import PhotoImage
 from PIL import Image, ImageDraw, ImageTk  # For Close ("X") icon
 
 button_state = False
+current_page_index = 0 
 page_frame = None
 
 def create_hamburger_icon():
@@ -29,6 +29,8 @@ def create_close_icon():
     return icon_photo
 
 def create_navigation_buttons(frame, switch_page_func):
+    global navigation_menu
+    
     buttons = []
 
     def on_enter(event):
@@ -76,8 +78,8 @@ def menu_toggle():
         root.config(bg="white")
         bottom_border_frame.config(bg="orange")
 
-        last_label.config(bg="orange", fg="black") 
-        next_label.config(bg="orange", fg="black")
+        last_button.config(bg="orange", fg="black") 
+        next_button.config(bg="orange", fg="black")
 
         # Turning button OFF:
         button_state = False
@@ -88,8 +90,8 @@ def menu_toggle():
         root.config(bg="#252726")
         bottom_border_frame.config(bg="#252726")
 
-        last_label.config(bg="#252726", fg="white") 
-        next_label.config(bg="#252726", fg="white") 
+        last_button.config(bg="#252726", fg="white") 
+        next_button.config(bg="#252726", fg="white") 
 
         # Lifting navigation_frame to be above other frames
         # MUST come before animation for smooth motion
@@ -121,6 +123,22 @@ def switch_page(page_function):
 
     navigation_frame.lift()  # Bring the navigation_frame to the top
 
+def last_page():
+    global current_page_index
+
+    total_pages = len(navigation_menu)
+
+    current_page_index = (current_page_index - 1) % total_pages
+    switch_page(navigation_menu[current_page_index][0])
+
+def next_page():
+    global current_page_index
+
+    total_pages = len(navigation_menu)
+
+    current_page_index = (current_page_index + 1) % total_pages
+    switch_page(navigation_menu[current_page_index][0])
+    
 def home_page():
     home_page_frame = tk.Frame(root, bg="white")
 
@@ -170,8 +188,8 @@ def third_page():
 root = tk.Tk()
 root.title("Tkinter Hamburger Menu") 
 root.geometry("500x500")
-#root.minsize(width=500, height=500)  # Set the minimum height
-#root.maxsize(width=root.winfo_screenwidth(), height=1000)  # Set the maximum height
+# root.minsize(width=500, height=500)  # Set the minimum height
+# root.maxsize(width=root.winfo_screenwidth(), height=1000)  # Set the maximum height
 
 menu_icon = create_hamburger_icon()
 close_icon = create_close_icon()
@@ -201,11 +219,13 @@ bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
 bottom_border_frame_2.pack(fill=tk.X, side="bottom")
 navigation_frame.lower(bottom_border_frame_2)   # Lift foot over the navigation_frame
 
-last_label = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"), bg="orange", fg="black", bd=0, padx=20, pady=5)
-last_label.pack(side="left")
+last_button = tk.Button(bottom_border_frame, text="< Last", font=("Arial", 13, "bold"),
+                        bg="orange", fg="black", bd=0, padx=20, pady=5, command=lambda: last_page())
+last_button.pack(side="left")
 
-next_label = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"), bg="orange", fg="black", bd=0, padx=20, pady=5)
-next_label.pack(side="right")
+next_button = tk.Button(bottom_border_frame, text="Next >", font=("Arial", 13, "bold"),
+                        bg="orange", fg="black", bd=0, padx=20, pady=5, command=lambda: next_page())
+next_button.pack(side="right")
 
 
 # This line creates the orange strip at the top of the Navigation Frame
