@@ -3,6 +3,7 @@ A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
 """
 
+
 import tkinter as tk
 from tkinter import PhotoImage
 from PIL import Image, ImageDraw, ImageTk  # For Close ("X") icon
@@ -57,19 +58,26 @@ def menu_toggle():
     global button_state
     
     if button_state is True:
-        # Create animated Navbar closing:
+        # Lifting navigation_frame above other frames
+        # MUST come before animation for smooth motion
+        navigation_frame.lift()
+        bottom_border_frame.lift()   # Necessary to hiding the bottom of navigation_frame
+        bottom_border_frame_2.lift() # Necessary to hiding the bottom of navigation_frame
+        
+        # Animate Navbar opening:
         for x in range(251):
             navigation_frame.place(x=-x, y=0)
             right_navigation_frame.update()
             top_border_frame.update()
 
         # Resetting widget colors:
-        header_label.config(bg="orange")
+        header_label.config(bg="orange", fg="black")
         top_border_frame.config(bg="orange")
         root.config(bg="white")
+        bottom_border_frame.config(bg="orange")
 
-        # Lifting navigation_frame above other frames
-        navigation_frame.lift()
+        last_label.config(bg="orange", fg="black") 
+        next_label.config(bg="orange", fg="black")
 
         # Turning button OFF:
         button_state = False
@@ -78,15 +86,22 @@ def menu_toggle():
         header_label.config(bg="#252726", fg="white")
         top_border_frame.config(bg="#252726")
         root.config(bg="#252726")
+        bottom_border_frame.config(bg="#252726")
 
-        # Created animated Navbar opening:
+        last_label.config(bg="#252726", fg="white") 
+        next_label.config(bg="#252726", fg="white") 
+
+        # Lifting navigation_frame to be above other frames
+        # MUST come before animation for smooth motion
+        navigation_frame.lift()
+        bottom_border_frame.lift()   # Necessary to hiding the bottom of navigation_frame
+        bottom_border_frame_2.lift() # Necessary to hiding the bottom of navigation_frame
+        
+        # Animate Navbar opening:
         for x in range(-250, 0):
             navigation_frame.place(x=x, y=0)
             right_navigation_frame.update()
             top_border_frame.update()
-
-        # Lifting navigation_frame to be above other frames
-        navigation_frame.lift()
 
         # Turning button ON:
         button_state = True
@@ -155,8 +170,8 @@ def third_page():
 root = tk.Tk()
 root.title("Tkinter Hamburger Menu") 
 root.geometry("500x500")
-root.minsize(width=500, height=500)  # Set the minimum height
-root.maxsize(width=root.winfo_screenwidth(), height=1000)  # Set the maximum height
+#root.minsize(width=500, height=500)  # Set the minimum height
+#root.maxsize(width=root.winfo_screenwidth(), height=1000)  # Set the maximum height
 
 menu_icon = create_hamburger_icon()
 close_icon = create_close_icon()
@@ -203,7 +218,7 @@ line_frame.place(x=0, y=44)  # Adjusted height
 # Creates a vertical black border on the right side of the Navigation Frame
 right_navigation_frame = tk.Frame(navigation_frame, bg="black", width=5, height=1000)
 right_navigation_frame.place(x=195, y=0) 
-right_navigation_frame.lift()  # Lift right_navigation_frame to the top
+#right_navigation_frame.lift()  # Lift right_navigation_frame to the top
 
 # Create navigation buttons using the function
 navigation_buttons = create_navigation_buttons(navigation_frame, switch_page)
