@@ -8,7 +8,7 @@ from tkinter import PhotoImage
 from PIL import Image, ImageDraw, ImageTk  # For Close ("X") icon
 
 button_state = False
-current_page_index = 0 
+current_page_index = 0
 page_frame = None
 
 def create_hamburger_icon():
@@ -122,8 +122,10 @@ def switch_page(page_function):
     page_frame.pack(fill=tk.BOTH, expand=True)
 
     navigation_frame.lift()  # Bring the navigation_frame to the top
+    bottom_border_frame.lift()   # Necessary to hiding the bottom of navigation_frame
+    bottom_border_frame_2.lift() # Necessary to hiding the bottom of navigation_frame
 
-def last_page():
+def last_page():    # For Last Button
     global current_page_index
 
     total_pages = len(navigation_menu)
@@ -131,7 +133,7 @@ def last_page():
     current_page_index = (current_page_index - 1) % total_pages
     switch_page(navigation_menu[current_page_index][0])
 
-def next_page():
+def next_page():    # For Next Button
     global current_page_index
 
     total_pages = len(navigation_menu)
@@ -219,11 +221,11 @@ bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
 bottom_border_frame_2.pack(fill=tk.X, side="bottom")
 navigation_frame.lower(bottom_border_frame_2)   # Lift foot over the navigation_frame
 
-last_button = tk.Button(bottom_border_frame, text="< Last", font=("Arial", 13, "bold"),
+last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
                         bg="orange", fg="black", bd=0, padx=20, pady=5, command=lambda: last_page())
 last_button.pack(side="left")
 
-next_button = tk.Button(bottom_border_frame, text="Next >", font=("Arial", 13, "bold"),
+next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
                         bg="orange", fg="black", bd=0, padx=20, pady=5, command=lambda: next_page())
 next_button.pack(side="right")
 
