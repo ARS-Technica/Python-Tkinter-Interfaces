@@ -11,20 +11,20 @@ button_state = False
 current_page_index = 0  # Necessary for the Last and Next Buttons
 page_frame = None
 
+def create_close_icon():
+    icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(icon)
+    draw.line((5, 5, 27, 27), fill="black", width=3)
+    draw.line((5, 27, 27, 5), fill="black", width=3)
+    icon_photo = ImageTk.PhotoImage(icon)
+    return icon_photo
+
 def create_hamburger_icon():
     icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
     draw = ImageDraw.Draw(icon)
     draw.line((5, 12, 27, 12), fill="black", width=3)
     draw.line((5, 18, 27, 18), fill="black", width=3)
     draw.line((5, 24, 27, 24), fill="black", width=3)
-    icon_photo = ImageTk.PhotoImage(icon)
-    return icon_photo
-
-def create_close_icon():
-    icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(icon)
-    draw.line((5, 5, 27, 27), fill="black", width=3)
-    draw.line((5, 27, 27, 5), fill="black", width=3)
     icon_photo = ImageTk.PhotoImage(icon)
     return icon_photo
 
@@ -143,7 +143,6 @@ def next_page():    # For Next Button
     current_page_index = (current_page_index + 1) % total_pages
     switch_page(navigation_menu[current_page_index][0])
 
-
 def home_page():
     global home_page_frame
     
@@ -190,7 +189,12 @@ def third_page():
 
     return third_page_frame
 
+def create_main_frame():
+    global main_frame
 
+    main_frame = tk.Frame(root, bg="white") 
+    main_frame.place()
+    
 def create_top_border():
     global header_label
     global menu_icon 
@@ -213,23 +217,20 @@ def create_top_border():
 
     navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
     navigation_button.place(x=10, y=5)
-
-def create_main_frame():
-    global main_frame
-
-    main_frame = tk.Frame(root, bg="white") 
-    main_frame.place()
-
     
 def create_navigation_frame():
-    global close_button    
+    global close_icon    # Global for close_icon NOT close_button
     global navigation_buttons
     global navigation_frame
     global right_navigation_frame
+
+    close_icon = create_close_icon()
+
     
     navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
     navigation_frame.place(x=-250, y=0)
-    
+
+
     # This line creates the orange strip at the top of the Navigation Frame
     tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
        
@@ -241,12 +242,10 @@ def create_navigation_frame():
     right_navigation_frame = tk.Frame(navigation_frame, bg="black", width=5, height=1000)
     right_navigation_frame.place(x=195, y=0)    
 
-
-    close_icon = create_close_icon()
-    
+   
     close_button = tk.Button(navigation_frame, image=close_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
     close_button.pack()
-    close_button.place(x=150, y=55)  # Adjusted y-coordinate
+    close_button.place(x=150, y=5)  # Adjusted y-coordinate
     
     # Create navigation buttons using the function
     navigation_buttons = create_navigation_buttons(navigation_frame, switch_page)
