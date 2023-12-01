@@ -145,6 +145,8 @@ def next_page():    # For Next Button
 
 
 def home_page():
+    global home_page_frame
+    
     home_page_frame = tk.Frame(root, bg="white")
 
     home_page_label = tk.Label(home_page_frame, text="HOME PAGE", font=("Arial", 25), fg="black", bg="white")
@@ -189,70 +191,100 @@ def third_page():
     return third_page_frame
 
 
-root = tk.Tk()
-root.title("Tkinter Hamburger Menu") 
-root.geometry("500x500")
-# root.minsize(width=500, height=500)  # Set the minimum height
-# root.maxsize(width=root.winfo_screenwidth(), height=1000)  # Set the maximum height
-
-menu_icon = create_hamburger_icon()
-close_icon = create_close_icon()
-
-top_border_frame = tk.Frame(root, bg="orange", height=10)
-top_border_frame.pack(fill=tk.X, side="top")
-top_border_frame_2 = tk.Frame(root, bg="black", height=5)
-top_border_frame_2.pack(fill=tk.X, side="top")
-
-header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"), bg="orange", fg="black", height=2, padx=20)
-header_label.pack(side="right")
- 
-navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
-navigation_button.place(x=10, y=5)
-
-main_frame = tk.Frame(root, bg="white") 
-main_frame.place()
-
-navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
-navigation_frame.place(x=-250, y=0)
-
-bottom_border_frame = tk.Frame(root, bg="orange", height=10)
-bottom_border_frame.pack(fill=tk.X, side="bottom")
-bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
-bottom_border_frame_2.pack(fill=tk.X, side="bottom")
-
-# Navigation Buttons
-last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
-                        bg="orange", fg="black", bd=0, padx=20, pady=5, command=lambda: last_page())
-last_button.pack(side="left")
-
-next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
-                        bg="orange", fg="black", bd=0, padx=20, pady=5, command=lambda: next_page())
-next_button.pack(side="right")
-
-# This line creates the orange strip at the top of the Navigation Frame
-tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
-
-# This line creates the black line beneath the orange strip (adjust the height for thickness)
-line_frame = tk.Frame(navigation_frame, bg="black", height=5, width=250)
-line_frame.place(x=0, y=44)  # Adjusted height
-
-# Creates a vertical black border on the right side of the Navigation Frame
-right_navigation_frame = tk.Frame(navigation_frame, bg="black", width=5, height=1000)
-right_navigation_frame.place(x=195, y=0)
-
-# Create navigation buttons using the function
-navigation_buttons = create_navigation_buttons(navigation_frame, switch_page)
-
-# Initially place buttons off-screen
-for button in navigation_buttons:
-    button.place(x=-230, y=60 + navigation_buttons.index(button) * 25)
-
-close_button = tk.Button(navigation_frame, image=close_icon,  bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
-close_button.pack()
-close_button.place(x=150, y=5)
+def create_top_border():
+    global header_label
+    global menu_icon 
+    global top_border_frame
+    global top_border_frame_2
+    
+    menu_icon = create_hamburger_icon()
 
 
-if __name__ == "__main__":   
+    top_border_frame = tk.Frame(root, bg="orange", height=10)
+    top_border_frame.pack(fill=tk.X, side="top")
+    top_border_frame_2 = tk.Frame(root, bg="black", height=5)
+    top_border_frame_2.pack(fill=tk.X, side="top")
+
+
+    header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"),
+                            bg="orange", fg="black", height=2, padx=20)
+    header_label.pack(side="right")
+
+
+    navigation_button = tk.Button(top_border_frame, image=menu_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
+    navigation_button.place(x=10, y=5)
+
+def create_main_frame():
+    global main_frame
+
+    main_frame = tk.Frame(root, bg="white") 
+    main_frame.place()
+
+    
+def create_navigation_frame():
+    global close_button    
+    global navigation_buttons
+    global navigation_frame
+    global right_navigation_frame
+    
+    navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
+    navigation_frame.place(x=-250, y=0)
+    
+    # This line creates the orange strip at the top of the Navigation Frame
+    tk.Label(navigation_frame, font=('Arial', 13), bg="orange", fg="black", height=2, width=250, padx=20).place(x=0, y=0)
+       
+    # This line creates the black line beneath the orange strip (adjust the height for thickness)
+    line_frame = tk.Frame(navigation_frame, bg="black", height=5, width=250)
+    line_frame.place(x=0, y=44)  # Adjusted height
+    
+    # Creates a vertical black border on the right side of the Navigation Frame
+    right_navigation_frame = tk.Frame(navigation_frame, bg="black", width=5, height=1000)
+    right_navigation_frame.place(x=195, y=0)    
+
+
+    close_icon = create_close_icon()
+    
+    close_button = tk.Button(navigation_frame, image=close_icon, bg="orange", activebackground="orange", bd=0, padx=20, command=menu_toggle)
+    close_button.pack()
+    close_button.place(x=150, y=55)  # Adjusted y-coordinate
+    
+    # Create navigation buttons using the function
+    navigation_buttons = create_navigation_buttons(navigation_frame, switch_page)
+    
+    # Initially place buttons off-screen
+    for button in navigation_buttons:
+        button.place(x=-230, y=60 + navigation_buttons.index(button) * 25)
+    
+def create_bottom_border():
+    global bottom_border_frame
+    global bottom_border_frame_2
+    global last_button
+    global next_button
+    
+    bottom_border_frame = tk.Frame(root, bg="orange", height=10)
+    bottom_border_frame.pack(fill=tk.X, side="bottom")
+    bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
+    bottom_border_frame_2.pack(fill=tk.X, side="bottom")
+
+    # Navigation Buttons
+    last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
+                            bg="orange", fg="black", bd=0, padx=20, pady=5, command=lambda: last_page())
+    last_button.pack(side="left")
+    
+    next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
+                            bg="orange", fg="black", bd=0, padx=20, pady=5, command=lambda: next_page())
+    next_button.pack(side="right")    
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Tkinter Hamburger Menu") 
+    root.geometry("500x500")
+
+    create_top_border()
+    create_main_frame()
+    create_navigation_frame()
+    create_bottom_border()
+    
     switch_page(home_page)  # Default landing page
     root.mainloop()
 
