@@ -1,3 +1,4 @@
+
 """
 A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
@@ -77,10 +78,26 @@ def set_dim_colors():
     next_button.config(bg=border_color_open, fg="white")
 
 def update_colors(step):
-    color_step = int((255 - 39) / 250)
-    r = 255 - color_step * step
-    g = 255 - color_step * step
-    b = 255 - color_step * step
+    """
+    update_colors should calculate the rgb value of border_color_open, calculate the
+    rgb value of border_color_closed, calculate the difference of the rgb values, 
+    divide that difference into 250 equal intervals.   Then, for each step in 
+    range(251) of the menu_toggle, it should change the value of border_color_open 
+    one interval closer to border_color_closed.  Finally, it should update the bg 
+    of top_border_frame and bottom_border_frame.
+    """
+
+    color_closed = (39, 39, 39)  # RGB values for "#252726"
+    color_open = (255, 165, 0)   # RGB values for "orange"
+
+    r_diff = (color_open[0] - color_closed[0]) / 250
+    g_diff = (color_open[1] - color_closed[1]) / 250
+    b_diff = (color_open[2] - color_closed[2]) / 250
+
+    r = int(color_open[0] - r_diff * step)
+    g = int(color_open[1] - g_diff * step)
+    b = int(color_open[2] - b_diff * step)
+
     new_color = "#%02x%02x%02x" % (r, g, b)
     top_border_frame.config(bg=new_color)
     bottom_border_frame.config(bg=new_color)
