@@ -144,15 +144,12 @@ def next_page():    # For Next Button
     switch_page(navigation_menu[current_page_index][0])
 
 def home_page():
-    global home_page_frame
-    
     home_page_frame = tk.Frame(root, bg="white")
-
     home_page_label = tk.Label(home_page_frame, text="HOME PAGE", font=("Arial", 25), fg="black", bg="white")
-    home_page_label.pack(pady=25)
+    home_page_label.pack(pady=15)
     
     home_page_text = tk.Label(home_page_frame, text="Click on the menu above to change frames!", font=("Arial", 12), fg="black", bg="white")
-    home_page_text.pack(pady=25)
+    home_page_text.pack(pady=15)
     
     return home_page_frame  
 
@@ -161,9 +158,9 @@ def first_page():
     first_page_label = tk.Label(first_page_frame, text="FIRST PAGE", font=("Arial", 25), fg="black", bg="white")
     first_page_label.pack(pady=15)
 
-    first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") #bg=root.cget("bg")) 
-    first_page_text_widget.insert(tk.END, "Content for the first page.")
-    first_page_text_widget.pack(pady=15)
+    first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, bg="grey", bd=5, highlightbackground="black", relief="solid")
+    first_page_text_widget.insert(tk.END, "This is text content for the first page.")
+    first_page_text_widget.pack(padx=25, pady=15, fill=tk.BOTH, expand=True)
 
     return first_page_frame
 
@@ -172,20 +169,19 @@ def second_page():
     second_page_label = tk.Label(second_page_frame, text="SECOND PAGE", font=("Arial", 25), fg="black", bg="white")
     second_page_label.pack(pady=15)
 
-    second_page_text_widget = tk.Text(second_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") #bg=root.cget("bg"))
-    second_page_text_widget.insert(tk.END, "Content for the second page.")
-    second_page_text_widget.pack(pady=15)
-
+    second_page_text_widget = tk.Text(second_page_frame, wrap=tk.WORD, bg="grey", bd=5, highlightbackground="black", relief="solid")
+    second_page_text_widget.insert(tk.END, "This is text content for the second page.")
+    second_page_text_widget.pack(padx=25, pady=15, fill=tk.BOTH, expand=True)
     return second_page_frame
-
+    
 def third_page():
     third_page_frame = tk.Frame(root, bg="white")
     third_page_label = tk.Label(third_page_frame, text="THIRD PAGE", font=("Arial", 25), fg="black", bg="white")
     third_page_label.pack(pady=15)
 
-    third_page_text_widget = tk.Text(third_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") #bg=root.cget("bg"))
-    third_page_text_widget.insert(tk.END, "Content for the third page.")
-    third_page_text_widget.pack(pady=15)
+    third_page_text_widget = tk.Text(third_page_frame, wrap=tk.WORD, bg="grey", bd=5, highlightbackground="black", relief="solid")
+    third_page_text_widget.insert(tk.END, "This is text content for the third page.")
+    third_page_text_widget.pack(padx=25, pady=15, fill=tk.BOTH, expand=True)
 
     return third_page_frame
 
