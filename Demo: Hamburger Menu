@@ -262,10 +262,12 @@ def create_top_border():
     
     menu_icon = create_hamburger_icon()
 
-    top_border_frame = tk.Frame(root, bg=border_color_open, height=10)
-    top_border_frame.pack(fill=tk.X, side="top")
+    top_border_frame = tk.Frame(root, bg=border_color_open, height=30)
+    #top_border_frame.pack(fill=tk.X, side="top")
+    top_border_frame.pack(fill=tk.X)
     top_border_frame_2 = tk.Frame(root, bg="black", height=5)
-    top_border_frame_2.pack(fill=tk.X, side="top")
+    #top_border_frame_2.pack(fill=tk.X, side="top")
+    top_border_frame.pack(fill=tk.X)
 
     header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"),
                             bg=border_color_open, fg="black", height=2, padx=20)
@@ -317,10 +319,12 @@ def create_bottom_border():
     global last_button
     global next_button
     
-    bottom_border_frame = tk.Frame(root, bg=border_color_open, height=10)
-    bottom_border_frame.pack(fill=tk.X, side="bottom")
+    bottom_border_frame = tk.Frame(root, bg=border_color_open, height=30)
+    #bottom_border_frame.pack(fill=tk.X, side="bottom")
+    bottom_border_frame.pack(fill=tk.X)
     bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
-    bottom_border_frame_2.pack(fill=tk.X, side="bottom")
+    #bottom_border_frame_2.pack(fill=tk.X, side="bottom")
+    bottom_border_frame_2.pack(fill=tk.X)
 
     last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
                             bg=border_color_open, fg="black", bd=0, padx=20, pady=5, command=last_page)
