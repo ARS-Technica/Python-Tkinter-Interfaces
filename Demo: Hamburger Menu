@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import PhotoImage
 from PIL import Image, ImageDraw, ImageTk
 
+
 button_state = False
 current_page_index = 0
 page_frame = None
@@ -75,38 +76,7 @@ def set_dim_colors():
     bottom_border_frame.config(bg=border_color_open)
     last_button.config(bg=border_color_open, fg="white")
     next_button.config(bg=border_color_open, fg="white")
-'''
-def update_colors(step):
-    """
-    update_colors should calculate the rgb value of border_color_open, calculate the
-    rgb value of border_color_closed, calculate the difference of the rgb values, 
-    divide that difference into 250 equal intervals.   Then, for each step in 
-    range(251) of the menu_toggle, it should change the value of border_color_open 
-    one interval closer to border_color_closed.  Finally, it should update the bg 
-    of top_border_frame and bottom_border_frame.
-    """
-
-    def hex_to_rgb(hex_value):
-        hex_value = hex_value.lstrip("#")
-        return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
-
-    color_closed = hex_to_rgb(border_color_open) #(39, 39, 39) is RGB values for "#252726" 
-    color_open = hex_to_rgb(border_color_closed) #(255, 165, 0) is RGB values for "orange"
-    
-
-    r_diff = (color_open[0] - color_closed[0]) / 250
-    g_diff = (color_open[1] - color_closed[1]) / 250
-    b_diff = (color_open[2] - color_closed[2]) / 250
-
-    r = int(color_open[0] - r_diff * step)
-    g = int(color_open[1] - g_diff * step)
-    b = int(color_open[2] - b_diff * step)
-
-    new_color = "#%02x%02x%02x" % (r, g, b)
-    top_border_frame.config(bg=new_color)
-    bottom_border_frame.config(bg=new_color)
-'''   
-
+ 
 def update_colors(step): 
     """
     update_colors should calculate the rgb value of border_color_open, calculate the
@@ -114,7 +84,7 @@ def update_colors(step):
     divide that difference into 250 equal intervals.   Then it should change the
     value of border_color_open one interval closer to border_color_closed.  
     Finally, it should update the bg of top_border_frame and bottom_border_frame.
-    """
+    """   
     
     animation_step = step
     
@@ -132,12 +102,13 @@ def update_colors(step):
         hex_value = hex_value.lstrip("#")
         return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
 
-    color_closed = hex_to_rgb(border_color_open)  # RGB values for "#252726"
-    color_open = hex_to_rgb(border_color_closed)  # RGB values for "orange"
-
+    #color_closed = hex_to_rgb(border_color_open) #(39, 39, 39) is RGB values for "#252726" 
+    #color_open = hex_to_rgb(border_color_closed) #(255, 165, 0) is RGB values for "orange"
+    # Abandoned in favor of splitting into seperate RGB values:
+    
     # Calculate the intermediate color
-    r_open, g_open, b_open = hex_to_rgb(border_color_open)
-    r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+    r_open, g_open, b_open = hex_to_rgb(border_color_closed)
+    r_closed, g_closed, b_closed = hex_to_rgb(border_color_open)
 
     r_intermediate = int(r_open + (r_closed - r_open) * animation_step / 250)
     g_intermediate = int(g_open + (g_closed - g_open) * animation_step / 250)
@@ -146,14 +117,19 @@ def update_colors(step):
     intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
 
     # Update the colors
+    #top_border_frame.config(bg=intermediate_color)
+    #bottom_border_frame.config(bg=intermediate_color)
+    #main_frame.config(bg=intermediate_color)
+    
+    header_label.config(bg=intermediate_color)
     top_border_frame.config(bg=intermediate_color)
+    root.config(bg=intermediate_color)
     bottom_border_frame.config(bg=intermediate_color)
-    main_frame.config(bg=intermediate_color)
+    last_button.config(bg=intermediate_color)
+    next_button.config(bg=intermediate_color)    
 
     if animation_step < 250:
-        # Schedule the next update with the updated animation_step
-        root.after(10, update_colors, animation_step + 1 if button_state else animation_step - 1)
-        # update_colors should only alter color by one step because it's called by menu_toggle repeatedly
+        root.after(10, update_colors)  # Schedule the next update
 
 def menu_toggle():
     global button_state
@@ -168,7 +144,7 @@ def menu_toggle():
             navigation_frame.place(x=-step, y=0)
             right_navigation_frame.update()
             top_border_frame.update()
-            update_colors(step)
+            update_colors(abs(step))
             root.update_idletasks()
             root.after(5)
 
@@ -262,12 +238,10 @@ def create_top_border():
     
     menu_icon = create_hamburger_icon()
 
-    top_border_frame = tk.Frame(root, bg=border_color_open, height=30)
-    #top_border_frame.pack(fill=tk.X, side="top")
-    top_border_frame.pack(fill=tk.X)
+    top_border_frame = tk.Frame(root, bg=border_color_open, height=10)
+    top_border_frame.pack(fill=tk.X, side="top")
     top_border_frame_2 = tk.Frame(root, bg="black", height=5)
-    #top_border_frame_2.pack(fill=tk.X, side="top")
-    top_border_frame.pack(fill=tk.X)
+    top_border_frame_2.pack(fill=tk.X, side="top")
 
     header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"),
                             bg=border_color_open, fg="black", height=2, padx=20)
@@ -319,12 +293,10 @@ def create_bottom_border():
     global last_button
     global next_button
     
-    bottom_border_frame = tk.Frame(root, bg=border_color_open, height=30)
-    #bottom_border_frame.pack(fill=tk.X, side="bottom")
-    bottom_border_frame.pack(fill=tk.X)
+    bottom_border_frame = tk.Frame(root, bg=border_color_open, height=10)
+    bottom_border_frame.pack(fill=tk.X, side="bottom")
     bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
-    #bottom_border_frame_2.pack(fill=tk.X, side="bottom")
-    bottom_border_frame_2.pack(fill=tk.X)
+    bottom_border_frame_2.pack(fill=tk.X, side="bottom")
 
     last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
                             bg=border_color_open, fg="black", bd=0, padx=20, pady=5, command=last_page)
