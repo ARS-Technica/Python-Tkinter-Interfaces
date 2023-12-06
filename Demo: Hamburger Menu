@@ -76,15 +76,15 @@ def set_dim_colors():
     bottom_border_frame.config(bg=border_color_opened) 
     last_button.config(bg=border_color_opened, fg="white")
     next_button.config(bg=border_color_opened, fg="white")
- 
+""" 
 def update_colors(step): 
-    """
+    '''
     update_colors should calculate the rgb value of border_color_open, calculate the
     rgb value of border_color_closed, calculate the difference of the rgb values, 
     divide that difference into 250 equal intervals.   Then it should change the
     value of border_color_open one interval closer to border_color_closed.  
     Finally, it should update the bg of top_border_frame and bottom_border_frame.
-    """   
+    '''   
     
     animation_step = step
     
@@ -131,6 +131,87 @@ def update_colors(step):
 
     if animation_step < 250:
         root.after(10, update_colors)  # Schedule the next update
+"""
+"""
+def update_colors(step):
+    animation_step = step
+    
+    if button_state:
+        animation_step += 1
+    else:
+        animation_step -= 1
+
+    if animation_step < 0:
+        animation_step = 0
+    elif animation_step > 250:
+        animation_step = 250
+
+    def hex_to_rgb(hex_value):
+        hex_value = hex_value.lstrip("#")
+        return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
+
+    # Calculate the intermediate color
+    r_open, g_open, b_open = hex_to_rgb(border_color_opened)
+    r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+
+    r_intermediate = int(r_open + (r_closed - r_open) * animation_step / 250)
+    g_intermediate = int(g_open + (g_closed - g_open) * animation_step / 250)
+    b_intermediate = int(b_open + (b_closed - b_open) * animation_step / 250)
+
+    intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
+
+    # Update the colors
+    header_label.config(bg=intermediate_color)
+    top_border_frame.config(bg=intermediate_color)
+    root.config(bg=intermediate_color)
+    bottom_border_frame.config(bg=intermediate_color)
+    last_button.config(bg=intermediate_color)
+    next_button.config(bg=intermediate_color)
+    navigation_button.config(bg=intermediate_color)
+
+    if animation_step < 250:
+        root.after(1, update_colors, animation_step + 1)  # Schedule the next update
+"""
+
+def update_colors(step):
+    animation_step = step
+
+    if button_state:
+        animation_step += 1
+    else:
+        animation_step -= 1
+
+    if animation_step < 0:
+        animation_step = 0
+    elif animation_step > 250:
+        animation_step = 250
+
+    def hex_to_rgb(hex_value):
+        hex_value = hex_value.lstrip("#")
+        return tuple(int(hex_value[i:i + 2], 16) for i in (0, 2, 4))
+
+    # Calculate the intermediate color
+    r_open, g_open, b_open = hex_to_rgb(border_color_opened)
+    r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+
+    r_intermediate = int(r_open + (r_closed - r_open) * animation_step / 250)
+    g_intermediate = int(g_open + (g_closed - g_open) * animation_step / 250)
+    b_intermediate = int(b_open + (b_closed - b_open) * animation_step / 250)
+
+    intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
+
+    # Update the colors
+    header_label.config(bg=intermediate_color)
+    top_border_frame.config(bg=intermediate_color)
+    root.config(bg=intermediate_color)
+    bottom_border_frame.config(bg=intermediate_color)
+    last_button.config(bg=intermediate_color)
+    next_button.config(bg=intermediate_color)
+    navigation_button.config(bg=intermediate_color)
+
+    if animation_step < 250:
+        root.after(10, lambda: update_colors(animation_step + 1))  # Schedule the next update (adjust the delay)
+
 
 """
 def menu_toggle():
