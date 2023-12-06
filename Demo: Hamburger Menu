@@ -61,7 +61,6 @@ def create_navigation_buttons(frame, switch_page_func):
 
     return buttons
 
-"""
 def reset_widget_colors():
     header_label.config(bg=border_color_closed, fg="black")
     top_border_frame.config(bg=border_color_closed)
@@ -69,9 +68,7 @@ def reset_widget_colors():
     bottom_border_frame.config(bg=border_color_closed)
     last_button.config(bg=border_color_closed, fg="black")
     next_button.config(bg=border_color_closed, fg="black")
-"""
-
-#def reset_widget_colors():
+    
 def set_dim_colors():
     header_label.config(bg=border_color_opened, fg="white")
     top_border_frame.config(bg=border_color_opened) 
@@ -79,16 +76,6 @@ def set_dim_colors():
     bottom_border_frame.config(bg=border_color_opened) 
     last_button.config(bg=border_color_opened, fg="white")
     next_button.config(bg=border_color_opened, fg="white")
-
-
-#def set_dim_colors():
-def reset_widget_colors():
-    header_label.config(bg=border_color_closed, fg="black")
-    top_border_frame.config(bg=border_color_closed)
-    root.config(bg=border_color_closed)
-    bottom_border_frame.config(bg=border_color_closed)
-    last_button.config(bg=border_color_closed, fg="black")
-    next_button.config(bg=border_color_closed, fg="black")
  
 def update_colors(step): 
     """
@@ -223,7 +210,7 @@ def menu_toggle():
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 """
-
+"""
 def menu_toggle():
     global button_state
 
@@ -263,7 +250,43 @@ def menu_toggle():
         button_state = True
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+"""
 
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(251):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks() # Update the widget states, preventing flickering
+            root.after(1)  # Introduce a delay (adjust the value to control the speed)
+
+        reset_widget_colors()
+        update_colors(250)
+        button_state = False
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(-250, 0):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks() # Update the widget states, preventing flickering
+            root.after(1)  # Introduce a delay (adjust the value to control the speed)
+
+        update_colors(0)
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 
 def switch_page(page_function):
     global page_frame
