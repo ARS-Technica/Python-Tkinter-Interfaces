@@ -144,48 +144,8 @@ def update_colors(step):
 
     if animation_step < 250:
         root.after(10, update_colors)  # Schedule the next update
+
 """
-def menu_toggle():
-    global button_state
-
-    if button_state is True:
-        navigation_frame.lift()
-        bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
-
-        for step in range(251):
-            navigation_frame.place(x=-step, y=0)
-            right_navigation_frame.update()
-            #top_border_frame.update()
-            update_colors(abs(step))
-            #root.update_idletasks()
-            #root.after(5)
-
-        reset_widget_colors()
-        button_state = False
-    else:
-        set_dim_colors()
-        navigation_frame.lift()
-        bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
-
-        for step in range(-250, 0):
-            navigation_frame.place(x=step, y=0)
-            right_navigation_frame.update()
-            #top_border_frame.update()
-            update_colors(abs(step))
-            #root.update_idletasks()
-            #root.after(5)
-
-        button_state = True
-        for button in navigation_buttons:
-            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
-        
-        #update_colors(abs(step))  # Update colors once at the end
-"""
-
 def menu_toggle():
     global button_state
 
@@ -214,6 +174,88 @@ def menu_toggle():
         for step in range(-250, 0):
             navigation_frame.place(x=step, y=0)
             right_navigation_frame.update()
+
+        # Call update_colors once, outside the loop
+        update_colors(0)
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+"""
+"""
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(251):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.after(2)  # Introduce a delay (adjust the value to control the speed)
+            update_colors(abs(step))
+
+        # Call update_colors once, outside the loop
+        update_colors(250)
+
+        reset_widget_colors()
+        button_state = False
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(-250, 0):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.after(2)  # Introduce a delay (adjust the value to control the speed)
+            update_colors(abs(step))
+
+        # Call update_colors once, outside the loop
+        update_colors(0)
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+"""
+
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(251):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update_idletasks()  # Update the display without flickering
+            root.after(1)  # Introduce a delay (adjust the value to control the speed)
+            update_colors(abs(step))
+
+        # Call update_colors once, outside the loop
+        update_colors(250)
+
+        reset_widget_colors()
+        button_state = False
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(-250, 0):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update_idletasks()  # Update the display without flickering
+            root.after(1)  # Introduce a delay (adjust the value to control the speed)
+            update_colors(abs(step))
 
         # Call update_colors once, outside the loop
         update_colors(0)
