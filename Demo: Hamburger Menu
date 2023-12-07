@@ -1,3 +1,5 @@
+# Corrected Color Transition
+
 """
 A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
@@ -82,7 +84,7 @@ def update_colors(step=0):
     """
     update_colors should calculate the rgb value of border_color_open, calculate the
     rgb value of border_color_closed, calculate the difference of the rgb values,
-    divide that difference into 250 equal intervals.   Then it should change the
+    divide that difference into 250 equal intervals. Then it should change the
     value of border_color_open one interval closer to border_color_closed.
     Finally, it should update the bg of top_border_frame and bottom_border_frame.
     """
@@ -103,9 +105,13 @@ def update_colors(step=0):
         hex_value = hex_value.lstrip("#")
         return tuple(int(hex_value[i:i + 2], 16) for i in (0, 2, 4))
 
-    # Calculate the intermediate color
-    r_open, g_open, b_open = hex_to_rgb(border_color_opened)
-    r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+    # Calculate the intermediate color based on button_state
+    if button_state:
+        r_open, g_open, b_open = hex_to_rgb(border_color_opened)
+        r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+    else:
+        r_open, g_open, b_open = hex_to_rgb(border_color_closed)
+        r_closed, g_closed, b_closed = hex_to_rgb(border_color_opened)
 
     r_intermediate = int(r_open + (r_closed - r_open) * animation_step / 250)
     g_intermediate = int(g_open + (g_closed - g_open) * animation_step / 250)
@@ -124,6 +130,7 @@ def update_colors(step=0):
 
     if animation_step < 250:
         root.after(10, lambda: update_colors(animation_step + 1))  # Schedule the next update
+
 
 def menu_toggle():
     global button_state
@@ -149,6 +156,10 @@ def menu_toggle():
         bottom_border_frame.lift()
         bottom_border_frame_2.lift()
         close_button.lift()  # Lift the close_button to the top
+
+        # Change the initial colors before placing the navigation_frame
+        top_border_frame.config(bg=border_color_closed)
+        bottom_border_frame.config(bg=border_color_closed)
 
         for step in range(-250, 0):
             navigation_frame.place(x=step, y=0)
