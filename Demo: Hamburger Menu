@@ -7,14 +7,15 @@ import tkinter as tk
 from tkinter import PhotoImage
 from PIL import Image, ImageDraw, ImageTk
 
-
 button_state = False
 current_page_index = 0
 page_frame = None
 
 # Global variables for header colors
 border_color_opened = "#252726"  # This is the color that the header dims to
-border_color_closed = "#FFA500"    # Hex value of "orange" is #FFA500
+border_color_closed = "#FFA500"  # Hex value of "orange" is #FFA500
+
+right_navigation_frame = None  # Declare right_navigation_frame as a global variable
 
 def create_close_icon():
     icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
@@ -34,8 +35,8 @@ def create_hamburger_icon():
     return icon_photo
 
 def create_navigation_buttons(frame, switch_page_func):
-    global navigation_menu
-    
+    global right_navigation_frame
+
     buttons = []
 
     def on_enter(event):
@@ -45,14 +46,14 @@ def create_navigation_buttons(frame, switch_page_func):
         event.widget.config(bg="white")  # Change background color on mouse leave
 
     button_width = 15  # Set a fixed width for the buttons
-    
+
     # Page Links to be listed in navigation_frame
-    navigation_menu = [(home_page, "Home"), (first_page, "First Page"), 
+    navigation_menu = [(home_page, "Home"), (first_page, "First Page"),
                        (second_page, "Second Page"), (third_page, "Third Page")]
 
     for page_func, text in navigation_menu:
         button = tk.Button(frame, text=text, font=("Arial", 13, "bold"),
-                           bd=0, relief=tk.SOLID, bg="white", fg="black", 
+                           bd=0, relief=tk.SOLID, bg="white", fg="black",
                            command=lambda func=page_func: switch_page_func(func), width=button_width)
         button.bind("<Enter>", on_enter)
         button.bind("<Leave>", on_leave)
@@ -68,112 +69,24 @@ def reset_widget_colors():
     bottom_border_frame.config(bg=border_color_closed)
     last_button.config(bg=border_color_closed, fg="black")
     next_button.config(bg=border_color_closed, fg="black")
-    
+
 def set_dim_colors():
     header_label.config(bg=border_color_opened, fg="white")
-    top_border_frame.config(bg=border_color_opened) 
+    top_border_frame.config(bg=border_color_opened)
     root.config(bg=border_color_opened)
-    bottom_border_frame.config(bg=border_color_opened) 
+    bottom_border_frame.config(bg=border_color_opened)
     last_button.config(bg=border_color_opened, fg="white")
     next_button.config(bg=border_color_opened, fg="white")
-""" 
-def update_colors(step): 
-    '''
+
+def update_colors(step=0):
+    """
     update_colors should calculate the rgb value of border_color_open, calculate the
-    rgb value of border_color_closed, calculate the difference of the rgb values, 
+    rgb value of border_color_closed, calculate the difference of the rgb values,
     divide that difference into 250 equal intervals.   Then it should change the
-    value of border_color_open one interval closer to border_color_closed.  
+    value of border_color_open one interval closer to border_color_closed.
     Finally, it should update the bg of top_border_frame and bottom_border_frame.
-    '''   
-    
-    animation_step = step
-    
-    if button_state:
-        animation_step += 1
-    else:
-        animation_step -= 1
+    """
 
-    if animation_step < 0:
-        animation_step = 0
-    elif animation_step > 250:
-        animation_step = 250
-
-    def hex_to_rgb(hex_value):
-        hex_value = hex_value.lstrip("#")
-        return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
-
-    #color_closed = hex_to_rgb(border_color_open) #(39, 39, 39) is RGB values for "#252726" 
-    #color_open = hex_to_rgb(border_color_closed) #(255, 165, 0) is RGB values for "orange"
-    # Abandoned in favor of splitting into seperate RGB values:
-    
-    # Calculate the intermediate color
-    r_open, g_open, b_open = hex_to_rgb(border_color_opened)
-    r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
-
-    r_intermediate = int(r_open + (r_closed - r_open) * animation_step / 250)
-    g_intermediate = int(g_open + (g_closed - g_open) * animation_step / 250)
-    b_intermediate = int(b_open + (b_closed - b_open) * animation_step / 250)
-
-    intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
-
-    # Update the colors
-    #top_border_frame.config(bg=intermediate_color)
-    #bottom_border_frame.config(bg=intermediate_color)
-    #main_frame.config(bg=intermediate_color)
-    
-    header_label.config(bg=intermediate_color)
-    top_border_frame.config(bg=intermediate_color)
-    root.config(bg=intermediate_color)
-    bottom_border_frame.config(bg=intermediate_color)
-    last_button.config(bg=intermediate_color)
-    next_button.config(bg=intermediate_color)    
-    navigation_button.config(bg=intermediate_color)    
-
-    if animation_step < 250:
-        root.after(10, update_colors)  # Schedule the next update
-"""
-"""
-def update_colors(step):
-    animation_step = step
-    
-    if button_state:
-        animation_step += 1
-    else:
-        animation_step -= 1
-
-    if animation_step < 0:
-        animation_step = 0
-    elif animation_step > 250:
-        animation_step = 250
-
-    def hex_to_rgb(hex_value):
-        hex_value = hex_value.lstrip("#")
-        return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
-
-    # Calculate the intermediate color
-    r_open, g_open, b_open = hex_to_rgb(border_color_opened)
-    r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
-
-    r_intermediate = int(r_open + (r_closed - r_open) * animation_step / 250)
-    g_intermediate = int(g_open + (g_closed - g_open) * animation_step / 250)
-    b_intermediate = int(b_open + (b_closed - b_open) * animation_step / 250)
-
-    intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
-
-    # Update the colors
-    header_label.config(bg=intermediate_color)
-    top_border_frame.config(bg=intermediate_color)
-    root.config(bg=intermediate_color)
-    bottom_border_frame.config(bg=intermediate_color)
-    last_button.config(bg=intermediate_color)
-    next_button.config(bg=intermediate_color)
-    navigation_button.config(bg=intermediate_color)
-
-    if animation_step < 250:
-        root.after(1, update_colors, animation_step + 1)  # Schedule the next update
-"""
-
-def update_colors(step):
     animation_step = step
 
     if button_state:
@@ -210,128 +123,7 @@ def update_colors(step):
     navigation_button.config(bg=intermediate_color)
 
     if animation_step < 250:
-        root.after(10, lambda: update_colors(animation_step + 1))  # Schedule the next update (adjust the delay)
-
-
-"""
-def menu_toggle():
-    global button_state
-
-    if button_state is True:
-        navigation_frame.lift()
-        bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
-
-        for step in range(251):
-            navigation_frame.place(x=-step, y=0)
-            right_navigation_frame.update()
-
-        # Call update_colors once, outside the loop
-        update_colors(250)
-
-        reset_widget_colors()
-        button_state = False
-    else:
-        set_dim_colors()
-        navigation_frame.lift()
-        bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
-
-        for step in range(-250, 0):
-            navigation_frame.place(x=step, y=0)
-            right_navigation_frame.update()
-
-        # Call update_colors once, outside the loop
-        update_colors(0)
-
-        button_state = True
-        for button in navigation_buttons:
-            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
-"""
-"""
-def menu_toggle():
-    global button_state
-
-    if button_state is True:
-        navigation_frame.lift()
-        bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
-
-        for step in range(251):
-            navigation_frame.place(x=-step, y=0)
-            right_navigation_frame.update()
-            root.after(2)  # Introduce a delay (adjust the value to control the speed)
-            update_colors(abs(step))
-
-        # Call update_colors once, outside the loop
-        update_colors(250)
-
-        reset_widget_colors()
-        button_state = False
-    else:
-        set_dim_colors()
-        navigation_frame.lift()
-        bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
-
-        for step in range(-250, 0):
-            navigation_frame.place(x=step, y=0)
-            right_navigation_frame.update()
-            root.after(2)  # Introduce a delay (adjust the value to control the speed)
-            update_colors(abs(step))
-
-        # Call update_colors once, outside the loop
-        update_colors(0)
-
-        button_state = True
-        for button in navigation_buttons:
-            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
-"""
-"""
-def menu_toggle():
-    global button_state
-
-    if button_state is True:
-        navigation_frame.lift()
-        bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
-
-        for step in range(251):
-            navigation_frame.place(x=-step, y=0)
-            right_navigation_frame.update_idletasks()  # Update the display without flickering
-            root.after(1)  # Introduce a delay (adjust the value to control the speed)
-            update_colors(abs(step))
-
-        # Call update_colors once, outside the loop
-        update_colors(250)
-
-        reset_widget_colors()
-        button_state = False
-    else:
-        set_dim_colors()
-        navigation_frame.lift()
-        bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
-
-        for step in range(-250, 0):
-            navigation_frame.place(x=step, y=0)
-            right_navigation_frame.update_idletasks()  # Update the display without flickering
-            root.after(1)  # Introduce a delay (adjust the value to control the speed)
-            update_colors(abs(step))
-
-        # Call update_colors once, outside the loop
-        update_colors(0)
-
-        button_state = True
-        for button in navigation_buttons:
-            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
-"""
+        root.after(10, lambda: update_colors(animation_step + 1))  # Schedule the next update
 
 def menu_toggle():
     global button_state
@@ -345,7 +137,7 @@ def menu_toggle():
         for step in range(251):
             navigation_frame.place(x=-step, y=0)
             right_navigation_frame.update()
-            root.update_idletasks() # Update the widget states, preventing flickering
+            root.update_idletasks()  # Update the widget states, preventing flickering
             root.after(1)  # Introduce a delay (adjust the value to control the speed)
 
         reset_widget_colors()
@@ -361,7 +153,7 @@ def menu_toggle():
         for step in range(-250, 0):
             navigation_frame.place(x=step, y=0)
             right_navigation_frame.update()
-            root.update_idletasks() # Update the widget states, preventing flickering
+            root.update_idletasks()  # Update the widget states, preventing flickering
             root.after(1)  # Introduce a delay (adjust the value to control the speed)
 
         update_colors(0)
