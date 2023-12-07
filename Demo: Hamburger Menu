@@ -126,14 +126,15 @@ def menu_toggle():
         bottom_border_frame_2.lift()
         close_button.lift()  # Lift the close_button to the top
 
-        for step in range(251):
+        update_colors(250)  # Start the color transition from #FFA500 to #252726
+
+        for step in range(250, -1, -1):
             navigation_frame.place(x=-step, y=0)
             right_navigation_frame.update()
             root.update_idletasks()  # Update the widget states, preventing flickering
-            root.after(1)  # Introduce a delay (adjust the value to control the speed)
+            root.after(2)  # Introduce a delay (adjust the value to control the speed)
 
         reset_widget_colors()
-        update_colors(250)
         button_state = False
     else:
         set_dim_colors()
@@ -142,18 +143,17 @@ def menu_toggle():
         bottom_border_frame_2.lift()
         close_button.lift()  # Lift the close_button to the top
 
-        for step in range(-250, 0):
-            navigation_frame.place(x=step, y=0)
+        update_colors(0)  # Start the color transition from #252726 to #FFA500
+
+        for step in range(0, 251):
+            navigation_frame.place(x=-step, y=0)
             right_navigation_frame.update()
             root.update_idletasks()  # Update the widget states, preventing flickering
-            root.after(1)  # Introduce a delay (adjust the value to control the speed)
+            root.after(2)  # Introduce a delay (adjust the value to control the speed)
 
-        update_colors(0)
-        update_buttons_colors(0)  # Call the function to update last_button and next_button colors
         button_state = True
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
-
 
 def update_buttons_colors(step=0):
     animation_step = step
@@ -336,3 +336,4 @@ if __name__ == "__main__":
     
     switch_page(home_page)
     root.mainloop()
+
