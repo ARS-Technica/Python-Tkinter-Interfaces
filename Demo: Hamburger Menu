@@ -121,28 +121,13 @@ def menu_toggle():
     global button_state
 
     if button_state is True:
-        navigation_frame.lift()
-        bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
-
-        update_colors(250)  # Start the color transition from #FFA500 to #252726
-
-        for step in range(250, -1, -1):
-            navigation_frame.place(x=-step, y=0)
-            right_navigation_frame.update()
-            root.update_idletasks()  # Update the widget states, preventing flickering
-            root.after(2)  # Introduce a delay (adjust the value to control the speed)
-
-        reset_widget_colors()
-        button_state = False
-    else:
         set_dim_colors()
         navigation_frame.lift()
         bottom_border_frame.lift()
         bottom_border_frame_2.lift()
         close_button.lift()  # Lift the close_button to the top
 
+        navigation_frame.place(x=0, y=0)  # Initialize the frame at the open position
         update_colors(0)  # Start the color transition from #252726 to #FFA500
 
         for step in range(0, 251):
@@ -151,9 +136,28 @@ def menu_toggle():
             root.update_idletasks()  # Update the widget states, preventing flickering
             root.after(2)  # Introduce a delay (adjust the value to control the speed)
 
+        reset_widget_colors()
+        button_state = False      
+
+    else:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        navigation_frame.place(x=-250, y=0)  # Initialize the frame at the closed position
+        update_colors(250)  # Start the color transition from #FFA500 to #252726
+
+        for step in range(250, -1, -1):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()  # Update the widget states, preventing flickering
+            root.after(2)  # Introduce a delay (adjust the value to control the speed)
+
         button_state = True
+
         for button in navigation_buttons:
-            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)  
 
 def update_buttons_colors(step=0):
     animation_step = step
