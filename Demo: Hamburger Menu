@@ -103,9 +103,12 @@ def update_colors(animation_progress):
         navigation_button.config(bg=intermediate_color)
 
         # Schedule the next color update
-        root.after(10, update_colors, animation_progress + 0.005)
+        #root.after(10, update_colors, animation_progress + 0.005)
         # Adjust the step size to control the speed of the color transition.
-
+        
+        if animation_progress < 1.0:
+            root.after(10, update_colors, animation_progress + 0.01)  # Schedule the next update    
+        
 def menu_toggle():
     global button_state
 
@@ -121,8 +124,11 @@ def menu_toggle():
             root.update_idletasks()  # Update the widget states, preventing flickering
             root.after(1)  # Introduce a delay (adjust the value to control the speed)
 
-        reset_widget_colors()
+        #reset_widget_colors()
+        #button_state = False
+        update_colors(1.0)  # Start the color transition from the current state to fully closed
         button_state = False
+        
     else:
         set_dim_colors()
         navigation_frame.lift()
@@ -141,7 +147,12 @@ def menu_toggle():
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 
         # Start the color transition animation
-        update_colors(0.0)
+        #update_colors(0.0)
+        
+        update_colors(0.0)  # Start the color transition from the current state to fully opened
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 
 def switch_page(page_function):
     global page_frame
@@ -290,4 +301,6 @@ if __name__ == "__main__":
 
     switch_page(home_page)
     root.mainloop()
+
+
 
