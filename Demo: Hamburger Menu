@@ -77,20 +77,28 @@ def set_dim_colors():
     last_button.config(bg=border_color_opened, fg="white")
     next_button.config(bg=border_color_opened, fg="white")
 
-def update_colors(step, progress):
+def update_colors():
     global animation_progress
 
     def hex_to_rgb(hex_value):
         hex_value = hex_value.lstrip("#")
         return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
     
+    if button_state:
+        animation_progress += 0.01
+    else:
+        animation_progress -= 0.01
+
+    # Ensure animation progress stays within valid range
+    animation_progress = max(0.0, min(1.0, animation_progress))
+
     # Calculate the intermediate color
     r_open, g_open, b_open = hex_to_rgb(border_color_opened)
     r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
 
-    r_intermediate = int(r_open + (r_closed - r_open) * progress)
-    g_intermediate = int(g_open + (g_closed - g_open) * progress)
-    b_intermediate = int(b_open + (b_closed - b_open) * progress)
+    r_intermediate = int(r_open + (r_closed - r_open) * animation_progress)
+    g_intermediate = int(g_open + (g_closed - g_open) * animation_progress)
+    b_intermediate = int(b_open + (b_closed - b_open) * animation_progress)
 
     intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
 
@@ -102,6 +110,9 @@ def update_colors(step, progress):
     last_button.config(bg=intermediate_color)
     next_button.config(bg=intermediate_color)
     navigation_button.config(bg=intermediate_color)
+
+    if 0.0 < animation_progress < 1.0:
+        root.after(10, update_colors)  # Schedule the next update
 
 def menu_toggle():
     global button_state
@@ -117,11 +128,6 @@ def menu_toggle():
             navigation_frame.place(x=-step, y=0)
             right_navigation_frame.update()
             root.update_idletasks()  # Update the widget states, preventing flickering
-
-            # Calculate animation progress and update colors
-            animation_progress = step / 250
-            update_colors(step, animation_progress)
-
             root.after(1)  # Introduce a delay (adjust the value to control the speed)
 
         reset_widget_colors()
@@ -137,17 +143,15 @@ def menu_toggle():
             navigation_frame.place(x=step, y=0)
             right_navigation_frame.update()
             root.update_idletasks()  # Update the widget states, preventing flickering
-
-            # Calculate animation progress and update colors
-            animation_progress = (step + 250) / 250
-            update_colors(step, animation_progress)
-
             root.after(1)  # Introduce a delay (adjust the value to control the speed)
 
-        update_colors(0, 0)
         button_state = True
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+    # Start the color transition animation
+    animation_progress = 0.0
+    update_colors()
 
 def switch_page(page_function):
     global page_frame
@@ -286,13 +290,14 @@ def create_bottom_border():
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.title("Tkinter Hamburger Menu") 
+    root.title("Tkinter Hamburger Menu")
     root.geometry("500x500")
 
     create_top_border()
     create_main_frame()
     create_navigation_frame()
     create_bottom_border()
-    
+
     switch_page(home_page)
     root.mainloop()
+
