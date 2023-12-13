@@ -1,5 +1,3 @@
- 
-
 """
 A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
@@ -135,15 +133,20 @@ def menu_toggle():
         def update_with_progress(progress):
             update_colors(progress, closing)
 
+        direction_multiplier = -1 if closing else 1
+
         for step in range(251):
-            navigation_frame.place(x=-step, y=0)
+            navigation_frame.place(x=direction_multiplier * -step, y=0)
             right_navigation_frame.update()
             root.update_idletasks()  # Update the widget states, preventing flickering
             animation_progress = step / 250
             root.after(10, update_with_progress, animation_progress)
 
         # Reset colors and state after the animation
-        reset_widget_colors()
+        if closing:
+            reset_widget_colors()
+        else:
+            set_dim_colors()
 
     if button_state is True:
         navigation_frame.lift()
@@ -170,7 +173,7 @@ def menu_toggle():
         button_state = True
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
- 
+				
 def switch_page(page_function):
     global page_frame
     if page_frame:
