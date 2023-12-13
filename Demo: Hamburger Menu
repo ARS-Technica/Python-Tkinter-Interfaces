@@ -96,48 +96,52 @@ def update_colors(animation_progress):
     header_label.config(bg=intermediate_color)
 
     # Calculate intermediate values for the top_border_frame and bottom_border_frame
-    r_top = int(r_closed + (r_open - r_closed) * animation_progress)
-    g_top = int(g_closed + (g_open - g_closed) * animation_progress)
-    b_top = int(b_closed + (b_open - b_closed) * animation_progress)
+    r_top = int(r_open + (r_closed - r_open) * animation_progress)
+    g_top = int(g_open + (g_closed - g_open) * animation_progress)
+    b_top = int(b_open + (b_closed - b_open) * animation_progress)
 
     intermediate_color_top = f'#{r_top:02X}{g_top:02X}{b_top:02X}'
 
     # Update the colors for the top_border_frame
     top_border_frame.config(bg=intermediate_color_top)
-    
-    header_label.config(bg=intermediate_color_top)
-    
-    navigation_button.config(bg=intermediate_color_top)      
 
     # Update the colors for the bottom_border_frame
     bottom_border_frame.config(bg=intermediate_color_top)
-    
-    last_button.config(bg=intermediate_color_top)
-    next_button.config(bg=intermediate_color_top)
 
     # Update the colors for the root (main background)
-    r_root = int(r_closed + (r_open - r_closed) * animation_progress)
-    g_root = int(g_closed + (g_open - g_closed) * animation_progress)
-    b_root = int(b_closed + (b_open - b_closed) * animation_progress)
+    r_root = int(r_open + (r_closed - r_open) * animation_progress)
+    g_root = int(g_open + (g_closed - g_open) * animation_progress)
+    b_root = int(b_open + (b_closed - b_open) * animation_progress)
 
     intermediate_color_root = f'#{r_root:02X}{g_root:02X}{b_root:02X}'
 
     root.config(bg=intermediate_color_root)
 
     # Update the colors for the last_button and next_button
-    
-    #last_next_color = intermediate_color if animation_progress < 0.5 else intermediate_color_top
-    #last_button.config(bg=last_next_color)
-    #next_button.config(bg=last_next_color)
-    #navigation_button.config(bg=last_next_color)  
-    
- 
- 
- 
- 
-    #last_button.config(bg=intermediate_color)
-    #next_button.config(bg=intermediate_color)
-    #navigation_button.config(bg=intermediate_color)  
+    last_button.config(bg=intermediate_color_top)
+    next_button.config(bg=intermediate_color_top)
+
+    # Update the colors for the navigation_button when closing
+    if button_state:
+        navigation_button.config(bg=intermediate_color_top)
+
+    if button_state is True:
+        # Calculate intermediate values for the top_border_frame and bottom_border_frame
+        r_top = int(r_closed - (r_closed - r_open) * animation_progress)
+        g_top = int(g_closed - (g_closed - g_open) * animation_progress)
+        b_top = int(b_closed - (b_closed - b_open) * animation_progress)
+
+        intermediate_color_top = f'#{r_top:02X}{g_top:02X}{b_top:02X}'
+
+        # Update the colors for the top_border_frame
+        top_border_frame.config(bg=intermediate_color_top)
+
+        # Update the colors for the bottom_border_frame
+        bottom_border_frame.config(bg=intermediate_color_top)
+
+        # Update the colors for the navigation_button when closing
+        navigation_button.config(bg=intermediate_color_top)
+
     
     
 def menu_toggle():
