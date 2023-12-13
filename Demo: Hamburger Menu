@@ -3,6 +3,7 @@ A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
 """
 
+
 import tkinter as tk
 from tkinter import PhotoImage
 from PIL import Image, ImageDraw, ImageTk
@@ -142,10 +143,9 @@ def update_colors(animation_progress):
         # Update the colors for the navigation_button when closing
         navigation_button.config(bg=intermediate_color_top)
 
-    
-    
 def menu_toggle():
     global button_state
+    global animation_progress
 
     if button_state is True:
         navigation_frame.lift()
@@ -182,16 +182,19 @@ def menu_toggle():
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 
         # Reset colors and state after the animation
-        reset_widget_colors()
+        set_dim_colors()
         button_state = True
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 
+        # Reverse the color transition when closing the navigation frame
+        for step in range(250):
+            animation_progress = 1 - step / 250
+            root.after(10, update_colors, animation_progress)
 
-
-
-
-
+        # Reset colors after the reversed animation
+        reset_widget_colors()
+        button_state = False
 
 def switch_page(page_function):
     global page_frame
