@@ -140,8 +140,6 @@ def update_colors(animation_progress):
     #navigation_button.config(bg=intermediate_color)  
     
     
-    
-
 def menu_toggle():
     global button_state
 
@@ -184,6 +182,15 @@ def menu_toggle():
         button_state = True
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+        # Additional code to smoothly transition from #252726 to #FFA500 when closing
+        for step in range(250):
+            animation_progress = step / 250
+            root.after(10, update_colors, 1 - animation_progress)
+
+
+
+
 
 def switch_page(page_function):
     global page_frame
