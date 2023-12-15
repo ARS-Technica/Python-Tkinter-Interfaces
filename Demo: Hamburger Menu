@@ -77,27 +77,25 @@ def set_dim_colors():
     last_button.config(bg=border_color_opened, fg="white")
     next_button.config(bg=border_color_opened, fg="white")
 
+
 def update_colors(animation_progress):
     global button_state
-
+        
     def hex_to_rgb(hex_value):
         hex_value = hex_value.lstrip("#")
         return tuple(int(hex_value[i:i + 2], 16) for i in (0, 2, 4))
 
     if button_state is True:
-        color_open = border_color_opened
-        color_closed = border_color_closed
+        r_open, g_open, b_open = hex_to_rgb(border_color_opened)
+        r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
     else:
-        color_open = border_color_closed
-        color_closed = border_color_opened
-
-    rgb_open = hex_to_rgb(color_open)
-    rgb_closed = hex_to_rgb(color_closed)
+        r_open, g_open, b_open = hex_to_rgb(border_color_closed)
+        r_closed, g_closed, b_closed = hex_to_rgb(border_color_opened)
 
     # Calculate intermediate values for the header_label
-    r_intermediate = int(rgb_open[0] + (rgb_closed[0] - rgb_open[0]) * animation_progress)
-    g_intermediate = int(rgb_open[1] + (rgb_closed[1] - rgb_open[1]) * animation_progress)
-    b_intermediate = int(rgb_open[2] + (rgb_closed[2] - rgb_open[2]) * animation_progress)
+    r_intermediate = int(r_open + (r_closed - r_open) * animation_progress)
+    g_intermediate = int(g_open + (g_closed - g_open) * animation_progress)
+    b_intermediate = int(b_open + (b_closed - b_open) * animation_progress)
 
     intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
 
@@ -105,9 +103,9 @@ def update_colors(animation_progress):
     header_label.config(bg=intermediate_color)
 
     # Calculate intermediate values for the top_border_frame and bottom_border_frame
-    r_top = int(rgb_open[0] + (rgb_closed[0] - rgb_open[0]) * animation_progress)
-    g_top = int(rgb_open[1] + (rgb_closed[1] - rgb_open[1]) * animation_progress)
-    b_top = int(rgb_open[2] + (rgb_closed[2] - rgb_open[2]) * animation_progress)
+    r_top = int(r_closed + (r_open - r_closed) * animation_progress)
+    g_top = int(g_closed + (g_open - g_closed) * animation_progress)
+    b_top = int(b_closed + (b_open - b_closed) * animation_progress)
 
     intermediate_color_top = f'#{r_top:02X}{g_top:02X}{b_top:02X}'
 
@@ -123,15 +121,71 @@ def update_colors(animation_progress):
     next_button.config(bg=intermediate_color_top)  # Update next_button color
 
     # Update the colors for the root (main background)
-    r_root = int(rgb_open[0] + (rgb_closed[0] - rgb_open[0]) * animation_progress)
-    g_root = int(rgb_open[1] + (rgb_closed[1] - rgb_open[1]) * animation_progress)
-    b_root = int(rgb_open[2] + (rgb_closed[2] - rgb_open[2]) * animation_progress)
+    r_root = int(r_closed + (r_open - r_closed) * animation_progress)
+    g_root = int(g_closed + (g_open - r_closed) * animation_progress)
+    b_root = int(b_closed + (b_open - b_closed) * animation_progress)
 
     intermediate_color_root = f'#{r_root:02X}{g_root:02X}{b_root:02X}'
 
+    #root.config(bg=intermediate_color_root)
     root.config(bg=intermediate_color_top)
 
 
+"""
+def update_colors(animation_progress):
+    global button_state
+
+    def hex_to_rgb(hex_value):
+        hex_value = hex_value.lstrip("#")
+        return tuple(int(hex_value[i:i + 2], 16) for i in (0, 2, 4))
+
+    if button_state is True:
+        r_open, g_open, b_open = hex_to_rgb(border_color_opened)
+        r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+    else:
+        r_open, g_open, b_open = hex_to_rgb(border_color_closed)
+        r_closed, g_closed, b_closed = hex_to_rgb(border_color_opened)
+
+    if animation_progress == 1.0:  # Animation is complete
+        intermediate_color = border_color_closed if button_state else border_color_opened
+        intermediate_color_top = border_color_opened if button_state else border_color_closed
+    elif animation_progress == 0.0:  # Animation is complete
+        intermediate_color = border_color_opened if button_state else border_color_closed
+        intermediate_color_top = border_color_closed if button_state else border_color_opened
+    else:
+        # Calculate intermediate values for the header_label
+        r_intermediate = int(r_open + (r_closed - r_open) * animation_progress)
+        g_intermediate = int(g_open + (g_closed - g_open) * animation_progress)
+        b_intermediate = int(b_open + (b_closed - b_open) * animation_progress)
+
+        intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
+
+        # Calculate intermediate values for the top_border_frame and bottom_border_frame
+        r_top = int(r_closed + (r_open - r_closed) * animation_progress)
+        g_top = int(g_closed + (g_open - g_closed) * animation_progress)
+        b_top = int(b_closed + (b_open - b_closed) * animation_progress)
+
+        intermediate_color_top = f'#{r_top:02X}{g_top:02X}{b_top:02X}'
+
+    # Update the colors for the header_label
+    header_label.config(bg=intermediate_color)
+
+    # Update the colors for the top_border_frame
+    top_border_frame.config(bg=intermediate_color_top)
+
+    header_label.config(bg=intermediate_color_top)
+    navigation_button.config(bg=intermediate_color_top)  # Update navigation_button color
+
+    # Update the colors for the bottom_border_frame
+    bottom_border_frame.config(bg=intermediate_color_top)
+    last_button.config(bg=intermediate_color_top)  # Update last_button color
+    next_button.config(bg=intermediate_color_top)  # Update next_button color
+
+    # Update the colors for the root (main background)
+    root.config(bg=intermediate_color_top)
+
+"""
+"""
 def menu_toggle():
     global button_state
 
@@ -176,7 +230,61 @@ def menu_toggle():
         button_state = True
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
-				
+"""
+"""
+def menu_toggle():
+    global button_state
+    global animation_progress
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()
+
+        for step in range(0, 251, 1): 
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = step / 250
+            root.after(10, update_colors, animation_progress)
+
+        # Schedule color update after animation is complete
+        root.after(10, update_colors, 1.0)
+
+        # Reset colors and state after the animation
+        reset_widget_colors()
+        button_state = False
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()
+
+        for step in range(-250, 0, 1): 
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = (step + 250) / 250
+            root.after(10, update_colors, animation_progress)
+
+        # Schedule color update after animation is complete
+        root.after(10, update_colors, 0.0)
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+        # Reset colors and state after the animation
+        set_dim_colors()
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+"""
+
+
+
 def switch_page(page_function):
     global page_frame
     if page_frame:
