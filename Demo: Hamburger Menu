@@ -130,7 +130,7 @@ def update_colors(animation_progress, closing=False):
     intermediate_color_root = f'#{r_root:02X}{g_root:02X}{b_root:02X}'
 
     root.config(bg=intermediate_color_top)
-
+"""
 def menu_toggle():
     global button_state
 
@@ -176,8 +176,55 @@ def menu_toggle():
     set_dim_colors()
     for button in navigation_buttons:
         button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
-
+"""
 				
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()
+
+        for step in range(0, 251, 1):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = step / 250
+            root.after(10, update_colors, animation_progress)
+
+        # Reset colors and state after the animation
+        reset_widget_colors()
+        button_state = False
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()
+
+        for step in range(-250, 0, 1):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = (step + 250) / 250
+            root.after(10, update_colors, animation_progress)
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+        # Reset colors and state after the animation
+        reset_widget_colors()
+        button_state = False
+
+    # Set the final state after the animation is complete
+    set_dim_colors()
+    for button in navigation_buttons:
+        button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+
 def switch_page(page_function):
     global page_frame
     if page_frame:
