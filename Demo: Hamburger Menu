@@ -77,7 +77,7 @@ def set_dim_colors():
     last_button.config(bg=border_color_opened, fg="white")
     next_button.config(bg=border_color_opened, fg="white")
 
-def update_colors(animation_progress):
+def update_colors(animation_progress, closing=False):
     global button_state
 
     def hex_to_rgb(hex_value):
@@ -131,7 +131,6 @@ def update_colors(animation_progress):
 
     root.config(bg=intermediate_color_top)
 
-
 def menu_toggle():
     global button_state
 
@@ -141,8 +140,7 @@ def menu_toggle():
         bottom_border_frame_2.lift()
         close_button.lift()
 
-        for step in range(0, 251, 1): 
-        # A smaller step value will slow down the animation.
+        for step in range(0, 251, 1):
             navigation_frame.place(x=-step, y=0)
             right_navigation_frame.update()
             root.update_idletasks()
@@ -150,7 +148,8 @@ def menu_toggle():
             root.after(10, update_colors, animation_progress)
 
         # Reset colors and state after the animation
-        reset_widget_colors()
+        # Remove the following line, so it doesn't reset the colors
+        # reset_widget_colors()
         button_state = False
     else:
         set_dim_colors()
@@ -159,8 +158,7 @@ def menu_toggle():
         bottom_border_frame_2.lift()
         close_button.lift()
 
-        for step in range(-250, 0, 1): 
-        #A smaller step value will slow down the animation. 
+        for step in range(-250, 0, 1):
             navigation_frame.place(x=step, y=0)
             right_navigation_frame.update()
             root.update_idletasks()
@@ -171,11 +169,14 @@ def menu_toggle():
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 
-        # Reset colors and state after the animation
-        set_dim_colors()
-        button_state = True
-        for button in navigation_buttons:
-            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+        # Remove the following line, so it doesn't reset the colors
+        # reset_widget_colors()
+
+        button_state = False
+    set_dim_colors()
+    for button in navigation_buttons:
+        button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
 				
 def switch_page(page_function):
     global page_frame
