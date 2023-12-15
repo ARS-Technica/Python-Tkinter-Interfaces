@@ -209,7 +209,7 @@ def first_page():
     first_page_frame = tk.Frame(root, bg="white")
     first_page_label = tk.Label(first_page_frame, text="FIRST PAGE", font=("Arial", 25), fg="black", bg="white")
     first_page_label.pack(pady=15)
-    first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") 
+    first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey", bd=2, relief=tk.SOLID)
     first_page_text_widget.insert(tk.END, "Content for the first page.")
     first_page_text_widget.pack(pady=15)
     return first_page_frame
@@ -227,7 +227,7 @@ def third_page():
     third_page_frame = tk.Frame(root, bg="white")
     third_page_label = tk.Label(third_page_frame, text="THIRD PAGE", font=("Arial", 25), fg="black", bg="white")
     third_page_label.pack(pady=15)
-    third_page_text_widget = tk.Text(third_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") 
+    third_page_text_widget = tk.Text(third_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey", bd=2, relief=tk.SOLID)
     third_page_text_widget.insert(tk.END, "Content for the third page.")
     third_page_text_widget.pack(pady=15)
     return third_page_frame
