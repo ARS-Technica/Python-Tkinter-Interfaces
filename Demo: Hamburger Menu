@@ -6,6 +6,7 @@ using only Python's Tkinter library.
 import tkinter as tk
 from tkinter import PhotoImage
 from PIL import Image, ImageDraw, ImageTk
+import colorsys
 
 button_state = False
 current_page_index = 0
@@ -77,6 +78,7 @@ def set_dim_colors():
     last_button.config(bg=border_color_opened, fg="white")
     next_button.config(bg=border_color_opened, fg="white")
 
+"""
 def update_colors(animation_progress):
     global button_state
         
@@ -132,18 +134,100 @@ def update_colors(animation_progress):
 
     root.config(bg=intermediate_color_root)
     #root.config(bg=intermediate_color_top)
+"""
+"""
+def update_colors(animation_progress):
+    global button_state
+
+    if button_state:
+        start_color = border_color_closed
+        end_color = border_color_opened 
+    else:
+        start_color = border_color_opened
+        end_color = border_color_closed
+
+    # Convert the start and end colors to RGB
+    start_rgb = tuple(int(start_color[i:i + 2], 16) for i in (1, 3, 5))
+    end_rgb = tuple(int(end_color[i:i + 2], 16) for i in (1, 3, 5))
+
+    # Calculate intermediate RGB values
+    intermediate_rgb = tuple(int(start + (end - start) * animation_progress) for start, end in zip(start_rgb, end_rgb))
+
+    # Convert intermediate RGB back to hex
+    intermediate_color = f'#{intermediate_rgb[0]:02X}{intermediate_rgb[1]:02X}{intermediate_rgb[2]:02X}'
+
+    # Update the colors for the header_label
+    header_label.config(bg=intermediate_color)
+
+    # Update the colors for the top_border_frame and bottom_border_frame
+    top_border_frame.config(bg=intermediate_color)
+    navigation_button.config(bg=intermediate_color)
+    bottom_border_frame.config(bg=intermediate_color)
+    last_button.config(bg=intermediate_color)
+    next_button.config(bg=intermediate_color)
+
+    # Update the colors for the root (main background)
+    root.config(bg=intermediate_color)
+"""
+
+def update_colors(animation_progress):
+    global button_state
+
+    if button_state:
+        start_color = border_color_closed
+        end_color = border_color_opened
+    else:
+        start_color = border_color_opened
+        end_color = border_color_closed
+
+    # Convert the start and end colors to RGB
+    start_rgb = tuple(int(start_color[i:i + 2], 16) for i in (1, 3, 5))
+    end_rgb = tuple(int(end_color[i:i + 2], 16) for i in (1, 3, 5))
+
+    # Calculate intermediate RGB values
+    intermediate_rgb = tuple(int(start + (end - start) * animation_progress) for start, end in zip(start_rgb, end_rgb))
+
+    # Convert intermediate RGB back to hex
+    intermediate_color = f'#{intermediate_rgb[0]:02X}{intermediate_rgb[1]:02X}{intermediate_rgb[2]:02X}'
+
+    # Update the colors for the header_label
+    header_label.config(bg=intermediate_color)
+
+    # Update the colors for the top_border_frame and bottom_border_frame
+    top_border_frame.config(bg=intermediate_color)
+    navigation_button.config(bg=intermediate_color)
+    bottom_border_frame.config(bg=intermediate_color)
+    last_button.config(bg=intermediate_color)
+    next_button.config(bg=intermediate_color)
+
+    # Update the colors for the root (main background)
+    root.config(bg=intermediate_color)
+
 
 def menu_toggle():
     global button_state
 
-    if button_state is True:
+    # Set colors based on the current button state
+    if button_state:
+        start_color = border_color_opened
+        end_color = border_color_closed
+    else:
+        start_color = border_color_closed
+        end_color = border_color_opened
+
+    # Update colors before animation starts
+    root.config(bg=start_color)
+    top_border_frame.config(bg=start_color)
+    bottom_border_frame.config(bg=start_color)
+    last_button.config(bg=start_color)
+    next_button.config(bg=start_color)
+
+    if button_state:
         navigation_frame.lift()
         bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
         close_button.lift()
 
-        for step in range(0, 251, 1): 
-        # A smaller step value will slow down the animation.
+        for step in range(0, 251, 1):
             navigation_frame.place(x=-step, y=0)
             right_navigation_frame.update()
             root.update_idletasks()
@@ -151,32 +235,33 @@ def menu_toggle():
             root.after(10, update_colors, animation_progress)
 
         # Reset colors and state after the animation
-        reset_widget_colors()
-        button_state = False
+        #reset_widget_colors()
+        update_colors(0.0)  # Start the color transition from the current state to fully closed
+        button_state = False  
+
+        
     else:
         set_dim_colors()
         navigation_frame.lift()
         bottom_border_frame.lift()
-        bottom_border_frame_2.lift()
         close_button.lift()
 
-        for step in range(-250, 0, 1): 
-        #A smaller step value will slow down the animation. 
+        for step in range(-250, 0, 1):
             navigation_frame.place(x=step, y=0)
             right_navigation_frame.update()
             root.update_idletasks()
             animation_progress = (step + 250) / 250
             root.after(10, update_colors, animation_progress)
 
+        # Reset colors and state after the animation
+        #set_dim_colors()
+        
+        update_colors(1.0)
         button_state = True
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 
-        # Reset colors and state after the animation
-        set_dim_colors()
-        button_state = True
-        for button in navigation_buttons:
-            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
 				
 def switch_page(page_function):
     global page_frame
