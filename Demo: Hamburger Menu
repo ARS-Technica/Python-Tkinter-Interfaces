@@ -124,13 +124,13 @@ def update_colors(animation_progress):
     next_button.config(bg=intermediate_color_top)  # Update next_button color
 
     # Update the colors for the root (main background)
-    #r_root = int(r_closed + (r_open - r_closed) * animation_progress)
-    #g_root = int(g_closed + (g_open - r_closed) * animation_progress)
-    #b_root = int(b_closed + (b_open - b_closed) * animation_progress)
+    r_root = int(r_closed + (r_open - r_closed) * animation_progress)
+    g_root = int(g_closed + (g_open - r_closed) * animation_progress)
+    b_root = int(b_closed + (b_open - b_closed) * animation_progress)
 
-    #intermediate_color_root = f'#{r_root:02X}{g_root:02X}{b_root:02X}'
+    intermediate_color_root = f'#{r_root:02X}{g_root:02X}{b_root:02X}'
 
-    #root.config(bg=intermediate_color_root)
+    root.config(bg=intermediate_color_root)
     #root.config(bg=intermediate_color_top)
 
 def menu_toggle():
