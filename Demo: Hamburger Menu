@@ -78,22 +78,22 @@ def set_dim_colors():
     next_button.config(bg=border_color_opened, fg="white")
 
 def update_colors(animation_progress):
-					   
-		
+    global button_state
+        
     def hex_to_rgb(hex_value):
         hex_value = hex_value.lstrip("#")
-        return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
+        return tuple(int(hex_value[i:i + 2], 16) for i in (0, 2, 4))
 
-							
-																
-																	  
-		 
-																
-																	  
-		
+    if button_state is True:
+        r_open, g_open, b_open = hex_to_rgb(border_color_opened)
+        r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+    else:
+        r_open, g_open, b_open = hex_to_rgb(border_color_closed)
+        r_closed, g_closed, b_closed = hex_to_rgb(border_color_opened)
+        
 
-    r_open, g_open, b_open = hex_to_rgb(border_color_opened)
-    r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+    #r_open, g_open, b_open = hex_to_rgb(border_color_opened)
+    #r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
 
     # Calculate intermediate values for the header_label
     r_intermediate = int(r_open + (r_closed - r_open) * animation_progress)
@@ -114,43 +114,24 @@ def update_colors(animation_progress):
 
     # Update the colors for the top_border_frame
     top_border_frame.config(bg=intermediate_color_top)
-    
+
     header_label.config(bg=intermediate_color_top)
-    
-    navigation_button.config(bg=intermediate_color_top)      
+    navigation_button.config(bg=intermediate_color_top)  # Update navigation_button color
 
     # Update the colors for the bottom_border_frame
     bottom_border_frame.config(bg=intermediate_color_top)
-    
-    last_button.config(bg=intermediate_color_top)
-    next_button.config(bg=intermediate_color_top)
+    last_button.config(bg=intermediate_color_top)  # Update last_button color
+    next_button.config(bg=intermediate_color_top)  # Update next_button color
 
     # Update the colors for the root (main background)
-    r_root = int(r_closed + (r_open - r_closed) * animation_progress)
-    g_root = int(g_closed + (g_open - g_closed) * animation_progress)
-    b_root = int(b_closed + (b_open - b_closed) * animation_progress)
+    #r_root = int(r_closed + (r_open - r_closed) * animation_progress)
+    #g_root = int(g_closed + (g_open - r_closed) * animation_progress)
+    #b_root = int(b_closed + (b_open - b_closed) * animation_progress)
 
-    intermediate_color_root = f'#{r_root:02X}{g_root:02X}{b_root:02X}'
+    #intermediate_color_root = f'#{r_root:02X}{g_root:02X}{b_root:02X}'
 
-    root.config(bg=intermediate_color_root)
-
-    # Update the colors for the last_button and next_button
-    
-    #last_next_color = intermediate_color if animation_progress < 0.5 else intermediate_color_top
-    #last_button.config(bg=last_next_color)
-    #next_button.config(bg=last_next_color)
-    #navigation_button.config(bg=last_next_color)  
-    
- 
- 
- 
- 
-    #last_button.config(bg=intermediate_color)
-    #next_button.config(bg=intermediate_color)
-    #navigation_button.config(bg=intermediate_color)  
-    
-    
-    
+    #root.config(bg=intermediate_color_root)
+    #root.config(bg=intermediate_color_top)
 
 def menu_toggle():
     global button_state
@@ -159,13 +140,13 @@ def menu_toggle():
         navigation_frame.lift()
         bottom_border_frame.lift()
         bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
+        close_button.lift()
 
-        for step in range(251):
-															
+        for step in range(0, 251, 1): 
+        # A smaller step value will slow down the animation.
             navigation_frame.place(x=-step, y=0)
             right_navigation_frame.update()
-            root.update_idletasks()  # Update the widget states, preventing flickering
+            root.update_idletasks()
             animation_progress = step / 250
             root.after(10, update_colors, animation_progress)
 
@@ -177,13 +158,13 @@ def menu_toggle():
         navigation_frame.lift()
         bottom_border_frame.lift()
         bottom_border_frame_2.lift()
-        close_button.lift()  # Lift the close_button to the top
+        close_button.lift()
 
-        for step in range(-250, 0):
-															
+        for step in range(-250, 0, 1): 
+        #A smaller step value will slow down the animation. 
             navigation_frame.place(x=step, y=0)
             right_navigation_frame.update()
-            root.update_idletasks()  # Update the widget states, preventing flickering
+            root.update_idletasks()
             animation_progress = (step + 250) / 250
             root.after(10, update_colors, animation_progress)
 
@@ -196,7 +177,7 @@ def menu_toggle():
         button_state = True
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
-
+				
 def switch_page(page_function):
     global page_frame
     if page_frame:
