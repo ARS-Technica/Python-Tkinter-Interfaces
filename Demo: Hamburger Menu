@@ -110,7 +110,8 @@ def update_colors(animation_progress):
     last_button.config(bg=intermediate_color)
     next_button.config(bg=intermediate_color)
     navigation_button.config(bg=intermediate_color)  
-            
+
+"""            
 def menu_toggle():
     global button_state
 
@@ -120,7 +121,8 @@ def menu_toggle():
         bottom_border_frame_2.lift()
         close_button.lift()  # Lift the close_button to the top
 
-        for step in range(251):
+        #for step in range(251):
+        for step in range(0, 251, 1):
             navigation_frame.place(x=-step, y=0)
             right_navigation_frame.update()
             root.update_idletasks()  # Update the widget states, preventing flickering
@@ -129,7 +131,9 @@ def menu_toggle():
             
         #reset_widget_colors()
         #button_state = False
+        
         update_colors(0.0)  # Start the color transition from the current state to fully closed
+        
         button_state = False
         
     else:
@@ -153,11 +157,55 @@ def menu_toggle():
         # Start the color transition animation
         #update_colors(0.0)
         
-        update_colors(1.0)  # Start the color transition from the current state to fully opened
+        update_colors(0.0)  # Start the color transition from the current state to fully opened
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+"""
+
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(0, 251, 1):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = step / 250
+            update_colors(animation_progress)  # Call update_colors directly with calculated progress
+
+        # Reset colors and state after the animation
+        reset_widget_colors()
+        button_state = False
+
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(-250, 0, 1):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = (step + 250) / 250
+            update_colors(animation_progress)  # Call update_colors directly with calculated progress
+
         button_state = True
         for button in navigation_buttons:
             button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 
+        # Reset colors and state after the animation
+        set_dim_colors()
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
 
 
 def switch_page(page_function):
@@ -227,7 +275,7 @@ def create_top_border():
     
     menu_icon = create_hamburger_icon()
 
-    top_border_frame = tk.Frame(root, bg=border_color_closed, height=10)
+    top_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
     top_border_frame.pack(fill=tk.X, side="top")
     top_border_frame_2 = tk.Frame(root, bg="black", height=5)
     top_border_frame_2.pack(fill=tk.X, side="top")
@@ -282,7 +330,857 @@ def create_bottom_border():
     global last_button
     global next_button
     
-    bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=10)
+    bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
+    bottom_border_frame.pack(fill=tk.X, side="bottom")
+    bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
+    bottom_border_frame_2.pack(fill=tk.X, side="bottom")
+
+    last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
+                            bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, command=last_page)
+    last_button.pack(side="left")
+    
+    next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
+                            bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, command=next_page)
+    next_button.pack(side="right")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Tkinter Hamburger Menu")
+    root.geometry("500x500")
+
+    create_top_border()
+    create_main_frame()
+    create_navigation_frame()
+    create_bottom_border()
+
+    switch_page(home_page)
+    root.mainloop()
+
+
+#%%
+
+
+import tkinter as tk
+from tkinter import PhotoImage
+from PIL import Image, ImageDraw, ImageTk
+
+button_state = False
+current_page_index = 0
+page_frame = None
+animation_progress = 0  # Global variable for animation progress
+
+# Global variables for header colors
+border_color_opened = "#252726"  # This is the color that the header dims to
+border_color_closed = "#FFA500"    # Hex value of "orange" is #FFA500
+
+def create_close_icon():
+    icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(icon)
+    draw.line((5, 5, 27, 27), fill="black", width=3)
+    draw.line((5, 27, 27, 5), fill="black", width=3)
+    icon_photo = ImageTk.PhotoImage(icon)
+    return icon_photo
+
+def create_hamburger_icon():
+    icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(icon)
+    draw.line((5, 12, 27, 12), fill="black", width=3)
+    draw.line((5, 18, 27, 18), fill="black", width=3)
+    draw.line((5, 24, 27, 24), fill="black", width=3)
+    icon_photo = ImageTk.PhotoImage(icon)
+    return icon_photo
+
+def create_navigation_buttons(frame, switch_page_func):
+    global navigation_menu
+    
+    buttons = []
+
+    def on_enter(event):
+        event.widget.config(bg="#e0e0e0")  # Change background color on mouse enter
+
+    def on_leave(event):
+        event.widget.config(bg="white")  # Change background color on mouse leave
+
+    button_width = 15  # Set a fixed width for the buttons
+    
+    # Page Links to be listed in navigation_frame
+    navigation_menu = [(home_page, "Home"), (first_page, "First Page"), 
+                       (second_page, "Second Page"), (third_page, "Third Page")]
+
+    for page_func, text in navigation_menu:
+        button = tk.Button(frame, text=text, font=("Arial", 13, "bold"),
+                           bd=0, relief=tk.SOLID, bg="white", fg="black", 
+                           command=lambda func=page_func: switch_page_func(func), width=button_width)
+        button.bind("<Enter>", on_enter)
+        button.bind("<Leave>", on_leave)
+        button.pack(fill=tk.X, pady=5)
+        buttons.append(button)
+
+    return buttons
+
+def reset_widget_colors():
+    header_label.config(bg=border_color_closed, fg="black")
+    top_border_frame.config(bg=border_color_closed)
+    root.config(bg=border_color_closed)
+    bottom_border_frame.config(bg=border_color_closed)
+    last_button.config(bg=border_color_closed, fg="black")
+    next_button.config(bg=border_color_closed, fg="black")
+    
+def set_dim_colors():
+    header_label.config(bg=border_color_opened, fg="white")
+    top_border_frame.config(bg=border_color_opened) 
+    root.config(bg=border_color_opened)
+    bottom_border_frame.config(bg=border_color_opened) 
+    last_button.config(bg=border_color_opened, fg="white")
+    next_button.config(bg=border_color_opened, fg="white")
+
+
+def update_colors(animation_progress):
+    def hex_to_rgb(hex_value):
+        hex_value = hex_value.lstrip("#")
+        return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
+    
+    """
+    Update the colors based on the animation progress.
+    """
+    if button_state:
+        start_color = border_color_closed
+        end_color = border_color_opened 
+    else:
+        start_color = border_color_opened
+        end_color = border_color_closed
+    
+    r_open, g_open, b_open = hex_to_rgb(border_color_opened)
+    r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+
+    r_intermediate = int(r_open + (r_closed - r_open) * animation_progress)
+    g_intermediate = int(g_open + (g_closed - g_open) * animation_progress)
+    b_intermediate = int(b_open + (b_closed - b_open) * animation_progress)
+
+    intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
+
+    # Update the colors
+    header_label.config(bg=intermediate_color)
+    top_border_frame.config(bg=intermediate_color)
+    root.config(bg=intermediate_color)
+    bottom_border_frame.config(bg=intermediate_color)
+    last_button.config(bg=intermediate_color)
+    next_button.config(bg=intermediate_color)
+    navigation_button.config(bg=intermediate_color)  
+
+"""            
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        #for step in range(251):
+        for step in range(0, 251, 1):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()  # Update the widget states, preventing flickering
+            #root.after(1)  # Introduce a delay (adjust the value to control the speed)
+            root.after(10, update_colors, step / 250)
+            
+        #reset_widget_colors()
+        #button_state = False
+        
+        update_colors(0.0)  # Start the color transition from the current state to fully closed
+        
+        button_state = False
+        
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(-250, 0):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()  # Update the widget states, preventing flickering
+            #root.after(1)  # Introduce a delay (adjust the value to control the speed)
+            root.after(10, update_colors, step / 250)
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+        # Start the color transition animation
+        #update_colors(0.0)
+        
+        update_colors(0.0)  # Start the color transition from the current state to fully opened
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+"""
+"""
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(0, 251, 1):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = step / 250
+            update_colors(animation_progress)  # Call update_colors directly with calculated progress
+
+        # Reset colors and state after the animation
+        reset_widget_colors()
+        button_state = False
+
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(-250, 0, 1):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = (step + 250) / 250
+            update_colors(animation_progress)  # Call update_colors directly with calculated progress
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+        # Reset colors and state after the animation
+        set_dim_colors()
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+"""
+
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(0, 251, 1):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = step / 250
+            update_colors(animation_progress)  # Call update_colors directly with calculated progress
+
+        # Reset colors and state after the animation
+        reset_widget_colors()
+        button_state = False
+
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(-250, 0, 1):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = (step + 250) / 250
+            update_colors(animation_progress)  # Call update_colors directly with calculated progress
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+        # Reset colors and state after the animation
+        set_dim_colors()
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+def switch_page(page_function):
+    global page_frame
+    if page_frame:
+        page_frame.destroy()
+    page_frame = page_function()
+    page_frame.pack(fill=tk.BOTH, expand=True)
+    navigation_frame.lift()
+    bottom_border_frame.lift()
+    bottom_border_frame_2.lift()
+
+def last_page():
+    global current_page_index
+    total_pages = len(navigation_menu)
+    current_page_index = (current_page_index - 1) % total_pages
+    switch_page(navigation_menu[current_page_index][0])
+
+def next_page():
+    global current_page_index
+    total_pages = len(navigation_menu)
+    current_page_index = (current_page_index + 1) % total_pages
+    switch_page(navigation_menu[current_page_index][0])
+
+def home_page():
+    global home_page_frame
+    home_page_frame = tk.Frame(root, bg="white")
+    home_page_label = tk.Label(home_page_frame, text="HOME PAGE", font=("Arial", 25), fg="black", bg="white")
+    home_page_label.pack(pady=25)
+    home_page_text = tk.Label(home_page_frame, text="Click on the menu above to change frames!", font=("Arial", 12), fg="black", bg="white")
+    home_page_text.pack(pady=25)
+    return home_page_frame  
+
+def first_page():
+    first_page_frame = tk.Frame(root, bg="white")
+    first_page_label = tk.Label(first_page_frame, text="FIRST PAGE", font=("Arial", 25), fg="black", bg="white")
+    first_page_label.pack(pady=15)
+    first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") 
+    first_page_text_widget.insert(tk.END, "Content for the first page.")
+    first_page_text_widget.pack(pady=15)
+    return first_page_frame
+
+def second_page():
+    second_page_frame = tk.Frame(root, bg="white")
+    second_page_label = tk.Label(second_page_frame, text="SECOND PAGE", font=("Arial", 25), fg="black", bg="white")
+    second_page_label.pack(pady=15)
+    second_page_text_widget = tk.Text(second_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey", bd=2, relief=tk.SOLID)
+    second_page_text_widget.insert(tk.END, "Content for the second page.")
+    second_page_text_widget.pack(pady=15)
+    return second_page_frame
+
+def third_page():
+    third_page_frame = tk.Frame(root, bg="white")
+    third_page_label = tk.Label(third_page_frame, text="THIRD PAGE", font=("Arial", 25), fg="black", bg="white")
+    third_page_label.pack(pady=15)
+    third_page_text_widget = tk.Text(third_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") 
+    third_page_text_widget.insert(tk.END, "Content for the third page.")
+    third_page_text_widget.pack(pady=15)
+    return third_page_frame
+
+def create_top_border():
+    global header_label
+    global menu_icon 
+    global navigation_button
+    global top_border_frame
+    global top_border_frame_2
+    
+    menu_icon = create_hamburger_icon()
+
+    top_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
+    top_border_frame.pack(fill=tk.X, side="top")
+    top_border_frame_2 = tk.Frame(root, bg="black", height=5)
+    top_border_frame_2.pack(fill=tk.X, side="top")
+
+    header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"),
+                            bg=border_color_closed, fg="black", height=2, padx=20)
+    header_label.pack(side="right")
+
+    navigation_button = tk.Button(top_border_frame, image=menu_icon, bg=border_color_closed, activebackground=border_color_closed, bd=0, padx=20, command=menu_toggle)
+    navigation_button.place(x=10, y=5)
+
+def create_main_frame():
+    global main_frame
+
+    main_frame = tk.Frame(root, bg="white") 
+    main_frame.place()
+
+def create_navigation_frame():
+    global close_button
+    global navigation_buttons
+    global navigation_frame
+    global right_navigation_frame
+    
+    navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
+    navigation_frame.place(x=-250, y=0)
+    
+    tk.Label(navigation_frame, font=('Arial', 13), bg=border_color_closed, fg="black", height=2, width=250, padx=20).place(x=0, y=0)
+       
+    line_frame = tk.Frame(navigation_frame, bg="black", height=5, width=250)
+    line_frame.place(x=0, y=44)
+    
+    right_navigation_frame = tk.Frame(navigation_frame, bg="black", width=5, height=1000)
+    right_navigation_frame.place(x=195, y=0)
+
+    close_icon = create_close_icon()
+
+    navigation_buttons = create_navigation_buttons(navigation_frame, switch_page)
+    
+    for button in navigation_buttons:
+        button.place(x=-230, y=60 + navigation_buttons.index(button) * 25)
+    
+    close_button = tk.Button(navigation_frame, image=close_icon,  bg=border_color_closed, activebackground=border_color_closed, bd=0, padx=20, command=menu_toggle)
+    close_button.pack()
+    close_button.place(x=150, y=5)
+    
+    # Keep a reference to close_icon to prevent it from being garbage collected
+    close_button.image = close_icon     # Without this the close_icon disappears
+
+def create_bottom_border():
+    global bottom_border_frame
+    global bottom_border_frame_2
+    global last_button
+    global next_button
+    
+    bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
+    bottom_border_frame.pack(fill=tk.X, side="bottom")
+    bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
+    bottom_border_frame_2.pack(fill=tk.X, side="bottom")
+
+    last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
+                            bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, command=last_page)
+    last_button.pack(side="left")
+    
+    next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
+                            bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, command=next_page)
+    next_button.pack(side="right")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Tkinter Hamburger Menu")
+    root.geometry("500x500")
+
+    create_top_border()
+    create_main_frame()
+    create_navigation_frame()
+    create_bottom_border()
+
+    switch_page(home_page)
+    root.mainloop()
+
+
+
+#%%
+
+
+import tkinter as tk
+from tkinter import PhotoImage
+from PIL import Image, ImageDraw, ImageTk
+
+button_state = False
+current_page_index = 0
+page_frame = None
+animation_progress = 0  # Global variable for animation progress
+
+# Global variables for header colors
+border_color_opened = "#252726"  # This is the color that the header dims to
+border_color_closed = "#FFA500"    # Hex value of "orange" is #FFA500
+
+def create_close_icon():
+    icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(icon)
+    draw.line((5, 5, 27, 27), fill="black", width=3)
+    draw.line((5, 27, 27, 5), fill="black", width=3)
+    icon_photo = ImageTk.PhotoImage(icon)
+    return icon_photo
+
+def create_hamburger_icon():
+    icon = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(icon)
+    draw.line((5, 12, 27, 12), fill="black", width=3)
+    draw.line((5, 18, 27, 18), fill="black", width=3)
+    draw.line((5, 24, 27, 24), fill="black", width=3)
+    icon_photo = ImageTk.PhotoImage(icon)
+    return icon_photo
+
+def create_navigation_buttons(frame, switch_page_func):
+    global navigation_menu
+    
+    buttons = []
+
+    def on_enter(event):
+        event.widget.config(bg="#e0e0e0")  # Change background color on mouse enter
+
+    def on_leave(event):
+        event.widget.config(bg="white")  # Change background color on mouse leave
+
+    button_width = 15  # Set a fixed width for the buttons
+    
+    # Page Links to be listed in navigation_frame
+    navigation_menu = [(home_page, "Home"), (first_page, "First Page"), 
+                       (second_page, "Second Page"), (third_page, "Third Page")]
+
+    for page_func, text in navigation_menu:
+        button = tk.Button(frame, text=text, font=("Arial", 13, "bold"),
+                           bd=0, relief=tk.SOLID, bg="white", fg="black", 
+                           command=lambda func=page_func: switch_page_func(func), width=button_width)
+        button.bind("<Enter>", on_enter)
+        button.bind("<Leave>", on_leave)
+        button.pack(fill=tk.X, pady=5)
+        buttons.append(button)
+
+    return buttons
+
+def reset_widget_colors():
+    header_label.config(bg=border_color_closed, fg="black")
+    top_border_frame.config(bg=border_color_closed)
+    root.config(bg=border_color_closed)
+    bottom_border_frame.config(bg=border_color_closed)
+    last_button.config(bg=border_color_closed, fg="black")
+    next_button.config(bg=border_color_closed, fg="black")
+    
+def set_dim_colors():
+    header_label.config(bg=border_color_opened, fg="white")
+    top_border_frame.config(bg=border_color_opened) 
+    root.config(bg=border_color_opened)
+    bottom_border_frame.config(bg=border_color_opened) 
+    last_button.config(bg=border_color_opened, fg="white")
+    next_button.config(bg=border_color_opened, fg="white")
+
+
+def update_colors(animation_progress):
+    def hex_to_rgb(hex_value):
+        hex_value = hex_value.lstrip("#")
+        return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
+    
+    """
+    Update the colors based on the animation progress.
+    """
+    if button_state:
+        start_color = border_color_closed
+        end_color = border_color_opened 
+    else:
+        start_color = border_color_opened
+        end_color = border_color_closed
+    
+    r_open, g_open, b_open = hex_to_rgb(border_color_opened)
+    r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+
+    r_intermediate = int(r_open + (r_closed - r_open) * animation_progress)
+    g_intermediate = int(g_open + (g_closed - g_open) * animation_progress)
+    b_intermediate = int(b_open + (b_closed - b_open) * animation_progress)
+
+    intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
+
+    # Update the colors
+    header_label.config(bg=intermediate_color)
+    top_border_frame.config(bg=intermediate_color)
+    root.config(bg=intermediate_color)
+    bottom_border_frame.config(bg=intermediate_color)
+    last_button.config(bg=intermediate_color)
+    next_button.config(bg=intermediate_color)
+    navigation_button.config(bg=intermediate_color)  
+
+"""            
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        #for step in range(251):
+        for step in range(0, 251, 1):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()  # Update the widget states, preventing flickering
+            #root.after(1)  # Introduce a delay (adjust the value to control the speed)
+            root.after(10, update_colors, step / 250)
+            
+        #reset_widget_colors()
+        #button_state = False
+        
+        update_colors(0.0)  # Start the color transition from the current state to fully closed
+        
+        button_state = False
+        
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(-250, 0):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()  # Update the widget states, preventing flickering
+            #root.after(1)  # Introduce a delay (adjust the value to control the speed)
+            root.after(10, update_colors, step / 250)
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+        # Start the color transition animation
+        #update_colors(0.0)
+        
+        update_colors(0.0)  # Start the color transition from the current state to fully opened
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+"""
+"""
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(0, 251, 1):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = step / 250
+            update_colors(animation_progress)  # Call update_colors directly with calculated progress
+
+        # Reset colors and state after the animation
+        reset_widget_colors()
+        button_state = False
+
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()  # Lift the close_button to the top
+
+        for step in range(-250, 0, 1):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = (step + 250) / 250
+            update_colors(animation_progress)  # Call update_colors directly with calculated progress
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+        # Reset colors and state after the animation
+        set_dim_colors()
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+"""
+"""
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()
+
+        for step in range(0, 251, 1):
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = step / 250
+            root.after(10, update_colors, animation_progress)
+
+        # Reset colors and state after the animation
+        reset_widget_colors()
+        button_state = False
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()
+
+        # This loop ensures that the color update happens smoothly during the animation
+        for step in range(-250, 0, 1):
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = (step + 250) / 250
+            root.after(10, update_colors, animation_progress)
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+        # Reset colors and state after the animation
+        reset_widget_colors()
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+"""
+
+def menu_toggle():
+    global button_state
+
+    if button_state is True:
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()
+
+        for step in range(0, 251, 7):   # The larger the step the faster the animation
+            navigation_frame.place(x=-step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = step / 250
+            update_colors(animation_progress)
+            root.after(10)  # Introduce a delay to control the speed
+
+        # Reset colors and state after the animation
+        reset_widget_colors()
+        button_state = False
+    else:
+        set_dim_colors()
+        navigation_frame.lift()
+        bottom_border_frame.lift()
+        bottom_border_frame_2.lift()
+        close_button.lift()
+
+        for step in range(-250, 0, 7):   # The larger the step the faster the animation
+            navigation_frame.place(x=step, y=0)
+            right_navigation_frame.update()
+            root.update_idletasks()
+            animation_progress = (step + 250) / 250
+            update_colors(animation_progress)
+            root.after(10)  # Introduce a delay to control the speed
+
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+        # Reset colors and state after the animation
+        set_dim_colors()
+        button_state = True
+        for button in navigation_buttons:
+            button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+
+
+def switch_page(page_function):
+    global page_frame
+    if page_frame:
+        page_frame.destroy()
+    page_frame = page_function()
+    page_frame.pack(fill=tk.BOTH, expand=True)
+    navigation_frame.lift()
+    bottom_border_frame.lift()
+    bottom_border_frame_2.lift()
+
+def last_page():
+    global current_page_index
+    total_pages = len(navigation_menu)
+    current_page_index = (current_page_index - 1) % total_pages
+    switch_page(navigation_menu[current_page_index][0])
+
+def next_page():
+    global current_page_index
+    total_pages = len(navigation_menu)
+    current_page_index = (current_page_index + 1) % total_pages
+    switch_page(navigation_menu[current_page_index][0])
+
+def home_page():
+    global home_page_frame
+    home_page_frame = tk.Frame(root, bg="white")
+    home_page_label = tk.Label(home_page_frame, text="HOME PAGE", font=("Arial", 25), fg="black", bg="white")
+    home_page_label.pack(pady=25)
+    home_page_text = tk.Label(home_page_frame, text="Click on the menu above to change frames!", font=("Arial", 12), fg="black", bg="white")
+    home_page_text.pack(pady=25)
+    return home_page_frame  
+
+def first_page():
+    first_page_frame = tk.Frame(root, bg="white")
+    first_page_label = tk.Label(first_page_frame, text="FIRST PAGE", font=("Arial", 25), fg="black", bg="white")
+    first_page_label.pack(pady=15)
+    first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") 
+    first_page_text_widget.insert(tk.END, "Content for the first page.")
+    first_page_text_widget.pack(pady=15)
+    return first_page_frame
+
+def second_page():
+    second_page_frame = tk.Frame(root, bg="white")
+    second_page_label = tk.Label(second_page_frame, text="SECOND PAGE", font=("Arial", 25), fg="black", bg="white")
+    second_page_label.pack(pady=15)
+    second_page_text_widget = tk.Text(second_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey", bd=2, relief=tk.SOLID)
+    second_page_text_widget.insert(tk.END, "Content for the second page.")
+    second_page_text_widget.pack(pady=15)
+    return second_page_frame
+
+def third_page():
+    third_page_frame = tk.Frame(root, bg="white")
+    third_page_label = tk.Label(third_page_frame, text="THIRD PAGE", font=("Arial", 25), fg="black", bg="white")
+    third_page_label.pack(pady=15)
+    third_page_text_widget = tk.Text(third_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") 
+    third_page_text_widget.insert(tk.END, "Content for the third page.")
+    third_page_text_widget.pack(pady=15)
+    return third_page_frame
+
+def create_top_border():
+    global header_label
+    global menu_icon 
+    global navigation_button
+    global top_border_frame
+    global top_border_frame_2
+    
+    menu_icon = create_hamburger_icon()
+
+    top_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
+    top_border_frame.pack(fill=tk.X, side="top")
+    top_border_frame_2 = tk.Frame(root, bg="black", height=5)
+    top_border_frame_2.pack(fill=tk.X, side="top")
+
+    header_label = tk.Label(top_border_frame, text="LOGO", font=("Arial", 13, "bold"),
+                            bg=border_color_closed, fg="black", height=2, padx=20)
+    header_label.pack(side="right")
+
+    navigation_button = tk.Button(top_border_frame, image=menu_icon, bg=border_color_closed, activebackground=border_color_closed, bd=0, padx=20, command=menu_toggle)
+    navigation_button.place(x=10, y=5)
+
+def create_main_frame():
+    global main_frame
+
+    main_frame = tk.Frame(root, bg="white") 
+    main_frame.place()
+
+def create_navigation_frame():
+    global close_button
+    global navigation_buttons
+    global navigation_frame
+    global right_navigation_frame
+    
+    navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
+    navigation_frame.place(x=-250, y=0)
+    
+    tk.Label(navigation_frame, font=('Arial', 13), bg=border_color_closed, fg="black", height=2, width=250, padx=20).place(x=0, y=0)
+       
+    line_frame = tk.Frame(navigation_frame, bg="black", height=5, width=250)
+    line_frame.place(x=0, y=44)
+    
+    right_navigation_frame = tk.Frame(navigation_frame, bg="black", width=5, height=1000)
+    right_navigation_frame.place(x=195, y=0)
+
+    close_icon = create_close_icon()
+
+    navigation_buttons = create_navigation_buttons(navigation_frame, switch_page)
+    
+    for button in navigation_buttons:
+        button.place(x=-230, y=60 + navigation_buttons.index(button) * 25)
+    
+    close_button = tk.Button(navigation_frame, image=close_icon,  bg=border_color_closed, activebackground=border_color_closed, bd=0, padx=20, command=menu_toggle)
+    close_button.pack()
+    close_button.place(x=150, y=5)
+    
+    # Keep a reference to close_icon to prevent it from being garbage collected
+    close_button.image = close_icon     # Without this the close_icon disappears
+
+def create_bottom_border():
+    global bottom_border_frame
+    global bottom_border_frame_2
+    global last_button
+    global next_button
+    
+    bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
     bottom_border_frame.pack(fill=tk.X, side="bottom")
     bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
     bottom_border_frame_2.pack(fill=tk.X, side="bottom")
