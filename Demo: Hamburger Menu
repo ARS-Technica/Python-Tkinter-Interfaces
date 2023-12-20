@@ -111,9 +111,7 @@ def update_colors(animation_progress):
     next_button.config(bg=intermediate_color)
     navigation_button.config(bg=intermediate_color)  
 """
-
-
-    
+  
 def update_colors_close(animation_progress):
     """
     Update the colors for closing the menu based on the animation progress.
@@ -143,6 +141,36 @@ def update_colors_close(animation_progress):
     next_button.config(bg=intermediate_color)
     navigation_button.config(bg=intermediate_color)
 
+"""
+def update_colors_open(animation_progress):
+    '''
+    Update the colors for opening the menu based on the animation progress.
+    '''
+    def hex_to_rgb(hex_value):
+        hex_value = hex_value.lstrip("#")
+        return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
+    
+    start_color = border_color_opened
+    end_color = border_color_closed
+
+    r_open, g_open, b_open = hex_to_rgb(border_color_opened)
+    r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
+
+    r_intermediate = int(r_open + (r_closed - r_open) * animation_progress)
+    g_intermediate = int(g_open + (g_closed - g_open) * animation_progress)
+    b_intermediate = int(b_open + (b_closed - b_open) * animation_progress)
+
+    intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
+
+    # Update the colors
+    header_label.config(bg=intermediate_color)
+    top_border_frame.config(bg=intermediate_color)
+    root.config(bg=intermediate_color)
+    bottom_border_frame.config(bg=intermediate_color)
+    last_button.config(bg=intermediate_color)
+    next_button.config(bg=intermediate_color)
+    navigation_button.config(bg=intermediate_color)
+"""
 
 def update_colors_open(animation_progress):
     """
@@ -152,8 +180,8 @@ def update_colors_open(animation_progress):
         hex_value = hex_value.lstrip("#")
         return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
     
-    start_color = border_color_opened
-    end_color = border_color_closed
+    start_color = border_color_closed
+    end_color = border_color_opened
 
     r_open, g_open, b_open = hex_to_rgb(border_color_opened)
     r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
@@ -193,7 +221,6 @@ def menu_toggle_close():
     reset_widget_colors()
     button_state = False
 
-
 def menu_toggle_open():
     global button_state
 
@@ -215,8 +242,6 @@ def menu_toggle_open():
     button_state = True
     for button in navigation_buttons:
         button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
-
- 
 
 def switch_page(page_function):
     global page_frame
