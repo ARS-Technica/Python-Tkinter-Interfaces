@@ -153,21 +153,15 @@ def menu_toggle_close():
         root.after(10, update_colors, animation_progress)
     """
     
-    for step in range(0, 251, 5):  # Decreased step size to 1 from 5
+    for step in range(0, 251, 1):  # Decreased step size to 1 from 5
     # A smaller step value will slow down the animation.
         navigation_frame.place(x=-step, y=0)
-        #root.update()  # Causes stationary frames to jitter
         right_navigation_frame.update() # Force an update
         root.update_idletasks()
-        #Moved Down: root.after(10)  # Introduce a delay to control the speed
-        animation_progress = step / 250
-        
-        #root.after(10, update_colors, animation_progress)
-        
-        #root.after(10) 
-        #update_colors_close(animation_progress)
-        
+        animation_progress = step / 250        
+        # Introduce a delay to control the speed
         right_navigation_frame.after(10, update_colors_open, animation_progress)
+        # Calling .after on ONLY a single frame eliminates flickering
 
     # Reset colors and state after the animation
     reset_widget_colors()
@@ -190,23 +184,16 @@ def menu_toggle_open():
         animation_progress = (step + 250) / 250
         root.after(10, update_colors, animation_progress)
     """
-    
 
-    for step in range(-250, 0, 5):  # Decreased step size to 1 from 5
+    for step in range(-250, 0, 1):  # Decreased step size to 1 from 5
     # A smaller step value will slow down the animation.
         navigation_frame.place(x=step, y=0)
-        #root.update()    # Causes stationary frames to jitter
         right_navigation_frame.update() # Force an update
-        # Moved Down: root.after(10)  # Introduce a delay to control the speed
         #animation_progress = (step + 250) / 250 # Uneven progression. AVOID!
         animation_progress = abs(step) / 250
-        
-        #root.after(10, update_colors, animation_progress)
-        
-        #root.after(10)
-        #update_colors_open(animation_progress)
-        
+        # Introduce a delay to control the speed:
         right_navigation_frame.after(10, update_colors_open, animation_progress)
+        # Calling .after on ONLY a single frame eliminates flickering
    
     # Reset colors and state after the animation
     set_dim_colors()
