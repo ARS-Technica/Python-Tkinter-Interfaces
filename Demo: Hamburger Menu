@@ -142,16 +142,6 @@ def menu_toggle_close():
     bottom_border_frame.lift()
     bottom_border_frame_2.lift()
     close_button.lift()
-
-    """
-    for step in range(0, 251, 1): 
-    # A smaller step value will slow down the animation.
-        navigation_frame.place(x=-step, y=0)
-        right_navigation_frame.update()
-        root.update_idletasks()
-        animation_progress = step / 250
-        root.after(10, update_colors, animation_progress)
-    """
     
     for step in range(0, 251, 1):  # Decreased step size to 1 from 5
     # A smaller step value will slow down the animation.
@@ -174,16 +164,6 @@ def menu_toggle_open():
     bottom_border_frame.lift()
     bottom_border_frame_2.lift()
     close_button.lift()
-
-    """
-    for step in range(-250, 0, 1): 
-    #A smaller step value will slow down the animation. 
-        navigation_frame.place(x=step, y=0)
-        right_navigation_frame.update()
-        root.update_idletasks()
-        animation_progress = (step + 250) / 250
-        root.after(10, update_colors, animation_progress)
-    """
 
     for step in range(-250, 0, 1):  # Decreased step size to 1 from 5
     # A smaller step value will slow down the animation.
@@ -228,16 +208,16 @@ def home_page():
     global home_page_frame
     home_page_frame = tk.Frame(root, bg="white")
     home_page_label = tk.Label(home_page_frame, text="HOME PAGE", font=("Arial", 25), fg="black", bg="white")
-    home_page_label.pack(pady=25)
+    home_page_label.pack(pady=15)
     home_page_text = tk.Label(home_page_frame, text="Click on the menu above to change frames!", font=("Arial", 12), fg="black", bg="white")
-    home_page_text.pack(pady=25)
+    home_page_text.pack(pady=15)
     return home_page_frame  
 
 def first_page():
     first_page_frame = tk.Frame(root, bg="white")
     first_page_label = tk.Label(first_page_frame, text="FIRST PAGE", font=("Arial", 25), fg="black", bg="white")
     first_page_label.pack(pady=15)
-    first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") 
+    first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey", bd=2, relief=tk.SOLID)
     first_page_text_widget.insert(tk.END, "Content for the first page.")
     first_page_text_widget.pack(pady=15)
     return first_page_frame
@@ -255,7 +235,7 @@ def third_page():
     third_page_frame = tk.Frame(root, bg="white")
     third_page_label = tk.Label(third_page_frame, text="THIRD PAGE", font=("Arial", 25), fg="black", bg="white")
     third_page_label.pack(pady=15)
-    third_page_text_widget = tk.Text(third_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey") 
+    third_page_text_widget = tk.Text(third_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey", bd=2, relief=tk.SOLID)
     third_page_text_widget.insert(tk.END, "Content for the third page.")
     third_page_text_widget.pack(pady=15)
     return third_page_frame
