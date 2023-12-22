@@ -299,17 +299,37 @@ def create_navigation_frame():
     close_button.image = close_icon     # Without this the close_icon disappears
 
 def on_next_button_press(event):
-    next_button.config(bg="#FFD700")  # Change to your desired color on press
+    global button_state
+
+    if button_state:
+        next_button.config(bg="grey")
+    else:
+        next_button.config(bg="#FFD700")  # Change to your desired color on press 
 
 def on_next_button_release(event):
-    next_button.config(bg=border_color_closed)  # Change to your desired color on release
+    global button_state
+
+    if button_state:
+        next_button.config(bg=border_color_opened) 
+    else:
+        next_button.config(bg=border_color_closed) 
 
 def on_last_button_press(event):
-    last_button.config(bg="#FFD700")  # Change to your desired color on press
+    global button_state
+
+    if button_state:
+        last_button.config(bg="grey")
+    else:
+        last_button.config(bg="#FFD700")  # Change to your desired color on press
 
 def on_last_button_release(event):
-    last_button.config(bg=border_color_closed)  # Change to your desired color on release
+    global button_state
 
+    if button_state:
+        last_button.config(bg=border_color_opened)
+    else:
+        last_button.config(bg=border_color_closed)  # Change to your desired color on release
+    
 def create_bottom_border():
     global bottom_border_frame
     global bottom_border_frame_2
