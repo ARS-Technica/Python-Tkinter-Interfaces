@@ -298,6 +298,18 @@ def create_navigation_frame():
     # Keep a reference to close_icon to prevent it from being garbage collected
     close_button.image = close_icon     # Without this the close_icon disappears
 
+def on_next_button_press(event):
+    next_button.config(bg="#FFD700")  # Change to your desired color on press
+
+def on_next_button_release(event):
+    next_button.config(bg=border_color_closed)  # Change to your desired color on release
+
+def on_last_button_press(event):
+    last_button.config(bg="#FFD700")  # Change to your desired color on press
+
+def on_last_button_release(event):
+    last_button.config(bg=border_color_closed)  # Change to your desired color on release
+
 def create_bottom_border():
     global bottom_border_frame
     global bottom_border_frame_2
@@ -312,10 +324,14 @@ def create_bottom_border():
     last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
                             bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, command=last_page)
     last_button.pack(side="left")
+    last_button.bind("<ButtonPress-1>", on_last_button_press)
+    last_button.bind("<ButtonRelease-1>", on_last_button_release)
     
     next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
                             bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, command=next_page)
     next_button.pack(side="right")
+    next_button.bind("<ButtonPress-1>", on_next_button_press)
+    next_button.bind("<ButtonRelease-1>", on_next_button_release)
 
 if __name__ == "__main__":
     root = tk.Tk()
