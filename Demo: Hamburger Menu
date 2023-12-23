@@ -301,7 +301,8 @@ def create_navigation_frame():
 def on_next_button_press(event):
     global button_state
 
-    if button_state:
+    #if button_state:  # this condition is always True because button_state is set to True in the menu_toggle_open function
+    if button_state and border_color_opened == "#252726":
         next_button.config(bg="grey")
     else:
         next_button.config(bg="#FFD700")  # Change to your desired color on press 
@@ -309,7 +310,8 @@ def on_next_button_press(event):
 def on_next_button_release(event):
     global button_state
 
-    if button_state:
+    #if button_state:  # this condition is always True because button_state is set to True in the menu_toggle_open function
+    if button_state and border_color_opened == "#252726":
         next_button.config(bg=border_color_opened) 
     else:
         next_button.config(bg=border_color_closed) 
@@ -317,7 +319,8 @@ def on_next_button_release(event):
 def on_last_button_press(event):
     global button_state
 
-    if button_state:
+    #if button_state:  # this condition is always True because button_state is set to True in the menu_toggle_open function
+    if button_state and border_color_opened == "#252726":
         last_button.config(bg="grey")
     else:
         last_button.config(bg="#FFD700")  # Change to your desired color on press
@@ -325,7 +328,8 @@ def on_last_button_press(event):
 def on_last_button_release(event):
     global button_state
 
-    if button_state:
+    #if button_state:  # this condition is always True because button_state is set to True in the menu_toggle_open function
+    if button_state and border_color_opened == "#252726":
         last_button.config(bg=border_color_opened)
     else:
         last_button.config(bg=border_color_closed)  # Change to your desired color on release
