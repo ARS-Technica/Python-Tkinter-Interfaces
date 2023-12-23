@@ -305,24 +305,20 @@ def create_bottom_border():
     global next_button
     
     def on_exit(event):
+        # Change the button colors based on conditions
         current_bg_color = bottom_border_frame.cget("bg")
-        
         if navigation_frame.winfo_ismapped() and current_bg_color == "#252726":
-            event.widget.config(bg="grey", fg="white")
+            event.widget.config(bg="grey", fg="black")  # Rollover color when navigation_frame is visible and background is "#252726"
         elif not navigation_frame.winfo_ismapped() and current_bg_color == "#FFA500":
-            event.widget.config(bg="#FFD700", fg="black")
-        else:
-            event.widget.config(bg=border_color_closed, fg="black")
-
+            event.widget.config(bg="#FFD700", fg="black")  # Rollover color when navigation_frame is not visible and background is "#FFA500"
+    
     def on_enter(event):
+        # Change the button colors based on conditions
         current_bg_color = bottom_border_frame.cget("bg")
-        
         if navigation_frame.winfo_ismapped() and current_bg_color == "#252726":
-            event.widget.config(bg="grey", fg="white")
+            event.widget.config(bg="grey", fg="black")  # Rollover color when navigation_frame is visible and background is "#252726"
         elif not navigation_frame.winfo_ismapped() and current_bg_color == "#FFA500":
-            event.widget.config(bg="#FFD700", fg="black")
-        else:
-            event.widget.config(bg=border_color_closed, fg="black")
+            event.widget.config(bg="#FFD700", fg="black")  # Rollover color when navigation_frame is not visible and background is "#FFA500"
     
     bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
     bottom_border_frame.pack(fill=tk.X, side="bottom")
@@ -340,7 +336,6 @@ def create_bottom_border():
     next_button.pack(side="right")
     next_button.bind("<Enter>", on_enter)
     next_button.bind("<Leave>", on_exit)
-
 
 if __name__ == "__main__":
     root = tk.Tk()
