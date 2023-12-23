@@ -298,35 +298,19 @@ def create_navigation_frame():
     # Keep a reference to close_icon to prevent it from being garbage collected
     close_button.image = close_icon     # Without this the close_icon disappears
 
-
-
-def on_next_button_enter(event):
-    current_bg_color = bottom_border_frame.cget("bg")
-    
-    if navigation_frame.winfo_ismapped() and current_bg_color == "#252726":
-        next_button.config(bg="grey")  # Change to your desired rollover color when navigation_frame is visible and background is "#252726"
-    elif not navigation_frame.winfo_ismapped() and current_bg_color == "#FFA500":
-        next_button.config(bg="#FFD700")  # Change to your desired rollover color when navigation_frame is not visible and background is "#FFA500"
-
-def on_next_button_leave(event):
-    next_button.config(bg=border_color_closed)  # Change to your desired normal color when not hovering
-
-def on_last_button_enter(event):
-    current_bg_color = bottom_border_frame.cget("bg")
-    
-    if navigation_frame.winfo_ismapped() and current_bg_color == "#252726":
-        last_button.config(bg="grey")  # Change to your desired rollover color when navigation_frame is visible and background is "#252726"
-    elif not navigation_frame.winfo_ismapped() and current_bg_color == "#FFA500":
-        last_button.config(bg="#FFD700")  # Change to your desired rollover color when navigation_frame is not visible and background is "#FFA500"
-
-def on_last_button_leave(event):
-    last_button.config(bg=border_color_closed)  # Change to your desired normal color when not hovering
-
 def create_bottom_border():
     global bottom_border_frame
     global bottom_border_frame_2
     global last_button
     global next_button
+    
+    def on_exit(event):
+        event.widget['background'] = border_color_closed
+        event.widget['foreground'] = border_color_opened
+
+    def on_enter(event):
+        event.widget['background'] = border_color_closed
+        event.widget['foreground'] = border_color_opened
     
     bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
     bottom_border_frame.pack(fill=tk.X, side="bottom")
@@ -336,16 +320,14 @@ def create_bottom_border():
     last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
                             bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, command=last_page)
     last_button.pack(side="left")
-    last_button.bind("<Enter>", on_last_button_enter)
-    last_button.bind("<Leave>", on_last_button_leave)
+    last_button.bind("<Enter>", on_enter)
+    last_button.bind("<Leave>", on_exit)
     
     next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
                             bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, command=next_page)
     next_button.pack(side="right")
-    next_button.bind("<Enter>", on_next_button_enter)
-    next_button.bind("<Leave>", on_next_button_leave)
-
-
+    next_button.bind("<Enter>", on_enter)
+    next_button.bind("<Leave>", on_exit)
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -359,3 +341,4 @@ if __name__ == "__main__":
 
     switch_page(home_page)
     root.mainloop()
+
