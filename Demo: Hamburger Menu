@@ -1,5 +1,3 @@
- 
-
 """
 A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
@@ -37,7 +35,7 @@ def create_hamburger_icon():
 
 def create_navigation_buttons(frame, switch_page_func):
     global navigation_menu
-    
+
     buttons = []
 
     def on_enter(event):
@@ -47,14 +45,18 @@ def create_navigation_buttons(frame, switch_page_func):
         event.widget.config(bg="white")  # Change background color on mouse leave
 
     button_width = 15  # Set a fixed width for the buttons
-    
+
     # Page Links to be listed in navigation_frame
-    navigation_menu = [(home_page, "Home"), (first_page, "First Page"), 
-                       (second_page, "Second Page"), (third_page, "Third Page")]
+    navigation_menu = [
+        (home_page, "Home"),
+        (first_page, "First Page"),
+        (second_page, "Second Page"),
+        (third_page, "Third Page")
+    ]
 
     for page_func, text in navigation_menu:
         button = tk.Button(frame, text=text, font=("Arial", 13, "bold"),
-                           bd=0, relief=tk.SOLID, bg="white", fg="black", 
+                           bd=0, relief=tk.SOLID, bg="white", fg="black",
                            command=lambda func=page_func: switch_page_func(func), width=button_width)
         button.bind("<Enter>", on_enter)
         button.bind("<Leave>", on_leave)
@@ -194,10 +196,20 @@ def menu_toggle_open():
 
 def switch_page(page_function):
     global page_frame
+    global navigation_buttons  # Add this line to access the navigation_buttons globally
+
     if page_frame:
         page_frame.destroy()
     page_frame = page_function()
     page_frame.pack(fill=tk.BOTH, expand=True)
+
+    # Update the font style based on the current page
+    for index, button in enumerate(navigation_buttons):
+        if index == current_page_index:
+            button.config(font=("Arial", 13, "bold", "underline"))
+        else:
+            button.config(font=("Arial", 13, "bold"))
+
     navigation_frame.lift()
     bottom_border_frame.lift()
     bottom_border_frame_2.lift()
