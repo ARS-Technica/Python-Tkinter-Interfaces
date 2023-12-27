@@ -1,3 +1,4 @@
+
 """
 A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
@@ -155,6 +156,7 @@ def menu_toggle_close():
 
     # Reset colors and state after the animation
     reset_widget_colors()
+    
     button_state = False
 
 def menu_toggle_open():
@@ -177,6 +179,7 @@ def menu_toggle_open():
    
     # Reset colors and state after the animation
     set_dim_colors()
+   
     button_state = True
     
     for button in navigation_buttons:
@@ -301,38 +304,43 @@ def create_navigation_frame():
 def create_bottom_border():
     global bottom_border_frame
     global bottom_border_frame_2
+    
+    global button_state
+    
     global last_button
     global next_button
     
     def on_exit(event):
-        # Change the button colors based on conditions
-        current_bg_color = bottom_border_frame.cget("bg")
-        if navigation_frame.winfo_ismapped() and current_bg_color == "#252726":
-            event.widget.config(bg="grey", fg="black")  # Rollover color when navigation_frame is visible and background is "#252726"
-        elif not navigation_frame.winfo_ismapped() and current_bg_color == "#FFA500":
-            event.widget.config(bg="#FFD700", fg="black")  # Rollover color when navigation_frame is not visible and background is "#FFA500"
-    
+        if button_state:
+        # When navigation_frame is visible and background is "#252726"
+           event.widget.config(bg=border_color_opened, fg="white") 
+        else:
+        # When navigation_frame is not visible and background is "#FFA500"
+            event.widget.config(bg=border_color_closed, fg="black")  
+
     def on_enter(event):
-        # Change the button colors based on conditions
-        current_bg_color = bottom_border_frame.cget("bg")
-        if navigation_frame.winfo_ismapped() and current_bg_color == "#252726":
-            event.widget.config(bg="grey", fg="black")  # Rollover color when navigation_frame is visible and background is "#252726"
-        elif not navigation_frame.winfo_ismapped() and current_bg_color == "#FFA500":
-            event.widget.config(bg="#FFD700", fg="black")  # Rollover color when navigation_frame is not visible and background is "#FFA500"
-    
+        if button_state:
+        # When navigation_frame is visible and background is "#252726"
+            event.widget.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")  
+        else:
+        # When navigation_frame is not visible and background is "#FFA500"
+            event.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="white")  
+
     bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
     bottom_border_frame.pack(fill=tk.X, side="bottom")
     bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
     bottom_border_frame_2.pack(fill=tk.X, side="bottom")
 
     last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
-                            bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, command=last_page)
+                            bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, 
+                            cursor="hand2", command=last_page)
     last_button.pack(side="left")
     last_button.bind("<Enter>", on_enter)
     last_button.bind("<Leave>", on_exit)
     
     next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
-                            bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, command=next_page)
+                            bg=border_color_closed, fg="black", bd=0, padx=20, pady=5,
+                            cursor="hand2", command=next_page)
     next_button.pack(side="right")
     next_button.bind("<Enter>", on_enter)
     next_button.bind("<Leave>", on_exit)
@@ -349,4 +357,3 @@ if __name__ == "__main__":
 
     switch_page(home_page)
     root.mainloop()
-
