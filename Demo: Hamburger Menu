@@ -35,6 +35,7 @@ def create_hamburger_icon():
 
 def create_navigation_buttons(frame, switch_page_func):
     global navigation_menu
+    global navigation_buttons  # Add this line to access the navigation_buttons globally
 
     buttons = []
 
@@ -43,6 +44,9 @@ def create_navigation_buttons(frame, switch_page_func):
 
     def on_leave(event):
         event.widget.config(bg="white")  # Change background color on mouse leave
+
+    def on_click(index):
+        navigate_to_index(index)
 
     button_width = 15  # Set a fixed width for the buttons
 
@@ -54,12 +58,13 @@ def create_navigation_buttons(frame, switch_page_func):
         (third_page, "Third Page")
     ]
 
-    for page_func, text in navigation_menu:
+    for index, (page_func, text) in enumerate(navigation_menu):
         button = tk.Button(frame, text=text, font=("Arial", 13, "bold"),
                            bd=0, relief=tk.SOLID, bg="white", fg="black",
                            command=lambda func=page_func: switch_page_func(func), width=button_width)
         button.bind("<Enter>", on_enter)
         button.bind("<Leave>", on_leave)
+        button.bind("<Button-1>", lambda event, idx=index: on_click(idx))  # Bind the click event
         button.pack(fill=tk.X, pady=5)
         buttons.append(button)
 
@@ -161,7 +166,7 @@ def menu_toggle_close():
     reset_widget_colors()
     
     last_button.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")  
-    next_button.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="white")  
+    next_button.config(activebackground=border_color_closed, bg=border_color_closed, fg="white")  
     
     button_state = False
 
@@ -196,7 +201,8 @@ def menu_toggle_open():
 
 def switch_page(page_function):
     global page_frame
-    global navigation_buttons  # Add this line to access the navigation_buttons globally
+    global navigation_buttons
+    global current_page_index
 
     if page_frame:
         page_frame.destroy()
@@ -214,6 +220,11 @@ def switch_page(page_function):
     bottom_border_frame.lift()
     bottom_border_frame_2.lift()
 
+def navigate_to_index(index):
+    global current_page_index
+    current_page_index = index
+    switch_page(navigation_menu[current_page_index][0])
+    
 def last_page():
     global current_page_index
     total_pages = len(navigation_menu)
