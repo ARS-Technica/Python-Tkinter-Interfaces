@@ -304,19 +304,22 @@ def create_navigation_frame():
 def create_bottom_border():
     global bottom_border_frame
     global bottom_border_frame_2
-    
+
     global button_state
-    
+
     global last_button
     global next_button
-    
+
     def on_exit(event):
         if button_state:
         # When navigation_frame is visible and background is "#252726"
-           event.widget.config(bg=border_color_opened, fg="white") 
+           event.widget.config(activebackground=border_color_opened, activeforeground="#FFA500",
+                               bg=border_color_opened, fg="white")  
+           # Note: activeforeground sets the text color when the button is in the active state (Hover state)
         else:
         # When navigation_frame is not visible and background is "#FFA500"
-            event.widget.config(bg=border_color_closed, fg="black")  
+            event.widget.config(activebackground=border_color_closed, activeforeground="white",
+                                bg=border_color_closed, fg="black")  
 
     def on_enter(event):
         if button_state:
@@ -337,7 +340,7 @@ def create_bottom_border():
     last_button.pack(side="left")
     last_button.bind("<Enter>", on_enter)
     last_button.bind("<Leave>", on_exit)
-    
+
     next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
                             bg=border_color_closed, fg="black", bd=0, padx=20, pady=5,
                             cursor="hand2", command=next_page)
