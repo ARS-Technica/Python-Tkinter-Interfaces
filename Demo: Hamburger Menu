@@ -1,3 +1,4 @@
+ 
 
 """
 A demonstration of how to make a simple hamburger menu common in mobile apps
@@ -157,6 +158,9 @@ def menu_toggle_close():
     # Reset colors and state after the animation
     reset_widget_colors()
     
+    last_button.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")  
+    next_button.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="white")  
+    
     button_state = False
 
 def menu_toggle_open():
@@ -179,7 +183,10 @@ def menu_toggle_open():
    
     # Reset colors and state after the animation
     set_dim_colors()
-   
+    
+    last_button.config(activebackground=border_color_opened, activeforeground="#FFA500", bg=border_color_opened, fg="white")  
+    next_button.config(activebackground=border_color_opened, activeforeground="#FFA500", bg=border_color_opened, fg="white")  
+    
     button_state = True
     
     for button in navigation_buttons:
@@ -360,3 +367,4 @@ if __name__ == "__main__":
 
     switch_page(home_page)
     root.mainloop()
+
