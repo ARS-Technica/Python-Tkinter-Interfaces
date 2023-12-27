@@ -219,12 +219,7 @@ def switch_page(page_function):
     navigation_frame.lift()
     bottom_border_frame.lift()
     bottom_border_frame_2.lift()
-
-def navigate_to_index(index):
-    global current_page_index
-    current_page_index = index
-    switch_page(navigation_menu[current_page_index][0])
-    
+  
 def last_page():
     global current_page_index
     total_pages = len(navigation_menu)
@@ -300,36 +295,61 @@ def create_main_frame():
     main_frame = tk.Frame(root, bg="white") 
     main_frame.place()
 
-def create_navigation_frame():
-    global close_button
+def create_navigation_buttons(frame, switch_page_func):
+    global navigation_menu
     global navigation_buttons
-    global navigation_frame
-    global right_navigation_frame
-    
-    navigation_frame = tk.Frame(root, bg="white", height=1000, width=200)
-    navigation_frame.place(x=-250, y=0)
-    
-    tk.Label(navigation_frame, font=('Arial', 13), bg=border_color_closed, fg="black", height=2, width=250, padx=20).place(x=0, y=0)
-       
-    line_frame = tk.Frame(navigation_frame, bg="black", height=5, width=250)
-    line_frame.place(x=0, y=44)
-    
-    right_navigation_frame = tk.Frame(navigation_frame, bg="black", width=5, height=1000)
-    right_navigation_frame.place(x=195, y=0)
+    global current_page_index  # Add this line
 
-    close_icon = create_close_icon()
+    buttons = []
 
-    navigation_buttons = create_navigation_buttons(navigation_frame, switch_page)
-    
-    for button in navigation_buttons:
-        button.place(x=-230, y=60 + navigation_buttons.index(button) * 25)
-    
-    close_button = tk.Button(navigation_frame, image=close_icon,  bg=border_color_closed, activebackground=border_color_closed, bd=0, padx=20, command=menu_toggle_close)
-    close_button.pack()
-    close_button.place(x=150, y=5)
-    
-    # Keep a reference to close_icon to prevent it from being garbage collected
-    close_button.image = close_icon     # Without this the close_icon disappears
+    def on_enter(event):
+        event.widget.config(bg="#e0e0e0")  # Change background color on mouse enter
+
+    def on_leave(event):
+        event.widget.config(bg="white")  # Change background color on mouse leave
+
+    button_width = 15  # Set a fixed width for the buttons
+
+    # Page Links to be listed in navigation_frame
+    navigation_menu = [
+        (home_page, "Home"),
+        (first_page, "First Page"),
+        (second_page, "Second Page"),
+        (third_page, "Third Page")
+    ]
+
+    for index, (page_func, text) in enumerate(navigation_menu):
+        button = tk.Button(frame, text=text, font=("Arial", 13, "bold"),
+                           bd=0, relief=tk.SOLID, bg="white", fg="black",
+                           command=lambda func=page_func, idx=index: (
+                               switch_page_func(func),
+                               update_button_styles(idx)
+                           ), width=button_width)
+        button.bind("<Enter>", on_enter)
+        button.bind("<Leave>", on_leave)
+
+        button.pack(fill=tk.X, pady=5)
+        buttons.append(button)
+
+    navigation_buttons = buttons  # Save the buttons globally
+
+    # Set the initial button styles
+    update_button_styles(current_page_index)
+
+    return buttons
+
+def update_button_styles(selected_index):
+    global navigation_buttons
+    global current_page_index
+
+    current_page_index = selected_index  # Update the current page index
+
+    # Iterate over all buttons and update their font styles based on the selected index
+    for i, btn in enumerate(navigation_buttons):
+        if i == selected_index:
+            btn.config(font=("Arial", 13, "bold", "underline"))
+        else:
+            btn.config(font=("Arial", 13, "bold"))
 
 def create_bottom_border():
     global bottom_border_frame
