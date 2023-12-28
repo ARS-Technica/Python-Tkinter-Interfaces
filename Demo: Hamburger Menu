@@ -153,15 +153,15 @@ def menu_toggle_close():
         # Calling .after on ONLY a single frame eliminates flickering
 
     # Reset colors and state after the animation
-    reset_widget_colors()
+    reset_widget_colors()        
+    button_state = False
     
     last_button.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")  
-    next_button.config(activebackground=border_color_closed, bg=border_color_closed, fg="white")  
-    
-    button_state = False
+    next_button.config(activebackground=border_color_closed, bg=border_color_closed, fg="white") 
 
 def menu_toggle_open():
     global button_state
+    global bottom_border_frame_2_y
 
     navigation_frame.lift()
     bottom_border_frame.lift()
@@ -177,6 +177,8 @@ def menu_toggle_open():
         # Introduce a delay to control the speed:
         right_navigation_frame.after(10, update_colors_open, animation_progress)
         # Calling .after on ONLY a single frame eliminates flickering
+        # Make line_frame line up with bottom_border_frame_2 when the navigation_frame is visible:
+        line_frame.place(x=0, y=43)
    
     # Reset colors and state after the animation
     set_dim_colors()
@@ -212,15 +214,25 @@ def switch_page(page_function):
   
 def last_page():
     global current_page_index
+    global button_state
+
     total_pages = len(navigation_menu)
     current_page_index = (current_page_index - 1) % total_pages
     switch_page(navigation_menu[current_page_index][0])
 
+    # Update button state for Last and Next Buttons
+    button_state = True if current_page_index != 0 else False
+
 def next_page():
     global current_page_index
+    global button_state
+
     total_pages = len(navigation_menu)
     current_page_index = (current_page_index + 1) % total_pages
     switch_page(navigation_menu[current_page_index][0])
+
+    # Update button state for Last and Next Buttons
+    button_state = True if current_page_index != len(navigation_menu) - 1 else False
 
 def home_page():
     global home_page_frame
@@ -288,6 +300,7 @@ def create_main_frame():
 
 def create_navigation_frame():
     global close_button
+    global line_frame
     global navigation_buttons
     global navigation_frame
     global right_navigation_frame
@@ -376,10 +389,14 @@ def update_button_styles(selected_index):
         else:
             btn.config(font=("Arial", 13, "bold"))
 
+global bottom_border_frame_2_y
+bottom_border_frame_2_y = None
+
 def create_bottom_border():
     global bottom_border_frame
     global bottom_border_frame_2
-
+    global bottom_border_frame_2_y
+    
     global button_state
 
     global last_button
@@ -390,7 +407,6 @@ def create_bottom_border():
             # When navigation_frame is visible and background is "#252726"
             event.widget.config(activebackground=border_color_opened, activeforeground="#FFA500",
                                 bg=border_color_opened, fg="white")
-            # Note: activeforeground sets the text color when the button is in the active state (Hover state)
         else:
             # When navigation_frame is not visible and background is "#FFA500"
             event.widget.config(activebackground=border_color_closed, activeforeground="white",
@@ -402,7 +418,8 @@ def create_bottom_border():
             event.widget.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")
         else:
             # When navigation_frame is not visible and background is "#FFA500"
-            event.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="black")            
+            event.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="black")
+          
 
     bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=45)
     bottom_border_frame.pack(fill=tk.X, side="bottom")
@@ -421,7 +438,7 @@ def create_bottom_border():
                             cursor="hand2", command=next_page)
     next_button.pack(side="right")
     next_button.bind("<Enter>", on_enter)
-    next_button.bind("<Leave>", on_exit)    
+    next_button.bind("<Leave>", on_exit)  
 
 if __name__ == "__main__":
     root = tk.Tk()
