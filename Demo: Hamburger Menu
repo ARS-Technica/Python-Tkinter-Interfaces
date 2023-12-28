@@ -391,6 +391,19 @@ def update_button_styles(selected_index):
         else:
             btn.config(font=("Arial", 13, "bold"))
 
+
+
+ 
+
+
+
+ 
+
+
+
+
+
+
 def create_bottom_border():
     global bottom_border_frame
     global bottom_border_frame_2
@@ -432,8 +445,8 @@ def create_bottom_border():
         active_fg = "white" if button_state else "black"
         event.widget.config(activebackground=active_bg, activeforeground=active_fg,
                             bg=active_bg, fg=active_fg)
-   """
-
+    """
+    """
     def on_exit(event):
         if button_state:
             # When navigation_frame is visible and background is "#252726"
@@ -451,8 +464,38 @@ def create_bottom_border():
         else:
             # When navigation_frame is not visible and background is "#FFA500"
             event.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="black")
+    """     
      
-        
+        # Functions to handle Enter and Leave events for next and last buttons
+    def on_enter_next(event):
+        if button_state:
+            next_button.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")
+        else:
+            next_button.config(activebackground=border_color_closed, bg=border_color_closed, fg="black")
+    
+    def on_leave_next(event):
+        if button_state:
+            next_button.config(activebackground=border_color_opened, activeforeground="#FFA500",
+                                bg=border_color_opened, fg="white")
+        else:
+            next_button.config(activebackground=border_color_closed, activeforeground="white",
+                                bg=border_color_closed, fg="black")
+    
+    def on_enter_last(event):
+        if button_state:
+            last_button.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")
+        else:
+            last_button.config(activebackground=border_color_closed, bg=border_color_closed, fg="black")
+    
+    def on_leave_last(event):
+        if button_state:
+            last_button.config(activebackground=border_color_opened, activeforeground="#FFA500",
+                                bg=border_color_opened, fg="white")
+        else:
+            last_button.config(activebackground=border_color_closed, activeforeground="white",
+                                bg=border_color_closed, fg="black")
+
+
     
     bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=45)
     bottom_border_frame.pack(fill=tk.X, side="bottom")
@@ -471,9 +514,11 @@ def create_bottom_border():
                             cursor="hand2", command=last_page)
     
     last_button.pack(side="left")
+    
+    """
     last_button.bind("<Enter>", on_enter)
     last_button.bind("<Leave>", on_exit)
-    
+    """
     """
     next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
                             bg=border_color_closed, fg="black", bd=0, padx=20, pady=5,
@@ -486,8 +531,27 @@ def create_bottom_border():
                             cursor="hand2", command=next_page)
 
     next_button.pack(side="right")
+    
+    """
     next_button.bind("<Enter>", on_enter)
-    next_button.bind("<Leave>", on_exit)    
+    next_button.bind("<Leave>", on_exit) 
+    """
+    
+    
+    
+    # Bind the Enter and Leave events to the functions
+    next_button.bind("<Enter>", on_enter_next)
+    next_button.bind("<Leave>", on_leave_next)
+    last_button.bind("<Enter>", on_enter_last)
+    last_button.bind("<Leave>", on_leave_last)
+        
+    
+    
+    
+    
+    
+    
+    
 
 if __name__ == "__main__":
     root = tk.Tk()
