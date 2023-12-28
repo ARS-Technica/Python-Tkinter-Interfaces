@@ -183,11 +183,26 @@ def menu_toggle_open():
     
     #last_button.config(activebackground=border_color_opened, activeforeground="#FFA500", bg=border_color_opened, fg="white")  
     #next_button.config(activebackground=border_color_opened, activeforeground="#FFA500", bg=border_color_opened, fg="white")  
-    
+  
     button_state = True
+
+    #root.focus_force()
+    #root.focus_set()
+    #last_button.focus_set()
+    #next_button.focus_set()
+    #root.focus_set()
     
     for button in navigation_buttons:
         button.place(x=20, y=60 + navigation_buttons.index(button) * 25)
+    
+    #root.focus_force()  # Set focus to root window after opening navigation_frame
+    #root.focus_set()
+    #bottom_border_frame.focus_set()
+    #last_button.focus_set()
+    #next_button.focus_set()
+    #bottom_border_frame.focus_set()
+    
+    #root.focus_force()
 
 def switch_page(page_function):
     global page_frame
@@ -485,6 +500,6 @@ if __name__ == "__main__":
     create_bottom_border()
 
     switch_page(home_page)
-    root.focus_force()  # Set initial focus to the root window
+    root.focus_force()  # Set initial focus to the root window for the rollover effect to start
     root.mainloop()
 
