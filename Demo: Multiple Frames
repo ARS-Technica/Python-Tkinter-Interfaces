@@ -7,86 +7,79 @@ import tkinter as tk
 
 # ***************** Create Layout ***************** #
 
-def create_main_frame():
-    global main_frame
-
+def create_main_frame(root):
     main_frame = tk.Frame(root, bg="white")
     main_frame.pack(fill=tk.BOTH, expand=True)
+    return main_frame
 
-def create_options_frame():
-    global options_frame
-
+def create_options_frame(root):
     options_frame = tk.Frame(root)
     options_frame.pack(pady=5)
     options_frame.pack_propagate(False)
     options_frame.configure(width=500, height=35)
+    return options_frame
 
-def create_top_border_frame():    
-    global top_border_frame
-
+def create_top_border_frame(root):
     top_border_frame = tk.Frame(root, bg='#0097e8', height=10)
     top_border_frame.pack(fill=tk.X, side="top")
+    return top_border_frame
 
 
 # ***************** Menu Elements ***************** #
 
-def create_navigation_buttons():
-    home_button = tk.Button(options_frame, text='Home', font=('Arial', 13), bd=0, 
+def create_navigation_buttons(options_frame, root):
+    home_button = tk.Button(options_frame, text='Home', font=('Arial', 13), bd=0,
                             fg='#0097e8', activeforeground='#0097e8',
-                            command=lambda: switch_page(indicator=home_indicator,
+                            command=lambda: switch_page(root, indicator=home_indicator,
                             page=home_page))
     home_button.place(x=0, y=0, width=125)
-    
+
     home_indicator = tk.Label(options_frame, bg='#0097e8')
     home_indicator.place(x=22, y=30, width=80, height=2)
-    
-    
+
     first_button = tk.Button(options_frame, text='First', font=('Arial', 13), bd=0,
                              fg='#0097e8', activeforeground='#0097e8',
-                             command=lambda: switch_page(indicator=first_indicator,
+                             command=lambda: switch_page(root, indicator=first_indicator,
                              page=first_page))
     first_button.place(x=125, y=0, width=125)
-    
+
     first_indicator = tk.Label(options_frame, bg='#0097e8')
     first_indicator.place(x=147, y=30, width=80, height=2)
-    
-    
+
     second_button = tk.Button(options_frame, text='Second', font=('Arial', 13), bd=0, 
                               fg='#0097e8', activeforeground='#0097e8',
-                              command=lambda: switch_page(indicator=second_indicator,
+                              command=lambda: switch_page(root, indicator=second_indicator,
                               page=second_page))
     second_button.place(x=250, y=0, width=125)
-    
+
     second_indicator = tk.Label(options_frame, bg='#0097e8')
     second_indicator.place(x=272, y=30, width=80, height=2)
-    
-    
+
     third_button = tk.Button(options_frame, text='Third', font=('Arial', 13), bd=0, 
                              fg='#0097e8', activeforeground='#0097e8',
-                             command=lambda: switch_page(indicator=third_indicator,
+                             command=lambda: switch_page(root, indicator=third_indicator,
                              page=third_page))
     third_button.place(x=375, y=0, width=125)
-    
+
     third_indicator = tk.Label(options_frame, bg='#0097e8')
     third_indicator.place(x=397, y=30, width=80, height=2)
 
 
 # ***************** Menu Functions ***************** #
 
-def switch_page(indicator, page):
+def switch_page(root, indicator, page):
     # Hide indicator if button is NOT selected
-    for child in options_frame.winfo_children():    # Use winfo_children to get all of a widget's child objects
-        if isinstance(child, tk.Label):             # If widget is a label
-            child['bg'] = 'SystemButtonFace'        # root.cget("bg) for Linux
+    for child in options_frame.winfo_children():
+        if isinstance(child, tk.Label):
+            child['bg'] = 'SystemButtonFace'
 
     indicator['bg'] = '#0097e8'
 
-    for frame in main_frame.winfo_children():
-        frame.destroy() # Erase previous contents of frame
-        root.update()   # Ensure that new content is shown in frame
+    for frame in root.winfo_children():
+        frame.destroy()
+        root.update()
 
-    page()  # Switch new page into main_frame
-
+    page()
 
 # ***************** Content Frames ***************** #
 
@@ -136,10 +129,12 @@ if __name__ == "__main__":
     root.geometry("500x500")
     root.title("Multi-Frame Tkinter Widget")
 
-    create_main_frame()
-    create_options_frame()
-    create_top_border_frame()
-    
+    main_frame = create_main_frame(root)
+    options_frame = create_options_frame(root)
+    top_border_frame = create_top_border_frame(root)
+
+    create_navigation_buttons(options_frame, root)
+
     home_page()
     root.mainloop()
 
