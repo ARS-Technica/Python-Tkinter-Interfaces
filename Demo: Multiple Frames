@@ -10,26 +10,27 @@ import tkinter as tk
 def create_main_frame():
     global main_frame
 
-    main_frame = tk.Frame(root, bg="white") 
-    main_frame.place()
-
-    #main_frame = tk.Frame(root)
-    #main_frame.pack(fill=tk.BOTH, expand=True)
+    main_frame = tk.Frame(root, bg="white")
+    main_frame.pack(fill=tk.BOTH, expand=True)
 
 def create_options_frame():
+    global options_frame
+
     options_frame = tk.Frame(root)
     options_frame.pack(pady=5)
     options_frame.pack_propagate(False)
     options_frame.configure(width=500, height=35)
 
-def create_top_border_frame():
-    top_border_frame = tk.Frame(root, bg='#0097e8', height=10)  # Purely aesthetic
+def create_top_border_frame():    
+    global top_border_frame
+
+    top_border_frame = tk.Frame(root, bg='#0097e8', height=10)
     top_border_frame.pack(fill=tk.X, side="top")
 
 
 # ***************** Menu Elements ***************** #
 
-def create_navigation_buttons():    
+def create_navigation_buttons():
     home_button = tk.Button(options_frame, text='Home', font=('Arial', 13), bd=0, 
                             fg='#0097e8', activeforeground='#0097e8',
                             command=lambda: switch_page(indicator=home_indicator,
