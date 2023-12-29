@@ -159,8 +159,9 @@ def menu_toggle_close():
     # Reset colors and state after the animation
     reset_widget_colors()
     
-    last_button.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")  
-    next_button.config(activebackground=border_color_closed, bg=border_color_closed, fg="white")  
+    last_button.config(activebackground=border_color_closed, activeforeground="black", bg=border_color_opened, fg="white")  
+    next_button.config(activebackground=border_color_closed, activeforeground="black", bg=border_color_closed, fg="white")
+    # activeforeground critical for rollover effect after menu is closed!
     
     button_state = False # Update button state when the navigation frame is closed
 
@@ -271,7 +272,7 @@ def create_top_border():
     
     menu_icon = create_hamburger_icon()
 
-    top_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
+    top_border_frame = tk.Frame(root, bg=border_color_closed, height=44)
     top_border_frame.pack(fill=tk.X, side="top")
     top_border_frame_2 = tk.Frame(root, bg="black", height=5)
     top_border_frame_2.pack(fill=tk.X, side="top")
@@ -341,8 +342,7 @@ def create_navigation_buttons(frame, switch_page_func):
         (home_page, "Home"),
         (first_page, "First Page"),
         (second_page, "Second Page"),
-        (third_page, "Third Page")
-    ]
+        (third_page, "Third Page")]
 
     for index, (page_func, text) in enumerate(navigation_menu):
         button = tk.Button(frame, text=text, font=("Arial", 13, "bold"),
@@ -376,7 +376,7 @@ def create_bottom_border():
         # When navigation_frame is visible and background is "#252726"
            event.widget.config(activebackground=border_color_opened, activeforeground="#FFA500",
                                bg=border_color_opened, fg="white")  
-           # Note: activeforeground sets the text color when the button is in the active state (Hover state)
+           # Note: activeforeground sets the text color when the button is in the active state (mouseover)
         else:
         # When navigation_frame is not visible and background is "#FFA500"
             event.widget.config(activebackground=border_color_closed, activeforeground="white",
@@ -390,7 +390,7 @@ def create_bottom_border():
         # When navigation_frame is not visible and background is "#FFA500"
             event.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="white")  
 
-    bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
+    bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=44)
     bottom_border_frame.pack(fill=tk.X, side="bottom")
     bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
     bottom_border_frame_2.pack(fill=tk.X, side="bottom")
@@ -422,3 +422,4 @@ if __name__ == "__main__":
     switch_page(home_page)
     root.mainloop()
 
+ 
