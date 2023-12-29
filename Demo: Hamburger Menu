@@ -380,22 +380,15 @@ def create_bottom_border():
     global next_button
 
     def on_exit(event):
-        if button_state:
-            # When navigation_frame is visible and background is "#252726"
-            event.widget.config(activebackground=border_color_opened, activeforeground="#FFA500",
-                                bg=border_color_opened, fg="white")
-        else:
-            # When navigation_frame is not visible and background is "#FFA500"
-            event.widget.config(activebackground=border_color_closed, activeforeground="white",
-                                bg=border_color_closed, fg="black")
-
+        active_bg = border_color_opened if button_state else border_color_closed
+        active_fg = "#FFA500" if button_state else "white"
+        event.widget.config(activebackground=active_bg, activeforeground=active_fg,
+                            bg=active_bg, fg=active_fg)
+    
     def on_enter(event):
-        if button_state:
-            # When navigation_frame is visible and background is "#252726"
-            event.widget.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")
-        else:
-            # When navigation_frame is not visible and background is "#FFA500"
-            event.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="black")
+        active_bg = border_color_opened if button_state else border_color_closed
+        active_fg = "white" if button_state else "black"
+        event.widget.config(activebackground=active_bg, bg=active_bg, fg=active_fg)
      
 
     bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=45)
