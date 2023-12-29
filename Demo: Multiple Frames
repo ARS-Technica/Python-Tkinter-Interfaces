@@ -14,10 +14,11 @@ def create_main_frame(root):
 
 def create_options_frame(root):
     options_frame = tk.Frame(root)
-    options_frame.pack(pady=5)
+    options_frame.pack(pady=5, side="top", fill="x")  # Place at the top, fill horizontally
     options_frame.pack_propagate(False)
     options_frame.configure(width=500, height=35)
     return options_frame
+
 
 def create_top_border_frame(root):
     top_border_frame = tk.Frame(root, bg='#0097e8', height=10)
@@ -32,41 +33,42 @@ def create_navigation_buttons(options_frame, root):
                             fg='#0097e8', activeforeground='#0097e8',
                             command=lambda: switch_page(root, indicator=home_indicator,
                             page=home_page))
-    home_button.place(x=0, y=0, width=125)
+    home_button.grid(row=0, column=0, padx=5)
 
     home_indicator = tk.Label(options_frame, bg='#0097e8')
-    home_indicator.place(x=22, y=30, width=80, height=2)
+    home_indicator.grid(row=1, column=0, pady=(0, 5), sticky="w", padx=5)
 
     first_button = tk.Button(options_frame, text='First', font=('Arial', 13), bd=0,
                              fg='#0097e8', activeforeground='#0097e8',
                              command=lambda: switch_page(root, indicator=first_indicator,
                              page=first_page))
-    first_button.place(x=125, y=0, width=125)
+    first_button.grid(row=0, column=1, padx=5)
 
     first_indicator = tk.Label(options_frame, bg='#0097e8')
-    first_indicator.place(x=147, y=30, width=80, height=2)
+    first_indicator.grid(row=1, column=1, pady=(0, 5), sticky="w", padx=5)
 
     second_button = tk.Button(options_frame, text='Second', font=('Arial', 13), bd=0, 
                               fg='#0097e8', activeforeground='#0097e8',
                               command=lambda: switch_page(root, indicator=second_indicator,
                               page=second_page))
-    second_button.place(x=250, y=0, width=125)
+    second_button.grid(row=0, column=2, padx=5)
 
     second_indicator = tk.Label(options_frame, bg='#0097e8')
-    second_indicator.place(x=272, y=30, width=80, height=2)
+    second_indicator.grid(row=1, column=2, pady=(0, 5), sticky="w", padx=5)
 
     third_button = tk.Button(options_frame, text='Third', font=('Arial', 13), bd=0, 
                              fg='#0097e8', activeforeground='#0097e8',
                              command=lambda: switch_page(root, indicator=third_indicator,
                              page=third_page))
-    third_button.place(x=375, y=0, width=125)
+    third_button.grid(row=0, column=3, padx=5)
 
     third_indicator = tk.Label(options_frame, bg='#0097e8')
-    third_indicator.place(x=397, y=30, width=80, height=2)
+    third_indicator.grid(row=1, column=3, pady=(0, 5), sticky="w", padx=5)
 
 
 # ***************** Menu Functions ***************** #
 
+"""
 def switch_page(root, indicator, page):
     # Hide indicator if button is NOT selected
     for child in options_frame.winfo_children():
@@ -80,6 +82,26 @@ def switch_page(root, indicator, page):
         root.update()
 
     page()
+"""
+
+def switch_page(root, indicator, page):
+    # Check if main_frame exists
+    if main_frame.winfo_exists():
+        # Hide indicator if button is NOT selected
+        for child in options_frame.winfo_children():
+            if isinstance(child, tk.Label):
+                child['bg'] = 'SystemButtonFace'
+
+        indicator['bg'] = '#0097e8'
+
+        # Destroy main_frame children
+        for frame in main_frame.winfo_children():
+            frame.destroy()
+
+        root.update_idletasks()  # Update idle tasks to ensure changes are applied
+
+        # Call the page function
+        page()
 
 # ***************** Content Frames ***************** #
 
