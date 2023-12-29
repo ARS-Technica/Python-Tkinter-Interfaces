@@ -17,8 +17,8 @@ current_page_index = 0
 page_frame = None
 
 # Global variables for header colors
-border_color_opened = "#252726"  # This is the color that the header dims to
-border_color_closed = "#FFA500"    # Hex value of "orange" is #FFA500
+border_color_closed = "#FFA500"     # Hex value of "orange" is #FFA500
+border_color_opened = "#252726"     # This is the color that the headers dims to
 
 
 # ***************** Create Layout ***************** #
@@ -62,7 +62,8 @@ def create_navigation_frame():
     navigation_frame.place(x=-250, y=0)
 
     tk.Label(navigation_frame, font=('Arial', 13), bg=border_color_closed, fg="black", height=2, width=250, padx=20).place(x=0, y=0)
-
+    
+    # Stripe at the top of the frame
     line_frame = tk.Frame(navigation_frame, bg="black", height=5, width=250)
     line_frame.place(x=0, y=44)
 
@@ -303,13 +304,16 @@ def update_colors(animation_progress):
         hex_value = hex_value.lstrip("#")
         return tuple(int(hex_value[i:i+2], 16) for i in (0, 2, 4))
     
+    # Convert hexidecimal color value into RGB for easier calculation
     r_open, g_open, b_open = hex_to_rgb(border_color_opened)
     r_closed, g_closed, b_closed = hex_to_rgb(border_color_closed)
 
+    # Calculate next color in transition
     r_intermediate = int(r_open + (r_closed - r_open) * animation_progress)
     g_intermediate = int(g_open + (g_closed - g_open) * animation_progress)
     b_intermediate = int(b_open + (b_closed - b_open) * animation_progress)
 
+    # Format the results as a hexidecimal value
     intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
 
     # Update the colors
@@ -328,6 +332,7 @@ def switch_page(page_function):
 
     if page_frame:
         page_frame.destroy()
+
     page_frame = page_function()
     page_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -348,9 +353,10 @@ def switch_page(page_function):
 def home_page():
     # Page Title
     home_page_frame = tk.Frame(root, bg="white")
-    home_page_label = tk.Label(home_page_frame, text="HOME PAGE", font=("Arial", 25), fg="black", bg="white")
+    home_page_label = tk.Label(home_page_frame, text="HOME PAGE", font=("Arial", 25, "bold"), fg="black", bg="white")
     home_page_label.pack(pady=15)
-    
+
+    # Text Box    
     home_page_text = tk.Label(home_page_frame, text="Click on the menu above to change frames!", font=("Arial", 12), fg="black", bg="white")
     home_page_text.pack(pady=15)
     
@@ -359,9 +365,10 @@ def home_page():
 def first_page():
     # Page Title
     first_page_frame = tk.Frame(root, bg="white")
-    first_page_label = tk.Label(first_page_frame, text="FIRST PAGE", font=("Arial", 25), fg="black", bg="white")
+    first_page_label = tk.Label(first_page_frame, text="FIRST PAGE", font=("Arial", 25, "bold"), fg="black", bg="white")
     first_page_label.pack(pady=15)
-    
+
+    # Text Box    
     first_page_text_widget = tk.Text(first_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey", bd=2, relief=tk.SOLID)
     first_page_text_widget.insert(tk.END, "Content for the first page.")
     first_page_text_widget.pack(pady=15)
@@ -371,9 +378,10 @@ def first_page():
 def second_page():
     # Page Title
     second_page_frame = tk.Frame(root, bg="white")
-    second_page_label = tk.Label(second_page_frame, text="SECOND PAGE", font=("Arial", 25), fg="black", bg="white")
+    second_page_label = tk.Label(second_page_frame, text="SECOND PAGE", font=("Arial", 25, "bold"), fg="black", bg="white")
     second_page_label.pack(pady=15)
-    
+
+    # Text Box    
     second_page_text_widget = tk.Text(second_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey", bd=2, relief=tk.SOLID)
     second_page_text_widget.insert(tk.END, "Content for the second page.")
     second_page_text_widget.pack(pady=15)
@@ -383,13 +391,14 @@ def second_page():
 def third_page():
     # Page Title
     third_page_frame = tk.Frame(root, bg="white")
-    third_page_label = tk.Label(third_page_frame, text="THIRD PAGE", font=("Arial", 25), fg="black", bg="white")
+    third_page_label = tk.Label(third_page_frame, text="THIRD PAGE", font=("Arial", 25, "bold"), fg="black", bg="white")
     third_page_label.pack(pady=15)
     
+    # Text Box
     third_page_text_widget = tk.Text(third_page_frame, wrap=tk.WORD, width=50, height=30, bg="grey", bd=2, relief=tk.SOLID)
     third_page_text_widget.insert(tk.END, "Content for the third page.")
-    
     third_page_text_widget.pack(pady=15)
+    
     return third_page_frame
 
 
