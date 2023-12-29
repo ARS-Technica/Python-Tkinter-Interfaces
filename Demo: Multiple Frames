@@ -5,10 +5,72 @@ A demonstration of how to switch between multiple pages in a tkinter application
 import tkinter as tk
 
 
-root = tk.Tk()
-root.geometry('500x500')
-root.title('Multi-Frame Tkinter Widget Demonstration')
+# ***************** Create Layout ***************** #
 
+def create_main_frame():
+    global main_frame
+
+    main_frame = tk.Frame(root, bg="white") 
+    main_frame.place()
+
+    #main_frame = tk.Frame(root)
+    #main_frame.pack(fill=tk.BOTH, expand=True)
+
+def create_options_frame():
+    options_frame = tk.Frame(root)
+    options_frame.pack(pady=5)
+    options_frame.pack_propagate(False)
+    options_frame.configure(width=500, height=35)
+
+def create_top_border_frame():
+    top_border_frame = tk.Frame(root, bg='#0097e8', height=10)  # Purely aesthetic
+    top_border_frame.pack(fill=tk.X, side="top")
+
+
+# ***************** Menu Elements ***************** #
+
+def create_navigation_buttons():    
+    home_button = tk.Button(options_frame, text='Home', font=('Arial', 13), bd=0, 
+                            fg='#0097e8', activeforeground='#0097e8',
+                            command=lambda: switch_page(indicator=home_indicator,
+                            page=home_page))
+    home_button.place(x=0, y=0, width=125)
+    
+    home_indicator = tk.Label(options_frame, bg='#0097e8')
+    home_indicator.place(x=22, y=30, width=80, height=2)
+    
+    
+    first_button = tk.Button(options_frame, text='First', font=('Arial', 13), bd=0,
+                             fg='#0097e8', activeforeground='#0097e8',
+                             command=lambda: switch_page(indicator=first_indicator,
+                             page=first_page))
+    first_button.place(x=125, y=0, width=125)
+    
+    first_indicator = tk.Label(options_frame, bg='#0097e8')
+    first_indicator.place(x=147, y=30, width=80, height=2)
+    
+    
+    second_button = tk.Button(options_frame, text='Second', font=('Arial', 13), bd=0, 
+                              fg='#0097e8', activeforeground='#0097e8',
+                              command=lambda: switch_page(indicator=second_indicator,
+                              page=second_page))
+    second_button.place(x=250, y=0, width=125)
+    
+    second_indicator = tk.Label(options_frame, bg='#0097e8')
+    second_indicator.place(x=272, y=30, width=80, height=2)
+    
+    
+    third_button = tk.Button(options_frame, text='Third', font=('Arial', 13), bd=0, 
+                             fg='#0097e8', activeforeground='#0097e8',
+                             command=lambda: switch_page(indicator=third_indicator,
+                             page=third_page))
+    third_button.place(x=375, y=0, width=125)
+    
+    third_indicator = tk.Label(options_frame, bg='#0097e8')
+    third_indicator.place(x=397, y=30, width=80, height=2)
+
+
+# ***************** Menu Functions ***************** #
 
 def switch_page(indicator, page):
     # Hide indicator if button is NOT selected
@@ -25,56 +87,7 @@ def switch_page(indicator, page):
     page()  # Switch new page into main_frame
 
 
-options_frame = tk.Frame(root)
-
-top_border_frame = tk.Frame(root, bg='#0097e8', height=10)  # Purely aesthetic
-top_border_frame.pack(fill=tk.X)
-
-
-home_button = tk.Button(options_frame, text='Home', font=('Arial', 13), bd=0, 
-                        fg='#0097e8', activeforeground='#0097e8',
-                        command=lambda: switch_page(indicator=home_indicator,
-                        page=home_page))
-home_button.place(x=0, y=0, width=125)
-
-home_indicator = tk.Label(options_frame, bg='#0097e8')
-home_indicator.place(x=22, y=30, width=80, height=2)
-
-
-first_button = tk.Button(options_frame, text='First', font=('Arial', 13), bd=0,
-                         fg='#0097e8', activeforeground='#0097e8',
-                         command=lambda: switch_page(indicator=first_indicator,
-                         page=first_page))
-first_button.place(x=125, y=0, width=125)
-
-first_indicator = tk.Label(options_frame, bg='#0097e8')
-first_indicator.place(x=147, y=30, width=80, height=2)
-
-
-second_button = tk.Button(options_frame, text='Second', font=('Arial', 13), bd=0, 
-                          fg='#0097e8', activeforeground='#0097e8',
-                          command=lambda: switch_page(indicator=second_indicator,
-                          page=second_page))
-second_button.place(x=250, y=0, width=125)
-
-second_indicator = tk.Label(options_frame, bg='#0097e8')
-second_indicator.place(x=272, y=30, width=80, height=2)
-
-
-third_button = tk.Button(options_frame, text='Third', font=('Arial', 13), bd=0, 
-                         fg='#0097e8', activeforeground='#0097e8',
-                         command=lambda: switch_page(indicator=third_indicator,
-                         page=third_page))
-third_button.place(x=375, y=0, width=125)
-
-third_indicator = tk.Label(options_frame, bg='#0097e8')
-third_indicator.place(x=397, y=30, width=80, height=2)
-
-
-options_frame.pack(pady=5)
-options_frame.pack_propagate(False)
-options_frame.configure(width=500, height=35)
-
+# ***************** Content Frames ***************** #
 
 def home_page():
     home_page_frame = tk.Frame(main_frame)
@@ -83,9 +96,9 @@ def home_page():
                                font=('Arial', 25), fg='#0097e8')
     home_page_label.pack(pady=25)
 
-    text_widget = tk.Text(home_page_frame, wrap=tk.WORD, width=50, height=10, bg=root.cget("bg")) 
+    text_widget = tk.Text(home_page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg")) 
     text_widget.insert(tk.END, "Click on the menu above to change frames!")
-    text_widget.pack(pady=10)
+    text_widget.pack(pady=15)
 
     home_page_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -116,11 +129,16 @@ def third_page():
 
     third_page_frame.pack(fill=tk.BOTH, expand=True)
 
+    
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.geometry("500x500")
+    root.title("Multi-Frame Tkinter Widget")
 
-main_frame = tk.Frame(root)
-main_frame.pack(fill=tk.BOTH, expand=True)
-
-
-home_page()
-root.mainloop()
+    create_main_frame()
+    create_options_frame()
+    create_top_border_frame()
+    
+    home_page()
+    root.mainloop()
 
