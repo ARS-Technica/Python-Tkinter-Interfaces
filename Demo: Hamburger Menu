@@ -45,6 +45,9 @@ def create_navigation_buttons(frame, switch_page_func):
     def on_leave(event):
         event.widget.config(bg="white")  # Change background color on mouse leave
 
+    def on_click(index):
+        navigate_to_index(index)
+
     button_width = 15  # Set a fixed width for the buttons
 
     # Page Links to be listed in navigation_frame
@@ -61,6 +64,7 @@ def create_navigation_buttons(frame, switch_page_func):
                            command=lambda func=page_func: switch_page_func(func), width=button_width)
         button.bind("<Enter>", on_enter)
         button.bind("<Leave>", on_leave)
+        button.bind("<Button-1>", lambda event, idx=index: on_click(idx))  # Bind the click event
         button.pack(fill=tk.X, pady=5)
         buttons.append(button)
 
@@ -73,7 +77,7 @@ def reset_widget_colors():
     bottom_border_frame.config(bg=border_color_closed)
     last_button.config(bg=border_color_closed, fg="black")
     next_button.config(bg=border_color_closed, fg="black")
-   
+    
 def set_dim_colors():
     header_label.config(bg=border_color_opened, fg="white")
     top_border_frame.config(bg=border_color_opened) 
@@ -155,6 +159,9 @@ def menu_toggle_close():
     # Reset colors and state after the animation
     reset_widget_colors()
     
+    last_button.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")  
+    next_button.config(activebackground=border_color_closed, bg=border_color_closed, fg="white")  
+    
     button_state = False # Update button state when the navigation frame is closed
 
 def menu_toggle_open():
@@ -176,8 +183,11 @@ def menu_toggle_open():
         # Calling .after on ONLY a single frame eliminates flickering
    
     # Reset colors and state after the animation
-    set_dim_colors() 
-  
+    set_dim_colors()
+    
+    last_button.config(activebackground=border_color_opened, activeforeground="#FFA500", bg=border_color_opened, fg="white")  
+    next_button.config(activebackground=border_color_opened, activeforeground="#FFA500", bg=border_color_opened, fg="white")  
+    
     button_state = True # Update button state when the navigation frame is opened
     
     for button in navigation_buttons:
@@ -304,7 +314,8 @@ def create_navigation_frame():
     for button in navigation_buttons:
         button.place(x=-230, y=60 + navigation_buttons.index(button) * 25)
 
-    close_button = tk.Button(navigation_frame, image=close_icon,  bg=border_color_closed, activebackground=border_color_closed, bd=0, padx=20, command=menu_toggle_close)
+    close_button = tk.Button(navigation_frame, image=close_icon,  bg=border_color_closed, 
+                             activebackground=border_color_closed, bd=0, padx=20, command=menu_toggle_close)
     close_button.pack()
     close_button.place(x=150, y=5)
 
@@ -313,8 +324,7 @@ def create_navigation_frame():
 
 def create_navigation_buttons(frame, switch_page_func):
     global navigation_menu
-    global navigation_buttons
-    global current_page_index  # Add this line
+    global navigation_buttons  # Add this line to access the navigation_buttons globally
 
     buttons = []
 
@@ -337,38 +347,20 @@ def create_navigation_buttons(frame, switch_page_func):
     for index, (page_func, text) in enumerate(navigation_menu):
         button = tk.Button(frame, text=text, font=("Arial", 13, "bold"),
                            bd=0, relief=tk.SOLID, bg="white", fg="black",
-                           command=lambda func=page_func, idx=index: (
-                               switch_page_func(func),
-                               update_button_styles(idx)
-                           ), width=button_width)
+                           command=lambda func=page_func: switch_page_func(func), width=button_width)
         button.bind("<Enter>", on_enter)
         button.bind("<Leave>", on_leave)
+        
+        # Modify the lambda function directly to update the current page and underline the text
+        button.bind("<Button-1>", lambda event, idx=index: (
+            switch_page(navigation_menu[idx][0]),
+            [btn.config(font=("Arial", 13, "bold", "underline")) if i == idx else btn.config(font=("Arial", 13, "bold")) for i, btn in enumerate(navigation_buttons)]
+        ))
 
         button.pack(fill=tk.X, pady=5)
         buttons.append(button)
 
-    navigation_buttons = buttons  # Save the buttons globally
-
-    # Set the initial button styles
-    update_button_styles(current_page_index)
-
     return buttons
-
-def update_button_styles(selected_index):
-    """
-    Responsible for updating the font styles of the navigation buttons based on the selected index.
-    """
-    global navigation_buttons
-    global current_page_index
-
-    current_page_index = selected_index  # Update the current page index
-
-    # Iterate over all buttons and update their font styles based on selected index
-    for i, btn in enumerate(navigation_buttons):
-        if i == selected_index:
-            btn.config(font=("Arial", 13, "bold", "underline")) # Underline link to current frame
-        else:
-            btn.config(font=("Arial", 13, "bold"))
 
 def create_bottom_border():
     global bottom_border_frame
@@ -379,111 +371,43 @@ def create_bottom_border():
     global last_button
     global next_button
 
-    """
     def on_exit(event):
         if button_state:
-            # When navigation_frame is visible and background is "#252726"
-            event.widget.config(activebackground=border_color_opened, activeforeground="#FFA500",
-                                bg=border_color_opened, fg="white")
+        # When navigation_frame is visible and background is "#252726"
+           event.widget.config(activebackground=border_color_opened, activeforeground="#FFA500",
+                               bg=border_color_opened, fg="white")  
+           # Note: activeforeground sets the text color when the button is in the active state (Hover state)
         else:
-            # When navigation_frame is not visible and background is "#FFA500"
+        # When navigation_frame is not visible and background is "#FFA500"
             event.widget.config(activebackground=border_color_closed, activeforeground="white",
-                                bg=border_color_closed, fg="black")
+                                bg=border_color_closed, fg="black")  
 
     def on_enter(event):
         if button_state:
-            # When navigation_frame is visible and background is "#252726"
-            event.widget.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")
+        # When navigation_frame is visible and background is "#252726"
+            event.widget.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")  
         else:
-            # When navigation_frame is not visible and background is "#FFA500"
-            event.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="black")
-    """
-    """
-    def on_exit(event):
-        global button_state
-    
-        if button_state:
-            # When navigation_frame is visible and background is "#252726"
-            event.widget.config(activebackground=border_color_opened, activeforeground="#FFA500",
-                                bg=border_color_opened, fg="white")
-        else:
-            # When navigation_frame is not visible and background is "#FFA500"
-            event.widget.config(activebackground=border_color_closed, activeforeground="white",
-                                bg=border_color_closed, fg="black")
-    
-    def on_enter(event):
-        global button_state
-    
-        if button_state:
-            # When navigation_frame is visible and background is "#252726"
-            event.widget.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")
-        else:
-            # When navigation_frame is not visible and background is "#FFA500"
-            event.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="black")
-    """
+        # When navigation_frame is not visible and background is "#FFA500"
+            event.widget.config(activebackground=border_color_closed, bg=border_color_closed, fg="white")  
 
-
-    def on_exit_last(event):
-        if button_state:
-            last_button.config(activebackground=border_color_opened, activeforeground="#FFA500",
-                                bg=border_color_opened, fg="white")
-        else:
-            last_button.config(activebackground=border_color_closed, activeforeground="white",
-                                bg=border_color_closed, fg="black")
-    
-    def on_enter_last(event):
-        if button_state:
-            last_button.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")
-        else:
-            last_button.config(activebackground=border_color_closed, bg=border_color_closed, fg="black")
-    
-    def on_exit_next(event):
-        if button_state:
-            next_button.config(activebackground=border_color_opened, activeforeground="#FFA500",
-                                bg=border_color_opened, fg="white")
-        else:
-            next_button.config(activebackground=border_color_closed, activeforeground="white",
-                                bg=border_color_closed, fg="black")
-    
-    def on_enter_next(event):
-        if button_state:
-            next_button.config(activebackground=border_color_opened, bg=border_color_opened, fg="white")
-        else:
-            next_button.config(activebackground=border_color_closed, bg=border_color_closed, fg="black")
-
-
-
-    bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=45)
+    bottom_border_frame = tk.Frame(root, bg=border_color_closed, height=43)
     bottom_border_frame.pack(fill=tk.X, side="bottom")
     bottom_border_frame_2 = tk.Frame(root, bg="black", height=5)
     bottom_border_frame_2.pack(fill=tk.X, side="bottom")
 
-
     last_button = tk.Button(bottom_border_frame, text="Last", font=("Arial", 13, "bold"),
-                            activebackground=border_color_closed, activeforeground="white",
-                            bg=border_color_closed, fg="black", bd=0, padx=20, pady=5,
+                            bg=border_color_closed, fg="black", bd=0, padx=20, pady=5, 
                             cursor="hand2", command=last_page)
-    
     last_button.pack(side="left")
-    #last_button.bind("<Enter>", on_enter)
-    #last_button.bind("<Leave>", on_exit)
-
+    last_button.bind("<Enter>", on_enter)
+    last_button.bind("<Leave>", on_exit)
 
     next_button = tk.Button(bottom_border_frame, text="Next", font=("Arial", 13, "bold"),
-                            activebackground=border_color_closed, activeforeground="white",
                             bg=border_color_closed, fg="black", bd=0, padx=20, pady=5,
                             cursor="hand2", command=next_page)
-
     next_button.pack(side="right")
-    #next_button.bind("<Enter>", on_enter)
-    #next_button.bind("<Leave>", on_exit)    
-    
-    
-    last_button.bind("<Enter>", on_enter_last)
-    last_button.bind("<Leave>", on_exit_last)
-    next_button.bind("<Enter>", on_enter_next)
-    next_button.bind("<Leave>", on_exit_next)
-    
+    next_button.bind("<Enter>", on_enter)
+    next_button.bind("<Leave>", on_exit)
 
 if __name__ == "__main__":
     root = tk.Tk()
@@ -496,6 +420,5 @@ if __name__ == "__main__":
     create_bottom_border()
 
     switch_page(home_page)
-    root.focus_force()  # Set initial focus to the root window for the rollover effect to start
     root.mainloop()
 
