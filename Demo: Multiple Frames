@@ -26,7 +26,7 @@ def switch_page(indicator, page):
 
 def create_button(parent, text, page_function, x_position):
     button = tk.Button(parent, text=text, font=('Arial', 13), bd=0,
-                       fg='#0097e8', activeforeground='#0097e8',
+                       fg='#0097e8', activeforeground='#0097e8', 
                        command=lambda: switch_page(indicator=indicators[text], page=page_function))
     button.place(x=x_position, y=0, width=125)
 
@@ -47,12 +47,13 @@ def create_navigation_buttons(options_frame):
 # ***************** Content Pages ***************** #
 
 def create_home_page():
-    home_page_frame = tk.Frame(main_frame)
+    home_page_frame = tk.Frame(main_frame, bg="white")
 
-    home_page_label = tk.Label(home_page_frame, text='Home Page', font=('Arial', 25), fg='#0097e8')
+    home_page_label = tk.Label(home_page_frame, text='Home Page', font=('Arial', 25, 'bold'), 
+                               bg="white", fg='#0097e8')
     home_page_label.pack(pady=25)
 
-    text_widget = tk.Text(home_page_frame, wrap=tk.WORD, width=50, height=30, bg=root.cget("bg"))
+    text_widget = tk.Text(home_page_frame, wrap=tk.WORD, width=50, height=30, bg='light grey', relief=tk.SOLID)
     text_widget.insert(tk.END, "Click on the menu above to change frames!")
     text_widget.pack(pady=15)
 
@@ -60,27 +61,30 @@ def create_home_page():
 
 
 def create_first_page():
-    first_page_frame = tk.Frame(main_frame)
+    first_page_frame = tk.Frame(main_frame, bg="white")
 
-    first_page_label = tk.Label(first_page_frame, text='First Page', font=('Arial', 25), fg='#0097e8')
+    first_page_label = tk.Label(first_page_frame, text='First Page', font=('Arial', 25, 'bold'), 
+                                bg="white", fg='#0097e8')
     first_page_label.pack(pady=25)
 
     first_page_frame.pack(fill=tk.BOTH, expand=True)
 
 
 def create_second_page():
-    second_page_frame = tk.Frame(main_frame)
+    second_page_frame = tk.Frame(main_frame, bg="white")
 
-    second_page_label = tk.Label(second_page_frame, text='Second Page', font=('Arial', 25), fg='#0097e8')
+    second_page_label = tk.Label(second_page_frame, text='Second Page', font=('Arial', 25, 'bold'), 
+                                 bg="white", fg='#0097e8')
     second_page_label.pack(pady=25)
 
     second_page_frame.pack(fill=tk.BOTH, expand=True)
 
 
 def create_third_page():
-    third_page_frame = tk.Frame(main_frame)
+    third_page_frame = tk.Frame(main_frame, bg="white")
 
-    third_page_label = tk.Label(third_page_frame, text='Third Page', font=('Arial', 25), fg='#0097e8')
+    third_page_label = tk.Label(third_page_frame, text='Third Page', font=('Arial', 25, 'bold'), 
+                                bg="white", fg='#0097e8')
     third_page_label.pack(pady=25)
 
     third_page_frame.pack(fill=tk.BOTH, expand=True)
