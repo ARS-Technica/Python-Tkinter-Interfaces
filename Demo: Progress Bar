@@ -3,32 +3,36 @@ Demonstration of a basic Progress Bar
 """
 
 import time
+import threading
 from tkinter import *
 from tkinter.ttk import *
 
 def progress_bar():
-    for i in range(1,101,1):
+    total_steps = 100
+    delay = 0.03
+
+    for i in range(1, total_steps + 1):
         progress['value'] = i
         root.update_idletasks()
-        blank_label.config(text=str(i)+"%")
-        time.sleep(0.03)
+        blank_label.config(text=f"{i}%")
+        time.sleep(delay)
 
     progress['value'] = 100
-    root.destroy()
+    root.after(500, root.destroy)  # Delay the destruction of the window to show completion
 
 def create_window():
-    global start_button, blank_label, progress
+    global blank_label, progress, start_button
 
     blank_label = Label(root, text="", font="arial 15 bold")
     blank_label.pack(padx=80)
     
     progress_bar_style = Style()
-    progress_bar_style.configure("TProgressbar", foreground='#09BF14', background='#09BF14', thickness=100)
-    
+    progress_bar_style.configure("TProgressbar", thickness=100)
+
     progress = Progressbar(root, style="TProgressbar", length=700, mode='determinate')
-    progress.pack(pady=10,padx=5)
+    progress.pack(pady=10, padx=5)
     
-    start_button = Button(root, text='Start', command=progress_bar)
+    start_button = Button(root, text='Start', command=lambda: threading.Thread(target=progress_bar).start())
     start_button.pack(pady=10)
 
 if __name__ == "__main__":
