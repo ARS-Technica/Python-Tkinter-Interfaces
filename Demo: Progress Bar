@@ -32,9 +32,9 @@ def restart_progress_bar(progress_bar_style):
     stop_button.pack(side=RIGHT, padx=10, pady=10)
 
 def start_progress_bar(progress_bar_style):
-    global percentage, pause, percentage_label
+    global percentage, pause, percentage_label, progress_bar_start, progress_bar_finish
 
-    delay = 0.03
+    delay = 0.05
     total_steps = 100
 
     # When resuming progress bar, start where the progress left off
@@ -55,11 +55,18 @@ def start_progress_bar(progress_bar_style):
 
             # Update the progress bar background color
             if percentage.get() <= 33:
-                progress_bar_style.configure("TProgressbar", background="red")
+                progress_bar_start = "#FF0000"  # Red
+                progress_bar_finish = "#FFFF00" # Yellow
             elif 33 < percentage.get() <= 66:
-                progress_bar_style.configure("TProgressbar", background="yellow")
+                progress_bar_start = "#FFFF00"  # Yellow
+                progress_bar_start = "#FFFF00"  # Yellow
+            elif 66 < percentage.get() <= 99:
+                progress_bar_start = "#FFFF00"  # Yellow
+                progress_bar_finish = "#00FF00" # Green               
             else:
-                progress_bar_style.configure("TProgressbar", background="green")
+                progress_bar_finish = "#0000FF"# Blue
+
+            update_colors(percentage, progress_bar_start, progress_bar_finish, progress_bar_style)
 
     if percentage.get() == 100:
         stop_button.pack_forget()
@@ -70,6 +77,28 @@ def stop_progress_bar():
 
     pause = 1
 
+def update_colors(percentage, progress_bar_start, progress_bar_finish, progress_bar_style):
+    """
+    Smoothly transition the value of the progress bar background through red, yellow, and green
+    """
+    def hex_to_rgb(hex_value):
+        hex_value = hex_value.lstrip("#")
+        return tuple(int(hex_value[i:i + 2], 16) for i in (0, 2, 4))
+
+    # Convert hexidecimal color value into RGB for easier calculation
+    r_start, g_start, b_start = hex_to_rgb(progress_bar_start)
+    r_finish, g_finish, b_finish = hex_to_rgb(progress_bar_finish)
+
+    # Calculate next color in transition
+    r_intermediate = int(r_start + (r_finish - r_start) * percentage.get() / 100)
+    g_intermediate = int(g_start + (g_finish - g_start) * percentage.get() / 100)
+    b_intermediate = int(b_start + (b_finish - b_start) * percentage.get() / 100)
+
+    # Format the results as a hexidecimal value
+    intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
+
+    progress_bar_style.configure("TProgressbar", background=intermediate_color)
+
 def window():
     global percentage_label_var, restart_button, start_button, stop_button
 
@@ -78,7 +107,8 @@ def window():
     progress_bar_style.theme_use('classic')
     progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="red")
 
-    progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400, mode='determinate', style='TProgressbar')
+    progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400, mode='determinate',
+                                   style='TProgressbar')
     progress_bar.pack(pady=10)
 
     # Create a StringVar to hold the text for the label
@@ -94,15 +124,15 @@ def window():
     # Set the width of the buttons to prevent them from changing positions when Stop becomes Restart
     button_width = 10
 
-    start_button = Button(frame_buttons, text="Start", font=("Arial", 12), 
+    start_button = Button(frame_buttons, text="Start", font=("Arial", 12),
                           command=lambda: progress_bar_thread(progress_bar_style), width=button_width)
     start_button.pack(side=LEFT, padx=10, pady=10)
 
-    stop_button = Button(frame_buttons, text="Stop", font=("Arial", 12), 
+    stop_button = Button(frame_buttons, text="Stop", font=("Arial", 12),
                          command=stop_progress_bar, width=button_width)
     stop_button.pack(side=RIGHT, padx=10, pady=10)
 
-    restart_button = Button(frame_buttons, text="Restart", font=("Arial", 12), 
+    restart_button = Button(frame_buttons, text="Restart", font=("Arial", 12),
                             command=lambda: restart_progress_bar(progress_bar_style), width=button_width)
 
 if __name__ == "__main__":
@@ -111,6 +141,4 @@ if __name__ == "__main__":
 
     window()
     root.mainloop()
-
-
 
