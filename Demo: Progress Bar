@@ -40,9 +40,8 @@ def start_progress_bar():
             time.sleep(delay)
 
     if percentage.get() == 100:
-        # When progress reaches 100%, "Stop" button is hidden, "Restart" button appears
         stop_button.pack_forget()
-        restart_button.pack(pady=10)
+        restart_button.pack(pady=20)
 
 def stop_progress_bar():
     global pause
@@ -57,8 +56,12 @@ def restart_progress_bar():
     thread = threading.Thread(target=start_progress_bar)
     thread.start()
 
+    restart_button.pack_forget()
+    stop_button.pack(side=LEFT, padx=10)
+    start_button.pack(side=LEFT, padx=10)
+
 def window():
-    global stop_button, restart_button
+    global start_button, stop_button, restart_button
 
     progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400)
     progress_bar.pack(pady=20)
