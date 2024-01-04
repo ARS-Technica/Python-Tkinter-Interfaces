@@ -66,15 +66,20 @@ def window():
     global percentage_label_var, restart_button, start_button, stop_button
 
     # ------ Progress Bar Widget ----- #
+    # Configure the colors of the Progressbar with theme
+    style = ttk.Style()
+    style.theme_use('classic') # Vista is the default appearance, but it won't work on my personal setup
+    # themes = 'clam', 'alt', 'default', 'classic', 'vista' 
+    style.configure("TProgressbar", troughcolor='lightgray', background='blue')
     
-    progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400)
+    progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400, mode='determinate', style='TProgressbar')
     progress_bar.pack(pady=10)
 
     # Create a StringVar to hold the text for the label
     percentage_label_var = StringVar()
     percentage_label_var.set("0%")  # Initialize with 0%
 
-    percentage_label = Label(root, textvariable=percentage_label_var, font="arial 15 bold")
+    percentage_label = Label(root, textvariable=percentage_label_var, font=("Arial", 12, "bold"))
     percentage_label.pack()
 
 
