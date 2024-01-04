@@ -41,7 +41,7 @@ def start_progress_bar():
 
     if percentage.get() == 100:
         stop_button.pack_forget()
-        restart_button.pack(pady=20)
+        restart_button.pack(side=LEFT, padx=10, pady=10)
 
 def stop_progress_bar():
     global pause
@@ -57,8 +57,8 @@ def restart_progress_bar():
     thread.start()
 
     restart_button.pack_forget()
-    stop_button.pack(side=LEFT, padx=10)
-    start_button.pack(side=LEFT, padx=10)
+    stop_button.pack(side=LEFT, padx=10, pady=10)
+    start_button.pack(side=LEFT, padx=10, pady=10)
 
 def window():
     global start_button, stop_button, restart_button
@@ -72,10 +72,10 @@ def window():
     frame_buttons.pack(pady=20)
 
     start_button = Button(frame_buttons, text="Start", font=("Arial", 12), command=progress_bar_thread)
-    start_button.pack(side=LEFT, padx=10)
+    start_button.pack(side=LEFT, padx=10, pady=10)
 
     stop_button = Button(frame_buttons, text="Stop", font=("Arial", 12), command=stop_progress_bar)
-    stop_button.pack(side=LEFT, padx=10)
+    stop_button.pack(side=LEFT, padx=10, pady=10)
 
     restart_button = Button(frame_buttons, text="Restart", font=("Arial", 12), command=restart_progress_bar)
 
@@ -85,4 +85,3 @@ if __name__ == "__main__":
 
     window()
     root.mainloop()
-
