@@ -20,6 +20,17 @@ def progress_bar_thread():
     thread1 = threading.Thread(target=start_progress_bar)
     thread1.start()
 
+def restart_progress_bar():
+    global pause
+
+    pause = 0
+    percentage.set(0) # Start from the beginning
+    thread = threading.Thread(target=start_progress_bar)
+    thread.start()
+
+    restart_button.pack_forget()
+    stop_button.pack(side=RIGHT, padx=10, pady=10)
+
 def start_progress_bar():
     global percentage, pause, percentage_label
 
@@ -28,11 +39,11 @@ def start_progress_bar():
 
     # When resuming progress bar, start where the progress left off
     if percentage.get() > 0:
-        start_val = percentage.get()
+        start_value = percentage.get()
     else:
-        start_val = 0
+        start_value = 0
 
-    for i in range(start_val, total_steps + 1):  # Use start_val rather than 0 in case of resume
+    for i in range(start_value, total_steps + 1):  # Use start_value rather than 0 in case of resume
         if pause == 1:
             break
         else:
@@ -44,52 +55,49 @@ def start_progress_bar():
 
     if percentage.get() == 100:
         stop_button.pack_forget()
-        restart_button.pack(side=LEFT, padx=10, pady=10)
+        restart_button.pack(side=RIGHT, padx=10, pady=10)
 
 def stop_progress_bar():
     global pause
 
     pause = 1
 
-def restart_progress_bar():
-    global pause
-
-    pause = 0
-    percentage.set(0)
-    thread = threading.Thread(target=start_progress_bar)
-    thread.start()
-
-    restart_button.pack_forget()
-    stop_button.pack(side=LEFT, padx=10, pady=10)
-    start_button.pack(side=LEFT, padx=10, pady=10)
-
 def window():
-    global start_button, stop_button, restart_button, percentage_label_var
+    global percentage_label_var, restart_button, start_button, stop_button
 
+    # ------ Progress Bar Widget ----- #
+    
     progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400)
-    progress_bar.pack(pady=20)
+    progress_bar.pack(pady=10)
 
     # Create a StringVar to hold the text for the label
     percentage_label_var = StringVar()
     percentage_label_var.set("0%")  # Initialize with 0%
 
-    percentage_label = Label(root, textvariable=percentage_label_var, font=("Arial", 15, "bold"))
+    percentage_label = Label(root, textvariable=percentage_label_var, font="arial 15 bold")
     percentage_label.pack()
+
+
+    # ----- Button Widgets -----#
 
     frame_buttons = Frame(root)  # Create a frame to hold the buttons
     frame_buttons.pack(pady=10)
+    
+    # Set the width of the buttons to prevent them from changing positions when Stop becomes Restart
+    button_width = 10
 
-    start_button = Button(frame_buttons, text="Start", font=("Arial", 12), command=progress_bar_thread)
+    start_button = Button(frame_buttons, text="Start", font=("Arial", 12), command=progress_bar_thread, width=button_width)
     start_button.pack(side=LEFT, padx=10, pady=10)
 
-    stop_button = Button(frame_buttons, text="Pause", font=("Arial", 12), command=stop_progress_bar)
-    stop_button.pack(side=LEFT, padx=10, pady=10)
+    stop_button = Button(frame_buttons, text="Stop", font=("Arial", 12), command=stop_progress_bar, width=button_width)
+    stop_button.pack(side=RIGHT, padx=10, pady=10)
 
-    restart_button = Button(frame_buttons, text="Restart", font=("Arial", 12), command=restart_progress_bar)
+    restart_button = Button(frame_buttons, text="Restart", font=("Arial", 12), command=restart_progress_bar, width=button_width)
 
 if __name__ == "__main__":
-    root.geometry("500x200")
-    root.title("Progressbar")
+    root.geometry("500x150")
+    root.title("Progress Bar Demonstration")
 
     window()
     root.mainloop()
+
