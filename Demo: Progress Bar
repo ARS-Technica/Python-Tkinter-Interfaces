@@ -9,7 +9,6 @@ from tkinter import *
 from tkinter import font
 from tkinter import ttk
 
-
 root = tk.Tk()
 percentage = IntVar()
 pause = 0
@@ -24,18 +23,22 @@ def progress_bar_thread():
 def start_progress_bar():
     global percentage
 
+    delay = 0.03    
+    total_steps = 100
+
+
     # When resuming progress bar, start where the progress left off
     if percentage.get() > 0:
         startVal = percentage.get()
     else:
         startVal = 0
     
-    for i in range(startVal, 101):  # Use startVal rather than 0 in case of resume
+    for i in range(startVal, total_steps + 1):  # Use startVal rather than 0 in case of resume
         if pause == 1:
             break
         else:
             percentage.set(i)
-            time.sleep(0.05)
+            time.sleep(delay)
  
 def stop_progress_bar():
     global pause
@@ -43,13 +46,16 @@ def stop_progress_bar():
     pause = 1
 
 def window():
-    progress_bar = ttk.Progressbar(root, max=100.0, variabl=percentage, length=400)
+    progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400)
     progress_bar.pack(pady=20)
 
     Label(root, textvariable=percentage, font="arial 15 bold").pack()
 
-    Button(root, text="Start", font=("Arial", 12), command=progress_bar_thread).pack(pady=20)
-    Button(root, text="Stop",font=("Arial", 12), command=stop_progress_bar).pack(pady=20)
+    frame_buttons = Frame(root)  # Create a frame to hold the buttons
+    frame_buttons.pack(pady=20)
+
+    Button(frame_buttons, text="Start", font=("Arial", 12), command=progress_bar_thread).pack(side=LEFT, padx=10)
+    Button(frame_buttons, text="Stop", font=("Arial", 12), command=stop_progress_bar).pack(side=LEFT, padx=10)
 
 if __name__ == "__main__":
     root.geometry("500x250")
