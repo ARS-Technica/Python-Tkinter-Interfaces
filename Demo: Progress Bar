@@ -16,36 +16,50 @@ pause = 0
 def progress_bar_thread():
     global pause
 
-    pause = 0 # To resume progress bar
+    pause = 0  # To resume progress bar
     thread1 = threading.Thread(target=start_progress_bar)
     thread1.start()
 
 def start_progress_bar():
-    global percentage
+    global percentage, pause
 
-    delay = 0.03    
+    delay = 0.03
     total_steps = 100
-
 
     # When resuming progress bar, start where the progress left off
     if percentage.get() > 0:
-        startVal = percentage.get()
+        start_val = percentage.get()
     else:
-        startVal = 0
-    
-    for i in range(startVal, total_steps + 1):  # Use startVal rather than 0 in case of resume
+        start_val = 0
+
+    for i in range(start_val, total_steps + 1):  # Use start_val rather than 0 in case of resume
         if pause == 1:
             break
         else:
             percentage.set(i)
             time.sleep(delay)
- 
+
+    if percentage.get() == 100:
+        # When progress reaches 100%, "Stop" button is hidden, "Restart" button appears
+        stop_button.pack_forget()
+        restart_button.pack(pady=10)
+
 def stop_progress_bar():
     global pause
 
     pause = 1
 
+def restart_progress_bar():
+    global pause
+
+    pause = 0
+    percentage.set(0)
+    thread = threading.Thread(target=start_progress_bar)
+    thread.start()
+
 def window():
+    global stop_button, restart_button
+
     progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400)
     progress_bar.pack(pady=20)
 
@@ -54,8 +68,13 @@ def window():
     frame_buttons = Frame(root)  # Create a frame to hold the buttons
     frame_buttons.pack(pady=20)
 
-    Button(frame_buttons, text="Start", font=("Arial", 12), command=progress_bar_thread).pack(side=LEFT, padx=10)
-    Button(frame_buttons, text="Stop", font=("Arial", 12), command=stop_progress_bar).pack(side=LEFT, padx=10)
+    start_button = Button(frame_buttons, text="Start", font=("Arial", 12), command=progress_bar_thread)
+    start_button.pack(side=LEFT, padx=10)
+
+    stop_button = Button(frame_buttons, text="Stop", font=("Arial", 12), command=stop_progress_bar)
+    stop_button.pack(side=LEFT, padx=10)
+
+    restart_button = Button(frame_buttons, text="Restart", font=("Arial", 12), command=restart_progress_bar)
 
 if __name__ == "__main__":
     root.geometry("500x250")
