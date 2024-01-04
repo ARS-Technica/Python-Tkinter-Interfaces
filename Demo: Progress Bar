@@ -13,25 +13,25 @@ root = tk.Tk()
 percentage = IntVar()
 pause = 0
 
-def progress_bar_thread():
+def progress_bar_thread(progress_bar_style):
     global pause
 
     pause = 0  # To resume progress bar
-    thread1 = threading.Thread(target=start_progress_bar)
+    thread1 = threading.Thread(target=lambda: start_progress_bar(progress_bar_style))
     thread1.start()
 
-def restart_progress_bar():
+def restart_progress_bar(progress_bar_style):
     global pause
 
     pause = 0
-    percentage.set(0) # Start from the beginning
-    thread = threading.Thread(target=start_progress_bar)
+    percentage.set(0)  # Start from the beginning
+    thread = threading.Thread(target=lambda: start_progress_bar(progress_bar_style))
     thread.start()
 
     restart_button.pack_forget()
     stop_button.pack(side=RIGHT, padx=10, pady=10)
 
-def start_progress_bar():
+def start_progress_bar(progress_bar_style):
     global percentage, pause, percentage_label
 
     delay = 0.03
@@ -50,8 +50,16 @@ def start_progress_bar():
             percentage.set(i)
             time.sleep(delay)
 
-            # Update the label with both variable value and fixed text
+            # Update the label with the percentage variable
             percentage_label_var.set(f"{percentage.get()}%")
+
+            # Update the progress bar background color
+            if percentage.get() <= 33:
+                progress_bar_style.configure("TProgressbar", background="red")
+            elif 33 < percentage.get() <= 66:
+                progress_bar_style.configure("TProgressbar", background="yellow")
+            else:
+                progress_bar_style.configure("TProgressbar", background="green")
 
     if percentage.get() == 100:
         stop_button.pack_forget()
@@ -65,13 +73,11 @@ def stop_progress_bar():
 def window():
     global percentage_label_var, restart_button, start_button, stop_button
 
-    # ------ Progress Bar Widget ----- #
     # Configure the colors of the Progressbar with theme
-    style = ttk.Style()
-    style.theme_use('classic') # Vista is the default appearance, but it won't work on my personal setup
-    # themes = 'clam', 'alt', 'default', 'classic', 'vista' 
-    style.configure("TProgressbar", troughcolor='lightgray', background='blue')
-    
+    progress_bar_style = ttk.Style()
+    progress_bar_style.theme_use('classic')
+    progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="red")
+
     progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400, mode='determinate', style='TProgressbar')
     progress_bar.pack(pady=10)
 
@@ -82,22 +88,22 @@ def window():
     percentage_label = Label(root, textvariable=percentage_label_var, font=("Arial", 12, "bold"))
     percentage_label.pack()
 
-
-    # ----- Button Widgets -----#
-
     frame_buttons = Frame(root)  # Create a frame to hold the buttons
     frame_buttons.pack(pady=10)
-    
+
     # Set the width of the buttons to prevent them from changing positions when Stop becomes Restart
     button_width = 10
 
-    start_button = Button(frame_buttons, text="Start", font=("Arial", 12), command=progress_bar_thread, width=button_width)
+    start_button = Button(frame_buttons, text="Start", font=("Arial", 12), 
+                          command=lambda: progress_bar_thread(progress_bar_style), width=button_width)
     start_button.pack(side=LEFT, padx=10, pady=10)
 
-    stop_button = Button(frame_buttons, text="Stop", font=("Arial", 12), command=stop_progress_bar, width=button_width)
+    stop_button = Button(frame_buttons, text="Stop", font=("Arial", 12), 
+                         command=stop_progress_bar, width=button_width)
     stop_button.pack(side=RIGHT, padx=10, pady=10)
 
-    restart_button = Button(frame_buttons, text="Restart", font=("Arial", 12), command=restart_progress_bar, width=button_width)
+    restart_button = Button(frame_buttons, text="Restart", font=("Arial", 12), 
+                            command=lambda: restart_progress_bar(progress_bar_style), width=button_width)
 
 if __name__ == "__main__":
     root.geometry("500x150")
@@ -105,4 +111,6 @@ if __name__ == "__main__":
 
     window()
     root.mainloop()
+
+
 
