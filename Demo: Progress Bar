@@ -56,9 +56,9 @@ def start_progress_bar(progress_bar_style):
             # Update the progress bar background color
             if percentage.get() <= 33:
                 progress_bar_start = "#FF0000"  # Red
-                progress_bar_finish = "#FFFF00" # Yellow
+                progress_bar_finish = "#FFA500" # Orange
             elif 33 < percentage.get() <= 66:
-                progress_bar_start = "#FFFF00"  # Yellow
+                progress_bar_finish = "#FFA500" # Orange
                 progress_bar_start = "#FFFF00"  # Yellow
             elif 66 < percentage.get() <= 99:
                 progress_bar_start = "#FFFF00"  # Yellow
@@ -71,6 +71,8 @@ def start_progress_bar(progress_bar_style):
     if percentage.get() == 100:
         stop_button.pack_forget()
         restart_button.pack(side=RIGHT, padx=10, pady=10)
+        time.sleep(.75)
+        percentage_label_var.set("COMPLETE")
 
 def stop_progress_bar():
     global pause
@@ -102,6 +104,8 @@ def update_colors(percentage, progress_bar_start, progress_bar_finish, progress_
 def window():
     global percentage_label_var, restart_button, start_button, stop_button
 
+    # ------ Progress Bar Widget ----- #
+    
     # Configure the colors of the Progressbar with theme
     progress_bar_style = ttk.Style()
     progress_bar_style.theme_use('classic')
@@ -117,6 +121,9 @@ def window():
 
     percentage_label = Label(root, textvariable=percentage_label_var, font=("Arial", 12, "bold"))
     percentage_label.pack()
+
+
+    # ----- Button Widgets -----#
 
     frame_buttons = Frame(root)  # Create a frame to hold the buttons
     frame_buttons.pack(pady=10)
@@ -141,4 +148,5 @@ if __name__ == "__main__":
 
     window()
     root.mainloop()
+
 
