@@ -21,7 +21,7 @@ def progress_bar_thread():
     thread1.start()
 
 def start_progress_bar():
-    global percentage, pause
+    global percentage, pause, percentage_label
 
     delay = 0.03
     total_steps = 100
@@ -38,6 +38,9 @@ def start_progress_bar():
         else:
             percentage.set(i)
             time.sleep(delay)
+
+            # Update the label with both variable value and fixed text
+            percentage_label_var.set(f"{percentage.get()}%")
 
     if percentage.get() == 100:
         stop_button.pack_forget()
@@ -61,26 +64,31 @@ def restart_progress_bar():
     start_button.pack(side=LEFT, padx=10, pady=10)
 
 def window():
-    global start_button, stop_button, restart_button
+    global start_button, stop_button, restart_button, percentage_label_var
 
     progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400)
     progress_bar.pack(pady=20)
 
-    Label(root, textvariable=percentage, font="arial 15 bold").pack()
+    # Create a StringVar to hold the text for the label
+    percentage_label_var = StringVar()
+    percentage_label_var.set("0%")  # Initialize with 0%
+
+    percentage_label = Label(root, textvariable=percentage_label_var, font=("Arial", 15, "bold"))
+    percentage_label.pack()
 
     frame_buttons = Frame(root)  # Create a frame to hold the buttons
-    frame_buttons.pack(pady=20)
+    frame_buttons.pack(pady=10)
 
     start_button = Button(frame_buttons, text="Start", font=("Arial", 12), command=progress_bar_thread)
     start_button.pack(side=LEFT, padx=10, pady=10)
 
-    stop_button = Button(frame_buttons, text="Stop", font=("Arial", 12), command=stop_progress_bar)
+    stop_button = Button(frame_buttons, text="Pause", font=("Arial", 12), command=stop_progress_bar)
     stop_button.pack(side=LEFT, padx=10, pady=10)
 
     restart_button = Button(frame_buttons, text="Restart", font=("Arial", 12), command=restart_progress_bar)
 
 if __name__ == "__main__":
-    root.geometry("500x250")
+    root.geometry("500x200")
     root.title("Progressbar")
 
     window()
