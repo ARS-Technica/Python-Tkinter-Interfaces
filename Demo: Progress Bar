@@ -18,6 +18,9 @@ def pause_progress_bar():
     global pause
 
     pause = 1
+    
+    pause_button.pack_forget()
+    reset_button.pack(side=RIGHT, padx=10, pady=10)
 
 def play_sound():
     # SystemAsterisk, SystemExclamation, SystemExit, SystemHand, SystemQuestion
