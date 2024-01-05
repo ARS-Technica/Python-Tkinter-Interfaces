@@ -5,47 +5,54 @@ Demonstration of a basic Progress Bar
 import time
 import threading
 import tkinter as tk
+import winsound
 from tkinter import *
 from tkinter import font
 from tkinter import ttk
-import winsound
 
 root = tk.Tk()
 percentage = IntVar()
 pause = 0
+
+def pause_progress_bar():
+    global pause
+
+    pause = 1
 
 def play_sound():
     # SystemAsterisk, SystemExclamation, SystemExit, SystemHand, SystemQuestion
     winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS) 
 
 def progress_bar_thread(progress_bar_style):
-    global pause
+    global pause, thread1
 
     pause = 0  # To resume progress bar
     thread1 = threading.Thread(target=lambda: start_progress_bar(progress_bar_style))
     thread1.start()
 
-def restart_progress_bar(progress_bar_style, thread1):
+    reset_button.config(command=lambda: reset_progress_bar(progress_bar_style))
+
+def reset_progress_bar(progress_bar_style):
     global pause
 
-    # Stop the existing progress bar thread
-    pause = 1
+    pause = 1  # Pause the existing progress bar thread
     thread1.join()
 
-    # Reset the percentage to zero
-    percentage.set(0)
+    percentage.set(0)  # Start from the beginning  
 
-    # Reset the background color to red to prevent a blue flash on restart
+    # Reset the background color to red to prevent a blue flash on reset
     progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="#dd776e")
 
-    # Update the label to show 0%
-    percentage_label_var.set("0%")
+    # thread = threading.Thread(target=lambda: start_progress_bar(progress_bar_style))
+    # thread.start()
+    
+    percentage_label_var.set("0%") # Update the label to show 0%
 
-    restart_button.pack_forget()
-    stop_button.pack(side=RIGHT, padx=10, pady=10)
+    reset_button.pack_forget()
+    pause_button.pack(side=RIGHT, padx=10, pady=10)
 
 def start_progress_bar(progress_bar_style):
-    global percentage, pause, percentage_label_var
+    global percentage, pause, percentage_label_var, progress_bar_start, progress_bar_finish
 
     delay = 0.05
     total_steps = 100
@@ -54,6 +61,9 @@ def start_progress_bar(progress_bar_style):
                 '#ecac67', '#e6ad61', '#e9b861', '#f3c563', '#f5ce62', '#e2c965', 
                 '#d4c86a', '#c4c56d', '#b0be6e', '#a4c073', '#94bd77', '#84bb7b', 
                 '#73b87e', '#63b682', '#57bb8a']  # Red to Green in twenty steps
+
+    progress_bar_start = spectrum[0]
+    progress_bar_finish = spectrum[1]
 
     # When resuming progress bar, start where the progress left off
     if percentage.get() > 0:
@@ -69,6 +79,8 @@ def start_progress_bar(progress_bar_style):
             time.sleep(delay)
 
             # Update the progress bar background color before updating the label
+															
+			
             if i % 5 == 0 and i > 0:  # "i > 0" required, otherwise progress bar flashes green to start
                 progress_bar_start = spectrum[int(i/5) - 1]
                 progress_bar_finish = spectrum[int(i/5)]
@@ -79,37 +91,41 @@ def start_progress_bar(progress_bar_style):
             percentage_label_var.set(f"{percentage.get()}%")
 
     if percentage.get() == 100:
-        stop_button.pack_forget()
-        restart_button.pack(side=RIGHT, padx=10, pady=10)
+        pause_button.pack_forget()
+        reset_button.pack(side=RIGHT, padx=10, pady=10)
         time.sleep(.75)
         percentage_label_var.set("COMPLETE")
         progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="blue")
         play_sound()
 
-def stop_progress_bar():
-    global pause
-
-    pause = 1
-
 def update_colors(percentage, progress_bar_start, progress_bar_finish, progress_bar_style):
+    """
+    Smoothly transition the value of the progress bar background through red, yellow, and green
+    """
     def hex_to_rgb(hex_value):
         hex_value = hex_value.lstrip("#")
         return tuple(int(hex_value[i:i + 2], 16) for i in (0, 2, 4))
 
+    # Convert hexidecimal color value into RGB for easier calculation
     r_start, g_start, b_start = hex_to_rgb(progress_bar_start)
     r_finish, g_finish, b_finish = hex_to_rgb(progress_bar_finish)
 
+    # Calculate next color in transition
     r_intermediate = int(r_start + (r_finish - r_start) * percentage.get() / 100)
     g_intermediate = int(g_start + (g_finish - g_start) * percentage.get() / 100)
     b_intermediate = int(b_start + (b_finish - b_start) * percentage.get() / 100)
 
+    # Format the results as a hexidecimal value
     intermediate_color = f'#{r_intermediate:02X}{g_intermediate:02X}{b_intermediate:02X}'
 
     progress_bar_style.configure("TProgressbar", background=intermediate_color)
 
 def window():
-    global percentage_label_var, restart_button, start_button, stop_button
+    global percentage_label_var, reset_button, start_button, pause_button
 
+    # ------ Progress Bar Widget ----- #
+    
+    # Configure the colors of the Progressbar with theme
     progress_bar_style = ttk.Style()
     progress_bar_style.theme_use('classic')
     progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="#dd776e")
@@ -118,27 +134,31 @@ def window():
                                    style='TProgressbar')
     progress_bar.pack(pady=10)
 
+    # Create a StringVar to hold the text for the label
     percentage_label_var = StringVar()
-    percentage_label_var.set("0%")
+    percentage_label_var.set("0%")  # Initialize with 0%
 
     percentage_label = Label(root, textvariable=percentage_label_var, font=("Arial", 12, "bold"))
     percentage_label.pack()
 
-    frame_buttons = Frame(root)
+    # ----- Button Widgets -----#
+
+    frame_buttons = Frame(root)  # Create a frame to hold the buttons
     frame_buttons.pack(pady=10)
 
+    # Set the width of the buttons to prevent them from changing positions when Pause becomes Reset
     button_width = 10
 
     start_button = Button(frame_buttons, text="Start", font=("Arial", 12),
                           command=lambda: progress_bar_thread(progress_bar_style), width=button_width)
     start_button.pack(side=LEFT, padx=10, pady=10)
 
-    stop_button = Button(frame_buttons, text="Stop", font=("Arial", 12),
-                         command=stop_progress_bar, width=button_width)
-    stop_button.pack(side=RIGHT, padx=10, pady=10)
+    pause_button = Button(frame_buttons, text="Pause", font=("Arial", 12),
+                         command=pause_progress_bar, width=button_width)
+    pause_button.pack(side=RIGHT, padx=10, pady=10)
 
-    restart_button = Button(frame_buttons, text="Restart", font=("Arial", 12),
-                            command=lambda: restart_progress_bar(progress_bar_style, thread1=None), width=button_width)
+    reset_button = Button(frame_buttons, text="Reset", font=("Arial", 12),
+                            command=lambda: reset_progress_bar(progress_bar_style), width=button_width)
 
 if __name__ == "__main__":
     root.geometry("500x150")
@@ -146,3 +166,4 @@ if __name__ == "__main__":
 
     window()
     root.mainloop()
+
