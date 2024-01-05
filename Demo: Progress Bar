@@ -35,14 +35,15 @@ def start_progress_bar(progress_bar_style):
     global percentage, pause, percentage_label, progress_bar_start, progress_bar_finish
 
     delay = 0.05
-    progress_bar_start = "#dd776e"  # Red
-    progress_bar_finish = "#dd776e" # Red
     total_steps = 100
-    
+
     spectrum = ['#dd776e', '#e0816d', '#e2886c', '#e5926b', '#e79a69', '#e9a268',
                 '#ecac67', '#e6ad61', '#e9b861', '#f3c563', '#f5ce62', '#e2c965', 
                 '#d4c86a', '#c4c56d', '#b0be6e', '#a4c073', '#94bd77', '#84bb7b', 
                 '#73b87e', '#63b682', '#57bb8a']  # Red to Green in twenty steps
+
+    progress_bar_start = spectrum[0]
+    progress_bar_finish = spectrum[1]
 
     # When resuming progress bar, start where the progress left off
     if percentage.get() > 0:
@@ -60,17 +61,12 @@ def start_progress_bar(progress_bar_style):
             # Update the label with the percentage variable
             percentage_label_var.set(f"{percentage.get()}%")
             
-            if i % 5 == 0:
+            if i % 5 == 0 and i > 0:  # "i > 0" required, otherwise progress bar flashes green to start
                 progress_bar_start = spectrum[int(i/5) - 1]
-                progress_bar_finish = spectrum[int(i/5)] 
+                progress_bar_finish = spectrum[int(i/5)]
 
                 update_colors(percentage, progress_bar_start, progress_bar_finish, progress_bar_style)
 
-            """
-            # For a single gradient use the following code, delete conditionals below
-            progress_bar_start = "#FF0000"  # Red
-            progress_bar_finish = "#00FF00" # Green   
-            """
             """
             # Update the progress bar background color
             if percentage.get() <= 25:
@@ -168,7 +164,4 @@ if __name__ == "__main__":
 
     window()
     root.mainloop()
-
-
-
 
