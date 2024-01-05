@@ -35,7 +35,14 @@ def start_progress_bar(progress_bar_style):
     global percentage, pause, percentage_label, progress_bar_start, progress_bar_finish
 
     delay = 0.05
+    progress_bar_start = "#dd776e"  # Red
+    progress_bar_finish = "#dd776e" # Red
     total_steps = 100
+    
+    spectrum = ['#dd776e', '#e0816d', '#e2886c', '#e5926b', '#e79a69', '#e9a268',
+                '#ecac67', '#e6ad61', '#e9b861', '#f3c563', '#f5ce62', '#e2c965', 
+                '#d4c86a', '#c4c56d', '#b0be6e', '#a4c073', '#94bd77', '#84bb7b', 
+                '#73b87e', '#63b682', '#57bb8a']  # Red to Green in twenty steps
 
     # When resuming progress bar, start where the progress left off
     if percentage.get() > 0:
@@ -52,27 +59,41 @@ def start_progress_bar(progress_bar_style):
 
             # Update the label with the percentage variable
             percentage_label_var.set(f"{percentage.get()}%")
+            
+            if i % 5 == 0:
+                progress_bar_start = spectrum[int(i/5) - 1]
+                progress_bar_finish = spectrum[int(i/5)] 
 
+                update_colors(percentage, progress_bar_start, progress_bar_finish, progress_bar_style)
+
+            """
+            # For a single gradient use the following code, delete conditionals below
+            progress_bar_start = "#FF0000"  # Red
+            progress_bar_finish = "#00FF00" # Green   
+            """
+            """
             # Update the progress bar background color
-            if percentage.get() <= 33:
+            if percentage.get() <= 25:
+                progress_bar_start = "#FF0000"  # Red                
+            elif 25 < percentage.get() <= 50:            
                 progress_bar_start = "#FF0000"  # Red
                 progress_bar_finish = "#FFA500" # Orange
-            elif 33 < percentage.get() <= 66:
+            elif 50 < percentage.get() <= 75:
                 progress_bar_finish = "#FFA500" # Orange
                 progress_bar_start = "#FFFF00"  # Yellow
-            elif 66 < percentage.get() <= 99:
+            elif 75 < percentage.get() <= 99:
                 progress_bar_start = "#FFFF00"  # Yellow
                 progress_bar_finish = "#00FF00" # Green               
             else:
                 progress_bar_finish = "#0000FF"# Blue
-
-            update_colors(percentage, progress_bar_start, progress_bar_finish, progress_bar_style)
+            """
 
     if percentage.get() == 100:
         stop_button.pack_forget()
         restart_button.pack(side=RIGHT, padx=10, pady=10)
         time.sleep(.75)
         percentage_label_var.set("COMPLETE")
+        progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="blue")
 
 def stop_progress_bar():
     global pause
@@ -109,7 +130,7 @@ def window():
     # Configure the colors of the Progressbar with theme
     progress_bar_style = ttk.Style()
     progress_bar_style.theme_use('classic')
-    progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="red")
+    progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="#dd776e")
 
     progress_bar = ttk.Progressbar(root, max=100.0, variable=percentage, length=400, mode='determinate',
                                    style='TProgressbar')
@@ -121,7 +142,6 @@ def window():
 
     percentage_label = Label(root, textvariable=percentage_label_var, font=("Arial", 12, "bold"))
     percentage_label.pack()
-
 
     # ----- Button Widgets -----#
 
@@ -148,5 +168,7 @@ if __name__ == "__main__":
 
     window()
     root.mainloop()
+
+
 
 
