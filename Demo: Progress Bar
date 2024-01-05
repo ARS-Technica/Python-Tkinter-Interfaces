@@ -23,38 +23,11 @@ def pause_progress_bar():
     reset_button.pack(side=RIGHT, padx=10, pady=10)
 
 def play_sound():
-    # SystemAsterisk, SystemExclamation, SystemExit, SystemHand, SystemQuestion
+    # Upon reaching 100, the Progress Bar will chime
     winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS) 
+    # Options: SystemAsterisk, SystemExclamation, SystemExit, SystemHand, SystemQuestion
 
-def progress_bar_thread(progress_bar_style):
-    global pause, thread1
-
-    pause = 0  # To resume progress bar
-    thread1 = threading.Thread(target=lambda: start_progress_bar(progress_bar_style))
-    thread1.start()
-
-    reset_button.config(command=lambda: reset_progress_bar(progress_bar_style))
-
-def reset_progress_bar(progress_bar_style):
-    global pause
-
-    pause = 1  # Pause the existing progress bar thread
-    thread1.join()
-
-    percentage.set(0)  # Start from the beginning  
-
-    # Reset the background color to red to prevent a blue flash on reset
-    progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="#dd776e")
-
-    # thread = threading.Thread(target=lambda: start_progress_bar(progress_bar_style))
-    # thread.start()
-    
-    percentage_label_var.set("0%") # Update the label to show 0%
-
-    reset_button.pack_forget()
-    pause_button.pack(side=RIGHT, padx=10, pady=10)
-
-def start_progress_bar(progress_bar_style):
+def progress_bar_colors(progress_bar_style):
     global percentage, pause, percentage_label_var, progress_bar_start, progress_bar_finish
 
     delay = 0.05
@@ -81,9 +54,8 @@ def start_progress_bar(progress_bar_style):
             percentage.set(i)
             time.sleep(delay)
 
-            # Update the progress bar background color before updating the label
-															
-			
+            # Update the progress bar background color before updating the label	
+
             if i % 5 == 0 and i > 0:  # "i > 0" required, otherwise progress bar flashes green to start
                 progress_bar_start = spectrum[int(i/5) - 1]
                 progress_bar_finish = spectrum[int(i/5)]
@@ -100,6 +72,40 @@ def start_progress_bar(progress_bar_style):
         percentage_label_var.set("COMPLETE")
         progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="blue")
         play_sound()
+
+def start_progress_bar(progress_bar_style):
+    global pause, thread1
+
+    pause = 0  # To resume progress bar
+    thread1 = threading.Thread(target=lambda: progress_bar_colors(progress_bar_style))
+    thread1.start()
+
+    if percentage.get() == 100:     # In case the Pause button is pressed at 100
+        reset_button.pack(side=RIGHT, padx=10, pady=10)
+        reset_button.config(command=lambda: reset_progress_bar(progress_bar_style))
+    else:
+        # When the Progress Bar begins advancing, the Reset Button becomes the Pause button
+        reset_button.pack_forget()
+        pause_button.pack(side=RIGHT, padx=10, pady=10)
+        pause_button.config(command=pause_progress_bar)
+
+def reset_progress_bar(progress_bar_style):
+    global pause
+
+    pause = 1  # Pause the existing progress bar thread
+    thread1.join()
+
+    percentage.set(0)  # Start from the beginning  
+
+    # Reset the background color to red to prevent a blue flash on reset
+    progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="#dd776e")
+
+    # Check if progress is at 100%, if not, change the button back to "Pause"
+    if percentage.get() != 100:
+        reset_button.pack_forget()
+        pause_button.pack(side=RIGHT, padx=10, pady=10)
+    
+    percentage_label_var.set("0%") # Update the label to show 0%
 
 def update_colors(percentage, progress_bar_start, progress_bar_finish, progress_bar_style):
     """
@@ -153,7 +159,7 @@ def window():
     button_width = 10
 
     start_button = Button(frame_buttons, text="Start", font=("Arial", 12),
-                          command=lambda: progress_bar_thread(progress_bar_style), width=button_width)
+                          command=lambda: start_progress_bar(progress_bar_style), width=button_width)
     start_button.pack(side=LEFT, padx=10, pady=10)
 
     pause_button = Button(frame_buttons, text="Pause", font=("Arial", 12),
