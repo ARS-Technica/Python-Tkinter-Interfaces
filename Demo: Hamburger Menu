@@ -6,8 +6,7 @@ A demonstration of how to make a simple hamburger menu common in mobile apps
 using only Python's Tkinter library.
 """
  
-import tkinter as tk
-from tkinter import PhotoImage
+import tkinter as tk 
 from PIL import Image, ImageDraw, ImageTk # Pillow library
 
 # Initialize global variables
@@ -163,7 +162,8 @@ def create_hamburger_icon():
 def create_navigation_buttons(frame, switch_page_func):
     global navigation_menu
     global navigation_buttons  # Add this line to access the navigation_buttons globally
-
+    global current_page_index
+    
     buttons = []
 
     def on_enter(event):
@@ -171,9 +171,6 @@ def create_navigation_buttons(frame, switch_page_func):
 
     def on_leave(event):
         event.widget.config(bg="white")  # Change background color on mouse leave
-
-    def on_click(index):
-        navigate_to_index(index)
 
     button_width = 15  # Set a fixed width for the buttons
 
@@ -184,18 +181,42 @@ def create_navigation_buttons(frame, switch_page_func):
         (second_page, "Second Page"),
         (third_page, "Third Page")]
 
-    # Create navigation buttons dynamically
+    # Create navigation buttons dynamically    
     for index, (page_func, text) in enumerate(navigation_menu):
         button = tk.Button(frame, text=text, font=("Arial", 13, "bold"),
                            bd=0, relief=tk.SOLID, bg="white", fg="black",
-                           command=lambda func=page_func: switch_page_func(func), width=button_width)
+                           command=lambda func=page_func, idx=index: (
+                               switch_page_func(func),
+                               update_button_styles(idx)
+                           ), width=button_width)
         button.bind("<Enter>", on_enter)
         button.bind("<Leave>", on_leave)
-        button.bind("<Button-1>", lambda event, idx=index: on_click(idx))  # Highlight menu item on click
+    
         button.pack(fill=tk.X, pady=5)
         buttons.append(button)
+    
+    navigation_buttons = buttons  # Save the buttons globally
 
+    # Set the initial button styles
+    update_button_styles(current_page_index)
+    
     return buttons
+
+def update_button_styles(selected_index):
+    """
+    Responsible for updating the font styles of the navigation buttons based on the selected index.
+    """
+    global navigation_buttons
+    global current_page_index
+
+    current_page_index = selected_index  # Update the current page index
+
+    # Iterate over all buttons and update their font styles based on selected index
+    for i, btn in enumerate(navigation_buttons):
+        if i == selected_index:
+            btn.config(font=("Arial", 13, "bold", "underline")) # Underline link to current frame
+        else:
+            btn.config(font=("Arial", 13, "bold"))
 
 
 # ***************** Navigation Functions ***************** #
@@ -417,4 +438,3 @@ if __name__ == "__main__":
     switch_page(home_page)
     root.mainloop()
 
- 
