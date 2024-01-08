@@ -18,6 +18,8 @@ def progress_bar_setup(root):
     return frame, var, canvas
 
 def update_progress(root):
+    global splash_root
+
     if progress_var.get() < 100:
         progress_width = progress_frame.winfo_width() * progress_var.get() / 100
         progress_canvas.delete("all")
@@ -31,8 +33,8 @@ def update_progress(root):
         # Increase progress (simulate progress)
         progress_var.set(progress_var.get() + 0.5)  # Increased progress increment for faster progress
     else:
-        # Stop updating when progress reaches or exceeds 100%
-        splash_root.after(3000, splash_root.destroy)
+        # Stop updating when progress reaches 100%
+        splash_root.destroy()  # Destroy the splash screen
         main_window()
 
 def show_splash_screen():
@@ -68,8 +70,6 @@ def show_splash_screen():
     # Start updating the progress
     update_progress(splash_root)
 
-    # Splash Screen Timer
-    splash_root.after(3000, splash_root.destroy)
     splash_root.mainloop()
 
 def main_window():
@@ -86,5 +86,4 @@ def main_window():
 
 if __name__ == "__main__":
     show_splash_screen()
-    main_window()
 
