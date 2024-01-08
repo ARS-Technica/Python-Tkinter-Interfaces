@@ -6,16 +6,30 @@ Inspired by the Codemy.com tutorial: https://www.youtube.com/watch?v=LTVvHObxc4E
 
 from tkinter import *
 
-def splash_screen():
+def show_splash_screen():
     splash_root = Tk()
-    splash_root.title("Splash Screen")
     splash_root.geometry("300x200+250+250")
+    splash_root.configure(bg="#990000")
     # Hide the title bar
     splash_root.overrideredirect(True)
+    
+    # Splash window dimensions and position
+    width = 300
+    height = 200
+    x_position = 250
+    y_position = 250
+    
+    splash_root.geometry(f"{width}x{height}+{x_position}+{y_position}")
+    
+    # Add a black border to the splash window
+    splash_root.configure(
+        highlightthickness=5,           # Adjust the thickness of the border
+        highlightbackground="black"     # Set the border color
+    )
 
     # Splash Screen Content
-    splash_label = Label(splash_root, text="Splash Screen!", font=("Helvetica", 18))
-    splash_label.pack(pady=20)
+    splash_label = Label(splash_root, bg="#990000", text="Splash Screen!", font=("Helvetica", 18, "bold"), fg="#000000")
+    splash_label.pack(pady=75)
 
     # Splash Screen Timer
     splash_root.after(3000, splash_root.destroy)
@@ -25,14 +39,15 @@ def main_window():
     root = Tk()
     root.title("Splash Screen Demo")
     root.geometry("500x550")
+    root.configure(bg="#FF9900")
 
     # Main Window Content
-    main_label = Label(root, text="Main Screen", font=("Helvetica", 18))
+    main_label = Label(root, bg="#FF9900", text="Main Screen", font=("Helvetica", 18, "bold"), fg="#000000")
     main_label.pack(pady=20)
 
     root.mainloop()
 
 if __name__ == "__main__":
-    splash_screen()
+    show_splash_screen()
     main_window()
 
