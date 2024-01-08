@@ -4,23 +4,54 @@ A demonstration of a simple Splash Screen using the Tkinter library.
 Inspired by the Codemy.com tutorial: https://www.youtube.com/watch?v=LTVvHObxc4E
 """
 
-from tkinter import *
+import tkinter as tk
+
+def progress_bar_setup(root):
+    # Create the progress frame and canvas
+    frame = tk.Frame(root, bg="white", borderwidth=2, relief="solid")
+    frame.place(relx=0.1, rely=0.7, relwidth=0.8, relheight=0.2)
+
+    var = tk.DoubleVar()
+    canvas = tk.Canvas(frame, bg="white", highlightthickness=0)
+    canvas.pack(fill="both", expand=True)
+
+    return frame, var, canvas
+
+def update_progress(root):
+    if progress_var.get() < 100:
+        progress_width = progress_frame.winfo_width() * progress_var.get() / 100
+        progress_canvas.delete("all")
+
+        # Draw small block segments
+        for i in range(0, int(progress_width), 5):
+            progress_canvas.create_rectangle(i, 0, i + 3, progress_frame.winfo_height(), fill="blue")
+
+        root.after(50, lambda: update_progress(root))  # Use lambda to pass arguments
+
+        # Increase progress (simulate progress)
+        progress_var.set(progress_var.get() + 0.5)  # Increased progress increment for faster progress
+    else:
+        # Stop updating when progress reaches or exceeds 100%
+        splash_root.after(3000, splash_root.destroy)
+        main_window()
 
 def show_splash_screen():
-    splash_root = Tk()
-    splash_root.geometry("300x200+250+250")
+    global splash_root, progress_frame, progress_var, progress_canvas
+
+    splash_root = tk.Tk()
+    splash_root.geometry("300x300+250+250")
     splash_root.configure(bg="#990000")
     # Hide the title bar
     splash_root.overrideredirect(True)
-    
+
     # Splash window dimensions and position
     width = 300
-    height = 200
+    height = 300
     x_position = 250
     y_position = 250
-    
+
     splash_root.geometry(f"{width}x{height}+{x_position}+{y_position}")
-    
+
     # Add a black border to the splash window
     splash_root.configure(
         highlightthickness=5,           # Adjust the thickness of the border
@@ -28,21 +59,27 @@ def show_splash_screen():
     )
 
     # Splash Screen Content
-    splash_label = Label(splash_root, bg="#990000", text="Splash Screen!", font=("Helvetica", 18, "bold"), fg="#000000")
+    splash_label = tk.Label(splash_root, bg="#990000", text="Splash Screen!", font=("Helvetica", 18, "bold"), fg="#000000")
     splash_label.pack(pady=75)
+
+    # Call the progress_bar_setup function to create the frame, variable, and canvas
+    progress_frame, progress_var, progress_canvas = progress_bar_setup(splash_root)
+
+    # Start updating the progress
+    update_progress(splash_root)
 
     # Splash Screen Timer
     splash_root.after(3000, splash_root.destroy)
     splash_root.mainloop()
 
 def main_window():
-    root = Tk()
+    root = tk.Tk()
     root.title("Splash Screen Demo")
     root.geometry("500x550")
     root.configure(bg="#FF9900")
 
     # Main Window Content
-    main_label = Label(root, bg="#FF9900", text="Main Screen", font=("Helvetica", 18, "bold"), fg="#000000")
+    main_label = tk.Label(root, bg="#FF9900", text="Main Screen", font=("Helvetica", 18, "bold"), fg="#000000")
     main_label.pack(pady=20)
 
     root.mainloop()
