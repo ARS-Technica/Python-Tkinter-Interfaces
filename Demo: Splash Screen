@@ -1,0 +1,31 @@
+"""
+A demonstration of a simple Splash Screen using the Tkinter library.
+
+Inspired by the Codemy.com tutorial: https://www.youtube.com/watch?v=LTVvHObxc4E
+"""
+
+from tkinter import *
+
+splash_root = Tk()
+splash_root.title()
+splash_root.geometry("300x200")
+
+splash_label = Label(splash_root, text="Splash Screen!", font=("Helvetica", 18))
+splash_label.pack(pady=20)
+
+
+def main_window():
+    splash_root.destroy()
+    root = Tk()
+    root.title("Splash Screen Demo")
+    root.geometry("500x550")
+    
+    main_label = Label(root, text="Main Screen", font=("Helvetica", 18))
+    main_label.pack(pady=20)
+
+
+# Splash Screen Timer
+splash_root.after(3000, main_window)
+
+#root.mainloop()
+mainloop() 
