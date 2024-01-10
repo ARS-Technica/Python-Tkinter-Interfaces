@@ -8,7 +8,7 @@ myself Tkinter, and I'm interested in seeing if the same effect can be
 established with plain vanilla Tkinter and some math.
 """
 
-from tkinter import Tk, ttk
+from tkinter import Button, Canvas, Frame, Tk, ttk
 from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow)
 
 def create_window():
@@ -43,6 +43,14 @@ def create_progress_gauge():
 
     canvas = Canvas(frame, bg='black', width=585, height=585, relief="raised", bd=1)
     canvas.grid(padx=5, pady=5)
+
+    # Draw Guage
+    scale = ttk.Scale(window, orient='horizontal', style="Horizontal.TScale", from_=0, to=360, length=400)
+    scale.set(0)
+    scale.grid(column=1, row=1, pady=10, padx=5)
+
+    style = ttk.Style()
+    style.configure("Horizontal.TScale", background="#000000")
 
     # Button(window, text="Launch", command=lambda: update_progress_gauge()) 
     
