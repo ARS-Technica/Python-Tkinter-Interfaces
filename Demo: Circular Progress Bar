@@ -24,20 +24,10 @@ def create_interface():
     window.mainloop()
 
 def update_progress_gauge():
-    """
-    Draw two concentric circles to act at the guage.  Then, fill the space
-    between them as the percent increases from 0 to 100.  May require multiple
-    functions.
-    """
-    global percent
- 
-    # Draw outlines of graphic guage to be filled
-    canvas.create_oval(150, 150, 450, 450, fill="", outline='#009900', width=5)
-    canvas.create_oval(180, 180, 420, 420, fill="#000000", outline='#009900', width=5)
-    
-    # Draw progress bar between gauge outlines
-    canvas.create_oval(100, 100, 500, 500, fill="", outline="", width=5)
+    global percent, canvas, window
 
+    percent = int(scale.get())
+        
     canvas.create_line(300, 300, 300 + 150 * sin(radians(percent)),
                        300 - 150 * cos(radians(percent)),
                        fill="red", width=20, tags="progress")
@@ -45,6 +35,25 @@ def update_progress_gauge():
     canvas.create_line(300, 300, 300 + 150 * sin(radians(percent + 8)),
                        300 - 150 * cos(radians(percent + 8)),
                        fill="black", width=20, tags="progress")
+
+    # Additional lines for smooth transition at 0 and 360 degrees
+    if percent == 0:
+        canvas.create_line(300, 300, 300 + 150 * sin(radians(0)),
+                           300 - 150 * cos(radians(0)),
+                           fill='black', width=20, tags="progress_lines")
+        canvas.create_line(300, 300, 300 + 150 * sin(radians(8)),
+                           300 - 150 * cos(radians(8)),
+                           fill='black', width=20, tags="progress_lines")
+    if percent == 360:
+        canvas.create_line(300, 300, 300 + 150 * sin(radians(0)),
+                           300 - 150 * cos(radians(0)),
+                           fill='deep sky blue', width=20, tags="progress_lines")
+        canvas.create_line(300, 300, 300 + 150 * sin(radians(8)),
+                           300 - 150 * cos(radians(8)),
+                           fill='deep sky blue', width=20, tags="progress_lines")
+
+    canvas.tag_lower("progress_lines")
+    window.after(100, update_progress_gauge)
 
 def create_progress_gauge(window):
     frame = Frame(window, height=600, width=600, bg='black', relief='sunken')
@@ -63,11 +72,11 @@ def create_progress_gauge(window):
     Button(window, text='Start', bg='green2', width=20, command=update_progress_gauge).grid(column=0, row=1, padx=3, pady=5)
 
 
-    # Draw the circular outlines of the gauge
-    canvas.create_oval(100, 100, 500, 500, fill="", outline='', width=5, tag='outline')
+    # Draw outlines of graphic guage to be filled
     canvas.create_oval(150, 150, 450, 450, fill='', outline='dark violet', width=6, tag='outline')
     canvas.create_oval(180, 180, 420, 420, fill='gray22', outline='dark violet', width=6, tag='outline')
-    canvas.tag_raise('outline')
+    # Draw progress bar between gauge outlines
+    canvas.create_oval(100, 100, 500, 500, fill="", outline='', width=5, tag='outline')
     
     canvas.create_text(300, 350, text='PYTHON', font=('Cambria Math', 22, 'bold'), fill='white')
     canvas.create_text(300, 380, text='Tkinter', font=('Freestyle Script', 25, 'bold'), fill='orange')
