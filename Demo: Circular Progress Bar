@@ -47,27 +47,22 @@ def update_progress_gauge():
                        fill="black", width=20, tags="progress")
 
 def create_progress_gauge(window):
-    percent = 0 # Start countdown from zero
+    frame = Frame(window, height=600, width=600, bg='black', relief='sunken')
+    frame.grid(columnspan=2, row=0)
 
-    window = create_window()
-    # Start the main event loop
-    window.mainloop()
-    
-    frame = Frame(window, height=600, width=600, bg="#000000", relief="sunken")
-    frame.grid(columnspan=2, row=0)    
-
-    canvas = Canvas(frame, bg="#000000", width=585, height=585, relief="raised", bd=1)
+    canvas = Canvas(frame, bg='black', width=585, height=585, relief='raised', bd=1)
     canvas.grid(padx=5, pady=5)
-
-    # Draw Guage
+    
     scale = ttk.Scale(window, orient='horizontal', style="Horizontal.TScale", from_=0, to=360, length=400)
     scale.set(0)
     scale.grid(column=1, row=1, pady=10, padx=5)
 
     style = ttk.Style()
-    style.configure("Horizontal.TScale", background="#000000")
+    style.configure("Horizontal.TScale", background="black")
 
-    # Button(window, text="Launch", command=lambda: update_progress_gauge()) 
+    Button(window, text='Start', bg='green2', width=20, command=update_progress_gauge).grid(column=0, row=1, padx=3, pady=5)
+    
+    return canvas, scale
 
 def create_window():   
     window = Tk()
