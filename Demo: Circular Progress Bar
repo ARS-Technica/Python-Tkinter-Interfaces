@@ -11,15 +11,17 @@ established with plain vanilla Tkinter and some math.
 from tkinter import Button, Canvas, Frame, Tk, ttk
 from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow)
 
-def create_window():
-    window = Tk()  
-    window.title("Demo: Circular Progress Gauge")
-    window.geometry("600x600")
-    window.configure(bg='#000000')
-    # Hide the title bar
-    window.overrideredirect(True)
 
-    return window
+def create_interface():
+    global canvas, percent, scale, window
+
+    percent = 0
+
+    window = create_window()
+    canvas, scale = create_progress_gauge(window)
+    update_progress_gauge()
+
+    window.mainloop()
 
 def update_progress_gauge():
     """
@@ -35,14 +37,16 @@ def update_progress_gauge():
     
     # Draw progress bar between gauge outlines
     canvas.create_oval(100, 100, 500, 500, fill="", outline="", width=5)
+
     canvas.create_line(300, 300, 300 + 150 * sin(radians(percent)),
                        300 - 150 * cos(radians(percent)),
                        fill="red", width=20, tags="progress")
+
     canvas.create_line(300, 300, 300 + 150 * sin(radians(percent + 8)),
                        300 - 150 * cos(radians(percent + 8)),
                        fill="black", width=20, tags="progress")
 
-def create_progress_gauge():
+def create_progress_gauge(window):
     percent = 0 # Start countdown from zero
 
     window = create_window()
@@ -64,7 +68,17 @@ def create_progress_gauge():
     style.configure("Horizontal.TScale", background="#000000")
 
     # Button(window, text="Launch", command=lambda: update_progress_gauge()) 
-    
+
+def create_window():   
+    window = Tk()
+    window.title("Demo: Circular Progress Gauge")
+    window.geometry('620x650+290+10')
+    window.configure(bg='#000000')
+    # Hide the title bar
+    # window.overrideredirect(True)
+
+    return window
+   
 if __name__ == "__main__":
-    create_progress_gauge()
+    create_interface()
 
