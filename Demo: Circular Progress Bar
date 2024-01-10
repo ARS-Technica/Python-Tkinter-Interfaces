@@ -28,8 +28,19 @@ def update_progress_gauge():
     functions.
     """
     global percent
-
-    pass
+ 
+    # Draw outlines of graphic guage to be filled
+    canvas.create_oval(150, 150, 450, 450, fill="", outline='#009900', width=5)
+    canvas.create_oval(180, 180, 420, 420, fill="#000000", outline='#009900', width=5)
+    
+    # Draw progress bar between gauge outlines
+    canvas.create_oval(100, 100, 500, 500, fill="", outline="", width=5)
+    canvas.create_line(300, 300, 300 + 150 * sin(radians(percent)),
+                       300 - 150 * cos(radians(percent)),
+                       fill="red", width=20, tags="progress")
+    canvas.create_line(300, 300, 300 + 150 * sin(radians(percent + 8)),
+                       300 - 150 * cos(radians(percent + 8)),
+                       fill="black", width=20, tags="progress")
 
 def create_progress_gauge():
     percent = 0 # Start countdown from zero
@@ -41,7 +52,7 @@ def create_progress_gauge():
     frame = Frame(window, height=600, width=600, bg="#000000", relief="sunken")
     frame.grid(columnspan=2, row=0)    
 
-    canvas = Canvas(frame, bg='black', width=585, height=585, relief="raised", bd=1)
+    canvas = Canvas(frame, bg="#000000", width=585, height=585, relief="raised", bd=1)
     canvas.grid(padx=5, pady=5)
 
     # Draw Guage
