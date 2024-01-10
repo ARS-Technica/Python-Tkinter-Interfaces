@@ -61,6 +61,17 @@ def create_progress_gauge(window):
     style.configure("Horizontal.TScale", background="black")
 
     Button(window, text='Start', bg='green2', width=20, command=update_progress_gauge).grid(column=0, row=1, padx=3, pady=5)
+
+
+    # Draw the circular outlines of the gauge
+    canvas.create_oval(100, 100, 500, 500, fill="", outline='', width=5, tag='outline')
+    canvas.create_oval(150, 150, 450, 450, fill='', outline='dark violet', width=6, tag='outline')
+    canvas.create_oval(180, 180, 420, 420, fill='gray22', outline='dark violet', width=6, tag='outline')
+    canvas.tag_raise('outline')
+    
+    canvas.create_text(300, 350, text='PYTHON', font=('Cambria Math', 22, 'bold'), fill='white')
+    canvas.create_text(300, 380, text='Tkinter', font=('Freestyle Script', 25, 'bold'), fill='orange')
+
     
     return canvas, scale
 
