@@ -1,0 +1,42 @@
+"""
+Circular Progress Bar
+
+The challenge is to create a circular progress gauge that counts up from 0 to 
+100 in Python using the Tkinter library.  Every example of Circular Progress 
+Bars I could find on Youtube made use of Pyside or PyQT.  I'm currently teaching
+myself Tkinter, and I'm interested in seeing if the same effect can be 
+established with plain vanilla Tkinter and some math.
+"""
+
+from tkinter import Tk, ttk
+from math import cos, radians, sin   # For drawing circles
+
+def create_window():
+    window = Tk()  
+    window.title("Demo: Circular Progress Gauge")
+    window.geometry("500x500")
+    window.configure(bg='#000000')
+    # Hide the title bar
+    window.overrideredirect(True)
+
+    return window
+
+def update_progress_gauge():
+    """
+    Draw two concentric circles to act at the guage.  Then, fill the space
+    between them as the percent increases from 0 to 100.  May require multiple
+    functions.
+    """
+    global percent
+
+    pass
+
+def main(): 
+    percent = 0
+
+    window = create_window()
+    window.mainloop()
+
+if __name__ == "__main__":
+    main()
+
