@@ -9,12 +9,12 @@ established with plain vanilla Tkinter and some math.
 """
 
 from tkinter import Tk, ttk
-from math import cos, radians, sin   # For drawing circles
+from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow)
 
 def create_window():
     window = Tk()  
     window.title("Demo: Circular Progress Gauge")
-    window.geometry("500x500")
+    window.geometry("600x600")
     window.configure(bg='#000000')
     # Hide the title bar
     window.overrideredirect(True)
@@ -31,12 +31,21 @@ def update_progress_gauge():
 
     pass
 
-def main(): 
-    percent = 0
+def create_progress_gauge():
+    percent = 0 # Start countdown from zero
 
     window = create_window()
+    # Start the main event loop
     window.mainloop()
+    
+    frame = Frame(window, height=600, width=600, bg="#000000", relief="sunken")
+    frame.grid(columnspan=2, row=0)    
 
+    canvas = Canvas(frame, bg='black', width=585, height=585, relief="raised", bd=1)
+    canvas.grid(padx=5, pady=5)
+
+    # Button(window, text="Launch", command=lambda: update_progress_gauge()) 
+    
 if __name__ == "__main__":
-    main()
+    create_progress_gauge()
 
