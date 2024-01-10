@@ -27,6 +27,7 @@ def update_progress_gauge():
     global percent, canvas, window
 
     percent = int(scale.get())
+    canvas.delete("progress_lines")
         
     canvas.create_line(300, 300, 300 + 150 * sin(radians(percent)),
                        300 - 150 * cos(radians(percent)),
@@ -51,6 +52,10 @@ def update_progress_gauge():
         canvas.create_line(300, 300, 300 + 150 * sin(radians(8)),
                            300 - 150 * cos(radians(8)),
                            fill='deep sky blue', width=20, tags="progress_lines")
+
+    # Display progress text
+    progress_text = f"{int(percent / 3.6)}%"
+    canvas.create_text(300, 300, text=progress_text, font=('Arial', 42, 'bold'), fill='deep sky blue', tags="progress_text")
 
     canvas.tag_lower("progress_lines")
     window.after(100, update_progress_gauge)
