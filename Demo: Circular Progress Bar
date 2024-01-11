@@ -12,9 +12,9 @@ from tkinter import Button, Canvas, Frame, Tk, ttk
 from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow)
 
 def create_interface():
-    global canvas, percent, scale, window
+    global canvas, degrees, scale, window
 
-    percent = 0
+    degrees = 0     # Will be divided into percentage in update_progress_gauge
 
     window = create_window()
     canvas, scale = create_progress_gauge(window)
@@ -58,28 +58,28 @@ def create_window():
     return window
 
 def update_progress_gauge():
-    global percent, canvas, window
+    global canvas, degrees, window
 
-    #percent = int(scale.get())													 
-    new_percent = int(scale.get())
+    #degrees = int(scale.get())													 
+    new_degrees = int(scale.get())
 
-    # Check if the progress has crossed the 100% mark
-    if percent >= 360 and new_percent < 360:
+    # Check if the progress has crossed the 360 degree mark (100%)
+    if degrees >= 360 and new_degrees < 360:    # 360 degrees = 100%
         canvas.delete("progress_text_complete")
         canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
 
-    percent = new_percent											
+    degrees = new_degrees						
 											 				
     #canvas.delete("progress_lines")
     canvas.delete("progress_text")  # Prevent text updates from piling up
 
     # Draw progress lines
-    canvas.create_line(300, 300, 300 + 150 * sin(radians(percent)),
-                       300 - 150 * cos(radians(percent)),
+    canvas.create_line(300, 300, 300 + 150 * sin(radians(degrees)),
+                       300 - 150 * cos(radians(degrees)),
                        fill="deep sky blue", width=20, tags="progress_lines")
 
     # Additional lines for smooth transition at 0 and 360 degrees
-    if percent == 360:
+    if degrees == 360:
         canvas.create_line(300, 300, 300 + 150 * sin(radians(0)),
                            300 - 150 * cos(radians(0)),
                            fill="deep sky blue", width=20, tags="progress_lines")
@@ -88,11 +88,11 @@ def update_progress_gauge():
                            fill="deep sky blue", width=20, tags="progress_lines")
 
     # Display progress text
-    progress_text = f"{int(percent / 3.6)}%"
+    progress_text = f"{int(degrees / 3.6)}%"
     canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue", tags="progress_text")
 
-    # Announce countdown is complete at 100% and update the text accordingly 
-    if percent >= 360: 														  
+    # Announce countdown is complete at 360 degrees (100%) and update the text accordingly 
+    if degrees >= 360: 		# 360 degrees = 100%												  
         canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="progress_text_complete")
     else:
         canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
