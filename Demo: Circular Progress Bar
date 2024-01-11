@@ -31,26 +31,21 @@ def create_progress_gauge(window):
     
     scale = ttk.Scale(window, orient="horizontal", style="Horizontal.TScale", from_=0, to=360, length=400)
     scale.set(0)
-    scale.grid(column=1, row=1, pady=10, padx=5)
+    scale.grid(column=0, row=1, pady=10, padx=5)
 
     style = ttk.Style()
     style.configure("Horizontal.TScale", background="black")
 
     Button(window, text="Start", bg="green2", width=20, command=update_progress_gauge).grid(column=0, row=1, padx=3, pady=5)
-    
+    scale.grid(column=1, row=2, pady=10, padx=5)
     
     # Draw the circular outlines of the gauge
     canvas.create_oval(100, 100, 500, 500, fill="", outline="", width=5, tag="outline")
     canvas.create_oval(150, 150, 450, 450, fill="", outline="dark violet", width=6, tag="outline")
     canvas.create_oval(180, 180, 420, 420, fill="black", outline="dark violet", width=6, tag="outline")
     canvas.tag_raise('outline')
-    
-    # Countdown Label
-    #progress_label = ttk.Label(window, bg="gray22", text="PROGRESS", font=("Arial", 22, "bold"), fg="#000000")
-    canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white")
-
+        
     return canvas, scale
-
 
 def create_window():   
     window = Tk()
@@ -73,7 +68,7 @@ def update_progress_gauge():
     canvas.create_line(300, 300, 300 + 150 * sin(radians(percent)),
                        300 - 150 * cos(radians(percent)),
                        fill="deep sky blue", width=20, tags="progress_lines")
-
+ 
     # Additional lines for smooth transition at 0 and 360 degrees
     if percent == 360:
         canvas.create_line(300, 300, 300 + 150 * sin(radians(0)),
@@ -87,6 +82,13 @@ def update_progress_gauge():
     progress_text = f"{int(percent / 3.6)}%"
     canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue", tags="progress_text")
 
+    # Announce countdown is complete at 100% and update the text accordingly
+    if progress_text == "100%":
+        canvas.delete("complete_text")  # Remove the "PROGRESS" text to replace it
+        canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="complete_text")
+    else:
+        canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="complete_text")
+        
     canvas.tag_lower("progress_lines")
     window.after(100, update_progress_gauge)
 
