@@ -8,7 +8,6 @@ myself Tkinter, and I'm interested in seeing if the same effect can be
 established with plain vanilla Tkinter and some math.
 """
 
-
 from tkinter import Button, Canvas, Frame, Tk, ttk
 from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow)
 
@@ -57,7 +56,7 @@ def create_window():
     # window.overrideredirect(True)
 
     return window
- 
+
 def update_progress_gauge():
     global percent, canvas, window
 
@@ -65,7 +64,7 @@ def update_progress_gauge():
     new_percent = int(scale.get())
 
     # Check if the progress has crossed the 100% mark
-    if percent >= 100 and new_percent < 100:
+    if percent >= 360 and new_percent < 360:
         canvas.delete("progress_text_complete")
         canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
 
@@ -92,9 +91,8 @@ def update_progress_gauge():
     progress_text = f"{int(percent / 3.6)}%"
     canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue", tags="progress_text")
 
-    # Announce countdown is complete at 100% and update the text accordingly
-    # Check if progress is 100% and update the text accordingly
-    if percent >= 100: 														  
+    # Announce countdown is complete at 100% and update the text accordingly 
+    if percent >= 360: 														  
         canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="progress_text_complete")
     else:
         canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
