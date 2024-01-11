@@ -8,21 +8,17 @@ myself Tkinter, and I'm interested in seeing if the same effect can be
 established with plain vanilla Tkinter and some math.
 """
 
-from tkinter import Button, Canvas, Frame, Tk, ttk
-from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow)
+from tkinter import Canvas, Tk, Frame, Button, ttk
+from math import cos, sin, radians
 
-def create_interface():
-    global canvas, percent, scale, window
+def create_window():
+    window = Tk()
+    window.title('Circular Progress Gauge')
+    window.geometry('620x650+290+10')
+    window.config(bg='black')
+    return window
 
-    percent = 0
-
-    window = create_window()
-    canvas, scale = create_progress_gauge(window)
-    update_progress_gauge()
-
-    window.mainloop()
-
-def create_progress_gauge(window):
+def create_canvas():
     frame = Frame(window, height=600, width=600, bg='black', relief='sunken')
     frame.grid(columnspan=2, row=0)
 
@@ -36,7 +32,7 @@ def create_progress_gauge(window):
     style = ttk.Style()
     style.configure("Horizontal.TScale", background="black")
 
-    Button(window, text='Start', bg='green2', width=20, command=update_progress_gauge).grid(column=0, row=1, padx=3, pady=5)
+    Button(window, text='Start', bg='green2', width=20, command=update_progress).grid(column=0, row=1, padx=3, pady=5)
     
     
     # Draw the circular outlines of the gauge
@@ -50,18 +46,8 @@ def create_progress_gauge(window):
 
     return canvas, scale
 
-def create_window():   
-    window = Tk()
-    window.title("Demo: Circular Progress Gauge")
-    window.geometry('620x650+290+10')
-    window.configure(bg='#000000')
-    # Hide the title bar
-    # window.overrideredirect(True)
-
-    return window
-
-def update_progress_gauge():
-    global percent, canvas, window
+def update_progress():
+    global percent, canvas
 
     percent = int(scale.get())
     canvas.delete("progress_lines")
@@ -96,8 +82,18 @@ def update_progress_gauge():
     canvas.create_text(300, 300, text=progress_text, font=('Arial', 42, 'bold'), fill='deep sky blue', tags="progress_text")
 
     canvas.tag_lower("progress_lines")
-    window.after(100, update_progress_gauge)
+    window.after(100, update_progress)
+
+def create_progress_gauge():
+    global window, scale, canvas, percent
+    percent = 0
+
+    window = create_window()
+    canvas, scale = create_canvas()
+    update_progress()
+
+    window.mainloop()
 
 if __name__ == "__main__":
-    create_interface()
+    create_progress_gauge()
   
