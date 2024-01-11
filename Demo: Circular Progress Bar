@@ -8,6 +8,7 @@ myself Tkinter, and I'm interested in seeing if the same effect can be
 established with plain vanilla Tkinter and some math.
 """
 
+
 from tkinter import Button, Canvas, Frame, Tk, ttk
 from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow)
 
@@ -56,11 +57,20 @@ def create_window():
     # window.overrideredirect(True)
 
     return window
-
+ 
 def update_progress_gauge():
     global percent, canvas, window
 
-    percent = int(scale.get())
+    #percent = int(scale.get())													 
+    new_percent = int(scale.get())
+
+    # Check if the progress has crossed the 100% mark
+    if percent >= 100 and new_percent < 100:
+        canvas.delete("progress_text_complete")
+        canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
+
+    percent = new_percent											
+											 				
     #canvas.delete("progress_lines")
     canvas.delete("progress_text")  # Prevent text updates from piling up
 
@@ -68,7 +78,7 @@ def update_progress_gauge():
     canvas.create_line(300, 300, 300 + 150 * sin(radians(percent)),
                        300 - 150 * cos(radians(percent)),
                        fill="deep sky blue", width=20, tags="progress_lines")
- 
+
     # Additional lines for smooth transition at 0 and 360 degrees
     if percent == 360:
         canvas.create_line(300, 300, 300 + 150 * sin(radians(0)),
@@ -83,15 +93,15 @@ def update_progress_gauge():
     canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue", tags="progress_text")
 
     # Announce countdown is complete at 100% and update the text accordingly
-    if progress_text == "100%":
-        canvas.delete("complete_text")  # Remove the "PROGRESS" text to replace it
-        canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="complete_text")
+    # Check if progress is 100% and update the text accordingly
+    if percent >= 100: 														  
+        canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="progress_text_complete")
     else:
-        canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="complete_text")
-        
+        canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
+
     canvas.tag_lower("progress_lines")
     window.after(100, update_progress_gauge)
-
+ 
 if __name__ == "__main__":
     create_interface()
 
