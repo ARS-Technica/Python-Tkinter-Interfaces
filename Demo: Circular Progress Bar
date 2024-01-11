@@ -8,92 +8,88 @@ myself Tkinter, and I'm interested in seeing if the same effect can be
 established with plain vanilla Tkinter and some math.
 """
 
-from tkinter import Canvas, Tk, Frame, Button, ttk
-from math import cos, sin, radians
+from tkinter import Button, Canvas, Frame, Tk, ttk
+from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow)
 
-def create_window():
-    window = Tk()
-    window.title('Circular Progress Gauge')
-    window.geometry('620x650+290+10')
-    window.config(bg='black')
-    return window
+def create_interface():
+    global canvas, percent, scale, window
 
-def create_canvas():
-    frame = Frame(window, height=600, width=600, bg='black', relief='sunken')
+    percent = 0
+
+    window = create_window()
+    canvas, scale = create_progress_gauge(window)
+    update_progress_gauge()
+
+    window.mainloop()
+
+def create_progress_gauge(window):
+    frame = Frame(window, height=600, width=600, bg="black", relief="sunken")
     frame.grid(columnspan=2, row=0)
 
-    canvas = Canvas(frame, bg='black', width=585, height=585, relief='raised', bd=1)
+    canvas = Canvas(frame, bg="black", width=585, height=585, relief="raised", bd=1)
     canvas.grid(padx=5, pady=5)
     
-    scale = ttk.Scale(window, orient='horizontal', style="Horizontal.TScale", from_=0, to=360, length=400)
+    scale = ttk.Scale(window, orient="horizontal", style="Horizontal.TScale", from_=0, to=360, length=400)
     scale.set(0)
     scale.grid(column=1, row=1, pady=10, padx=5)
 
     style = ttk.Style()
     style.configure("Horizontal.TScale", background="black")
 
-    Button(window, text='Start', bg='green2', width=20, command=update_progress).grid(column=0, row=1, padx=3, pady=5)
+    Button(window, text="Start", bg="green2", width=20, command=update_progress_gauge).grid(column=0, row=1, padx=3, pady=5)
     
     
     # Draw the circular outlines of the gauge
-    canvas.create_oval(100, 100, 500, 500, fill="", outline='', width=5, tag='outline')
-    canvas.create_oval(150, 150, 450, 450, fill='', outline='dark violet', width=6, tag='outline')
-    canvas.create_oval(180, 180, 420, 420, fill='gray22', outline='dark violet', width=6, tag='outline')
+    canvas.create_oval(100, 100, 500, 500, fill="", outline="", width=5, tag="outline")
+    canvas.create_oval(150, 150, 450, 450, fill="", outline="dark violet", width=6, tag="outline")
+    canvas.create_oval(180, 180, 420, 420, fill="black", outline="dark violet", width=6, tag="outline")
     canvas.tag_raise('outline')
     
-    canvas.create_text(300, 350, text='PYTHON', font=('Cambria Math', 22, 'bold'), fill='white')
-    canvas.create_text(300, 380, text='Tkinter', font=('Freestyle Script', 25, 'bold'), fill='orange')
+    # Countdown Label
+    #progress_label = ttk.Label(window, bg="gray22", text="PROGRESS", font=("Arial", 22, "bold"), fg="#000000")
+    canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white")
 
     return canvas, scale
 
-def update_progress():
-    global percent, canvas
+
+def create_window():   
+    window = Tk()
+    window.title("Demo: Circular Progress Gauge")
+    window.geometry("600x650+100+100")
+    window.configure(bg="#000000")
+    # Hide the title bar
+    # window.overrideredirect(True)
+
+    return window
+
+def update_progress_gauge():
+    global percent, canvas, window
 
     percent = int(scale.get())
-    canvas.delete("progress_lines")
+    #canvas.delete("progress_lines")
     canvas.delete("progress_text")  # Prevent text updates from piling up
 
     # Draw progress lines
     canvas.create_line(300, 300, 300 + 150 * sin(radians(percent)),
                        300 - 150 * cos(radians(percent)),
-                       fill='deep sky blue', width=20, tags="progress_lines")
-    canvas.create_line(300, 300, 300 + 150 * sin(radians(percent + 8)),
-                       300 - 150 * cos(radians(percent + 8)),
-                       fill='black', width=20, tags="progress_lines")
+                       fill="deep sky blue", width=20, tags="progress_lines")
 
     # Additional lines for smooth transition at 0 and 360 degrees
-    if percent == 0:
-        canvas.create_line(300, 300, 300 + 150 * sin(radians(0)),
-                           300 - 150 * cos(radians(0)),
-                           fill='black', width=20, tags="progress_lines")
-        canvas.create_line(300, 300, 300 + 150 * sin(radians(8)),
-                           300 - 150 * cos(radians(8)),
-                           fill='black', width=20, tags="progress_lines")
     if percent == 360:
         canvas.create_line(300, 300, 300 + 150 * sin(radians(0)),
                            300 - 150 * cos(radians(0)),
-                           fill='deep sky blue', width=20, tags="progress_lines")
+                           fill="deep sky blue", width=20, tags="progress_lines")
         canvas.create_line(300, 300, 300 + 150 * sin(radians(8)),
                            300 - 150 * cos(radians(8)),
-                           fill='deep sky blue', width=20, tags="progress_lines")
+                           fill="deep sky blue", width=20, tags="progress_lines")
 
     # Display progress text
     progress_text = f"{int(percent / 3.6)}%"
-    canvas.create_text(300, 300, text=progress_text, font=('Arial', 42, 'bold'), fill='deep sky blue', tags="progress_text")
+    canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue", tags="progress_text")
 
     canvas.tag_lower("progress_lines")
-    window.after(100, update_progress)
-
-def create_progress_gauge():
-    global window, scale, canvas, percent
-    percent = 0
-
-    window = create_window()
-    canvas, scale = create_canvas()
-    update_progress()
-
-    window.mainloop()
+    window.after(100, update_progress_gauge)
 
 if __name__ == "__main__":
-    create_progress_gauge()
-  
+    create_interface()
+
