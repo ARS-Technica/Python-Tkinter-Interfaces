@@ -70,12 +70,13 @@ def pause_progress():
         # If running, pause the progress
         progress_paused = True
         pause_button.configure(text="Restart")
+        restart()
 
 def restart():
-    global degrees, progress_paused
+    global degrees
     degrees = 0
-    progress_paused = True
-    pause_button.configure(text="Pause")
+    canvas.delete("progress_lines")
+    update_progress_gauge()
 
 def update_progress_gauge():
     global canvas, degrees, window, progress_paused
