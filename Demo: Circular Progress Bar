@@ -13,11 +13,17 @@ from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow
 
 def create_interface():
     global canvas, degrees, scale, window
+from tkinter import Button, Canvas, Frame, Tk, ttk
+from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow)
 
-    degrees = 0     # Will be divided into percentage in update_progress_gauge
+def create_interface():
+    global canvas, degrees, scale, window
+
+    degrees = 0  # Will be divided into percentage in update_progress_gauge
 
     window = create_window()
     canvas, scale = create_progress_gauge(window)
+    scale.bind("<Motion>", lambda event: update_progress_gauge())  # Bind scale movement to update function
     update_progress_gauge()
 
     window.mainloop()
@@ -31,13 +37,13 @@ def create_progress_gauge(window):
     
     scale = ttk.Scale(window, orient="horizontal", style="Horizontal.TScale", from_=0, to=360, length=400)
     scale.set(0)
-    scale.grid(column=0, row=1, pady=10, padx=5)
+    scale.grid(column=1, row=1, pady=10, padx=5)
 
     style = ttk.Style()
     style.configure("Horizontal.TScale", background="black")
 
     Button(window, text="Start", bg="green2", width=20, command=update_progress_gauge).grid(column=0, row=1, padx=3, pady=5)
-    scale.grid(column=1, row=2, pady=10, padx=5)
+    scale.grid(column=1, row=1, pady=10, padx=5)
     
     # Draw the circular outlines of the gauge
     canvas.create_oval(100, 100, 500, 500, fill="", outline="", width=5, tag="outline")
@@ -61,7 +67,7 @@ def update_progress_gauge():
     global canvas, degrees, window
 
     #degrees = int(scale.get())													 
-    new_degrees = int(scale.get())
+    new_degrees = int(scale.get())  # In case scale moves backwards
 
     # Check if the progress has crossed the 360 degree mark (100%)
     if degrees >= 360 and new_degrees < 360:    # 360 degrees = 100%
@@ -70,22 +76,13 @@ def update_progress_gauge():
 
     degrees = new_degrees						
 											 				
-    #canvas.delete("progress_lines")
+    #canvas.delete("progress_lines") # NO.  Not if you want gauge to fill in
     canvas.delete("progress_text")  # Prevent text updates from piling up
-
+  
     # Draw progress lines
     canvas.create_line(300, 300, 300 + 150 * sin(radians(degrees)),
                        300 - 150 * cos(radians(degrees)),
                        fill="deep sky blue", width=20, tags="progress_lines")
-
-    # Additional lines for smooth transition at 0 and 360 degrees
-    if degrees == 360:
-        canvas.create_line(300, 300, 300 + 150 * sin(radians(0)),
-                           300 - 150 * cos(radians(0)),
-                           fill="deep sky blue", width=20, tags="progress_lines")
-        canvas.create_line(300, 300, 300 + 150 * sin(radians(8)),
-                           300 - 150 * cos(radians(8)),
-                           fill="deep sky blue", width=20, tags="progress_lines")
 
     # Display progress text
     progress_text = f"{int(degrees / 3.6)}%"
@@ -98,7 +95,9 @@ def update_progress_gauge():
         canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
 
     canvas.tag_lower("progress_lines")
-    window.after(100, update_progress_gauge)
+    window.after(20, update_progress_gauge)    # Adjust the delay time as needed
+    # Note: Delays of 50 or over may result is gaps opening up in the ring
+    # Note: Delays of less than 20 may result in the application freezing up
  
 if __name__ == "__main__":
     create_interface()
