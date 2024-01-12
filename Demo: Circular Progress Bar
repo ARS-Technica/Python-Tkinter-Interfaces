@@ -12,14 +12,6 @@ from tkinter import Button, Canvas, Frame, Tk, ttk
 from math import cos, radians, sin
 
 def create_interface():
-    global canvas, degrees, window
-# Don't start the Progress Gauge until the user presses the "Start" button.  
-# Stop the Progress Gauge and the progress_text when it reaches 360 degrees even if the "Pause" button hasn't been pressed.  
-
-from tkinter import Button, Canvas, Frame, Tk, ttk
-from math import cos, radians, sin
-
-def create_interface():
     global canvas, degrees, window, progress_paused
 
     degrees = 0  # Will be divided into percentage in update_progress_gauge
@@ -54,6 +46,8 @@ def create_window():
     return window
 
 def create_buttons(window):
+    global pause_button
+
     start_button = Button(window, text="Start", bg="green2", width=20, command=start_progress)
     start_button.grid(column=0, row=1, padx=3, pady=5)
 
@@ -67,7 +61,21 @@ def start_progress():
 
 def pause_progress():
     global progress_paused
+
+    if progress_paused:
+        # If paused, restart the progress
+        start_progress()
+        pause_button.configure(text="Pause")
+    else:
+        # If running, pause the progress
+        progress_paused = True
+        pause_button.configure(text="Restart")
+
+def restart():
+    global degrees, progress_paused
+    degrees = 0
     progress_paused = True
+    pause_button.configure(text="Pause")
 
 def update_progress_gauge():
     global canvas, degrees, window, progress_paused
@@ -75,7 +83,7 @@ def update_progress_gauge():
     if not progress_paused:
         new_degrees = degrees + 1
 
-        # Check if the progress has crossed the 360 degree mark (100%)
+        # Check if the progress has crossed the 360-degree mark (100%)
         if degrees >= 360 and new_degrees < 360:  # 360 degrees = 100%
             canvas.delete("progress_text_complete")
             canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
@@ -96,7 +104,7 @@ def update_progress_gauge():
         # Announce countdown is complete at 360 degrees (100%) and update the text accordingly
         if degrees >= 360:  # 360 degrees = 100%
             canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="progress_text_complete")
-            progress_paused = True  # Stop the progress when it reaches 360 degrees
+            restart()  # Reset the progress when it reaches 360 degrees
 
         canvas.tag_lower("progress_lines")
 
@@ -104,6 +112,4 @@ def update_progress_gauge():
 
 if __name__ == "__main__":
     create_interface()
-
-
 
