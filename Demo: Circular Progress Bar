@@ -9,19 +9,12 @@ established with plain vanilla Tkinter and some math.
 """
 
 from tkinter import Button, Canvas, Frame, Tk, ttk
-from math import cos, radians, sin   # For drawing circles (Thanx Stack Overflow)
-
-def create_interface():
-    global canvas, degrees, scale, window
-from tkinter import Button, Canvas, Frame, Tk, ttk
-from math imfrom tkinter import Button, Canvas, Frame, Tk, ttk
 from math import cos, radians, sin
 
 def create_interface():
-    global canvas, degrees, window, progress_paused
+    global canvas, degrees, window
 
     degrees = 0
-    progress_paused = False
 
     window = create_window()
     canvas = create_progress_gauge(window)
@@ -60,8 +53,6 @@ def create_buttons(window):
     pause_button.grid(column=1, row=1, padx=3, pady=5)
 
 def start_progress():
-    global progress_paused
-    progress_paused = False
     update_progress_gauge()
 
 def pause_progress():
@@ -69,28 +60,28 @@ def pause_progress():
     progress_paused = True
 
 def update_progress_gauge():
-    global canvas, degrees, window, progress_paused
+    global canvas, degrees, window
 
-    if not progress_paused:
-        degrees += 1
-        if degrees > 360:
-            degrees = 0
+    degrees += 1
+    if degrees > 360:
+        degrees = 0
 
-        #canvas.delete("progress_lines")
-        canvas.create_line(300, 300, 300 + 150 * sin(radians(degrees)),
-                           300 - 150 * cos(radians(degrees)),
-                           fill="deep sky blue", width=20, tags="progress_lines")
+    canvas.delete("progress_lines")
+    canvas.create_line(300, 300, 300 + 150 * sin(radians(degrees)),
+                       300 - 150 * cos(radians(degrees)),
+                       fill="deep sky blue", width=20, tags="progress_lines")
 
-        canvas.create_text(300, 275, text=f"{int(degrees / 3.6)}%", font=("Arial", 42, "bold"), fill="deep sky blue", tags="progress_text")
+    canvas.create_text(300, 275, text=f"{int(degrees / 3.6)}%", font=("Arial", 42, "bold"), fill="deep sky blue", tags="progress_text")
 
-        if degrees >= 360:
-            canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="progress_text_complete")
-        else:
-            canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
+    if degrees >= 360:
+        canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="progress_text_complete")
+    else:
+        canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
 
-        canvas.tag_lower("progress_lines")
+    canvas.tag_lower("progress_lines")
 
-    window.after(20, update_progress_gauge)
+    if degrees < 360:
+        window.after(20, update_progress_gauge)
 
 if __name__ == "__main__":
     create_interface()
