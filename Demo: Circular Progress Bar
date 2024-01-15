@@ -11,11 +11,14 @@ established with plain vanilla Tkinter and some math.
 from tkinter import Button, Canvas, Frame, Tk, ttk
 from math import cos, radians, sin
 
+degrees = 0
+pause = False
+
 def create_interface():
-    global canvas, degrees, window, progress_paused
+    global canvas, degrees, window, pause
 
     degrees = 0  # Will be divided into percentage in update_progress_gauge
-    progress_paused = True
+    pause = True
 
     window = create_window()
     canvas = create_progress_gauge(window)
@@ -46,42 +49,132 @@ def create_window():
     return window
 
 def create_buttons(window):
-    global pause_button
+    global pause_button, reset_button, start_button
 
+    """
     start_button = Button(window, text="Start", bg="green2", width=20, command=start_progress)
     start_button.grid(column=0, row=1, padx=3, pady=5)
 
     pause_button = Button(window, text="Pause", bg="red", width=20, command=pause_progress)
     pause_button.grid(column=1, row=1, padx=3, pady=5)
+    """
+
+    # Set the width of the buttons to prevent them from changing positions when Pause becomes Reset
+    button_width = 20
+
+    start_button = Button(window, text="Start", font=("Arial", 12), bg="green2",
+                          command=lambda: start_progress, width=button_width)
+    start_button.pack(side=LEFT, padx=3, pady=5)
+
+    pause_button = Button(window, text="Pause", font=("Arial", 12), bg="yellow",
+                         command=pause_progress, width=button_width)
+    pause_button.pack(side=RIGHT, padx=3, pady=5)
+
+    reset_button = Button(window, text="Reset", font=("Arial", 12), bg="red",
+                            command=lambda: reset_progress, width=button_width)
+    
+"""
+
+def start_progress_bar(progress_bar_style):
+    global pause, thread1
+
+    pause = 0  # To resume progress bar
+    thread1 = threading.Thread(target=lambda: progress_bar_colors(progress_bar_style))
+    thread1.start()
+
+    if percentage.get() == 100:     # In case the Pause button is pressed at 100
+        reset_button.pack(side=RIGHT, padx=10, pady=10)
+        reset_button.config(command=lambda: reset_progress_bar(progress_bar_style))
+    else:
+        # When the Progress Bar begins advancing, the Reset Button becomes the Pause button
+        reset_button.pack_forget()
+        pause_button.pack(side=RIGHT, padx=10, pady=10)
+        pause_button.config(command=pause_progress_bar)
+
+"""
 
 def start_progress():
-    global progress_paused
-    progress_paused = False
+    global pause, degrees
+    
+    pause = False  # To resume progress 
+    """
+    thread1 = threading.Thread(target=lambda: progress_bar_colors(progress_bar_style))
+    thread1.start()
+    """
     update_progress_gauge()
+
+    if degrees.get() == 360:     # In case the Pause button is pressed at 360
+        reset_button.pack(side=RIGHT, padx=3, pady=5)
+        reset_button.config(command=reset_progress)
+    else:
+        # When the Progress Bar begins advancing, the Reset Button becomes the Pause button
+        reset_button.pack_forget()
+        pause_button.pack(side=RIGHT, padx=3, pady=5)
+        pause_button.config(command=pause_progress)
+
+"""
+
+def pause_progress_bar():
+    global pause
+
+    pause = 1
+
+    pause_button.pack_forget()
+    reset_button.pack(side=RIGHT, padx=10, pady=10)
+
+""" 
 
 def pause_progress():
-    global progress_paused
+    global pause
+    
+    pause = True
 
-    if progress_paused:
-        # If paused, restart the progress
-        start_progress()
-        pause_button.configure(text="Pause")
-    else:
-        # If running, pause the progress
-        progress_paused = True
-        pause_button.configure(text="Restart")
-        restart()
+    pause_button.pack_forget()
+    reset_button.pack(side=RIGHT, padx=10, pady=10)    
 
-def restart():
-    global degrees
+"""
+
+def reset_progress_bar(progress_bar_style):
+    global pause
+
+    pause = 1  # Pause the existing progress bar thread
+    thread1.join()
+
+    percentage.set(0)  # Start from the beginning  
+
+    # Reset the background color to red to prevent a blue flash on reset
+    progress_bar_style.configure("TProgressbar", troughcolor="lightgray", background="#dd776e")
+
+    # Check if progress is at 100%, if not, change the button back to "Pause"
+    if percentage.get() != 100:
+        reset_button.pack_forget()
+        pause_button.pack(side=RIGHT, padx=10, pady=10)
+    
+    percentage_label_var.set("0%") # Update the label to show 0%
+
+"""
+
+def restart_progress():
+    global degrees, pause
+    
     degrees = 0
+    # thread1.join()
+    pause = True
+  
     canvas.delete("progress_lines")
-    update_progress_gauge()
+    #update_progress_gauge()
+    pause_button.configure(text="Pause")
+
+    if degrees.get() != 360:
+        reset_button.pack_forget()
+        pause_button.pack(side=RIGHT, padx=10, pady=10)    
+   
+    #progress_text = f"{int(degrees / 3.6)}%"      
 
 def update_progress_gauge():
-    global canvas, degrees, window, progress_paused
+    global canvas, degrees, window, pause
 
-    if not progress_paused:
+    if not pause:
         new_degrees = degrees + 1
 
         # Check if the progress has crossed the 360-degree mark (100%)
@@ -105,7 +198,7 @@ def update_progress_gauge():
         # Announce countdown is complete at 360 degrees (100%) and update the text accordingly
         if degrees >= 360:  # 360 degrees = 100%
             canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="progress_text_complete")
-            restart()  # Reset the progress when it reaches 360 degrees
+            restart_progress()  # Reset the progress when it reaches 360 degrees
 
         canvas.tag_lower("progress_lines")
 
@@ -113,4 +206,6 @@ def update_progress_gauge():
 
 if __name__ == "__main__":
     create_interface()
+
+
 
