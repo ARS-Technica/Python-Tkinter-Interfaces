@@ -60,7 +60,7 @@ def create_buttons(window):
     pause_button.pack(side=LEFT, padx=3, pady=5)
 
     reset_button = Button(window, text="Reset", font=("Arial", 12), bg="red", command=reset_progress, width=button_width)
-    #reset_button.pack(side=LEFT, padx=3, pady=5)
+    # reset_button.pack(side=LEFT, padx=3, pady=5)
 
 def start_progress():
     global pause, degrees
@@ -85,18 +85,6 @@ def pause_progress():
     reset_button.pack(side=LEFT, padx=3, pady=5)
 
 def reset_progress():
-    """
-    global pause
-
-    pause = True
-    canvas.delete("progress_lines")
-    degrees = 0
-    update_progress_gauge()
-    pause_button.config(text="Pause")
-    reset_button.pack_forget()
-    start_button.pack(side=LEFT, padx=3, pady=5)
-    """
-
     global degrees, pause
 
     degrees = 0
@@ -107,40 +95,59 @@ def reset_progress():
     progress_text = f"{int(degrees / 3.6)}%"
     update_progress_gauge()
 
+    canvas.delete("progress_text_complete")
+    reset_button.pack_forget()
+    pause_button.pack(side=LEFT, padx=3, pady=5)
+
+def restart_progress():
+    global degrees, pause
+
+    degrees = 0
+    pause = True
+
+    canvas.delete("progress_lines")
+    update_progress_gauge()
     reset_button.pack_forget()
     pause_button.pack(side=LEFT, padx=3, pady=5)
 
 def update_progress_gauge():
-    global canvas, degrees, window, pause
+    global canvas, degrees, pause, window
 
-    if not pause:
-        new_degrees = degrees + 1
+    if pause:
+        pass
+    else:
+        if degrees < 360:     # Stop Progress Gauge at 100%
+            new_degrees = degrees + 1   
 
-        if degrees >= 360 and new_degrees < 360:
-            canvas.delete("progress_text_complete")
+            #canvas.delete("progress_text_complete")
             canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
 
-        degrees = new_degrees
+            degrees = new_degrees
 
-        canvas.delete("progress_text")
-
-        canvas.create_line(300, 300, 300 + 150 * sin(radians(degrees)),
-                           300 - 150 * cos(radians(degrees)),
-                           fill="deep sky blue", width=20, tags="progress_lines")
-
-        progress_text = f"{int(degrees / 3.6)}%"
-        canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue", tags="progress_text")
-
-        if degrees >= 360:
+            canvas.delete("progress_text")  # Prevent text updates from piling up
+    
+            canvas.create_line(300, 300, 300 + 150 * sin(radians(degrees)),
+                               300 - 150 * cos(radians(degrees)),
+                               fill="deep sky blue", width=20, tags="progress_lines")
+    
+            progress_text = f"{int(degrees / 3.6)}%"
+            canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue", tags="progress_text")
+    
+            canvas.tag_lower("progress_lines")
+    
+            window.after(20, update_progress_gauge)
+        
+        else:
+            
             canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="progress_text_complete")
-            restart_progress()
-
-        canvas.tag_lower("progress_lines")
-
-        window.after(20, update_progress_gauge)
-
+            #reset_progress()
+            pause_button.pack_forget()
+            reset_button.pack(side=LEFT, padx=3, pady=5)
+            #time.sleep(.75)
+            
 if __name__ == "__main__":
     create_interface()
+
 
 
 
