@@ -10,6 +10,7 @@ established with plain vanilla Tkinter and some math.
 
 from tkinter import Button, Canvas, Frame, Tk, LEFT
 from math import cos, radians, sin
+import winsound
 
 degrees = 0
 pause = False
@@ -110,18 +111,23 @@ def restart_progress():
     reset_button.pack_forget()
     pause_button.pack(side=LEFT, padx=3, pady=5)
 
+def play_sound():
+    # Upon reaching 100, the Progress Bar will chime
+    winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS) 
+    # Options: SystemAsterisk, SystemExclamation, SystemExit, SystemHand, SystemQuestion
+
 def update_progress_gauge():
     global canvas, degrees, pause, window
+
+    #canvas.delete("progress_text_complete")
+    canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
+
 
     if pause:
         pass
     else:
         if degrees < 360:     # Stop Progress Gauge at 100%
-            new_degrees = degrees + 1   
-
-            #canvas.delete("progress_text_complete")
-            canvas.create_text(300, 325, text="PROGRESS", font=("Arial", 22, "bold"), fill="white", tags="progress_text")
-
+            new_degrees = degrees + 1
             degrees = new_degrees
 
             canvas.delete("progress_text")  # Prevent text updates from piling up
@@ -138,7 +144,8 @@ def update_progress_gauge():
             window.after(20, update_progress_gauge)
         
         else:
-            
+            play_sound()
+            canvas.delete("progress_text")   
             canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white", tags="progress_text_complete")
             #reset_progress()
             pause_button.pack_forget()
@@ -147,6 +154,8 @@ def update_progress_gauge():
             
 if __name__ == "__main__":
     create_interface()
+
+
 
 
 
