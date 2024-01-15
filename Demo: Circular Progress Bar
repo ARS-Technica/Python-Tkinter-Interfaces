@@ -60,7 +60,7 @@ def create_buttons(window):
     pause_button.pack(side=LEFT, padx=3, pady=5)
 
     reset_button = Button(window, text="Reset", font=("Arial", 12), bg="red", command=reset_progress, width=button_width)
-    reset_button.pack(side=LEFT, padx=3, pady=5)
+    #reset_button.pack(side=LEFT, padx=3, pady=5)
 
 def start_progress():
     global pause, degrees
@@ -85,6 +85,7 @@ def pause_progress():
     reset_button.pack(side=LEFT, padx=3, pady=5)
 
 def reset_progress():
+    """
     global pause
 
     pause = True
@@ -94,15 +95,18 @@ def reset_progress():
     pause_button.config(text="Pause")
     reset_button.pack_forget()
     start_button.pack(side=LEFT, padx=3, pady=5)
+    """
 
-def restart_progress():
     global degrees, pause
 
     degrees = 0
-    pause = False
+    pause = True
 
     canvas.delete("progress_lines")
+    canvas.delete("progress_text")
+    progress_text = f"{int(degrees / 3.6)}%"
     update_progress_gauge()
+
     reset_button.pack_forget()
     pause_button.pack(side=LEFT, padx=3, pady=5)
 
@@ -137,4 +141,6 @@ def update_progress_gauge():
 
 if __name__ == "__main__":
     create_interface()
+
+
 
