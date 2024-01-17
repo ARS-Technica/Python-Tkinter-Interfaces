@@ -14,6 +14,9 @@ import winsound
 
 degrees = 0
 pause = False
+center_x = 0
+center_y = 0
+outer_radius = 0
 
 def confirmation_messagebox():
     result = messagebox.askyesno("Confirmation", "Would you like to restart the Progress Gauge?")
@@ -25,13 +28,13 @@ def confirmation_messagebox():
         # User clicks 'No' button
         message_box = messagebox.showinfo("Exit Message", "Thanks for trying out our Circular Progress Gauge!")
     
-        # Delay for a few seconds, then closes application
+        # Delay for a few seconds, then close the application
         window.after(3000, window.destroy)
 
 def create_interface():
     global canvas, degrees, window, pause_button, reset_button, start_button
 
-    degrees = 0  # Will be divided into percentage in update_progress_gauge
+    degrees = 0  # Will be divided into a percentage in update_progress_gauge
     pause = True
 
     window = create_window()
@@ -40,6 +43,8 @@ def create_interface():
     window.mainloop()
 
 def create_progress_gauge(window):
+    global center_x, center_y, outer_radius
+
     frame = Frame(window, bg="black", relief="sunken")
     frame.pack(fill="both", expand=True)
 
@@ -47,17 +52,16 @@ def create_progress_gauge(window):
     canvas = Canvas(frame, bg="black", width=canvas_size, height=canvas_size, relief="raised", bd=1)
     canvas.pack(padx=5, pady=5, fill="both", expand=True)
 
-    # Calculate the center of the canvas
     center_x = canvas_size // 2
     center_y = canvas_size // 2
+    outer_radius = canvas_size // 2 - 10
 
     # Draw the circular outlines of the gauge
-    outer_radius = canvas_size // 2 - 10
-    inner_radius = outer_radius - 30
-
     canvas.create_oval(center_x - outer_radius, center_y - outer_radius,
                        center_x + outer_radius, center_y + outer_radius,
                        fill="", outline="", width=5, tag="outline")
+
+    inner_radius = outer_radius - 30
 
     canvas.create_oval(center_x - inner_radius, center_y - inner_radius,
                        center_x + inner_radius, center_y + inner_radius,
@@ -142,8 +146,11 @@ def reset_progress():
         canvas.delete("percentage_counter")
         canvas.delete("progress_label")
         progress_text = "0%"
-        canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue", tags="percentage_counter")
-        canvas.create_text(300, 325, text="READY!", font=("Arial", 22, "bold"), fill="white", tags="ready_label")
+        canvas.create_text(center_x, center_y - 25, text=progress_text, font=("Arial", 42, "bold"),
+                           fill="deep sky blue", tags="percentage_counter")
+
+        canvas.create_text(center_x, center_y + 25, text="READY!", font=("Arial", 22, "bold"),
+                           fill="white", tags="ready_label")
         
         update_progress_gauge()
     
@@ -151,7 +158,8 @@ def reset_progress():
         reset_button.pack_forget()
         pause_button.pack(side=RIGHT, padx=3, pady=5)
         
-        canvas.create_text(300, 325, text="READY!", font=("Arial", 22, "bold"), fill="white", tags="ready_label")
+        canvas.create_text(center_x, center_y + 25, text="READY!", font=("Arial", 22, "bold"),
+                           fill="white", tags="ready_label")
     else:
         pass
 
@@ -172,7 +180,7 @@ def play_sound():
     # Options: SystemAsterisk, SystemExclamation, SystemExit, SystemHand, SystemQuestion
 
 def update_progress_gauge():
-    global canvas, degrees, pause, window
+    global canvas, degrees, pause, window, center_x, center_y
 
     if pause:
         pass
@@ -182,38 +190,31 @@ def update_progress_gauge():
 
             degrees = new_degrees
 
-            canvas.delete("progress_lines")
+            #canvas.delete("progress_lines")    # Not if you want the Progress Gauge to fill
             canvas.delete("percentage_counter")  # Prevent text updates from piling up
-
-            # Calculate the center of the canvas
-            center_x = canvas.winfo_reqwidth() // 2
-            center_y = canvas.winfo_reqheight() // 2
-
-            # Draw the progress lines
+            
             canvas.create_line(center_x, center_y,
-                               center_x + 150 * sin(radians(degrees)),
-                               center_y - 150 * cos(radians(degrees)),
+                               center_x + (outer_radius - 10) * sin(radians(degrees)),
+                               center_y - (outer_radius - 10) * cos(radians(degrees)),
                                fill="deep sky blue", width=20, tags="progress_lines")
 
-            # Update the percentage counter
             percentage_counter = f"{int(degrees / 3.6)}%"
-            canvas.create_text(center_x, center_y - 25, text=percentage_counter,
-                               font=("Arial", 42, "bold"), fill="deep sky blue", tags="percentage_counter")
+            canvas.create_text(center_x, center_y - 25, text=percentage_counter, font=("Arial", 42, "bold"),
+                               fill="deep sky blue", tags="percentage_counter")
 
-            # Raise the progress lines
             canvas.tag_lower("progress_lines")
 
             canvas.delete("progress_text_complete")
-            canvas.create_text(center_x, center_y + 50, text="PROGRESS",
-                               font=("Arial", 22, "bold"), fill="white", tags="progress_label")
+            canvas.create_text(center_x, center_y + 25, text="PROGRESS", font=("Arial", 22, "bold"),
+                               fill="white", tags="progress_label")
 
             window.after(20, update_progress_gauge)
 
         else:
             play_sound()
             canvas.delete("progress_label")
-            canvas.create_text(center_x, center_y + 50, text="COMPLETE!",
-                               font=("Arial", 22, "bold"), fill="white", tags="progress_text_complete")
+            canvas.create_text(center_x, center_y + 25, text="COMPLETE!", font=("Arial", 22, "bold"),
+                               fill="white", tags="progress_text_complete")
             pause_button.pack_forget()
             reset_button.pack(side=RIGHT, padx=3, pady=5)
             reset_button.config(command=reset_progress)
