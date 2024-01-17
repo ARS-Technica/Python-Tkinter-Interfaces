@@ -8,12 +8,32 @@ myself Tkinter, and I'm interested in seeing if the same effect can be
 established with plain vanilla Tkinter and some math.
 """
 
-from tkinter import Button, Canvas, Frame, Tk, LEFT, RIGHT
+from tkinter import Button, Canvas, Frame, LEFT, messagebox, RIGHT, Tk
 from math import cos, radians, sin
+from time import sleep
 import winsound
 
 degrees = 0
 pause = False
+
+def confirmation_messagebox():
+    result = messagebox.askyesno("Confirmation", "Would you like to restart the Progress Gauge?")
+    
+    if result:
+        # User clicks 'Yes' button
+        """
+        reset_progress()
+        sleep(5)
+        start_progress()
+        """
+        reset_progress()
+        window.after(3000, start_progress())
+    else:
+        # User clicks 'No' button
+        message_box = messagebox.showinfo("Exit Message", "Thanks for trying out our Circular Progress Gauge!")
+    
+        # Delay for a few seconds, then closes application
+        window.after(3000, window.destroy)
 
 def create_interface():
     global canvas, degrees, window, pause_button, reset_button, start_button
@@ -75,9 +95,7 @@ def start_progress():
     update_progress_gauge()
 
     if degrees == 360:
-        pause_button.pack_forget()
-        reset_button.pack(side=RIGHT, padx=3, pady=5)
-        reset_button.config(command=restart_progress)
+        confirmation_messagebox()
     else:
         reset_button.pack_forget()
         pause_button.pack(side=RIGHT, padx=3, pady=5)
@@ -88,26 +106,35 @@ def pause_progress():
 
     pause = True
 
-    pause_button.pack_forget()
-    reset_button.pack(side=RIGHT, padx=3, pady=5)
+    if degrees == 0 or degrees == 360:
+        pass
+    else:
+        pause_button.pack_forget()
+        reset_button.pack(side=RIGHT, padx=3, pady=5)
 
 def reset_progress():
     global degrees, pause
 
-    degrees = 0
-    pause = True
-
-    canvas.delete("progress_lines")
-    canvas.delete("percentage_counter")
-    canvas.delete("progress_label")
-    percentage_counter = f"{int(degrees / 3.6)}%"
-    update_progress_gauge()
-
-    canvas.delete("progress_text_complete")
-    reset_button.pack_forget()
-    pause_button.pack(side=RIGHT, padx=3, pady=5)
+    if pause or degrees == 360:
+        degrees = 0
+        pause = True
     
-    canvas.create_text(300, 325, text="READY!", font=("Arial", 22, "bold"), fill="white", tags="ready_label")
+        canvas.delete("progress_lines")
+        canvas.delete("percentage_counter")
+        canvas.delete("progress_label")
+        progress_text = "0%"
+        canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue", tags="percentage_counter")
+        canvas.create_text(300, 325, text="READY!", font=("Arial", 22, "bold"), fill="white", tags="ready_label")
+        
+        update_progress_gauge()
+    
+        canvas.delete("progress_text_complete")
+        reset_button.pack_forget()
+        pause_button.pack(side=RIGHT, padx=3, pady=5)
+        
+        canvas.create_text(300, 325, text="READY!", font=("Arial", 22, "bold"), fill="white", tags="ready_label")
+    else:
+        pass                                                                                          
 
 def restart_progress():
     global degrees, pause
@@ -166,5 +193,4 @@ def update_progress_gauge():
 
 if __name__ == "__main__":
     create_interface()
-
 
