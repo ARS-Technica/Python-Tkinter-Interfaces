@@ -12,14 +12,9 @@ from tkinter import Button, Canvas, Frame, LEFT, messagebox, RIGHT, Tk
 from math import cos, radians, sin
 import winsound
 
-#center_x = 0
-#center_y = 0
-#degrees = 0
 gauge_fill = "deep sky blue"
 gauge_outline = "dark violet"
 gauge_text = "white"
-#pause = False
-
 
 def confirmation_messagebox():
     result = messagebox.askyesno("Confirmation", "Would you like to restart the Progress Gauge?")
@@ -95,11 +90,13 @@ def create_window():
     window = Tk()
     window.title("Demo: Circular Progress Gauge")
 
+    # Hide the title bar
+    window.overrideredirect(True)
+    
     # Calculate the window dimensions based on the gauge size
     gauge_size = 375
     window_width = gauge_size + 20  # Add padding
     window_height = gauge_size + 70  # Add padding and space for buttons
-
     window.geometry(f"{window_width}x{window_height}+100+100")
     window.configure(bg="#000000")
 
@@ -173,19 +170,6 @@ def reset_progress():
     else:
         pass    # A stylistic choice to never have three buttons displayed
 
-"""
-def restart_progress():
-    global degrees, pause
-
-    degrees = 0
-    pause = True
-
-    canvas.delete("progress_lines")
-    update_progress_gauge()
-    reset_button.pack_forget()
-    pause_button.pack(side=RIGHT, padx=3, pady=5)
-"""
-
 def play_sound():
     # Upon reaching 360 degrees (100 percent), the Progress Bar will chime
     winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
@@ -217,7 +201,6 @@ def update_progress_gauge():
 
             canvas.tag_lower("progress_lines") # Keep the lines beneath the ovals
 
-            #canvas.delete("progress_text_complete")
             canvas.create_text(center_x, center_y + 25, text="PROGRESS", 
                                font=("Arial", 22, "bold"),
                                fill=gauge_text, tags="progress_label")
@@ -234,6 +217,9 @@ def update_progress_gauge():
             pause_button.pack_forget()
             reset_button.pack(side=RIGHT, padx=3, pady=5)
             reset_button.config(command=reset_progress)
+
+            # Wait three seconds, then close the window
+            window.after(3000, lambda: window.destroy())  
 
 if __name__ == "__main__":
     create_interface()
