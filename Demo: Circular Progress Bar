@@ -192,11 +192,18 @@ def update_progress_gauge():
 
             #canvas.delete("progress_lines")    # Not if you want the Progress Gauge to fill
             canvas.delete("percentage_counter")  # Prevent text updates from piling up
-            
+            """
             canvas.create_line(center_x, center_y,
                                center_x + (outer_radius - 10) * sin(radians(degrees)),
                                center_y - (outer_radius - 10) * cos(radians(degrees)),
                                fill="deep sky blue", width=20, tags="progress_lines")
+            """
+
+            line_length = outer_radius - 30  # Adjust the length of the lines
+            canvas.create_line(center_x, center_y,
+                   center_x + line_length * sin(radians(degrees)),
+                   center_y - line_length * cos(radians(degrees)),
+                   fill="deep sky blue", width=20, tags="progress_lines")
 
             percentage_counter = f"{int(degrees / 3.6)}%"
             canvas.create_text(center_x, center_y - 25, text=percentage_counter, font=("Arial", 42, "bold"),
