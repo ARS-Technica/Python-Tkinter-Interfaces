@@ -10,7 +10,6 @@ established with plain vanilla Tkinter and some math.
 
 from tkinter import Button, Canvas, Frame, LEFT, messagebox, RIGHT, Tk
 from math import cos, radians, sin
-from time import sleep
 import winsound
 
 degrees = 0
@@ -21,13 +20,7 @@ def confirmation_messagebox():
     
     if result:
         # User clicks 'Yes' button
-        """
         reset_progress()
-        sleep(5)
-        start_progress()
-        """
-        reset_progress()
-        window.after(3000, start_progress())
     else:
         # User clicks 'No' button
         message_box = messagebox.showinfo("Exit Message", "Thanks for trying out our Circular Progress Gauge!")
@@ -47,10 +40,10 @@ def create_interface():
     window.mainloop()
 
 def create_progress_gauge(window):
-    frame = Frame(window, height=600, width=600, bg="black", relief="sunken")
+    frame = Frame(window, bg="black", relief="sunken")
     frame.pack(fill="both", expand=True)
 
-    canvas = Canvas(frame, bg="black", width=585, height=585, relief="raised", bd=1)
+    canvas = Canvas(frame, bg="black", width=375, height=375, relief="raised", bd=1)
     canvas.pack(padx=5, pady=5, fill="both", expand=True)
 
     # Draw the circular outlines of the gauge
@@ -68,7 +61,13 @@ def create_progress_gauge(window):
 def create_window():
     window = Tk()
     window.title("Demo: Circular Progress Gauge")
-    window.geometry("600x650+100+100")
+
+    # Calculate the window dimensions based on the gauge size
+    gauge_size = 375
+    window_width = gauge_size + 20  # Add padding
+    window_height = gauge_size + 70  # Add padding and space for buttons
+
+    window.geometry(f"{window_width}x{window_height}+100+100")
     window.configure(bg="#000000")
 
     return window
@@ -134,7 +133,7 @@ def reset_progress():
         
         canvas.create_text(300, 325, text="READY!", font=("Arial", 22, "bold"), fill="white", tags="ready_label")
     else:
-        pass                                                                                          
+        pass
 
 def restart_progress():
     global degrees, pause
@@ -163,7 +162,7 @@ def update_progress_gauge():
 
             degrees = new_degrees
 
-            #canvas.delete("progress_lines")    # Not if you wan the Progress Gauge to fill
+            #canvas.delete("progress_lines")    # Not if you want the Progress Gauge to fill
             canvas.delete("percentage_counter")  # Prevent text updates from piling up
             
             canvas.create_line(300, 300, 300 + 150 * sin(radians(degrees)),
@@ -189,7 +188,6 @@ def update_progress_gauge():
             pause_button.pack_forget()
             reset_button.pack(side=RIGHT, padx=3, pady=5)
             reset_button.config(command=reset_progress)
-
 
 if __name__ == "__main__":
     create_interface()
