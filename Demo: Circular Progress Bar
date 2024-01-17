@@ -8,7 +8,7 @@ myself Tkinter, and I'm interested in seeing if the same effect can be
 established with plain vanilla Tkinter and some math.
 """
 
-from tkinter import Button, Canvas, Frame, Tk, LEFT
+from tkinter import Button, Canvas, Frame, Tk, LEFT, RIGHT
 from math import cos, radians, sin
 import winsound
 
@@ -38,6 +38,10 @@ def create_progress_gauge(window):
     canvas.create_oval(150, 150, 450, 450, fill="", outline="dark violet", width=6, tag="outline")
     canvas.create_oval(180, 180, 420, 420, fill="black", outline="dark violet", width=6, tag="outline")
     canvas.tag_raise('outline')
+    
+    progress_text = "0%"
+    canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue", tags="percentage_counter")
+    canvas.create_text(300, 325, text="READY!", font=("Arial", 22, "bold"), fill="white", tags="ready_label")
 
     return canvas
 
@@ -58,23 +62,25 @@ def create_buttons(window):
     start_button.pack(side=LEFT, padx=3, pady=5)
 
     pause_button = Button(window, text="Pause", font=("Arial", 12), bg="yellow", command=pause_progress, width=button_width)
-    pause_button.pack(side=LEFT, padx=3, pady=5)
+    pause_button.pack(side=RIGHT, padx=3, pady=5)
 
     reset_button = Button(window, text="Reset", font=("Arial", 12), bg="red", command=reset_progress, width=button_width)
-    #reset_button.pack(side=LEFT, padx=3, pady=5)
+    #reset_button.pack(side=RIGHT, padx=3, pady=5)
 
 def start_progress():
     global pause, degrees
 
     pause = False
+    canvas.delete("ready_label")
     update_progress_gauge()
 
     if degrees == 360:
-        reset_button.pack(side=LEFT, padx=3, pady=5)
+        pause_button.pack_forget()
+        reset_button.pack(side=RIGHT, padx=3, pady=5)
         reset_button.config(command=restart_progress)
     else:
         reset_button.pack_forget()
-        pause_button.pack(side=LEFT, padx=3, pady=5)
+        pause_button.pack(side=RIGHT, padx=3, pady=5)
         pause_button.config(command=pause_progress)
 
 def pause_progress():
@@ -83,7 +89,7 @@ def pause_progress():
     pause = True
 
     pause_button.pack_forget()
-    reset_button.pack(side=LEFT, padx=3, pady=5)
+    reset_button.pack(side=RIGHT, padx=3, pady=5)
 
 def reset_progress():
     global degrees, pause
@@ -92,14 +98,16 @@ def reset_progress():
     pause = True
 
     canvas.delete("progress_lines")
-    canvas.delete("progress_text")
+    canvas.delete("percentage_counter")
     canvas.delete("progress_label")
-    progress_text = f"{int(degrees / 3.6)}%"
+    percentage_counter = f"{int(degrees / 3.6)}%"
     update_progress_gauge()
 
     canvas.delete("progress_text_complete")
     reset_button.pack_forget()
-    pause_button.pack(side=LEFT, padx=3, pady=5)
+    pause_button.pack(side=RIGHT, padx=3, pady=5)
+    
+    canvas.create_text(300, 325, text="READY!", font=("Arial", 22, "bold"), fill="white", tags="ready_label")
 
 def restart_progress():
     global degrees, pause
@@ -110,7 +118,7 @@ def restart_progress():
     canvas.delete("progress_lines")
     update_progress_gauge()
     reset_button.pack_forget()
-    pause_button.pack(side=LEFT, padx=3, pady=5)
+    pause_button.pack(side=RIGHT, padx=3, pady=5)
 
 def play_sound():
     # Upon reaching 100, the Progress Bar will chime
@@ -128,16 +136,16 @@ def update_progress_gauge():
 
             degrees = new_degrees
 
-            #canvas.delete("progress_lines")
-            canvas.delete("progress_text")  # Prevent text updates from piling up
+            #canvas.delete("progress_lines")    # Not if you wan the Progress Gauge to fill
+            canvas.delete("percentage_counter")  # Prevent text updates from piling up
             
             canvas.create_line(300, 300, 300 + 150 * sin(radians(degrees)),
                                300 - 150 * cos(radians(degrees)),
                                fill="deep sky blue", width=20, tags="progress_lines")
 
-            progress_text = f"{int(degrees / 3.6)}%"
-            canvas.create_text(300, 275, text=progress_text, font=("Arial", 42, "bold"), fill="deep sky blue",
-                               tags="progress_text")
+            percentage_counter = f"{int(degrees / 3.6)}%"
+            canvas.create_text(300, 275, text=percentage_counter, font=("Arial", 42, "bold"), fill="deep sky blue",
+                               tags="percentage_counter")
 
             canvas.tag_lower("progress_lines")
 
@@ -151,8 +159,12 @@ def update_progress_gauge():
             canvas.delete("progress_label")
             canvas.create_text(300, 325, text="COMPLETE!", font=("Arial", 22, "bold"), fill="white",
                                tags="progress_text_complete")
-            reset_button.pack(side=LEFT, padx=3, pady=5)
+            pause_button.pack_forget()
+            reset_button.pack(side=RIGHT, padx=3, pady=5)
+            reset_button.config(command=reset_progress)
+
 
 if __name__ == "__main__":
     create_interface()
+
 
