@@ -31,8 +31,22 @@ def confirmation_messagebox():
         # Delay for a few seconds, then close the application
         window.after(3000, window.destroy)
 
+def create_buttons(window):
+    global pause_button, reset_button, start_button
+
+    button_width = 20
+
+    start_button = Button(window, text="Start", font=("Arial", 12), bg="green2", command=start_progress, width=button_width)
+    start_button.pack(side=LEFT, padx=3, pady=5)
+
+    pause_button = Button(window, text="Pause", font=("Arial", 12), bg="yellow", command=pause_progress, width=button_width)
+    pause_button.pack(side=RIGHT, padx=3, pady=5)
+
+    reset_button = Button(window, text="Reset", font=("Arial", 12), bg="red", command=reset_progress, width=button_width)
+    # reset_button.pack(side=RIGHT, padx=3, pady=5) # Causes app to show 3 buttons
+
 def create_interface():
-    global canvas, degrees, window, pause_button, reset_button, start_button
+    global canvas, degrees, window, pause, pause_button, reset_button, start_button
 
     degrees = 0  # Will be divided into a percentage in update_progress_gauge
     pause = True
@@ -94,7 +108,7 @@ def create_window():
 
     # Hide the title bar
     window.overrideredirect(True)
-    #Make the window appear above all other active windows
+    # Make the window appear above all other active windows
     window.attributes('-topmost',True)
     
     # Calculate the window dimensions based on the gauge size
@@ -106,20 +120,6 @@ def create_window():
 
     return window
 
-def create_buttons(window):
-    global pause_button, reset_button, start_button
-
-    button_width = 20
-
-    start_button = Button(window, text="Start", font=("Arial", 12), bg="green2", command=start_progress, width=button_width)
-    start_button.pack(side=LEFT, padx=3, pady=5)
-
-    pause_button = Button(window, text="Pause", font=("Arial", 12), bg="yellow", command=pause_progress, width=button_width)
-    pause_button.pack(side=RIGHT, padx=3, pady=5)
-
-    reset_button = Button(window, text="Reset", font=("Arial", 12), bg="red", command=reset_progress, width=button_width)
-    #reset_button.pack(side=RIGHT, padx=3, pady=5) # Causes app to show 3 buttons
-
 def exit_window():
     """
     This function closes the window when the Progress Gauge reaches 100%,
@@ -129,21 +129,6 @@ def exit_window():
 
     if degrees == 360 and not pause:
         window.destroy()
-
-def start_progress():
-    global pause, degrees
-
-    pause = False
-    canvas.delete("ready_label")
-    update_progress_gauge()
-    
-    # In case user doesn't realize he needs to press "Reset" to relaunch count
-    if degrees == 360:
-        confirmation_messagebox()
-    else:
-        reset_button.pack_forget()
-        pause_button.pack(side=RIGHT, padx=3, pady=5)
-        pause_button.config(command=pause_progress)
 
 def pause_progress():
     global pause
@@ -155,6 +140,11 @@ def pause_progress():
     else:
         pause_button.pack_forget()
         reset_button.pack(side=RIGHT, padx=3, pady=5)
+
+def play_sound():
+    # Upon reaching 360 degrees (100 percent), the Progress Bar will chime
+    winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
+    # Options: SystemAsterisk, SystemExclamation, SystemExit, SystemHand, SystemQuestion
 
 def reset_progress():
     global degrees, pause
@@ -184,13 +174,24 @@ def reset_progress():
     else:
         pass    # A stylistic choice to never have three buttons displayed
 
-def play_sound():
-    # Upon reaching 360 degrees (100 percent), the Progress Bar will chime
-    winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
-    # Options: SystemAsterisk, SystemExclamation, SystemExit, SystemHand, SystemQuestion
+def start_progress():
+    global degrees, pause
+
+    if pause:   # Prevents start_progress function being called multiple times
+        pause = False
+        canvas.delete("ready_label")
+        update_progress_gauge()
+
+        # In case the user doesn't realize they need to press "Reset" to relaunch count
+        if degrees == 360:
+            confirmation_messagebox()
+        else:
+            reset_button.pack_forget()
+            pause_button.pack(side=RIGHT, padx=3, pady=5)
+            pause_button.config(command=pause_progress)
 
 def update_progress_gauge():
-    global canvas, degrees, pause, window, center_x, center_y
+    global canvas, center_x, center_y, degrees, pause, window
 
     if pause:
         pass
@@ -238,4 +239,6 @@ def update_progress_gauge():
 
 if __name__ == "__main__":
     create_interface()
+
+
 
