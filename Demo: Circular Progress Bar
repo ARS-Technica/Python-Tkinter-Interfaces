@@ -1,5 +1,6 @@
 """
 Circular Progress Bar
+a.k.a. Radial Gauge
 
 The challenge is to create a circular progress gauge that counts up from 0 to 
 100 in Python using the Tkinter library.  Every example of Circular Progress 
@@ -15,6 +16,7 @@ import winsound
 gauge_fill = "deep sky blue"
 gauge_outline = "dark violet"
 gauge_text = "white"
+
 
 def confirmation_messagebox():
     result = messagebox.askyesno("Confirmation", "Would you like to restart the Progress Gauge?")
@@ -92,6 +94,8 @@ def create_window():
 
     # Hide the title bar
     window.overrideredirect(True)
+    #Make the window appear above all other active windows
+    window.attributes('-topmost',True)
     
     # Calculate the window dimensions based on the gauge size
     gauge_size = 375
@@ -115,6 +119,16 @@ def create_buttons(window):
 
     reset_button = Button(window, text="Reset", font=("Arial", 12), bg="red", command=reset_progress, width=button_width)
     #reset_button.pack(side=RIGHT, padx=3, pady=5) # Causes app to show 3 buttons
+
+def exit_window():
+    """
+    This function closes the window when the Progress Gauge reaches 100%,
+    but unlike "window.after(3000, lambda: window.destroy())", it checks
+    that the user hasn't pressed the Reset button.
+    """
+
+    if degrees == 360 and not pause:
+        window.destroy()
 
 def start_progress():
     global pause, degrees
@@ -219,7 +233,8 @@ def update_progress_gauge():
             reset_button.config(command=reset_progress)
 
             # Wait three seconds, then close the window
-            window.after(3000, lambda: window.destroy())  
+            #window.after(3000, lambda: window.destroy())  # No. Closes despite hitting "Reset"
+            window.after(3000, lambda: exit_window())
 
 if __name__ == "__main__":
     create_interface()
