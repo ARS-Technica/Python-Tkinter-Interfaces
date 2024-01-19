@@ -19,6 +19,7 @@ gauge_text = "white"
 
 
 def confirmation_messagebox():
+    global confirmation_box_open
     result = messagebox.askyesno("Confirmation", "Would you like to restart the Progress Gauge?")
     
     if result:
@@ -27,6 +28,7 @@ def confirmation_messagebox():
     else:
         # User clicks 'No' button
         message_box = messagebox.showinfo("Exit Message", "Thanks for trying out our Circular Progress Gauge!")
+        confirmation_box_open = False  # Set the flag to indicate that the message box is closed
     
         # Delay for a few seconds, then close the application
         window.after(3000, window.destroy)
@@ -46,8 +48,9 @@ def create_buttons(window):
     # reset_button.pack(side=RIGHT, padx=3, pady=5) # Causes app to show 3 buttons
 
 def create_interface():
-    global canvas, degrees, window, pause, pause_button, reset_button, start_button
+    global canvas, confirmation_box_open, degrees, pause, pause_button, reset_button, start_button, window
 
+    confirmation_box_open = False  # Global variable to track confirmation message box state
     degrees = 0  # Will be divided into a percentage in update_progress_gauge
     pause = True
 
@@ -126,8 +129,9 @@ def exit_window():
     but unlike "window.after(3000, lambda: window.destroy())", it checks
     that the user hasn't pressed the Reset button.
     """
+    global confirmation_box_open
 
-    if degrees == 360 and not pause:
+    if not confirmation_box_open and degrees == 360 and not pause:
         window.destroy()
 
 def pause_progress():
@@ -182,16 +186,16 @@ def start_progress():
         canvas.delete("ready_label")
         update_progress_gauge()
 
-        # In case the user doesn't realize they need to press "Reset" to relaunch count
-        if degrees == 360:
-            confirmation_messagebox()
-        else:
-            reset_button.pack_forget()
-            pause_button.pack(side=RIGHT, padx=3, pady=5)
-            pause_button.config(command=pause_progress)
+    # In case users don't realize they need to press "Reset" to relaunch count
+    if degrees == 360:
+        confirmation_messagebox()
+    else:
+        reset_button.pack_forget()
+        pause_button.pack(side=RIGHT, padx=3, pady=5)
+        pause_button.config(command=pause_progress)
 
 def update_progress_gauge():
-    global canvas, center_x, center_y, degrees, pause, window
+    global canvas, center_x, center_y, confirmation_box_open, degrees, pause, window
 
     if pause:
         pass
@@ -232,6 +236,8 @@ def update_progress_gauge():
             pause_button.pack_forget()
             reset_button.pack(side=RIGHT, padx=3, pady=5)
             reset_button.config(command=reset_progress)
+
+            confirmation_box_open = True  # Set the flag to indicate that the message box is open
 
             # Wait three seconds, then close the window
             #window.after(3000, lambda: window.destroy())  # No. Closes despite hitting "Reset"
