@@ -7,6 +7,9 @@ The challenge is to create a circular progress gauge that counts up from 0 to
 Bars I could find on Youtube made use of Pyside or PyQT.  I'm currently teaching
 myself Tkinter, and I'm interested in seeing if the same effect can be 
 established with plain vanilla Tkinter and some math.
+
+Inspired by "Barra de Progreso Circular en Python con Tkinter"
+https://www.youtube.com/watch?v=C3LKMhENOPI&t=1s&ab_channel=MagnoEfren
 """
 
 from tkinter import Button, Canvas, Frame, LEFT, messagebox, RIGHT, Tk
@@ -245,6 +248,4 @@ def update_progress_gauge():
 
 if __name__ == "__main__":
     create_interface()
-
-
 
