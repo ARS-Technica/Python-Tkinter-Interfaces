@@ -1,0 +1,256 @@
+"""
+Circular Progress Bar
+a.k.a. Radial Gauge
+
+The challenge is to create a circular progress gauge that counts up from 0 to 
+100 in Python using the Tkinter library.  Every example of Circular Progress 
+Bars I could find on Youtube made use of Pyside or PyQT.  I'm currently teaching
+myself Tkinter, and I'm interested in seeing if the same effect can be 
+established with plain vanilla Tkinter and some math.
+
+Inspired by "Barra de Progreso Circular en Python con Tkinter"
+https://www.youtube.com/watch?v=C3LKMhENOPI&t=1s&ab_channel=MagnoEfren
+"""
+
+from tkinter import Button, Canvas, Frame, LEFT, messagebox, RIGHT, Tk
+from math import cos, radians, sin
+import winsound
+
+gauge_outline = "black"
+gauge_text = "white"
+
+def confirmation_messagebox():
+    result = messagebox.askyesno("Confirmation", "Would you like to restart the Progress Gauge?")
+    
+    if result:
+        # User clicks 'Yes' button
+        reset_progress()
+    else:
+        # User clicks 'No' button
+        message_box = messagebox.showinfo("Exit Message", "Thanks for trying out our Circular Progress Gauge!")
+    
+        # Delay for a few seconds, then close the application
+        window.after(3000, window.destroy)
+
+def create_buttons(window):
+    global pause_button, reset_button, start_button
+
+    button_width = 20
+
+    start_button = Button(window, text="Start", font=("Arial", 12), bg="green2", command=start_progress, width=button_width)
+    start_button.pack(side=LEFT, padx=3, pady=5)
+
+    pause_button = Button(window, text="Pause", font=("Arial", 12), bg="yellow", command=pause_progress, width=button_width)
+    pause_button.pack(side=RIGHT, padx=3, pady=5)
+
+    reset_button = Button(window, text="Reset", font=("Arial", 12), bg="red", command=reset_progress, width=button_width)
+    # reset_button.pack(side=RIGHT, padx=3, pady=5) # Causes app to show 3 buttons
+
+def create_interface():
+    global canvas, degrees, pause, pause_button, reset_button, start_button, window
+
+    degrees = 0  # Will be divided into a percentage in update_progress_gauge
+    pause = True
+
+    window = create_window()
+    canvas = create_progress_gauge(window)
+    create_buttons(window)
+    window.mainloop()
+
+def create_progress_gauge(window):
+    global center_x, center_y, inner_radius, outer_radius
+
+    frame = Frame(window, bg="gainsboro", relief="flat")
+    frame.pack(fill="both", expand=True)
+
+    canvas_size = 375
+    canvas = Canvas(frame, bg="gainsboro", width=canvas_size, height=canvas_size, relief="flat", bd=1)
+    canvas.pack(padx=5, pady=5, fill="both", expand=True)
+
+    # Center graphical elements of the Progress Gauge rather than use absolute positioning
+    center_x = canvas_size // 2
+    center_y = canvas_size // 2
+    outer_radius = canvas_size // 2 - 10
+    inner_radius = outer_radius - 30
+    # inner_radius doubles as line_length for color fill in update_progress_gauge
+
+    # Draw the circular outlines of the gauge
+    canvas.create_oval(center_x - outer_radius, center_y - outer_radius,
+                       center_x + outer_radius, center_y + outer_radius,
+                       fill="", outline="", width=5, tag="outline")
+
+    # Outer Ring of the Progress Gauge
+    canvas.create_oval(center_x - inner_radius, center_y - inner_radius,
+                       center_x + inner_radius, center_y + inner_radius,
+                       fill="", outline=gauge_outline, width=6, tag="outline")
+
+    # Inner Ring of the Progress Gauge
+    canvas.create_oval(center_x - 100, center_y - 100,
+                       center_x + 100, center_y + 100,
+                       fill="black", outline=gauge_outline, width=6, tag="outline")
+                        # 100 represents the radius of the inner ring
+
+    # Bring the graphical elements of the Progress Gauge to the fore
+    canvas.tag_raise('outline') # This allows lines to be drawn that appear to "fill" gauge
+
+    # Initial Text on Progress Gauge
+    progress_text = "0%"
+    canvas.create_text(center_x, center_y - 25, text=progress_text, font=("Arial", 42, "bold"),
+                       fill=gauge_text, tags="percentage_counter")
+
+    canvas.create_text(center_x, center_y + 25, text="READY!", font=("Arial", 22, "bold"),
+                       fill=gauge_text, tags="ready_label")
+
+    return canvas
+
+def create_window():
+    window = Tk()
+    window.title("Demo: Circular Progress Gauge")
+
+    # Hide the title bar
+    window.overrideredirect(True)
+    # Make the window appear above all other active windows
+    window.attributes('-topmost',True)
+    
+    # Calculate the window dimensions based on the gauge size
+    gauge_size = 375
+    window_width = gauge_size + 20  # Add padding
+    window_height = gauge_size + 70  # Add padding and space for buttons
+    window.geometry(f"{window_width}x{window_height}+100+100")
+    window.configure(bg="gainsboro")
+
+    return window
+
+def exit_window():
+    """
+    This function closes the window when the Progress Gauge reaches 100%,
+    but unlike "window.after(3000, lambda: window.destroy())", it checks
+    that the user hasn't pressed the Reset button.
+    """
+
+    if degrees == 360 and not pause:
+        window.destroy()
+
+def pause_progress():
+    global pause
+
+    pause = True
+
+    if degrees == 0 or degrees == 360:
+        pass    # Eliminates early error caused by pressing "Pause" at the last possible moment
+    else:
+        pause_button.pack_forget()
+        reset_button.pack(side=RIGHT, padx=3, pady=5)
+
+def play_sound():
+    # Upon reaching 360 degrees (100 percent), the Progress Bar will chime
+    winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
+    # Options: SystemAsterisk, SystemExclamation, SystemExit, SystemHand, SystemQuestion
+
+def reset_progress():
+    global degrees, pause
+
+    if pause or degrees == 360:
+        degrees = 0
+        pause = True
+    
+        canvas.delete("progress_lines")
+        canvas.delete("percentage_counter")
+        canvas.delete("progress_label")
+        progress_text = "0%"
+        canvas.create_text(center_x, center_y - 25, text=progress_text, font=("Arial", 42, "bold"),
+                           fill=gauge_text, tags="percentage_counter")
+
+        canvas.create_text(center_x, center_y + 25, text="READY!", font=("Arial", 22, "bold"),
+                           fill=gauge_text, tags="ready_label")
+        
+        update_progress_gauge()
+    
+        canvas.delete("progress_text_complete")
+        reset_button.pack_forget()
+        pause_button.pack(side=RIGHT, padx=3, pady=5)
+        
+        canvas.create_text(center_x, center_y + 25, text="READY!", font=("Arial", 22, "bold"),
+                           fill=gauge_text, tags="ready_label")
+    else:
+        pass    # A stylistic choice to never have three buttons displayed
+
+def start_progress():
+    global degrees, pause
+
+    if pause:   # Prevents start_progress function being called multiple times
+        pause = False
+        canvas.delete("ready_label")
+        update_progress_gauge()
+
+    # In case users don't realize they need to press "Reset" to relaunch count
+    if degrees == 360:
+        confirmation_messagebox()
+    else:
+        reset_button.pack_forget()
+        pause_button.pack(side=RIGHT, padx=3, pady=5)
+        pause_button.config(command=pause_progress)
+
+def update_progress_gauge():
+    global canvas, center_x, center_y, degrees, pause, window
+
+    if pause:
+        pass
+    else:
+        if degrees < 360:  # Stop Progress Gauge at 100%          
+            degrees += 1
+
+            #canvas.delete("progress_lines")    # Not if you want the Progress Gauge to fill
+            canvas.delete("percentage_counter")  # Prevent text updates from piling up
+
+            color_list = ['#dd776e', '#e0816d', '#e2886c', '#e5926b', '#e79a69', '#e9a268',
+                        '#ecac67', '#e6ad61', '#e9b861', '#f3c563', '#f5ce62', '#e2c965', 
+                        '#d4c86a', '#c4c56d', '#b0be6e', '#a4c073', '#94bd77', '#84bb7b', 
+                        '#73b87e', '#63b682', '#57bb8a']  # Red to Green in twenty steps
+
+            num_colors = len(color_list)
+            
+            # Map degrees to the index of the color in the list
+            current_color_index = int(degrees / (360 / num_colors)) % num_colors
+            current_color = color_list[current_color_index]
+            
+            # Progress Gauge filler
+            canvas.create_line(center_x, center_y,
+                   center_x + inner_radius * sin(radians(degrees)),
+                   center_y - inner_radius * cos(radians(degrees)),
+                   fill=current_color, width=10, tags="progress_lines")
+            
+            # Convert degrees into percentage
+            percentage_counter = f"{int(degrees / 3.6)}%"   
+            canvas.create_text(center_x, center_y - 25, text=percentage_counter, 
+                               font=("Arial", 42, "bold"),
+                               fill=gauge_text, tags="percentage_counter")
+
+            canvas.tag_lower("progress_lines") # Keep the lines beneath the ovals
+
+            canvas.create_text(center_x, center_y + 25, text="PROGRESS", 
+                               font=("Arial", 22, "bold"),
+                               fill=gauge_text, tags="progress_label")
+
+            window.after(20, update_progress_gauge)  # Quicker updates cause stuttering
+
+        else:
+            canvas.delete("progress_label")
+            canvas.create_text(center_x, center_y + 25, text="COMPLETE!", 
+                               font=("Arial", 22, "bold"),
+                               fill=gauge_text, tags="progress_text_complete")
+            play_sound()
+            
+            pause_button.pack_forget()
+            reset_button.pack(side=RIGHT, padx=3, pady=5)
+            reset_button.config(command=reset_progress)
+
+            confirmation_box_open = True  # Set the flag to indicate that the message box is open
+
+            # Wait three seconds, then close the window
+            #window.after(3000, lambda: window.destroy())  # No. Closes despite hitting "Reset"
+            window.after(3000, lambda: exit_window())
+
+if __name__ == "__main__":
+    create_interface()
+
