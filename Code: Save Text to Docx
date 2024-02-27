@@ -1,0 +1,88 @@
+"""
+Save text on a text widget to mulitple formats, including .docx, .pdf, and .txt
+"""
+
+import os
+import tkinter as tk
+from tkinter import filedialog
+from docx import Document
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
+from docx.shared import Pt
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+
+
+class FileEditor:
+	def __init__(self, root):
+		self.root = root
+		self.root.title("File Editor")	
+
+		self.text_widget = tk.Text(root, height=20, width=60)
+		self.text_widget.pack()
+
+		self.file_format_var = tk.StringVar()
+		self.file_format_var.set('docx')
+		self.file_format_dropdown = tk.OptionMenu(root, self.file_format_var, "docx", "pdf", "txt")
+
+		self.file_format_dropdown.pack()
+
+		self.save_button = tk.Button(root, text="Save", command=self.save_content)
+		self.save_button.pack()
+
+
+	def save_content(self):
+		content = self.text_widget.get("1.0", "end-1c")
+
+		file_format = self.file_format_var.get()
+
+		file_extension = file_format
+
+		file_path = filedialog.asksaveasfilename(defaultextension=file_extension, 
+                                           filetypes=[(f"{file_extension.upper()} Files", f"*.{file_extension}")])
+
+		if file_path:	
+			if file_format == 'docx':
+				self.save_as_docx(content, file_path)
+			elif file_format == "pdf":
+				self.save_as_pdf(content, file_path)
+			else:
+				self.save_as_text(content, file_path)
+
+		os.startfile(file_path)
+
+	@staticmethod
+	def save_as_docx(content, file_path):
+		document = Document()
+
+		paragraph = document.add_paragraph()
+		paragraph.alighnment = WD_PARAGRAPH_ALIGNMENT.LEFT
+		run = paragraph.add_run()
+		
+		run.text = content
+		run.font.size = Pt(12)
+
+		document.save(file_path)
+
+	@staticmethod
+	def save_as_pdf(content, file_path):
+		doc = SimpleDocTemplate(file_path, pagesize=letter)
+		styles = getSampleStyleSheet()
+		story = [Paragraph(content.replace('\n', '<br/>'), styles["Normal"])] #Replace new lines with HTML line breaks
+
+		doc.build(story)
+
+
+	@staticmethod
+	def save_as_text(content, file_path):
+		with open(file_path, 'w') as file:
+			file.write(content)
+
+
+if __name__ == "__main__":
+	root = tk.Tk()
+	editor = FileEditor(root)
+	root.mainloop()
+
