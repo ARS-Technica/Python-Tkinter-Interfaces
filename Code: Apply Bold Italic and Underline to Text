@@ -1,0 +1,22 @@
+"""
+Because Tkinter handles underline formatting as a boolean, it can be 
+challenging to apply Bold, Italic, and Underline formatting to text
+simultaneously.  This is an example of how it can be achieved manually.
+
+For me, the challenge is now how to produce this effect with buttons
+on a toolbar for my text editor project.
+"""
+
+import tkinter as tk
+
+root = tk.Tk()
+text = tk.Text(root)
+
+font = tk.Font(family="Helvetica", size=12, weight="bold", slant="italic", underline=True)
+text.tag_configure("bold_italic_underline", font=font)
+
+text.insert("insert", "This is bold, italic and underlined text.")
+text.tag_add("bold_italic_underline", "1.0", "end")
+
+text.pack()
+root.mainloop()
