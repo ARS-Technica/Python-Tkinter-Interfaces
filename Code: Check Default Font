@@ -1,0 +1,17 @@
+"""
+Check the system default font in Python Tkinter.
+"""
+
+import tkinter as tk
+
+root = tk.Tk()
+
+# Get the system default font
+default_font = tk.font.nametofont("TkDefaultFont")
+
+# Print the font family and size
+print(default_font.actual("family"))
+print(default_font.actual("size"))
+
+root.mainloop()
+
