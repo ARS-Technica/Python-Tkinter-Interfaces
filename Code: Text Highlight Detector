@@ -12,11 +12,14 @@ detecting when text is highlighted.
 
 
 import tkinter as tk
-
+ 
 def on_text_highlight(event):
-    selected_text = text_widget.get(tk.SEL_FIRST, tk.SEL_LAST)
-    print("Selected Text:", selected_text)
-
+    if text_widget.tag_ranges("sel"):
+        selected_text = text_widget.get(tk.SEL_FIRST, tk.SEL_LAST)
+        print("Selected Text:", selected_text)
+    else:
+        pass
+        
 root = tk.Tk()
 root.title("Text Highlight Detector")
 
