@@ -1,0 +1,30 @@
+"""
+This script is an attempt to create a function that will allow a simple text
+editor to determine when a passage of text is selected.
+
+This program will print the selected_text only when a passage of text is highlighted. 
+The <KeyRelease> event is triggered when a key is released after it has been pressed, 
+but since we are binding it to the text widget, it will only be triggered when the 
+text widget has the focus and a key is released while the text is selected. If no 
+text is selected, the event won't be triggered. So, it will work specifically for 
+detecting when text is highlighted.
+"""
+
+
+import tkinter as tk
+
+def on_text_highlight(event):
+    selected_text = text_widget.get(tk.SEL_FIRST, tk.SEL_LAST)
+    print("Selected Text:", selected_text)
+
+root = tk.Tk()
+root.title("Text Highlight Detector")
+
+text_widget = tk.Text(root)
+text_widget.pack(expand=True, fill='both')
+
+# Bind the KeyRelease event to the text widget
+text_widget.bind("<KeyRelease>", on_text_highlight)
+
+root.mainloop()
+
