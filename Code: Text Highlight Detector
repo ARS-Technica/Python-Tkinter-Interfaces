@@ -40,5 +40,8 @@ last_selection = None
 # Bind the KeyRelease event to the text widget
 text_widget.bind("<KeyRelease>", on_text_highlight)
 
+# Bind FocusOut event to update selection
+text_widget.bind("<FocusOut>", on_text_highlight)
+
 root.mainloop()
 
