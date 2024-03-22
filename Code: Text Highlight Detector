@@ -12,19 +12,25 @@ detecting when text is highlighted.
 
 
 import tkinter as tk
- 
+
 def on_text_highlight(event):
-    if text_widget.tag_ranges("sel"):
+    global last_selection
+    
+    current_selection = text_widget.tag_ranges(tk.SEL)
+
+    # Check that the user isn't just re-highlighting the same passage
+    if current_selection != last_selection:
         selected_text = text_widget.get(tk.SEL_FIRST, tk.SEL_LAST)
         print("Selected Text:", selected_text)
-    else:
-        pass
-        
+        last_selection = current_selection
+
 root = tk.Tk()
 root.title("Text Highlight Detector")
 
 text_widget = tk.Text(root)
 text_widget.pack(expand=True, fill='both')
+
+last_selection = None
 
 # Bind the KeyRelease event to the text widget
 text_widget.bind("<KeyRelease>", on_text_highlight)
