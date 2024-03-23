@@ -6,9 +6,11 @@ def confirm_close(root):
     if result:
         root.destroy()
 
-# Example usage:
 def main():
     root = tk.Tk()
+
+    # Handling window closing event
+    root.protocol("WM_DELETE_WINDOW", lambda: confirm_close(root))
 
     # Create a menu
     menu_bar = tk.Menu(root)
