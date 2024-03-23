@@ -1,3 +1,10 @@
+"""
+An example of how to impliment a function that is triggered
+when the user attempts to exit the program.  It confirms the
+user's intent to close the program and triggers a save dialog
+if the file hasn't been saved recently.
+"""
+
 import tkinter as tk
 from tkinter import messagebox
 
