@@ -1,1 +1,26 @@
+import tkinter as tk
+from tkinter import messagebox
+
+def confirm_close(root):
+    result = messagebox.askokcancel("Confirm Close", "Are you sure you want to close the application?")
+    if result:
+        root.destroy()
+
+# Example usage:
+def main():
+    root = tk.Tk()
+
+    # Create a menu
+    menu_bar = tk.Menu(root)
+    file_menu = tk.Menu(menu_bar, tearoff=0)
+    file_menu.add_command(label="Close", command=lambda: confirm_close(root))
+    menu_bar.add_cascade(label="File", menu=file_menu)
+
+    # Attach menu to root window
+    root.config(menu=menu_bar)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
 
