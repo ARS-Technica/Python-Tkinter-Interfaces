@@ -9,7 +9,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 # Global variable to track whether the file has unsaved changes
-file_saved = True
+file_saved = False
 
 def save_file():
     global file_saved
