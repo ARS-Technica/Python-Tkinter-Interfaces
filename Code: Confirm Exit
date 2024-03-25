@@ -5,8 +5,8 @@ user's intent to close the program and triggers a save dialog
 if the file hasn't been saved recently.
 """
 
-import tkinter as tk
-from tkinter import messagebox
+
+from tkinter import *
 
 # Global variable to track whether the file has unsaved changes
 file_saved = False
@@ -35,14 +35,14 @@ def confirm_close(root):
             root.destroy()
 
 def main():
-    root = tk.Tk()
+    root = Tk()
 
     # Handling window closing event
     root.protocol("WM_DELETE_WINDOW", lambda: confirm_close(root))
 
     # Create a menu
-    menu_bar = tk.Menu(root)
-    file_menu = tk.Menu(menu_bar, tearoff=0)
+    menu_bar = Menu(root)
+    file_menu = Menu(menu_bar, tearoff=0)
     file_menu.add_command(label="Save", command=save_file)
     file_menu.add_command(label="Close", command=lambda: confirm_close(root))
     menu_bar.add_cascade(label="File", menu=file_menu)
@@ -54,4 +54,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
