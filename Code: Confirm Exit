@@ -13,18 +13,26 @@ file_saved = False
 
 def save_file():
     global file_saved
-
+    
     # Needs expanding
     print("File saved.")
     file_saved = True
 
 def confirm_close(root):
     global file_saved
+
     if not file_saved:
         result = messagebox.askyesno("Unsaved Changes", "There are unsaved changes. Do you want to save before closing?")
+
         if result:
             save_file()
-    root.destroy()
+        else:
+            root.destroy()
+    else:
+        result = messagebox.askokcancel("Confirm Close", "Are you sure you want to close the application?")
+
+        if result:
+            root.destroy()
 
 def main():
     root = tk.Tk()
