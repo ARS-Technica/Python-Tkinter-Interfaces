@@ -1,8 +1,6 @@
 """
-
 A demonstration of how to alter the font and size of text on a text widget with
 a pair of combo boxes.  The combo boxes alter all text, not just selected text.
-
 """
 
 
@@ -11,7 +9,7 @@ from tkinter import ttk
 from tkinter import font
 
 def update_font(event):
-    selected_font = font.Font(font=font_family_combo.get(), size=int(font_size_combo.get()))
+    selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
     text.config(font=selected_font)
 
 # Create the main window
