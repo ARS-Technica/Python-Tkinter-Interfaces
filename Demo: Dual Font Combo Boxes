@@ -4,40 +4,23 @@ a pair of combo boxes.  The combo boxes alter all text, not just selected text.
 """
 
  
+# Added Default Font (default_family = "Arial") and Size Variables (default_size = 12)
+ 
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import font
 from tkinter import ttk
 
+# Set default font
+global default_family
+default_family = "Arial"
+global default_size
+default_size = 12
 
 # Initialize font_counter
 global font_counter
 font_counter = 0
 
-
-"""
-# FORMAT BAR METHODS
-def change_font(event): # current_font_family
-    # Get the selected font family from the combobox
-    selected_font_family = all_fonts.get()
-
-    # Check if any text is selected
-    if text.tag_ranges("sel"):
-        # Remove previous font family tags from the selected range
-        for tag in text.tag_names("sel.first"):
-            if tag == "font_family":
-                text.tag_remove(tag, "sel.first", "sel.last")
-
-        # Apply font family tag to the selected text
-        font_family_tag = "font_family_" + selected_font_family
-        text.tag_add(font_family_tag, "sel.first", "sel.last")
-
-        # Configure the font family tag
-        text.tag_configure(font_family_tag, font=(selected_font_family, current_font_size))
-    else:
-        # Alert the user that no text has been selected
-        messagebox.showinfo("alert", "No text has been selected")
-"""
 
 # FORMAT BAR METHODS
 def update_font(event=None):
@@ -62,35 +45,37 @@ def apply_font_style(event=None):
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")      
-    
+
 """
-def update_font_combobox(event):
+# I'm now using a regular expression (\d+) to find the font size in the font attribute so that it doesn't get truncated in the combobox.
+def update_size_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
 
     # Get the tag names associated with the cursor position
-    tag_names = text.tag_names(cursor_pos)
+    tag_names = text.tag_names(cursor_pos)    
 
     if tag_names:
         # Get the font attribute configured for the clicked position
-        font_attr = text.tag_cget(tag_names[0], "font") 
+        font_attr = text.tag_cget(tag_names[0], "font")
 
-        # Check if the font attribute is not empty and contains the font family
+        # Check that the font attribute is not empty and contains both font family and size
         if font_attr:
-            # Use regular expression to find the font face in the font attribute
-            # font_face_match = re.search(r"family='([^']+)'", font_attr)  # Search for the font name directly
-            font_face_match = re.search(r"'?([\w\s]+)'?", font_attr)  # Search for any word characters and whitespaces
-            # Searches for any word characters and whitespaces enclosed within single quotes (')
-            
-            # Check if the font face match is found
-            if font_face_match:
-                # Extract the font face from the matched string
-                font_face = font_face_match.group(1)  # Use group(1) to get the captured group
+            # Use regular expression (\d+) to find the font size in the font attribute
+            font_size_match = re.search(r'\d+', font_attr)
 
-                # Set the font combobox to display the font face
-                all_fonts.set(font_face.strip())  # Remove leading and trailing whitespaces if any
+            if font_size_match:
+                # Extract the font size from the matched string
+                font_size = font_size_match.group()
+
+                # Set the font size combobox to display the font size
+                all_size.set(font_size)
+                
+    else:
+        # Set the font size combobox to display the default font size
+        all_size.set(default_size)
 """
-
+  
 def update_comboboxes(event):
     # Get the index of the clicked position    
     cursor_position = text.index("@{},{}".format(event.x, event.y))
@@ -111,23 +96,41 @@ def update_comboboxes(event):
                 font_family_combo.set(family)
                 font_size_combo.set(size)
 
+    else:
+        # Set the font and size comboboxes to display the default font and size
+        font_family_combo.set(default_family)
+        font_size_combo.set(default_size)
+
 # Create the main window
 root = tk.Tk()
 root.title("Font Selector")
 
+"""
+# CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
+text_frame = Frame(root, borderwidth=1, relief="sunken")
+text = Text(wrap="word", font=(default_font, default_size), background="white", borderwidth=0, highlightthickness=0 , undo= True)
+text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
+"""
+
 # Create a text widget to display font changes
-text = tk.Text(root, wrap="word")
+text = tk.Text(root, wrap="word", font=(default_family, default_size), background="white", borderwidth=0, highlightthickness=0 , undo= True)
 text.pack(fill="both", expand=True)
 
-# Fonts
+# Get all font families
 font_families = list(font.families())
+
 
 # Create a combo box for font selection
 font_family_label = ttk.Label(root, text="Font Family:")
 font_family_label.pack()
 font_family_combo = ttk.Combobox(root, values=font_families)
 font_family_combo.pack()
-font_family_combo.set(font_families[0])
+
+if default_family in font_families:  # Check that the default font is installed
+    font_family_combo.set(default_family)
+else:
+    font_family_combo.set(font_families[0])  # Set the first available font as default
+
 
 # Create a combo box for font size selection
 font_size_label = ttk.Label(root, text="Font Size:")
