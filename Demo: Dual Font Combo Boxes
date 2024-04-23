@@ -9,16 +9,24 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import font
 
-def update_font(event=None):
-    selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
-    text.tag_configure("custom_font", font=selected_font)
+global font_counter
+font_counter = 0
 
-def apply_font_style():
+def update_font(event=None):
+    global font_counter
+    selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
+    text.tag_configure("custom_font_{}".format(font_counter), font=selected_font)
+    apply_font_style()
+
+def apply_font_style(event=None):
+    global font_counter
+
     start = text.index("sel.first")
     end = text.index("sel.last")
-    tag_name = f"style_{start}_{end}"
-    text.tag_configure(tag_name, font=(font_family_combo.get(), int(font_size_combo.get())))
-    text.tag_add(tag_name, start, end)
+    text.tag_add("custom_font_{}".format(font_counter), start, end)
+
+    # Increment font_counter for next font style
+    font_counter += 1
 
 # Create the main window
 root = tk.Tk()
@@ -27,6 +35,14 @@ root.title("Font Selector")
 # Create a text widget to display font changes
 text = tk.Text(root, wrap="word")
 text.pack(fill="both", expand=True)
+
+# Text for Debugging
+text.insert("end", "This first sentence tests the bold formatting feature.\n")
+text.insert("end", "\n")
+text.insert("end", "This second sentence tests the italics formatting feature.\n")
+text.insert("end", "\n")
+text.insert("end", "This third sentence demonstrates the ability to underline words.\n")
+text.insert("end", "\n")
 
 # Fonts
 font_families = list(font.families())
@@ -45,12 +61,15 @@ font_size_combo = ttk.Combobox(root, values=list(range(8, 72)))
 font_size_combo.pack()
 font_size_combo.set("12")
 
+# Initialize font_counter
+font_counter = 0
+
 # Bind events to update the font
 font_family_combo.bind("<<ComboboxSelected>>", update_font)
 font_size_combo.bind("<<ComboboxSelected>>", update_font)
 
 # Bind event to apply font style when text is selected
-text.bind("<FocusOut>", lambda event: apply_font_style())
+text.bind("<<Selection>>", apply_font_style)
 
 root.mainloop()
 
