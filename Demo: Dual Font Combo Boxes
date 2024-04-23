@@ -46,36 +46,6 @@ def apply_font_style(event=None):
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")      
 
-"""
-# I'm now using a regular expression (\d+) to find the font size in the font attribute so that it doesn't get truncated in the combobox.
-def update_size_combobox(event):
-    # Get the index of the clicked position
-    cursor_pos = text.index("@{},{}".format(event.x, event.y))
-
-    # Get the tag names associated with the cursor position
-    tag_names = text.tag_names(cursor_pos)    
-
-    if tag_names:
-        # Get the font attribute configured for the clicked position
-        font_attr = text.tag_cget(tag_names[0], "font")
-
-        # Check that the font attribute is not empty and contains both font family and size
-        if font_attr:
-            # Use regular expression (\d+) to find the font size in the font attribute
-            font_size_match = re.search(r'\d+', font_attr)
-
-            if font_size_match:
-                # Extract the font size from the matched string
-                font_size = font_size_match.group()
-
-                # Set the font size combobox to display the font size
-                all_size.set(font_size)
-                
-    else:
-        # Set the font size combobox to display the default font size
-        all_size.set(default_size)
-"""
-  
 def update_comboboxes(event):
     # Get the index of the clicked position    
     cursor_position = text.index("@{},{}".format(event.x, event.y))
@@ -105,16 +75,49 @@ def update_comboboxes(event):
 root = tk.Tk()
 root.title("Font Selector")
 
-"""
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
+formattingbar.pack(side="top", fill="x")
+text_frame = tk.Frame(root, borderwidth=1, relief="sunken")
+text = tk.Text(wrap="word", font=(default_family, default_size), background="white", borderwidth=0, highlightthickness=0 , undo= True)
+text.focus_set()
+text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
+
+
+# Text for Debugging
+text.insert("end", "This first sentence tests the bold formatting feature.\n")
+text.insert("end", "\n")
+text.insert("end", "This second sentence tests the italics formatting feature.\n")
+text.insert("end", "\n")
+text.insert("end", "This third sentence demonstrates the ability to underline words.\n")
+text.insert("end", "\n")
+
+
+
+"""
+# Create a text widget to display font changes
 text_frame = Frame(root, borderwidth=1, relief="sunken")
 text = Text(wrap="word", font=(default_font, default_size), background="white", borderwidth=0, highlightthickness=0 , undo= True)
 text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
-"""
 
-# Create a text widget to display font changes
-text = tk.Text(root, wrap="word", font=(default_family, default_size), background="white", borderwidth=0, highlightthickness=0 , undo= True)
-text.pack(fill="both", expand=True)
+
+# text = tk.Text(root, wrap="word", font=(default_family, default_size), background="white", borderwidth=0, highlightthickness=0 , undo= True)
+# text.pack(fill="both", expand=True)
+
+
+# Text for Debugging
+text.insert("end", "This first sentence tests the bold formatting feature.\n")
+text.insert("end", "\n")
+text.insert("end", "This second sentence tests the italics formatting feature.\n")
+text.insert("end", "\n")
+text.insert("end", "This third sentence demonstrates the ability to underline words.\n")
+text.insert("end", "\n")
+
+
+# PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
+formattingbar.pack(side="top", fill="x")
+text_frame.pack(side="bottom", fill="both", expand=True)
+text.focus_set()
+"""
 
 # Get all font families
 font_families = list(font.families())
@@ -146,5 +149,6 @@ font_size_combo.bind("<<ComboboxSelected>>", update_font)
 # Bind event to apply font style when text is selected
 text.bind("<Button-1>", update_comboboxes)
 
+# Mainloop of the Program
 root.mainloop()
 
