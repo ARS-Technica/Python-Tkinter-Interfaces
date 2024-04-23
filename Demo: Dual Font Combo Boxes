@@ -12,8 +12,9 @@ from tkinter import font
 def update_font(event=None):
     selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
     text.tag_configure("custom_font", font=selected_font)
+    apply_font_style()
 
-def apply_font_style():
+def apply_font_style(event=None):
     start = text.index("sel.first")
     end = text.index("sel.last")
     text.tag_add("custom_font", start, end)
@@ -43,13 +44,12 @@ font_size_combo = ttk.Combobox(root, values=list(range(8, 72)))
 font_size_combo.pack()
 font_size_combo.set("12")
 
-# Apply font style button
-apply_button = ttk.Button(root, text="Apply Font Style", command=apply_font_style)
-apply_button.pack()
-
 # Bind events to update the font
 font_family_combo.bind("<<ComboboxSelected>>", update_font)
 font_size_combo.bind("<<ComboboxSelected>>", update_font)
+
+# Bind event to apply font style when text is selected
+text.bind("<<Selection>>", apply_font_style)
 
 root.mainloop()
 
