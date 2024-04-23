@@ -3,12 +3,13 @@ A demonstration of how to alter the font and size of text on a text widget with
 a pair of combo boxes.  The combo boxes alter all text, not just selected text.
 """
 
-# Effort to apply different combinations of font and font size to different passages of text
+# Moved Font Styling Menu to Top of Text Widget
 
 import tkinter as tk
 from tkinter import ttk
 from tkinter import font
 
+# Initialize font_counter
 global font_counter
 font_counter = 0
 
@@ -33,9 +34,23 @@ def apply_font_style(event=None):
 root = tk.Tk()
 root.title("Font Selector")
 
+"""
+# CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
+text_frame = Frame(root, borderwidth=1, relief="sunken")
+text = Text(wrap="word", font=(default_font, default_size), background="white", borderwidth=0, highlightthickness=0 , undo= True)
+text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
+
+# PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
+formattingbar.pack(side="top", fill="x")
+text_frame.pack(side="bottom", fill="both", expand=True)
+text.focus_set()
+"""
+
 # Create a text widget to display font changes
+text_frame = tk.Frame(root, borderwidth=1, padx=2, relief="sunken")
 text = tk.Text(root, wrap="word")
-text.pack(fill="both", expand=True)
+text.focus_set()
+text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
 
 # Text for Debugging
 text.insert("end", "This first sentence tests the bold formatting feature.\n")
@@ -45,25 +60,26 @@ text.insert("end", "\n")
 text.insert("end", "This third sentence demonstrates the ability to underline words.\n")
 text.insert("end", "\n")
 
+formattingbar = tk.Frame(root, padx=2, pady=2)
+formattingbar.pack(side="top", fill="x")
+text_frame.pack(side="bottom", fill="both", expand=True)
+
 # Fonts
 font_families = list(font.families())
 
 # Create a combo box for font selection
 font_family_label = ttk.Label(root, text="Font Family:")
-font_family_label.pack()
+font_family_label.pack(side="left") 
 font_family_combo = ttk.Combobox(root, values=font_families)
-font_family_combo.pack()
+font_family_combo.pack(side="left", padx=4, pady=4)
 font_family_combo.set(font_families[0])
 
 # Create a combo box for font size selection
 font_size_label = ttk.Label(root, text="Font Size:")
-font_size_label.pack()
+font_size_label.pack(side="left")
 font_size_combo = ttk.Combobox(root, values=list(range(8, 72)))
-font_size_combo.pack()
+font_size_combo.pack(side="left", padx=4, pady=4)
 font_size_combo.set("12")
-
-# Initialize font_counter
-font_counter = 0
 
 # Bind events to update the font
 font_family_combo.bind("<<ComboboxSelected>>", update_font)
