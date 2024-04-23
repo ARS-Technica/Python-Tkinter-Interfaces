@@ -2,8 +2,8 @@
 A demonstration of how to alter the font and size of text on a text widget with
 a pair of combo boxes.  The combo boxes alter all text, not just selected text.
 """
-
-
+ 
+ 
 import tkinter as tk
 from tkinter import ttk
 from tkinter import font
@@ -27,19 +27,57 @@ def apply_font_style(event=None):
         text.tag_add("custom_font_{}".format(font_counter), start, end)
 
         # Increment font_counter for next font style
-        font_counter += 1
+        font_counter += 1     
+    
+"""
+
+def update_font_combobox(event):
+    # Get the index of the clicked position
+    cursor_pos = text.index("@{},{}".format(event.x, event.y))
+
+    # Get the tag names associated with the cursor position
+    tag_names = text.tag_names(cursor_pos)
+
+    if tag_names:
+        # Get the font attribute configured for the clicked position
+        font_attr = text.tag_cget(tag_names[0], "font") 
+
+        # Check if the font attribute is not empty and contains the font family
+        if font_attr:
+            # Use regular expression to find the font face in the font attribute
+            # font_face_match = re.search(r"family='([^']+)'", font_attr)  # Search for the font name directly
+            font_face_match = re.search(r"'?([\w\s]+)'?", font_attr)  # Search for any word characters and whitespaces
+            # Searches for any word characters and whitespaces enclosed within single quotes (')
+            
+            # Check if the font face match is found
+            if font_face_match:
+                # Extract the font face from the matched string
+                font_face = font_face_match.group(1)  # Use group(1) to get the captured group
+
+                # Set the font combobox to display the font face
+                all_fonts.set(font_face.strip())  # Remove leading and trailing whitespaces if any
+
+"""
 
 def update_comboboxes(event):
-    index = text.index("@{},{}".format(event.x, event.y))
-    tags = text.tag_names(index)
+    # Get the index of the clicked position    
+    cursor_position = text.index("@{},{}".format(event.x, event.y))
 
-    for tag in tags:
-        if tag.startswith("custom_font_"):
-            font_info = text.tag_cget(tag, "font")
-            family = font.Font(font=font_info).actual()["family"]
-            size = font.Font(font=font_info).actual()["size"]
-            font_family_combo.set(family)
-            font_size_combo.set(size)
+    # Get the tag names associated with the cursor position    
+    tags = text.tag_names(cursor_position)
+    
+    # Check if the font attribute is not empty and contains the font family
+    if tags:
+        # Iterate through tags to find the font attributes
+        for tag in tags:
+            if tag.startswith("custom_font_"):
+                font_info = text.tag_cget(tag, "font")
+
+                family = font.Font(font=font_info).actual()["family"]
+                size = font.Font(font=font_info).actual()["size"]
+
+                font_family_combo.set(family)
+                font_size_combo.set(size)
 
 # Create the main window
 root = tk.Tk()
