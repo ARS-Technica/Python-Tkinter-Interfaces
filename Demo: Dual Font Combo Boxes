@@ -3,7 +3,6 @@ A demonstration of how to alter the font and size of text on a text widget with
 a pair of combo boxes.  The combo boxes alter all text, not just selected text.
 """
 
-# Moved Font Styling Menu to Top of Text Widget
 
 import tkinter as tk
 from tkinter import ttk
@@ -30,21 +29,68 @@ def apply_font_style(event=None):
         # Increment font_counter for next font style
         font_counter += 1
 
+"""
+def update_font_combobox(event):
+    # Get the index of the clicked position
+    cursor_pos = text.index("@{},{}".format(event.x, event.y))
+
+    # Get the tag names associated with the cursor position
+    tag_names = text.tag_names(cursor_pos)
+
+    if tag_names:
+        # Get the font attribute configured for the clicked position
+        font_attr = text.tag_cget(tag_names[0], "font") 
+
+        # Check if the font attribute is not empty and contains the font family
+        if font_attr:
+            # Use regular expression to find the font face in the font attribute
+            # font_face_match = re.search(r"family='([^']+)'", font_attr)  # Search for the font name directly
+            font_face_match = re.search(r"'?([\w\s]+)'?", font_attr)  # Search for any word characters and whitespaces
+            # Searches for any word characters and whitespaces enclosed within single quotes (')
+            
+            # Check if the font face match is found
+            if font_face_match:
+                # Extract the font face from the matched string
+                font_face = font_face_match.group(1)  # Use group(1) to get the captured group
+
+                # Set the font combobox to display the font face
+                all_fonts.set(font_face.strip())  # Remove leading and trailing whitespaces if any
+"""
+
+"""
+def update_comboboxes(event):
+    # Get the index of the clicked position
+    cursor_pos = text.index("@{},{}".format(event.x, event.y))    
+    
+    # Get the tags associated with the clicked position
+    # tags = text.tag_names("current")
+    tags = text.tag_names(cursor_pos)
+
+    # Iterate through the tags to find the font-related tags
+    font_tag = None
+    
+    if tags:
+        for tag in tags:
+            if tag.startswith("custom_font_"):
+                font_tag = tag
+                break
+    
+        if font_tag:
+            # Get font configuration from the tag
+            font_config = text.tag_cget(font_tag, "font")
+    
+            # Extract font family and size from the font configuration
+            font_family = font.Font(font=font_config).actual()["family"]
+            font_size = font.Font(font=font_config).actual()["size"]
+    
+            # Update the font family and font size comboboxes
+            font_family_combo.set(font_family)
+            font_size_combo.set(font_size)
+"""
+
 # Create the main window
 root = tk.Tk()
 root.title("Font Selector")
-
-"""
-# CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
-text_frame = Frame(root, borderwidth=1, relief="sunken")
-text = Text(wrap="word", font=(default_font, default_size), background="white", borderwidth=0, highlightthickness=0 , undo= True)
-text.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
-
-# PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
-formattingbar.pack(side="top", fill="x")
-text_frame.pack(side="bottom", fill="both", expand=True)
-text.focus_set()
-"""
 
 # Create a text widget to display font changes
 text_frame = tk.Frame(root, borderwidth=1, padx=2, relief="sunken")
@@ -87,6 +133,10 @@ font_size_combo.bind("<<ComboboxSelected>>", update_font)
 
 # Bind event to apply font style when text is selected
 text.bind("<<Selection>>", apply_font_style)
+
+
+# Bind the function to mouse clicks
+text.bind("<Button-1>", update_comboboxes)
 
 root.mainloop()
 
