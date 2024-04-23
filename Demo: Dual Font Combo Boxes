@@ -21,12 +21,13 @@ def update_font(event=None):
 def apply_font_style(event=None):
     global font_counter
 
-    start = text.index("sel.first")
-    end = text.index("sel.last")
-    text.tag_add("custom_font_{}".format(font_counter), start, end)
+    if text.tag_ranges("sel"):
+        start = text.index("sel.first")
+        end = text.index("sel.last")
+        text.tag_add("custom_font_{}".format(font_counter), start, end)
 
-    # Increment font_counter for next font style
-    font_counter += 1
+        # Increment font_counter for next font style
+        font_counter += 1
 
 # Create the main window
 root = tk.Tk()
