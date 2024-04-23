@@ -2,17 +2,44 @@
 A demonstration of how to alter the font and size of text on a text widget with
 a pair of combo boxes.  The combo boxes alter all text, not just selected text.
 """
- 
+
  
 import tkinter as tk
-from tkinter import ttk
+from tkinter import filedialog
 from tkinter import font
+from tkinter import ttk
+
 
 # Initialize font_counter
 global font_counter
 font_counter = 0
 
 
+"""
+# FORMAT BAR METHODS
+def change_font(event): # current_font_family
+    # Get the selected font family from the combobox
+    selected_font_family = all_fonts.get()
+
+    # Check if any text is selected
+    if text.tag_ranges("sel"):
+        # Remove previous font family tags from the selected range
+        for tag in text.tag_names("sel.first"):
+            if tag == "font_family":
+                text.tag_remove(tag, "sel.first", "sel.last")
+
+        # Apply font family tag to the selected text
+        font_family_tag = "font_family_" + selected_font_family
+        text.tag_add(font_family_tag, "sel.first", "sel.last")
+
+        # Configure the font family tag
+        text.tag_configure(font_family_tag, font=(selected_font_family, current_font_size))
+    else:
+        # Alert the user that no text has been selected
+        messagebox.showinfo("alert", "No text has been selected")
+"""
+
+# FORMAT BAR METHODS
 def update_font(event=None):
     selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
     text.tag_configure("custom_font_{}".format(font_counter), font=selected_font)
@@ -21,16 +48,22 @@ def update_font(event=None):
 def apply_font_style(event=None):
     global font_counter
 
+    # Check if any text is selected
     if text.tag_ranges("sel"):
         start = text.index("sel.first")
         end = text.index("sel.last")
+        
+        # Apply font styling to the selected text
         text.tag_add("custom_font_{}".format(font_counter), start, end)
 
         # Increment font_counter for next font style
-        font_counter += 1     
+        font_counter += 1
+
+    else:
+        # Alert the user that no text has been selected
+        tk.messagebox.showinfo("alert", "No text has been selected")      
     
 """
-
 def update_font_combobox(event):
     # Get the index of the clicked position
     cursor_pos = text.index("@{},{}".format(event.x, event.y))
@@ -56,7 +89,6 @@ def update_font_combobox(event):
 
                 # Set the font combobox to display the font face
                 all_fonts.set(font_face.strip())  # Remove leading and trailing whitespaces if any
-
 """
 
 def update_comboboxes(event):
