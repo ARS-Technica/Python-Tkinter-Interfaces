@@ -2,7 +2,7 @@
 A demonstration of how to alter the font and size of text on a text widget with
 a pair of combo boxes.  The combo boxes alter all text, not just selected text.
 """									   
-
+									   
 
 import tkinter as tk
 from tkinter import filedialog
@@ -69,6 +69,17 @@ def update_comboboxes(event):
         font_family_combo.set(default_family)
         font_size_combo.set(default_size)
 
+
+
+def toggle_bold():
+    if text.tag_ranges("sel"):
+        current_tags = text.tag_names("sel.first")
+        if "bold" in current_tags:
+            text.tag_remove("bold", "sel.first", "sel.last")
+        else:
+            text.tag_add("bold", "sel.first", "sel.last")
+            
+            
 # Create the main window
 root = tk.Tk()
 root.title("Font Selector")
@@ -127,6 +138,10 @@ font_size_combo.bind("<<ComboboxSelected>>", update_font)
 
 # Bind event to apply font style when text is selected
 text.bind("<Button-1>", update_comboboxes)
+
+# Button to toggle bold
+bold_button = ttk.Button(root, text="Bold", command=toggle_bold)
+bold_button.pack()
 
 # Mainloop of the Program
 root.mainloop()
