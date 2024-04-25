@@ -2,7 +2,7 @@
 A demonstration of how to alter the font and size of text on a text widget with
 a pair of combo boxes.  The combo boxes alter all text, not just selected text.
 """									   
-									   
+								   
 
 import tkinter as tk
 from tkinter import filedialog
@@ -28,14 +28,22 @@ def update_font(event=None):
 
 def apply_font_style(event=None):
     global font_counter
-
-    # Check if any text is selected
+       
+    # Check if any text is selected        
     if text.tag_ranges("sel"):
         start = text.index("sel.first")
         end = text.index("sel.last")
-        
-        # Apply font styling to the selected text
-        text.tag_add("custom_font_{}".format(font_counter), start, end)
+        current_tags = text.tag_names("sel.first")
+
+        if any(tag.startswith("custom_font_") for tag in current_tags):
+            # If the selected text already has font styling tags, add bold property to the existing tag
+            text.tag_add("bold", start, end)
+        else:
+            # If the selected text doesn't have font styling tags, create a new tag with bold property
+            
+            # Apply font styling to the selected text
+            text.tag_add("custom_font_{}".format(font_counter), start, end)
+            text.tag_configure("custom_font_{}".format(font_counter), font=(font_family_combo.get(), int(font_size_combo.get())), bold=True)
 
         # Increment font_counter for next font style
         font_counter += 1
@@ -69,17 +77,15 @@ def update_comboboxes(event):
         font_family_combo.set(default_family)
         font_size_combo.set(default_size)
 
-
-
 def toggle_bold():
     if text.tag_ranges("sel"):
         current_tags = text.tag_names("sel.first")
         if "bold" in current_tags:
             text.tag_remove("bold", "sel.first", "sel.last")
         else:
-            text.tag_add("bold", "sel.first", "sel.last")
-            
-            
+            apply_font_style()
+
+
 # Create the main window
 root = tk.Tk()
 root.title("Font Selector")
