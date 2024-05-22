@@ -17,24 +17,20 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
-# Reintroduce textwrap Library
-
 
 import tkinter as tk
 import textwrap
 
-def get_text_widget_width(text_widget):
-    return text_widget.winfo_width()
-
 def justify_text(event):
-    new_width = event.width
-    text = text_widget.get("1.0", "end-1c")  # Get all text from the text widget
-    justified_text = justify_text_with_width(text, new_width)
-    text_widget.delete("1.0", "end")  # Clear the text widget
-    text_widget.insert("1.0", justified_text)  # Insert the justified text
+    text = text_widget.get("1.0", "end-1c")  # Retrieve text from the text widget
+    width = event.width  # Get the new width of the window
+    justified_text = justify_text_helper(text, width)
+    text_widget.config(state="normal")  # Enable editing
+    text_widget.delete("1.0", "end")  # Clear existing text
+    text_widget.insert("1.0", justified_text)  # Insert justified text
+    text_widget.config(state="disabled")  # Disable editing
 
-
-def justify_text_with_width(text, width):
+def justify_text_helper(text, width):
     wrapper = textwrap.TextWrapper(width=width)
     lines = text.split('\n')
     justified_lines = [wrapper.fill(line) for line in lines]
@@ -44,12 +40,14 @@ def justify_text_with_width(text, width):
 # Example usage:
 root = tk.Tk()
 
-text_widget = tk.Text(root)
+text_widget = tk.Text(root, wrap="word")
 text_widget.pack(fill="both", expand=True)
 
+# Initial text insertion
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
 text_widget.insert("1.0", text)
 
+# Binding the justify_text function to the <Configure> event of the root window
 root.bind("<Configure>", justify_text)
 
 root.mainloop()
