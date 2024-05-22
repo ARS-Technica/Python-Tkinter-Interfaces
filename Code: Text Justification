@@ -35,20 +35,20 @@ def justify_text_helper(text, width):
     justified_lines = []
     for line in lines:
         words = line.split()
-        num_spaces_needed = width - len(''.join(words))
-        if num_spaces_needed > 0:
-            num_gaps = len(words) - 1
-            spaces_per_gap = num_spaces_needed // max(1, num_gaps)
-            extra_spaces = num_spaces_needed % max(1, num_gaps)
-            justified_line = words[0] + ' ' * spaces_per_gap
-            for i in range(1, len(words)):
-                if extra_spaces > 0:
-                    justified_line += ' '
-                    extra_spaces -= 1
-                justified_line += words[i] + ' ' * spaces_per_gap
-            justified_lines.append(justified_line.strip())
-        else:
-            justified_lines.append(line)
+        if len(words) == 1:
+            justified_lines.append(words[0])
+            continue
+        total_space = width - sum(len(word) for word in words)
+        spaces_between_words = len(words) - 1
+        if spaces_between_words == 0:
+            justified_lines.append(words[0])
+            continue
+        spaces_per_gap, extra_spaces = divmod(total_space, spaces_between_words)
+        justified_line = words[0]
+        for i in range(1, len(words)):
+            justified_line += ' ' * (spaces_per_gap + (i <= extra_spaces))
+            justified_line += words[i]
+        justified_lines.append(justified_line)
     return '\n'.join(justified_lines)
 
 # Example usage:
