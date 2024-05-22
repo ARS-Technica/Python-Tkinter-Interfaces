@@ -17,7 +17,7 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
-# Dynamically realign text when I resize the window
+# Combine code to retrieve width of text editor, justification, and binding
 
 
 import tkinter as tk
@@ -25,7 +25,7 @@ import tkinter as tk
 def get_text_widget_width(text_widget):
     return text_widget.winfo_width()
 
-def update_text_width(event):
+def justify_text(event):
     new_width = event.width
     text_widget.config(width=new_width)
 
@@ -35,8 +35,10 @@ root = tk.Tk()
 text_widget = tk.Text(root)
 text_widget.pack(fill="both", expand=True)
 
-# Bind the update_text_width function to the <Configure> event of the root window
-root.bind("<Configure>", update_text_width)
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+text_widget.insert("1.0", text)
+
+root.bind("<Configure>", justify_text)
 
 root.mainloop()
 
