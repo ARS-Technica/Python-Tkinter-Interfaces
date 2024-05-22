@@ -17,7 +17,7 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
-# Attempt to use the textwrap and JustifyText libraries to write a Python function that justifies text
+# Dynamically realign text when I resize the window
 
 
 import tkinter as tk
@@ -25,14 +25,18 @@ import tkinter as tk
 def get_text_widget_width(text_widget):
     return text_widget.winfo_width()
 
+def update_text_width(event):
+    new_width = event.width
+    text_widget.config(width=new_width)
+
 # Example usage:
 root = tk.Tk()
+
 text_widget = tk.Text(root)
 text_widget.pack(fill="both", expand=True)
 
-# Assume you have some event or function where you want to get the width
-width = get_text_widget_width(text_widget)
-print("Width of the text widget:", width)
+# Bind the update_text_width function to the <Configure> event of the root window
+root.bind("<Configure>", update_text_width)
 
 root.mainloop()
 
