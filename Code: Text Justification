@@ -35,21 +35,23 @@ def justify_text_helper(text, width):
     justified_lines = []
     for line in lines:
         words = line.split()
-        if len(words) == 1:
-            justified_lines.append(words[0])
-            continue
-        total_space = width - sum(len(word) for word in words)
-        spaces_between_words = len(words) - 1
-        if spaces_between_words == 0:
-            justified_lines.append(words[0])
-            continue
-        spaces_per_gap, extra_spaces = divmod(total_space, spaces_between_words)
-        justified_line = words[0]
-        for i in range(1, len(words)):
-            justified_line += ' ' * (spaces_per_gap + (i <= extra_spaces))
-            justified_line += words[i]
-        justified_lines.append(justified_line)
-    return '\n'.join(justified_lines)
+        num_words = len(words)
+        if num_words > 1:
+            spaces_needed = width - len(line)
+            spaces_per_gap = spaces_needed // (num_words - 1)
+            extra_spaces = spaces_needed % (num_words - 1)
+            justified_line = words[0] + ' ' * spaces_per_gap
+            for i in range(1, num_words - 1):
+                if i <= extra_spaces:
+                    justified_line += ' ' + words[i] + ' ' * (spaces_per_gap + 1)
+                else:
+                    justified_line += ' ' + words[i] + ' ' * spaces_per_gap
+            justified_line += ' ' + words[-1]
+            justified_lines.append(justified_line)
+        else:
+            justified_lines.append(line)
+    justified_text = '\n'.join(justified_lines)
+    return justified_text
 
 # Example usage:
 root = tk.Tk()
