@@ -20,18 +20,19 @@ Bear with me.  I'm still learning.
 # Attempt to use the textwrap and JustifyText libraries to write a Python function that justifies text
 
 
-import textwrap
+import tkinter as tk
 
-def justify_text(text, width):
-    wrapper = textwrap.TextWrapper(width=width)
-    lines = text.split('\n')
-    justified_lines = [wrapper.fill(line) for line in lines]
-    justified_text = '\n'.join(justified_lines)
-    return justified_text
+def get_text_widget_width(text_widget):
+    return text_widget.winfo_width()
 
 # Example usage:
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-justified_text = justify_text(text, 50)
+root = tk.Tk()
+text_widget = tk.Text(root)
+text_widget.pack(fill="both", expand=True)
 
+# Assume you have some event or function where you want to get the width
+width = get_text_widget_width(text_widget)
+print("Width of the text widget:", width)
 
-print(justified_text)
+root.mainloop()
+
