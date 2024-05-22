@@ -1,0 +1,19 @@
+# -*- coding: utf-8 -*-
+
+"""
+After many, many failed attempts to incorporate a Justification button into my
+Text Editor program, I restarted from scratch with an attempt to code ONLY the
+font toolbar in "Skeleton for Font Styling". After many, many (MANY) more failed 
+attempts to incorporate a function that would justify text so that would leave 
+both sides of a paragraph flush into my font bar, this is a THIRD project that 
+will souly focus on the Justify Text function.
+
+Yes, I am that frustrated.
+
+Once successful, this code will be incorporated into the font toolbar in 
+"Skeleton for Font Styling", which will then be incorporated into my basic Text
+Editor, and finally, into my Advanced Text Editor.
+
+Bear with me.  I'm still learning.
+"""
+
