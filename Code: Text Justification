@@ -17,6 +17,8 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
+# Trying to reduce gaps between words
+
 
 import tkinter as tk
 
@@ -38,12 +40,15 @@ def justify_text_helper(text, width):
         if len(words) == 1 or len(line) > width:
             justified_lines.append(line)
         else:
-            space_needed = width - sum(len(word) for word in words)
+            line_length = sum(len(word) for word in words)
             num_gaps = len(words) - 1
+            total_spaces_needed = width - line_length
             if num_gaps == 0:
                 justified_lines.append(words[0])
             else:
-                spaces = [' ' * (space_needed // num_gaps + (1 if i < space_needed % num_gaps else 0)) for i in range(num_gaps)]
+                space_between_words = total_spaces_needed // num_gaps
+                extra_spaces = total_spaces_needed % num_gaps
+                spaces = [' ' * (space_between_words + (1 if i < extra_spaces else 0)) for i in range(num_gaps)]
                 justified_lines.append(''.join(word + space for word, space in zip(words, spaces)) + words[-1])
     justified_text = '\n'.join(justified_lines)
     return justified_text
