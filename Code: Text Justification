@@ -40,17 +40,23 @@ def justify_text_helper(text, width):
         if len(words) == 1 or len(line) > width:
             justified_lines.append(line)
         else:
-            num_words = len(words)
             total_word_length = sum(len(word) for word in words)
-            spaces_needed = width - total_word_length
-            num_gaps = num_words - 1
+            num_spaces_needed = width - total_word_length
+            num_gaps = len(words) - 1
             if num_gaps == 0:
                 justified_lines.append(words[0])
             else:
-                base_spaces = spaces_needed // num_gaps
-                extra_spaces = spaces_needed % num_gaps
-                spaces = [' ' * base_spaces + (' ' if i < extra_spaces else '') for i in range(num_gaps)]
-                justified_lines.append(''.join(word + space for word, space in zip(words, spaces)) + words[-1])
+                space_per_gap = num_spaces_needed // num_gaps
+                extra_spaces = num_spaces_needed % num_gaps
+                space = ' ' * space_per_gap
+                extra_space = ' ' * (space_per_gap + 1)
+                justified_line = words[0]
+                for i in range(1, len(words)):
+                    if i <= extra_spaces:
+                        justified_line += extra_space + words[i]
+                    else:
+                        justified_line += space + words[i]
+                justified_lines.append(justified_line)
     justified_text = '\n'.join(justified_lines)
     return justified_text
 
