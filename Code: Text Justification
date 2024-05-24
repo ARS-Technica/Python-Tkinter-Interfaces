@@ -17,8 +17,6 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
-# Removing python-docx library
-
 
 import tkinter as tk
 
@@ -33,22 +31,39 @@ def justify_text(event):
     text_widget.insert("1.0", justified_text)
 
 def justify_text_helper(text, width):
-    lines = text.split('\n')
+    words = text.split()
+    lines = []
+    current_line = []
+    current_line_width = 0
+
+    for word in words:
+        word_width = len(word)
+        if current_line_width + len(current_line) + word_width <= width:
+            current_line.append(word)
+            current_line_width += word_width
+        else:
+            lines.append(current_line)
+            current_line = [word]
+            current_line_width = word_width
+    
+    if current_line:
+        lines.append(current_line)
+
     justified_lines = []
     for line in lines:
-        words = line.split()
-        if len(words) == 1 or len(line) > width:
-            justified_lines.append(line)
+        total_spaces = width - sum(len(word) for word in line)
+        num_gaps = len(line) - 1
+        if num_gaps == 0:
+            justified_line = line[0]
         else:
-            num_spaces_needed = width - sum(len(word) for word in words)
-            num_gaps = len(words) - 1
-            space_per_gap = num_spaces_needed // num_gaps if num_gaps > 0 else 0
-            extra_spaces = num_spaces_needed % num_gaps if num_gaps > 0 else 0
-            justified_line = words[0]
-            for i in range(1, len(words)):
+            space_per_gap = total_spaces // num_gaps
+            extra_spaces = total_spaces % num_gaps
+            justified_line = line[0]
+            for i in range(1, len(line)):
                 spaces = ' ' * (space_per_gap + 1 if i <= extra_spaces else space_per_gap)
-                justified_line += spaces + words[i]
-            justified_lines.append(justified_line)
+                justified_line += spaces + line[i]
+        justified_lines.append(justified_line)
+    
     justified_text = '\n'.join(justified_lines)
     return justified_text
 
