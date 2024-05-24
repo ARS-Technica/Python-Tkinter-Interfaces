@@ -17,12 +17,10 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
-# Using python-docx library
+# Removing python-docx library
 
 
 import tkinter as tk
-from docx import Document
-from io import BytesIO
 
 def get_text_widget_width(text_widget):
     return text_widget.winfo_width()
@@ -35,14 +33,24 @@ def justify_text(event):
     text_widget.insert("1.0", justified_text)
 
 def justify_text_helper(text, width):
-    doc = Document()
-    paragraph = doc.add_paragraph(text)
-    for run in paragraph.runs:
-        run.font.size = width * 2  # Adjust font size for proper width measurement
-    paragraph.alignment = 3  # Justify alignment
-    doc_bytes = BytesIO()
-    doc.save(doc_bytes)
-    return doc_bytes.getvalue()
+    lines = text.split('\n')
+    justified_lines = []
+    for line in lines:
+        words = line.split()
+        if len(words) == 1 or len(line) > width:
+            justified_lines.append(line)
+        else:
+            num_spaces_needed = width - sum(len(word) for word in words)
+            num_gaps = len(words) - 1
+            space_per_gap = num_spaces_needed // num_gaps if num_gaps > 0 else 0
+            extra_spaces = num_spaces_needed % num_gaps if num_gaps > 0 else 0
+            justified_line = words[0]
+            for i in range(1, len(words)):
+                spaces = ' ' * (space_per_gap + 1 if i <= extra_spaces else space_per_gap)
+                justified_line += spaces + words[i]
+            justified_lines.append(justified_line)
+    justified_text = '\n'.join(justified_lines)
+    return justified_text
 
 # Example usage:
 root = tk.Tk()
