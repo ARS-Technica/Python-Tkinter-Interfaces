@@ -32,38 +32,37 @@ def justify_text(event):
 
 def justify_text_helper(text, width):
     words = text.split()
-    lines = []
-    current_line = []
-    current_line_width = 0
+    dp = [0] * len(words)  # Dynamic programming array to store the "badness" values
+    breaks = [0] * len(words)  # Array to store the optimal break positions
 
-    for word in words:
-        word_width = len(word)
-        if current_line_width + len(current_line) + word_width <= width:
-            current_line.append(word)
-            current_line_width += word_width
-        else:
-            lines.append(current_line)
-            current_line = [word]
-            current_line_width = word_width
-    
-    if current_line:
-        lines.append(current_line)
+    # Calculate the "badness" values for each line break position
+    for i in range(len(words) - 1, -1, -1):
+        min_badness = float('inf')
+        line_width = 0
+        for j in range(i, len(words)):
+            if j > i:
+                line_width += len(words[j]) + 1
+            else:
+                line_width += len(words[j])
+            if line_width <= width:
+                badness = (width - line_width) ** 2
+                if j == len(words) - 1:
+                    curr_badness = badness
+                else:
+                    curr_badness = badness + dp[j + 1]
+                if curr_badness < min_badness:
+                    min_badness = curr_badness
+                    dp[i] = min_badness
+                    breaks[i] = j
 
+    # Reconstruct the justified text with optimal line breaks
     justified_lines = []
-    for line in lines:
-        total_spaces = width - sum(len(word) for word in line)
-        num_gaps = len(line) - 1
-        if num_gaps == 0:
-            justified_line = line[0]
-        else:
-            space_per_gap = total_spaces // num_gaps
-            extra_spaces = total_spaces % num_gaps
-            justified_line = line[0]
-            for i in range(1, len(line)):
-                spaces = ' ' * (space_per_gap + 1 if i <= extra_spaces else space_per_gap)
-                justified_line += spaces + line[i]
-        justified_lines.append(justified_line)
-    
+    i = 0
+    while i < len(words):
+        line = ' '.join(words[i:breaks[i] + 1])
+        justified_lines.append(line)
+        i = breaks[i] + 1
+
     justified_text = '\n'.join(justified_lines)
     return justified_text
 
@@ -79,4 +78,7 @@ text_widget.insert("1.0", text)
 root.bind("<Configure>", justify_text)
 
 root.mainloop()
+
+
+# Truncates words
 
