@@ -22,6 +22,7 @@ Bear with me.  I'm still learning.
 
 import tkinter as tk
 from docx import Document
+from io import BytesIO
 
 def get_text_widget_width(text_widget):
     return text_widget.winfo_width()
@@ -39,10 +40,9 @@ def justify_text_helper(text, width):
     for run in paragraph.runs:
         run.font.size = width * 2  # Adjust font size for proper width measurement
     paragraph.alignment = 3  # Justify alignment
-    doc.save("temp.docx")
-    with open("temp.docx", "rb") as file:
-        doc_bytes = file.read()
-    return doc_bytes.decode("utf-8")
+    doc_bytes = BytesIO()
+    doc.save(doc_bytes)
+    return doc_bytes.getvalue()
 
 # Example usage:
 root = tk.Tk()
