@@ -20,6 +20,7 @@ Bear with me.  I'm still learning.
 # Attempting to Stop Mid-Word Line Breaks
 
 
+
 import tkinter as tk
 
 def get_text_widget_width(text_widget):
@@ -61,20 +62,19 @@ def justify_text_helper(text, width):
     justified_lines = []
     i = 0
     while i < len(words):
+        line_words = words[i:breaks[i] + 1]
         line = ''
-        for j in range(i, breaks[i] + 1):
-            if len(line) + len(words[j]) > width:  # If adding the word exceeds line width
-                if len(line) == 0:  # If line is empty, add the word without hyphenation
-                    line += words[j]
-                else:  # If line is not empty, add hyphenated word
-                    line += '-' + words[j]
-                    justified_lines.append(line)
-                    line = ''
-            else:  # If adding the word does not exceed line width
-                if len(line) > 0:
-                    line += ' ' + words[j]
-                else:
-                    line += words[j]
+        for j, word in enumerate(line_words):
+            if len(line) + len(word) + j < width:  # Check if the word fits in the line
+                if j > 0:
+                    line += ' '
+                line += word
+            else:  # Word needs to be split
+                if len(line) > 0:  # Add hyphen if not the first word in the line
+                    line += '-\n'
+                line += word[:width - len(line) - 1] + '-'
+                i -= 1  # Decrement i to process the remaining part of the word in the next iteration
+                break
         justified_lines.append(line)
         i = breaks[i] + 1
 
@@ -93,4 +93,5 @@ text_widget.insert("1.0", text)
 root.bind("<Configure>", justify_text)
 
 root.mainloop()
+
 
