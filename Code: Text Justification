@@ -17,6 +17,8 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
+# Attempting to Stop Mid-Word Line Breaks
+
 
 import tkinter as tk
 
@@ -44,22 +46,34 @@ def justify_text_helper(text, width):
                 line_width += len(words[j]) + 1
             else:
                 line_width += len(words[j])
-            if line_width <= width:
-                badness = (width - line_width) ** 2
+            if line_width <= width or (j == i and len(words[j]) > width):
                 if j == len(words) - 1:
-                    curr_badness = badness
+                    badness = 0  # No badness for the last line
                 else:
-                    curr_badness = badness + dp[j + 1]
-                if curr_badness < min_badness:
-                    min_badness = curr_badness
+                    badness = (width - line_width) ** 2
+                if j > i and len(words[j]) <= width:  # Word needs to be broken
+                    badness += 100  # Add penalty for breaking words
+                if j == len(words) - 1 and len(words[j]) > width:  # Word is longer than line width
+                    badness += 100  # Add penalty for long words
+                if badness < min_badness:
+                    min_badness = badness
                     dp[i] = min_badness
                     breaks[i] = j
 
-    # Reconstruct the justified text with optimal line breaks
+    # Reconstruct the justified text with optimal line breaks and hyphenation
     justified_lines = []
     i = 0
     while i < len(words):
-        line = ' '.join(words[i:breaks[i] + 1])
+        line = words[i]
+        for j in range(i + 1, breaks[i] + 1):
+            if len(line) + len(words[j]) + 1 <= width:  # Word can fit on the same line
+                line += ' ' + words[j]
+            else:  # Word needs to be broken
+                remaining_width = width - len(line)
+                num_chars_to_hyphenate = min(remaining_width, len(words[j]) - 1)
+                line += '-' + words[j][:num_chars_to_hyphenate]
+                words[j] = words[j][num_chars_to_hyphenate:]
+                break
         justified_lines.append(line)
         i = breaks[i] + 1
 
@@ -78,7 +92,4 @@ text_widget.insert("1.0", text)
 root.bind("<Configure>", justify_text)
 
 root.mainloop()
-
-
-# Truncates words
 
