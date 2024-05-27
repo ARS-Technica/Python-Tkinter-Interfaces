@@ -21,6 +21,7 @@ Bear with me.  I'm still learning.
 
 
 import tkinter as tk
+import re
 
 def get_text_widget_width(text_widget):
     return text_widget.winfo_width()
@@ -33,58 +34,29 @@ def justify_text(event):
     text_widget.insert("1.0", justified_text)
 
 def justify_text_helper(text, width):
-    words = text.split()
-    dp = [0] * len(words)  # Dynamic programming array to store the "badness" values
-    breaks = [0] * len(words)  # Array to store the optimal break positions
-
-    # Calculate the "badness" values for each line break position
-    for i in range(len(words) - 1, -1, -1):
-        min_badness = float('inf')
-        line_width = 0
-        for j in range(i, len(words)):
-            if j > i:
-                line_width += len(words[j]) + 1
-            else:
-                line_width += len(words[j])
-            if line_width <= width:
-                badness = (width - line_width) ** 2
-                if j == len(words) - 1:
-                    curr_badness = badness
-                else:
-                    curr_badness = badness + dp[j + 1]
-                if curr_badness < min_badness:
-                    min_badness = curr_badness
-                    dp[i] = min_badness
-                    breaks[i] = j
-
-    # Reconstruct the justified text with optimal line breaks
+    lines = text.split('\n')
     justified_lines = []
-    i = 0
-    while i < len(words):
-        line = ''
-        word = words[i]
-        while i < breaks[i] and len(line) + len(word) + 1 <= width:
-            line += word + ' '
-            i += 1
-            word = words[i]
-        if i == breaks[i]:
-            line += word
-        elif len(word) > width:
-            # If the word is longer than the line width, break it into multiple lines
-            while word:
-                line += word[:width - len(line)] + '-\n'
-                word = word[width - len(line):]
-                if len(word) > width:
-                    justified_lines.append(line)
-                    line = ''
-        else:
-            # If the word needs to be broken into parts to be displayed across multiple lines, hyphenate it
-            line += word[:breaks[i] - len(line)] + '-\n'
-            line += ' ' * (len(words[i]) - breaks[i] + len(line) - 1)
-        justified_lines.append(line)
-        i = breaks[i] + 1
-
-    justified_text = ' '.join(justified_lines)
+    for line in lines:
+        words = re.findall(r'\b\w+\b|-?\w*\.\w+(-\w+)*|[\uff00-\uffff]|\S', line, re.U)
+        current_line = []
+        current_length = 0
+        for word in words:
+            if current_length + len(word) > width:
+                if current_length == 0:
+                    # Special case: the word is longer than the line width
+                    # Split the word into segments with hyphenation
+                    segments = [word[i:i+width] for i in range(0, len(word), width)]
+                    current_line.append(segments[0] + '-')
+                    current_line.extend(segments[1:])
+                    current_length = len(segments[-1])
+                else:
+                    justified_lines.append(' '.join(current_line))
+                    current_line = []
+                    current_length = 0
+            current_line.append(word)
+            current_length += len(word)
+        justified_lines.append(' '.join(current_line))
+    justified_text = '\n'.join(justified_lines)
     return justified_text
 
 # Example usage:
