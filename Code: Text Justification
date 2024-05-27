@@ -46,38 +46,45 @@ def justify_text_helper(text, width):
                 line_width += len(words[j]) + 1
             else:
                 line_width += len(words[j])
-            if line_width <= width or (j == i and len(words[j]) > width):
+            if line_width <= width:
+                badness = (width - line_width) ** 2
                 if j == len(words) - 1:
-                    badness = 0  # No badness for the last line
+                    curr_badness = badness
                 else:
-                    badness = (width - line_width) ** 2
-                if j > i and len(words[j]) <= width:  # Word needs to be broken
-                    badness += 100  # Add penalty for breaking words
-                if j == len(words) - 1 and len(words[j]) > width:  # Word is longer than line width
-                    badness += 100  # Add penalty for long words
-                if badness < min_badness:
-                    min_badness = badness
+                    curr_badness = badness + dp[j + 1]
+                if curr_badness < min_badness:
+                    min_badness = curr_badness
                     dp[i] = min_badness
                     breaks[i] = j
 
-    # Reconstruct the justified text with optimal line breaks and hyphenation
+    # Reconstruct the justified text with optimal line breaks
     justified_lines = []
     i = 0
     while i < len(words):
-        line = words[i]
-        for j in range(i + 1, breaks[i] + 1):
-            if len(line) + len(words[j]) + 1 <= width:  # Word can fit on the same line
-                line += ' ' + words[j]
-            else:  # Word needs to be broken
-                remaining_width = width - len(line)
-                num_chars_to_hyphenate = min(remaining_width, len(words[j]) - 1)
-                line += '-' + words[j][:num_chars_to_hyphenate]
-                words[j] = words[j][num_chars_to_hyphenate:]
-                break
+        line = ''
+        word = words[i]
+        while i < breaks[i] and len(line) + len(word) + 1 <= width:
+            line += word + ' '
+            i += 1
+            word = words[i]
+        if i == breaks[i]:
+            line += word
+        elif len(word) > width:
+            # If the word is longer than the line width, break it into multiple lines
+            while word:
+                line += word[:width - len(line)] + '-\n'
+                word = word[width - len(line):]
+                if len(word) > width:
+                    justified_lines.append(line)
+                    line = ''
+        else:
+            # If the word needs to be broken into parts to be displayed across multiple lines, hyphenate it
+            line += word[:breaks[i] - len(line)] + '-\n'
+            line += ' ' * (len(words[i]) - breaks[i] + len(line) - 1)
         justified_lines.append(line)
         i = breaks[i] + 1
 
-    justified_text = '\n'.join(justified_lines)
+    justified_text = ' '.join(justified_lines)
     return justified_text
 
 # Example usage:
