@@ -47,7 +47,12 @@ def justify_text_helper(text, width):
             else:
                 line_width += len(words[j])
             if line_width <= width:
-                badness = (width - line_width) ** 2
+                if len(words[j]) > width:  # If word is longer than line width
+                    # Break word into multiple lines with hyphenation
+                    hyphenated_word = hyphenate_word(words[j], width)
+                    badness = (width - len(hyphenated_word)) ** 2
+                else:
+                    badness = (width - line_width) ** 2
                 if j == len(words) - 1:
                     curr_badness = badness
                 else:
@@ -62,30 +67,23 @@ def justify_text_helper(text, width):
     i = 0
     while i < len(words):
         line = ' '.join(words[i:breaks[i] + 1])
-        if len(line) > width:  # Hyphenate long words that span multiple lines
-            hyphenated_line = hyphenate_long_words(line, width)
-            justified_lines.append(hyphenated_line)
-        else:
-            justified_lines.append(line)
+        justified_lines.append(line)
         i = breaks[i] + 1
 
     justified_text = '\n'.join(justified_lines)
     return justified_text
 
-def hyphenate_long_words(line, width):
-    words = line.split()
-    hyphenated_words = []
-    for word in words:
-        if len(word) > width:
-            hyphenated_word = ''
-            while len(word) > width:
-                hyphenated_word += word[:width] + '-\n'
-                word = word[width:]
-            hyphenated_word += word
-            hyphenated_words.append(hyphenated_word)
+def hyphenate_word(word, width):
+    hyphenated_word = ''
+    remaining_width = width
+    for char in word:
+        if remaining_width <= 0:
+            hyphenated_word += '-\n' + char
+            remaining_width = width - 1
         else:
-            hyphenated_words.append(word)
-    return ' '.join(hyphenated_words)
+            hyphenated_word += char
+            remaining_width -= 1
+    return hyphenated_word
 
 # Example usage:
 root = tk.Tk()
