@@ -20,6 +20,7 @@ Bear with me.  I'm still learning.
 # Attempting to Stop Mid-Word Line Breaks
 
 
+
 import tkinter as tk
 
 def get_text_widget_width(text_widget):
@@ -35,58 +36,61 @@ def justify_text(event):
 def justify_text_helper(text, width):
     words = text.split()
     lines = []
-    current_line = ''
+    current_line = []
+    current_width = 0
     for word in words:
-        if len(current_line) + len(word) + 1 <= width:  # Check if the word fits on the current line
+        if len(word) > width:
+            # If word length exceeds width, hyphenate it and add to lines
+            hyphenated_word = hyphenate(word, width)
             if current_line:
-                current_line += ' ' + word
-            else:
-                current_line = word
+                lines.append(' '.join(current_line))
+            lines.extend(hyphenated_word)
+            current_line = []
+            current_width = 0
+        elif current_width + len(word) + len(current_line) <= width:
+            # If word can fit in current line, add it
+            current_line.append(word)
+            current_width += len(word)
         else:
-            lines.append(current_line)
-            current_line = word if len(word) >= width else ''
+            # If word cannot fit in current line, add current line to lines
+            lines.append(' '.join(current_line))
+            current_line = [word]
+            current_width = len(word)
     if current_line:
-        lines.append(current_line)
+        lines.append(' '.join(current_line))
 
-    # Hyphenate words that need to be broken across multiple lines
-    hyphenated_lines = []
+    # Justify each line
+    justified_lines = []
     for line in lines:
-        hyphenated_line = ''
-        words = line.split()
-        for i, word in enumerate(words):
-            if len(word) > width:  # If the word is longer than the line width, hyphenate it
-                hyphenated_line += '\n' + '-'.join([word[j:j+width] for j in range(0, len(word), width)])
-            elif len(hyphenated_line) + len(word) + 1 <= width:  # Check if the word fits on the line
-                if hyphenated_line:
-                    hyphenated_line += ' ' + word
-                else:
-                    hyphenated_line = word
+        spaces_to_add = width - len(line)
+        if spaces_to_add > 0:
+            words = line.split()
+            num_gaps = len(words) - 1
+            if num_gaps > 0:
+                space_per_gap = spaces_to_add // num_gaps
+                extra_spaces = spaces_to_add % num_gaps
+                justified_line = words[0]
+                for i in range(1, len(words)):
+                    if i <= extra_spaces:
+                        justified_line += ' ' * (space_per_gap + 1) + words[i]
+                    else:
+                        justified_line += ' ' * space_per_gap + words[i]
+                justified_lines.append(justified_line)
             else:
-                hyphenated_lines.append(hyphenated_line)
-                hyphenated_line = word
-        if hyphenated_line:
-            hyphenated_lines.append(hyphenated_line)
+                justified_lines.append(line)
+        else:
+            justified_lines.append(line)
 
-    # Justify the lines
-    justified_text = '\n'.join(justify_line(line, width) for line in hyphenated_lines)
+    justified_text = '\n'.join(justified_lines)
     return justified_text
 
-def justify_line(line, width):
-    words = line.split()
-    num_spaces_needed = width - sum(len(word) for word in words)
-    num_gaps = len(words) - 1
-    if num_gaps == 0:
-        return line
-    else:
-        space_per_gap = num_spaces_needed // num_gaps
-        extra_spaces = num_spaces_needed % num_gaps
-        justified_line = words[0]
-        for i in range(1, len(words)):
-            if i <= extra_spaces:
-                justified_line += ' ' * (space_per_gap + 1) + words[i]
-            else:
-                justified_line += ' ' * space_per_gap + words[i]
-        return justified_line
+def hyphenate(word, width):
+    hyphenated_word = []
+    while len(word) > width:
+        hyphenated_word.append(word[:width - 1] + "-")
+        word = word[width - 1:]
+    hyphenated_word.append(word)
+    return hyphenated_word
 
 # Example usage:
 root = tk.Tk()
