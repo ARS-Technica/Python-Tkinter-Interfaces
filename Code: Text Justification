@@ -61,14 +61,20 @@ def justify_text_helper(text, width):
     justified_lines = []
     i = 0
     while i < len(words):
-        line = ''
-        for j in range(i, breaks[i] + 1):
-            if j > i:
-                line += ' ' + words[j]
-            else:
-                line += words[j]
-        justified_lines.append(line)
-        i = breaks[i] + 1
+        if len(words[i]) > width:
+            # If a word is longer than the width of a line, break it into parts
+            parts = [words[i][j:j + width] for j in range(0, len(words[i]), width)]
+            # Hyphenate the parts and add them to the justified text
+            for part_index, part in enumerate(parts):
+                if part_index < len(parts) - 1:
+                    part += '-'
+                justified_lines.append(part)
+            i += 1
+        else:
+            # If a word fits within the width of a line, add it to the justified text
+            line = ' '.join(words[i:breaks[i] + 1])
+            justified_lines.append(line)
+            i = breaks[i] + 1
 
     justified_text = '\n'.join(justified_lines)
     return justified_text
