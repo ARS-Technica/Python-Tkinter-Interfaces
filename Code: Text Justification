@@ -34,56 +34,31 @@ def justify_text(event):
 
 def justify_text_helper(text, width):
     words = text.split()
-    dp = [0] * len(words)  # Dynamic programming array to store the "badness" values
-    breaks = [0] * len(words)  # Array to store the optimal break positions
-
-    # Calculate the "badness" values for each line break position
-    for i in range(len(words) - 1, -1, -1):
-        min_badness = float('inf')
-        line_width = 0
-        for j in range(i, len(words)):
-            if j > i:
-                line_width += len(words[j]) + 1
-            else:
-                line_width += len(words[j])
-            if line_width <= width:
-                badness = (width - line_width) ** 2
-                if j == len(words) - 1:
-                    curr_badness = badness
-                else:
-                    curr_badness = badness + dp[j + 1]
-                if curr_badness < min_badness:
-                    min_badness = curr_badness
-                    dp[i] = min_badness
-                    breaks[i] = j
-
-    # Reconstruct the justified text with optimal line breaks
     justified_lines = []
-    i = 0
-    while i < len(words):
-        line = ''
-        j = breaks[i] if i != len(words) - 1 else len(words) - 1
-        while j >= i:
-            if len(line) + len(words[j]) <= width:
-                if j == i and len(line) + len(words[j]) == width and i != len(words) - 1:
-                    # Word needs to be split between lines
-                    line += words[j] + '-\n'
-                else:
-                    line += words[j] + ' '
-            else:
-                if len(line) == 0:
-                    # Word is longer than the line width
-                    line += words[j][:width] + '-\n' + words[j][width:]
-                else:
-                    line = line.rstrip()
-                    justified_lines.append(line)
-                    line = words[j] + ' '
-            j -= 1
-        line = line.rstrip()
+    line = ''
+    for word in words:
+        if len(line) + len(word) + 1 <= width:  # If the word can fit in the current line
+            if line:
+                line += ' '
+            line += word
+        else:  # Word needs to be placed on the next line
+            justified_lines.append(line)
+            line = word if len(word) > width else ''
+    if line:
         justified_lines.append(line)
-        i = breaks[i] + 1
 
-    justified_text = '\n'.join(justified_lines)
+    # Hyphenate words that need to be broken into parts
+    hyphenated_lines = []
+    for line in justified_lines:
+        hyphenated_words = []
+        for word in line.split():
+            if len(word) > width:  # Word is longer than the line
+                hyphenated_words.extend([word[i:i+width] + '-' for i in range(0, len(word), width)])
+            else:
+                hyphenated_words.append(word)
+        hyphenated_lines.append(' '.join(hyphenated_words))
+
+    justified_text = '\n'.join(hyphenated_lines)
     return justified_text
 
 # Example usage:
