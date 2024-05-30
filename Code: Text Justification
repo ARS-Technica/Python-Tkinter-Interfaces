@@ -19,6 +19,10 @@ Bear with me.  I'm still learning.
 
 # Attempting to break on spaces and never in the middle of a word
 
+#   Split the text into words.
+#   Fit as many words as possible into each line without exceeding the specified width.
+#   Redistribute the remaining spaces evenly across the line.
+
 
 import tkinter as tk
 
@@ -39,37 +43,23 @@ def justify_text_helper(text, width):
     current_length = 0
 
     for word in words:
-        if current_length + len(word) + len(current_line) <= width:
-            current_line.append(word)
-            current_length += len(word)
-        else:
-            if current_line:
-                justified_lines.append(justify_line(current_line, width))
-            current_line = [word]
-            current_length = len(word)
-    
-    if current_line:  # Add the last line
+        if current_length + len(word) + len(current_line) > width:
+            # Redistribute spaces
+            spaces_to_add = width - current_length
+            for i in range(spaces_to_add):
+                current_line[i % (len(current_line) - 1 or 1)] += ' '
+            justified_lines.append(''.join(current_line))
+            current_line = []
+            current_length = 0
+
+        current_line.append(word)
+        current_length += len(word)
+
+    if current_line:
         justified_lines.append(' '.join(current_line))
 
     justified_text = '\n'.join(justified_lines)
     return justified_text
-
-def justify_line(line_words, width):
-    if len(line_words) == 1:
-        return line_words[0]  # Single word line
-    total_chars = sum(len(word) for word in line_words)
-    total_spaces = width - total_chars
-    gaps = len(line_words) - 1
-    spaces_per_gap = total_spaces // gaps
-    extra_spaces = total_spaces % gaps
-
-    justified_line = ''
-    for i, word in enumerate(line_words):
-        justified_line += word
-        if i < gaps:
-            justified_line += ' ' * (spaces_per_gap + (1 if i < extra_spaces else 0))
-    
-    return justified_line
 
 # Example usage:
 root = tk.Tk()
