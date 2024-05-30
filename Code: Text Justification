@@ -34,59 +34,21 @@ def justify_text(event):
 
 def justify_text_helper(text, width):
     words = text.split()
-    dp = [0] * len(words)  # Dynamic programming array to store the "badness" values
-    breaks = [0] * len(words)  # Array to store the optimal break positions
-
-    # Calculate the "badness" values for each line break position
-    for i in range(len(words) - 1, -1, -1):
-        min_badness = float('inf')
-        line_width = 0
-        for j in range(i, len(words)):
-            if j > i:
-                line_width += len(words[j]) + 1
-            else:
-                line_width += len(words[j])
-            if line_width <= width:
-                if len(words[j]) > width:  # If word is longer than line width
-                    # Break word into multiple lines with hyphenation
-                    hyphenated_word = hyphenate_word(words[j], width)
-                    badness = (width - len(hyphenated_word)) ** 2
-                else:
-                    badness = (width - line_width) ** 2
-                if j == len(words) - 1:
-                    curr_badness = badness
-                else:
-                    curr_badness = badness + dp[j + 1]
-                if curr_badness < min_badness:
-                    min_badness = curr_badness
-                    dp[i] = min_badness
-                    breaks[i] = j
-
-    # Reconstruct the justified text with optimal line breaks
     justified_lines = []
-    i = 0
-    while i < len(words):
-        line = ' '.join(words[i:breaks[i] + 1])
-        justified_lines.append(line)
-        i = breaks[i] + 1
+    current_line = ''
+    for word in words:
+        if len(current_line) + len(word) + 1 <= width:  # Check if word can fit in current line
+            if current_line:  # Add space if not first word in line
+                current_line += ' '
+            current_line += word
+        else:
+            justified_lines.append(current_line)
+            current_line = word if len(word) >= width else ' ' + word
+    if current_line:  # Add the last line
+        justified_lines.append(current_line)
 
     justified_text = '\n'.join(justified_lines)
     return justified_text
-
-def hyphenate_word(word, width):
-    hyphenated_word = ''
-    remaining_width = width
-    for char in word:
-        if char == ' ':
-            hyphenated_word += char
-            remaining_width -= 1
-        elif remaining_width <= 0:
-            hyphenated_word += '-\n' + char
-            remaining_width = width - 1
-        else:
-            hyphenated_word += char
-            remaining_width -= 1
-    return hyphenated_word
 
 # Example usage:
 root = tk.Tk()
