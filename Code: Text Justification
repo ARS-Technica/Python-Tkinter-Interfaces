@@ -17,7 +17,7 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
-# Attempting to Stop Mid-Word Line Breaks
+# Attempting to break on spaces and never in the middle of a word
 
 
 import tkinter as tk
@@ -47,7 +47,12 @@ def justify_text_helper(text, width):
             else:
                 line_width += len(words[j])
             if line_width <= width:
-                badness = (width - line_width) ** 2
+                if len(words[j]) > width:  # If word is longer than line width
+                    # Break word into multiple lines with hyphenation
+                    hyphenated_word = hyphenate_word(words[j], width)
+                    badness = (width - len(hyphenated_word)) ** 2
+                else:
+                    badness = (width - line_width) ** 2
                 if j == len(words) - 1:
                     curr_badness = badness
                 else:
@@ -61,23 +66,32 @@ def justify_text_helper(text, width):
     justified_lines = []
     i = 0
     while i < len(words):
-        if len(words[i]) > width:
-            # If a word is longer than the width of a line, break it into parts
-            parts = [words[i][j:j + width] for j in range(0, len(words[i]), width)]
-            # Hyphenate the parts and add them to the justified text
-            for part_index, part in enumerate(parts):
-                if part_index < len(parts) - 1:
-                    part += '-'
-                justified_lines.append(part)
-            i += 1
-        else:
-            # If a word fits within the width of a line, add it to the justified text
-            line = ' '.join(words[i:breaks[i] + 1])
-            justified_lines.append(line)
-            i = breaks[i] + 1
+        line = ' '.join(words[i:breaks[i] + 1])
+        justified_lines.append(line)
+        i = breaks[i] + 1
 
     justified_text = '\n'.join(justified_lines)
     return justified_text
+
+def hyphenate_word(word, width):
+    hyphenated_word = ''
+    remaining_width = width
+    for char in word:
+        if char == ' ':
+            if remaining_width <= 0:
+                hyphenated_word += '-\n'
+                remaining_width = width
+            else:
+                hyphenated_word += char
+                remaining_width -= 1
+        else:
+            if remaining_width <= 0:
+                hyphenated_word += '-\n' + char
+                remaining_width = width - 1
+            else:
+                hyphenated_word += char
+                remaining_width -= 1
+    return hyphenated_word
 
 # Example usage:
 root = tk.Tk()
