@@ -33,47 +33,71 @@ def justify_text(event):
     text_widget.insert("1.0", justified_text)
 
 def justify_text_helper(text, width):
-    lines = []
-    words = text.split()
-    current_line = ''
-    for word in words:
-        if len(current_line) + len(word) <= width:
-            # Word fits on the current line
-            if current_line:
-                current_line += ' '
-            current_line += word
-        else:
-            # Word does not fit on the current line
-            lines.append(current_line)
-            current_line = word
-    if current_line:
-        lines.append(current_line)
-    
+    words = split_words(text)  # Custom function to split text into words
+    dp = [0] * len(words)  # Dynamic programming array to store the "badness" values
+    breaks = [0] * len(words)  # Array to store the optimal break positions
+
+    # Calculate the "badness" values for each line break position
+    for i in range(len(words) - 1, -1, -1):
+        min_badness = float('inf')
+        line_width = 0
+        for j in range(i, len(words)):
+            if j > i:
+                line_width += len(words[j]) + 1
+            else:
+                line_width += len(words[j])
+            if line_width <= width:
+                if len(words[j]) > width:  # If word is longer than line width
+                    # Break word into multiple lines with hyphenation
+                    hyphenated_word = hyphenate_word(words[j], width)
+                    badness = (width - len(hyphenated_word)) ** 2
+                else:
+                    badness = (width - line_width) ** 2
+                if j == len(words) - 1:
+                    curr_badness = badness
+                else:
+                    curr_badness = badness + dp[j + 1]
+                if curr_badness < min_badness:
+                    min_badness = curr_badness
+                    dp[i] = min_badness
+                    breaks[i] = j
+
+    # Reconstruct the justified text with optimal line breaks
     justified_lines = []
-    for line in lines:
-        justified_lines.append(justify_line(line, width))
-    
+    i = 0
+    while i < len(words):
+        line = ' '.join(words[i:breaks[i] + 1])
+        justified_lines.append(line)
+        i = breaks[i] + 1
+
     justified_text = '\n'.join(justified_lines)
     return justified_text
 
-def justify_line(line, width):
-    if len(line) >= width:
-        return line
-    words = line.split()
-    num_spaces_needed = width - sum(len(word) for word in words)
-    num_gaps = len(words) - 1
-    if num_gaps == 0:
-        return line
-    else:
-        space_per_gap = num_spaces_needed // num_gaps
-        extra_spaces = num_spaces_needed % num_gaps
-        justified_line = words[0]
-        for i in range(1, len(words)):
-            if i <= extra_spaces:
-                justified_line += ' ' * (space_per_gap + 1) + words[i]
-            else:
-                justified_line += ' ' * space_per_gap + words[i]
-        return justified_line
+def hyphenate_word(word, width):
+    hyphenated_word = ''
+    remaining_width = width
+    for char in word:
+        if remaining_width <= 0:
+            hyphenated_word += '-\n' + char
+            remaining_width = width - 1
+        else:
+            hyphenated_word += char
+            remaining_width -= 1
+    return hyphenated_word
+
+def split_words(text):
+    words = []
+    word = ''
+    for char in text:
+        if char == ' ':
+            if word:
+                words.append(word)
+                word = ''
+        else:
+            word += char
+    if word:
+        words.append(word)
+    return words
 
 # Example usage:
 root = tk.Tk()
