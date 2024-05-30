@@ -41,37 +41,39 @@ def justify_text_helper(text, width):
     justified_lines = []
     current_line = []
     current_length = 0
-
+    
     for word in words:
-        if current_length + len(current_line) + len(word) <= width:  # Check if word can fit in current line
+        if current_length + len(word) + len(current_line) <= width:
             current_line.append(word)
             current_length += len(word)
         else:
-            justified_lines.append(justify_line(current_line, width))
+            if current_line:
+                justified_lines.append(justify_line(current_line, width))
             current_line = [word]
             current_length = len(word)
-
-    if current_line:  # Add the last line without justification
+    
+    if current_line:
         justified_lines.append(' '.join(current_line))
-
+    
     justified_text = '\n'.join(justified_lines)
     return justified_text
 
-def justify_line(words, width):
-    if len(words) == 1:
-        return words[0]  # Single word, no justification needed
-
-    total_length = sum(len(word) for word in words)
-    num_spaces = len(words) - 1
-    space_width, extra_spaces = divmod(width - total_length, num_spaces)
-
-    justified_line = ''
-    for i, word in enumerate(words):
-        if i < num_spaces:
-            justified_line += word + ' ' * (space_width + (1 if i < extra_spaces else 0))
-        else:
-            justified_line += word
-
+def justify_line(line_words, width):
+    if len(line_words) == 1:
+        return line_words[0]
+    
+    total_word_length = sum(len(word) for word in line_words)
+    total_spaces = width - total_word_length
+    gaps = len(line_words) - 1
+    
+    space_per_gap = total_spaces // gaps
+    extra_spaces = total_spaces % gaps
+    
+    justified_line = ""
+    for i in range(gaps):
+        justified_line += line_words[i] + ' ' * (space_per_gap + (1 if i < extra_spaces else 0))
+    justified_line += line_words[-1]
+    
     return justified_line
 
 # Example usage:
@@ -86,4 +88,6 @@ text_widget.insert("1.0", text)
 root.bind("<Configure>", justify_text)
 
 root.mainloop()
+
+# Closer.  Fewer ragged ends
 
