@@ -35,38 +35,41 @@ def justify_text(event):
 def justify_text_helper(text, width):
     words = text.split()
     justified_lines = []
-    current_line = ''
+    current_line = []
+    current_length = 0
+
     for word in words:
-        if len(current_line) + len(word) + 1 <= width:  # Check if word can fit in current line
-            if current_line:  # Add space if not first word in line
-                current_line += ' '
-            current_line += word
+        if current_length + len(word) + len(current_line) <= width:
+            current_line.append(word)
+            current_length += len(word)
         else:
-            # Find the last word that completely fits on the line
-            last_full_word = ''
-            for w in reversed(current_line.split()):
-                if len(last_full_word) + len(w) + 1 <= width:
-                    last_full_word = w + ' ' + last_full_word if last_full_word else w
-                else:
-                    break
-            
-            # Distribute remaining spaces evenly across the line
-            num_spaces_needed = width - len(current_line)
-            remaining_spaces = num_spaces_needed % (len(current_line.split()) - 1) if len(current_line.split()) > 1 else 0
-            space_per_gap = num_spaces_needed // (len(current_line.split()) - 1) if len(current_line.split()) > 1 else 0
-            
-            justified_line = last_full_word
-            for w in current_line.split():
-                if w != last_full_word:
-                    justified_line += ' ' * (space_per_gap + (1 if remaining_spaces > 0 else 0)) + w
-                    remaining_spaces -= 1
-            justified_lines.append(justified_line)
-            current_line = word if len(word) >= width else ' ' + word
+            if current_line:
+                justified_lines.append(justify_line(current_line, width))
+            current_line = [word]
+            current_length = len(word)
+    
     if current_line:  # Add the last line
-        justified_lines.append(current_line)
+        justified_lines.append(' '.join(current_line))
 
     justified_text = '\n'.join(justified_lines)
     return justified_text
+
+def justify_line(line_words, width):
+    if len(line_words) == 1:
+        return line_words[0]  # Single word line
+    total_chars = sum(len(word) for word in line_words)
+    total_spaces = width - total_chars
+    gaps = len(line_words) - 1
+    spaces_per_gap = total_spaces // gaps
+    extra_spaces = total_spaces % gaps
+
+    justified_line = ''
+    for i, word in enumerate(line_words):
+        justified_line += word
+        if i < gaps:
+            justified_line += ' ' * (spaces_per_gap + (1 if i < extra_spaces else 0))
+    
+    return justified_line
 
 # Example usage:
 root = tk.Tk()
