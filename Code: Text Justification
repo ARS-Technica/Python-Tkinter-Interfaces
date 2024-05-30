@@ -33,7 +33,7 @@ def justify_text(event):
     text_widget.insert("1.0", justified_text)
 
 def justify_text_helper(text, width):
-    words = split_words(text)  # Custom function to split text into words
+    words = text.split()
     dp = [0] * len(words)  # Dynamic programming array to store the "badness" values
     breaks = [0] * len(words)  # Array to store the optimal break positions
 
@@ -77,27 +77,16 @@ def hyphenate_word(word, width):
     hyphenated_word = ''
     remaining_width = width
     for char in word:
-        if remaining_width <= 0:
+        if char == ' ':
+            hyphenated_word += char
+            remaining_width -= 1
+        elif remaining_width <= 0:
             hyphenated_word += '-\n' + char
             remaining_width = width - 1
         else:
             hyphenated_word += char
             remaining_width -= 1
     return hyphenated_word
-
-def split_words(text):
-    words = []
-    word = ''
-    for char in text:
-        if char == ' ':
-            if word:
-                words.append(word)
-                word = ''
-        else:
-            word += char
-    if word:
-        words.append(word)
-    return words
 
 # Example usage:
 root = tk.Tk()
