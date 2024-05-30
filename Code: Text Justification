@@ -43,23 +43,36 @@ def justify_text_helper(text, width):
     current_length = 0
 
     for word in words:
-        if current_length + len(word) + len(current_line) > width:
-            # Redistribute spaces
-            spaces_to_add = width - current_length
-            for i in range(spaces_to_add):
-                current_line[i % (len(current_line) - 1 or 1)] += ' '
-            justified_lines.append(''.join(current_line))
-            current_line = []
-            current_length = 0
+        if current_length + len(current_line) + len(word) <= width:  # Check if word can fit in current line
+            current_line.append(word)
+            current_length += len(word)
+        else:
+            justified_lines.append(justify_line(current_line, width))
+            current_line = [word]
+            current_length = len(word)
 
-        current_line.append(word)
-        current_length += len(word)
-
-    if current_line:
+    if current_line:  # Add the last line without justification
         justified_lines.append(' '.join(current_line))
 
     justified_text = '\n'.join(justified_lines)
     return justified_text
+
+def justify_line(words, width):
+    if len(words) == 1:
+        return words[0]  # Single word, no justification needed
+
+    total_length = sum(len(word) for word in words)
+    num_spaces = len(words) - 1
+    space_width, extra_spaces = divmod(width - total_length, num_spaces)
+
+    justified_line = ''
+    for i, word in enumerate(words):
+        if i < num_spaces:
+            justified_line += word + ' ' * (space_width + (1 if i < extra_spaces else 0))
+        else:
+            justified_line += word
+
+    return justified_line
 
 # Example usage:
 root = tk.Tk()
