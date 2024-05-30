@@ -33,48 +33,47 @@ def justify_text(event):
     text_widget.insert("1.0", justified_text)
 
 def justify_text_helper(text, width):
-    words = text.split()
     lines = []
-    current_line = []
-    current_width = 0
-
+    words = text.split()
+    current_line = ''
     for word in words:
-        if current_line and current_width + len(word) + len(current_line) > width:
-            lines.append(current_line)
-            current_line = []
-            current_width = 0
-        if len(word) > width:
-            # Handle long words by breaking them with hyphenation
-            hyphenated_word = hyphenate_word(word, width)
-            lines.append([hyphenated_word])
-            current_line = []
-            current_width = 0
+        if len(current_line) + len(word) <= width:
+            # Word fits on the current line
+            if current_line:
+                current_line += ' '
+            current_line += word
         else:
-            current_line.append(word)
-            current_width += len(word)
-        if current_line:
-            current_width += 1  # Add space after each word except the last one
-
+            # Word does not fit on the current line
+            lines.append(current_line)
+            current_line = word
     if current_line:
         lines.append(current_line)
-
-    # Join words within each line with spaces
-    justified_lines = [' '.join(line) for line in lines]
-
+    
+    justified_lines = []
+    for line in lines:
+        justified_lines.append(justify_line(line, width))
+    
     justified_text = '\n'.join(justified_lines)
     return justified_text
 
-def hyphenate_word(word, width):
-    hyphenated_word = ''
-    remaining_width = width
-    for char in word:
-        if remaining_width <= 0:
-            hyphenated_word += '-\n' + char
-            remaining_width = width - 1
-        else:
-            hyphenated_word += char
-            remaining_width -= 1
-    return hyphenated_word
+def justify_line(line, width):
+    if len(line) >= width:
+        return line
+    words = line.split()
+    num_spaces_needed = width - sum(len(word) for word in words)
+    num_gaps = len(words) - 1
+    if num_gaps == 0:
+        return line
+    else:
+        space_per_gap = num_spaces_needed // num_gaps
+        extra_spaces = num_spaces_needed % num_gaps
+        justified_line = words[0]
+        for i in range(1, len(words)):
+            if i <= extra_spaces:
+                justified_line += ' ' * (space_per_gap + 1) + words[i]
+            else:
+                justified_line += ' ' * space_per_gap + words[i]
+        return justified_line
 
 # Example usage:
 root = tk.Tk()
