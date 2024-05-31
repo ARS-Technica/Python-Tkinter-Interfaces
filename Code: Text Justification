@@ -38,42 +38,39 @@ def justify_text(event):
 
 def justify_text_helper(text, width):
     words = text.split()
-    justified_lines = []
+    lines = []
     current_line = []
     current_length = 0
 
     for word in words:
-        if current_length + len(word) + len(current_line) <= width:  # Check if the word fits
+        if current_length + len(word) + len(current_line) <= width:
             current_line.append(word)
             current_length += len(word)
         else:
-            # Distribute spaces
-            justified_lines.append(justify_line(current_line, width))
+            if current_line:
+                lines.append(current_line)
             current_line = [word]
             current_length = len(word)
+    if current_line:
+        lines.append(current_line)
 
-    if current_line:  # Add the last line
-        justified_lines.append(justify_line(current_line, width, last_line=True))
+    justified_lines = [justify_line(line, width) for line in lines]
+    return '\n'.join(justified_lines)
 
-    justified_text = '\n'.join(justified_lines)
-    return justified_text
+def justify_line(line, width):
+    if len(line) == 1:
+        return line[0]
 
-def justify_line(words, width, last_line=False):
-    if last_line or len(words) == 1:
-        return ' '.join(words)  # Left-align the last line or single-word lines
+    total_length = sum(len(word) for word in line)
+    total_spaces = width - total_length
+    spaces_per_gap = total_spaces // (len(line) - 1)
+    extra_spaces = total_spaces % (len(line) - 1)
 
-    total_spaces = width - sum(len(word) for word in words)
-    gaps = len(words) - 1
-    space_per_gap = total_spaces // gaps
-    extra_spaces = total_spaces % gaps
-
-    justified_line = words[0]
-    for i in range(1, len(words)):
-        if i <= extra_spaces:
-            justified_line += ' ' * (space_per_gap + 1) + words[i]
-        else:
-            justified_line += ' ' * space_per_gap + words[i]
-    
+    justified_line = ''
+    for i, word in enumerate(line):
+        justified_line += word
+        if i < len(line) - 1:
+            justified_line += ' ' * (spaces_per_gap + (1 if i < extra_spaces else 0))
     return justified_line
 
 # Example usage:
