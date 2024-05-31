@@ -30,39 +30,52 @@ def get_text_widget_width(text_widget):
     return text_widget.winfo_width()
 
 def justify_text(event):
-    new_width = event.width // 10  # Adjusting for character width in pixels
-    text = text_widget.get("1.0", "end-1c")
-    justified_text = justify_text_helper(text, new_width)
-    text_widget.delete("1.0", "end")
-    text_widget.insert("1.0", justified_text)
+    new_width = event.width
+    if new_width > 1:  # To avoid issues with very small widths
+        text = text_widget.get("1.0", "end-1c")
+        justified_text = justify_text_helper(text, new_width)
+        text_widget.delete("1.0", "end")
+        text_widget.insert("1.0", justified_text)
 
 def justify_text_helper(text, width):
     words = text.split()
     lines = []
     current_line = []
-
-    def add_line():
-        if not current_line:
-            return
-        line = ' '.join(current_line)
-        spaces_to_add = width - len(line)
-        if spaces_to_add > 0 and len(current_line) > 1:
-            num_gaps = len(current_line) - 1
-            extra_spaces, remainder = divmod(spaces_to_add, num_gaps)
-            for i in range(remainder):
-                current_line[i] += ' '
-            line = (' ' * (extra_spaces + 1)).join(current_line)
-        lines.append(line)
-        current_line.clear()
+    current_length = 0
 
     for word in words:
-        if len(' '.join(current_line + [word])) > width:
-            add_line()
-        current_line.append(word)
+        if current_length + len(word) + len(current_line) > width:  # + len(current_line) accounts for spaces
+            lines.append(current_line)
+            current_line = [word]
+            current_length = len(word)
+        else:
+            current_line.append(word)
+            current_length += len(word)
     
-    add_line()  # Add the last line
+    if current_line:  # Add the last line
+        lines.append(current_line)
 
-    return '\n'.join(lines)
+    justified_lines = []
+    for line in lines[:-1]:  # Justify all lines except the last one
+        total_length = sum(len(word) for word in line)
+        spaces_needed = width - total_length
+        gaps = len(line) - 1
+        if gaps > 0:
+            space_per_gap = spaces_needed // gaps
+            extra_spaces = spaces_needed % gaps
+            justified_line = line[0]
+            for i in range(1, len(line)):
+                spaces = ' ' * (space_per_gap + (1 if i <= extra_spaces else 0))
+                justified_line += spaces + line[i]
+            justified_lines.append(justified_line)
+        else:
+            justified_lines.append(line[0] + ' ' * spaces_needed)
+
+    last_line = ' '.join(lines[-1])  # Left-align the last line
+    justified_lines.append(last_line)
+    
+    justified_text = '\n'.join(justified_lines)
+    return justified_text
 
 # Example usage:
 root = tk.Tk()
