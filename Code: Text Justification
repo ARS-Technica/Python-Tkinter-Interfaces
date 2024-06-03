@@ -26,54 +26,54 @@ def get_text_widget_width(text_widget):
     return text_widget.winfo_width()
 
 def justify_text(event):
-    new_width = event.width // 10  # Adjusting for character width in pixels
-    text = text_widget.get("1.0", "end-1c")
-    justified_text = justify_text_helper(text, new_width)
-    text_widget.delete("1.0", "end")
-    text_widget.insert("1.0", justified_text)
+  new_width = event.width // 10  # Adjusting for character width in pixels
+  text = text_widget.get("1.0", "end-1c")
+  justified_text = justify_text_helper(text, new_width)
+  text_widget.delete("1.0", "end")
+  text_widget.insert("1.0", justified_text)
+
 
 def justify_text_helper(text, width):
-    words = text.split()
-    lines = []
-    current_line = []
+  words = text.split()
+  lines = []
+  current_line = []
 
-    def add_line():
-        if not current_line:
-          return
-        line = ' '.join(current_line)
-        spaces_to_add = width - len(line)
-          
-        # Handle hyphenation
-        if spaces_to_add <= 0: # No space for additional words, check for hyphenation
-          for i in range(len(current_line) - 1, 0, -1):  # Check from last word to first
-            if len(current_line[i]) > 3 and spaces_to_add + len(current_line[i]) - 2 >= 0:  # Check word length and available space
-              hyphenated_word = current_line[i][:-1] + '-' + current_line[i][-1]
-              current_line[i] = hyphenated_word
-              spaces_to_add += len(current_line[i]) - len(line)
-              break  # Hyphenate only one word per line
-          
-        # Distribute spaces for justification
-        num_gaps = len(current_line) - 1  # Number of gaps between words
-        
-        if num_gaps > 0:  # Don't add extra spaces if only one word
-          extra_spaces, remainder = divmod(spaces_to_add, num_gaps)
-          spaces_per_gap = extra_spaces + 1
-          line = (' ' * spaces_per_gap).join(current_line)
-          # Distribute remaining spaces (if any)
-          for i in range(remainder):
-            line = line[:i * spaces_per_gap + i] + ' ' + line[i * spaces_per_gap + i:]
-          
-        lines.append(line)
-        current_line.clear()
+  def add_line():
+    if not current_line:
+      return
+    line = ' '.join(current_line)
+    spaces_to_add = width - len(line)
 
-    for word in words:
-        if len(' '.join(current_line + [word])) > width:
-            add_line()
-        current_line.append(word)
-    
-    add_line()  # Add the last line
+    # Handle hyphenation if no space for additional words
+    if spaces_to_add <= 0:
+        for i in range(len(current_line) - 1, 0, -1):  # Check from last word to first
+          if len(current_line[i]) > 3 and spaces_to_add + len(current_line[i]) - 2 >= 0:  # Check word length and available space
+            hyphenated_word = current_line[i][:-1] + '-' + current_line[i][-1]
+            current_line[i] = hyphenated_word
+            spaces_to_add += len(current_line[i]) - len(line)
+            break  # Hyphenate only one word per line
 
-    return '\n'.join(lines)
+    # Distribute spaces for justification
+    num_gaps = len(current_line) - 1
+    if num_gaps > 0:
+      extra_spaces = spaces_to_add // num_gaps  # Use floor division
+      spaces_per_gap = extra_spaces + 1
+      line = (' ' * spaces_per_gap).join(current_line)
+      # Distribute remaining spaces (if any)
+      for i in range(spaces_to_add % num_gaps):  # Distribute remaining spaces sequentially
+        line = line[:i * (extra_spaces + 1) + i] + ' ' + line[i * (extra_spaces + 1) + i:]
+
+    lines.append(line)
+    current_line.clear()
+
+  for word in words:
+    if len(' '.join(current_line + [word])) > width:
+      add_line()
+    current_line.append(word)
+  
+  add_line()  # Add the last line
+
+  return '\n'.join(lines)
 
 # Example usage:
 root = tk.Tk()
