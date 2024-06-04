@@ -36,7 +36,7 @@ def align_justify():
     text_justified = True
 
     # This function is called when the justify button is clicked
-    new_width = get_text_widget_width(text_widget) // 8  # Approximate character width in pixels
+    new_width = text_widget.winfo_width() // 8  # Approximate character width in pixels
     text = text_widget.get("1.0", "end-1c")  # Get all text from the text widget
     justified_text = align_justify_helper(text, new_width)  # Justify the text to fit the new width
     text_widget.delete("1.0", "end")  # Delete the current text in the text widget
