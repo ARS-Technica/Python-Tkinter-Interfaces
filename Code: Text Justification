@@ -24,15 +24,15 @@ def get_text_widget_width(text_widget):
     # Get the width of the text widget in pixels
     return text_widget.winfo_width()
 
-def justify_text(event):
-    # This function is called whenever the window is resized
-    new_width = event.width // 8  # Approximate character width in pixels
+def align_justify():
+    # This function is called when the justify button is clicked
+    new_width = get_text_widget_width(text_widget) // 8  # Approximate character width in pixels
     text = text_widget.get("1.0", "end-1c")  # Get all text from the text widget
-    justified_text = justify_text_helper(text, new_width)  # Justify the text to fit the new width
+    justified_text = align_justify_helper(text, new_width)  # Justify the text to fit the new width
     text_widget.delete("1.0", "end")  # Delete the current text in the text widget
     text_widget.insert("1.0", justified_text)  # Insert the newly justified text into the text widget
 
-def justify_text_helper(text, width):
+def align_justify_helper(text, width):
     # This function justifies the entire text while preserving paragraph breaks
     paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
     justified_paragraphs = []  # List to hold justified paragraphs
@@ -107,7 +107,9 @@ text = (
 )
 text_widget.insert("1.0", text)  # Insert the sample text into the text widget
 
-root.bind("<Configure>", justify_text)  # Bind the justify_text function to the window resize event
+# Create a button to justify the text
+justify_button = tk.Button(root, text="Justify Text", command=align_justify)
+justify_button.pack()
 
 root.mainloop()  # Start the Tkinter event loop
 
