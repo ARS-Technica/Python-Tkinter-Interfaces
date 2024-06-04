@@ -17,68 +17,75 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
-# This works well, however, each time I resize the window, all of the paragraphs in the text editor run together.
-
 
 import tkinter as tk
 
 def get_text_widget_width(text_widget):
+    # Get the width of the text widget in pixels
     return text_widget.winfo_width()
 
 def justify_text(event):
+    # This function is called whenever the window is resized
     new_width = event.width // 8  # Approximate character width in pixels
-    text = text_widget.get("1.0", "end-1c")
-    justified_text = justify_text_helper(text, new_width)
-    text_widget.delete("1.0", "end")
-    text_widget.insert("1.0", justified_text)
+    text = text_widget.get("1.0", "end-1c")  # Get all text from the text widget
+    justified_text = justify_text_helper(text, new_width)  # Justify the text to fit the new width
+    text_widget.delete("1.0", "end")  # Delete the current text in the text widget
+    text_widget.insert("1.0", justified_text)  # Insert the newly justified text into the text widget
 
 def justify_text_helper(text, width):
-    paragraphs = text.split('\n\n')  # Split text into paragraphs
-    justified_paragraphs = []
+    # This function justifies the entire text while preserving paragraph breaks
+    paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
+    justified_paragraphs = []  # List to hold justified paragraphs
     
     for paragraph in paragraphs:
+        # For each paragraph, justify its text
         lines = justify_paragraph(paragraph, width)
-        justified_paragraphs.append('\n'.join(lines))
+        justified_paragraphs.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
     
-    justified_text = '\n\n'.join(justified_paragraphs)
+    justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters
     return justified_text
 
 def justify_paragraph(paragraph, width):
-    words = paragraph.split()
-    lines = []
-    current_line = []
-    current_length = 0
-
+    # This function justifies a single paragraph
+    words = paragraph.split()  # Split paragraph into individual words
+    lines = []  # List to hold the lines of the paragraph
+    current_line = []  # List to hold the words of the current line
+    current_length = 0  # Length of the current line
+    
     for word in words:
+        # Check if adding the word would exceed the width
         if current_length + len(word) + len(current_line) > width:
-            lines.append(current_line)
-            current_line = [word]
-            current_length = len(word)
+            lines.append(current_line)  # Add the current line to the list of lines
+            current_line = [word]  # Start a new line with the current word
+            current_length = len(word)  # Reset the length of the current line
         else:
+            # Add the word to the current line
             current_line.append(word)
-            current_length += len(word)
+            current_length += len(word)  # Update the length of the current line
     
     if current_line:
+        # Add the last line to the list of lines
         lines.append(current_line)
     
-    justified_lines = []
-    for line in lines[:-1]:  # Justify all but the last line
-        line_length = sum(len(word) for word in line) + 1 # +1 Necessary for smooth screen re-sizings
-        total_spaces = width - line_length
-        gaps = len(line) - 1
+    justified_lines = []  # List to hold the justified lines
+    for line in lines[:-1]:  # Justify all lines except the last one
+        line_length = sum(len(word) for word in line) + 1 # Calculate the total length of words in the line
+        # +1 Necessary for smooth screen re-sizings !!!
+        total_spaces = width - line_length  # Calculate the total number of spaces needed to justify the line
+        gaps = len(line) - 1  # Number of gaps between words
         if gaps > 0:
-            spaces = total_spaces // gaps
-            extra_spaces = total_spaces % gaps
-            justified_line = ''
+            spaces = total_spaces // gaps  # Minimum spaces to add between each word
+            extra_spaces = total_spaces % gaps  # Extra spaces to distribute evenly
+            justified_line = ''  # String to hold the justified line
             for i, word in enumerate(line):
-                if i < extra_spaces:
-                    justified_line += word + ' ' * (spaces + 1)
-                elif i < gaps:
-                    justified_line += word + ' ' * spaces
-                else:
-                    justified_line += word
-            justified_lines.append(justified_line)
+                # Add the word to the justified line
+                justified_line += word
+                if i < gaps:
+                    # Add spaces after the word if it's not the last word in the line
+                    justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
+            justified_lines.append(justified_line)  # Add the justified line to the list
         else:
+            # If there's only one word in the line, add it as is
             justified_lines.append(line[0])
 
     # Add the last line without justification
@@ -88,18 +95,19 @@ def justify_paragraph(paragraph, width):
     return justified_lines
 
 # Example usage:
-root = tk.Tk()
+root = tk.Tk()  # Create the main window
 
-text_widget = tk.Text(root)
-text_widget.pack(fill="both", expand=True)
+text_widget = tk.Text(root)  # Create a text widget
+text_widget.pack(fill="both", expand=True)  # Make the text widget fill the window
 
+# Sample text to insert into the text widget
 text = (
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
     "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
 )
-text_widget.insert("1.0", text)
+text_widget.insert("1.0", text)  # Insert the sample text into the text widget
 
-root.bind("<Configure>", justify_text)
+root.bind("<Configure>", justify_text)  # Bind the justify_text function to the window resize event
 
-root.mainloop()
+root.mainloop()  # Start the Tkinter event loop
 
