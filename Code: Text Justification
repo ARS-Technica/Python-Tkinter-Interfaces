@@ -20,11 +20,21 @@ Bear with me.  I'm still learning.
 
 import tkinter as tk
 
+global text_justified
+text_justified = False
+
+def is_text_justified(event):
+    if text_justified:
+        align_justify()
+
 def get_text_widget_width(text_widget):
     # Get the width of the text widget in pixels
     return text_widget.winfo_width()
 
 def align_justify():
+    global text_justified
+    text_justified = True
+
     # This function is called when the justify button is clicked
     new_width = get_text_widget_width(text_widget) // 8  # Approximate character width in pixels
     text = text_widget.get("1.0", "end-1c")  # Get all text from the text widget
@@ -110,6 +120,8 @@ text_widget.insert("1.0", text)  # Insert the sample text into the text widget
 # Create a button to justify the text
 justify_button = tk.Button(root, text="Justify Text", command=align_justify)
 justify_button.pack()
+
+root.bind("<Configure>", is_text_justified)
 
 root.mainloop()  # Start the Tkinter event loop
 
