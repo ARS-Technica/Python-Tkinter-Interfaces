@@ -17,7 +17,7 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
-# # Works great.  However, when text is pasted in, the window must be resized in order to justify the new text.
+# This works well, however, each time I resize the window, all of the paragraphs in the text editor run together.
 
 
 import tkinter as tk
@@ -33,7 +33,18 @@ def justify_text(event):
     text_widget.insert("1.0", justified_text)
 
 def justify_text_helper(text, width):
-    words = text.split()
+    paragraphs = text.split('\n\n')  # Split text into paragraphs
+    justified_paragraphs = []
+    
+    for paragraph in paragraphs:
+        lines = justify_paragraph(paragraph, width)
+        justified_paragraphs.append('\n'.join(lines))
+    
+    justified_text = '\n\n'.join(justified_paragraphs)
+    return justified_text
+
+def justify_paragraph(paragraph, width):
+    words = paragraph.split()
     lines = []
     current_line = []
     current_length = 0
@@ -74,7 +85,7 @@ def justify_text_helper(text, width):
     last_line = ' '.join(lines[-1])
     justified_lines.append(last_line)
     
-    return '\n'.join(justified_lines)
+    return justified_lines
 
 # Example usage:
 root = tk.Tk()
@@ -82,7 +93,10 @@ root = tk.Tk()
 text_widget = tk.Text(root)
 text_widget.pack(fill="both", expand=True)
 
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+text = (
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\n"
+    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+)
 text_widget.insert("1.0", text)
 
 root.bind("<Configure>", justify_text)
