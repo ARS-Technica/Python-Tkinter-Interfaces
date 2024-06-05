@@ -20,12 +20,11 @@ Bear with me.  I'm still learning.
 
 import tkinter as tk
 
-
 def get_text_widget_width(text_widget):
     # Get the width of the text widget in pixels
     return text_widget.winfo_width()
 
-def align_justify(event=None):
+def align_justify():
     # Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     
@@ -101,7 +100,8 @@ def justify_paragraph(paragraph, width):
             justified_lines.append(justified_line)  # Add the justified line to the list
         else:
             # If there's only one word in the line, add it as is
-            justified_lines.append(line[0])
+            if line:  # Check if line is not empty
+                justified_lines.append(line[0])
 
     # Add the last line without justification
     last_line = ' '.join(lines[-1])
