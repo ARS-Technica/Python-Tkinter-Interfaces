@@ -21,7 +21,11 @@ Bear with me.  I'm still learning.
 import tkinter as tk
 
 
-def align_justify():
+def get_text_widget_width(text_widget):
+    # Get the width of the text widget in pixels
+    return text_widget.winfo_width()
+
+def align_justify(event=None):
     # Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     
@@ -80,7 +84,7 @@ def justify_paragraph(paragraph, width):
     
     justified_lines = []  # List to hold the justified lines
     for line in lines[:-1]:  # Justify all lines except the last one
-        line_length = sum(len(word) for word in line) + 1 # Calculate the total length of words in the line
+        line_length = sum(len(word) for word in line) + 1  # Calculate the total length of words in the line
         # +1 Necessary for smooth screen re-sizings !!!
         total_spaces = width - line_length  # Calculate the total number of spaces needed to justify the line
         gaps = len(line) - 1  # Number of gaps between words
@@ -105,9 +109,15 @@ def justify_paragraph(paragraph, width):
     
     return justified_lines
 
-def get_text_widget_width(text_widget):
-    # Get the width of the text widget in pixels
-    return text_widget.winfo_width()
+def justify_all_text(event=None):
+    # Get the entire content of the text widget
+    text = text_widget.get("1.0", "end-1c")
+    new_width = get_text_widget_width(text_widget) // 8  # Approximate character width in pixels
+    justified_text = align_justify_helper(text, new_width)  # Justify the entire text
+
+    # Replace the entire content with the justified text
+    text_widget.delete("1.0", "end")
+    text_widget.insert("1.0", justified_text)
 
 # Example usage:
 root = tk.Tk()  # Create the main window
@@ -122,9 +132,12 @@ text = (
 )
 text_widget.insert("1.0", text)  # Insert the sample text into the text widget
 
-# Create a button to justify the text
+# Create a button to justify the selected text
 justify_button = tk.Button(root, text="Justify Selected Text", command=align_justify)
 justify_button.pack()
+
+# Bind the configure event to justify all text when the window is resized
+root.bind("<Configure>", justify_all_text)
 
 root.mainloop()  # Start the Tkinter event loop
 
