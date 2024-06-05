@@ -24,6 +24,7 @@ def get_text_widget_width(text_widget):
     # Get the width of the text widget in pixels
     return text_widget.winfo_width()
 
+
 def align_justify():
     # Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
@@ -45,6 +46,9 @@ def align_justify():
         # Replace the selected text with the justified text
         text_widget.delete(start, end)
         text_widget.insert(start, justified_text)
+
+        # Tag the newly justified text
+        text_widget.tag_add("justified", start, f"{start} + {len(justified_text)}c")
 
 def align_justify_helper(text, width):
     # This function justifies the entire text while preserving paragraph breaks
@@ -110,14 +114,28 @@ def justify_paragraph(paragraph, width):
     return justified_lines
 
 def justify_all_text(event=None):
-    # Get the entire content of the text widget
-    text = text_widget.get("1.0", "end-1c")
+    # Get all ranges of text that have been justified
+    ranges = text_widget.tag_ranges("justified")
+    
+    if not ranges:
+        return
+    
     new_width = get_text_widget_width(text_widget) // 8  # Approximate character width in pixels
-    justified_text = align_justify_helper(text, new_width)  # Justify the entire text
-
-    # Replace the entire content with the justified text
-    text_widget.delete("1.0", "end")
-    text_widget.insert("1.0", justified_text)
+    
+    for i in range(0, len(ranges), 2):
+        start = ranges[i]
+        end = ranges[i + 1]
+        
+        # Get the text within the range
+        text = text_widget.get(start, end)
+        justified_text = align_justify_helper(text, new_width)
+        
+        # Replace the text within the range
+        text_widget.delete(start, end)
+        text_widget.insert(start, justified_text)
+        
+        # Update the tag range
+        text_widget.tag_add("justified", start, f"{start} + {len(justified_text)}c")
 
 # Example usage:
 root = tk.Tk()  # Create the main window
