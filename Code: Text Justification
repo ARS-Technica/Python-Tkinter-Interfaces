@@ -20,27 +20,28 @@ Bear with me.  I'm still learning.
 
 import tkinter as tk
 
-global text_justified
-text_justified = False
-
-def is_text_justified(event):
-    if text_justified:
-        align_justify()
-
-def get_text_widget_width(text_widget):
-    # Get the width of the text widget in pixels
-    return text_widget.winfo_width()
 
 def align_justify():
-    global text_justified
-    text_justified = True
+    # Get all ranges of selected text
+    selections = text_widget.tag_ranges("sel")
+    
+    if not selections:
+        # No text selected, do nothing
+        return
+    
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
 
-    # This function is called when the justify button is clicked
-    new_width = text_widget.winfo_width() // 8  # Approximate character width in pixels
-    text = text_widget.get("1.0", "end-1c")  # Get all text from the text widget
-    justified_text = align_justify_helper(text, new_width)  # Justify the text to fit the new width
-    text_widget.delete("1.0", "end")  # Delete the current text in the text widget
-    text_widget.insert("1.0", justified_text)  # Insert the newly justified text into the text widget
+        # Get the selected text
+        text = text_widget.get(start, end)
+        new_width = get_text_widget_width(text_widget) // 8  # Approximate character width in pixels
+        justified_text = align_justify_helper(text, new_width)  # Justify the selected text
+
+        # Replace the selected text with the justified text
+        text_widget.delete(start, end)
+        text_widget.insert(start, justified_text)
 
 def align_justify_helper(text, width):
     # This function justifies the entire text while preserving paragraph breaks
@@ -104,6 +105,10 @@ def justify_paragraph(paragraph, width):
     
     return justified_lines
 
+def get_text_widget_width(text_widget):
+    # Get the width of the text widget in pixels
+    return text_widget.winfo_width()
+
 # Example usage:
 root = tk.Tk()  # Create the main window
 
@@ -118,10 +123,8 @@ text = (
 text_widget.insert("1.0", text)  # Insert the sample text into the text widget
 
 # Create a button to justify the text
-justify_button = tk.Button(root, text="Justify Text", command=align_justify)
+justify_button = tk.Button(root, text="Justify Selected Text", command=align_justify)
 justify_button.pack()
-
-root.bind("<Configure>", is_text_justified)
 
 root.mainloop()  # Start the Tkinter event loop
 
