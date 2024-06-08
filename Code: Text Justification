@@ -477,7 +477,9 @@ root.title("Font Selector")
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 # Create a text widget to display font changes
 text_frame = tk.Frame(root, borderwidth=1, padx=2, relief="sunken")
-text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0 , undo= True)
+# Create a text widget with spacing for justification
+text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0 , undo= True, spacing1=1)
+# This option specifies the extra space between words when the text is justified.
 text_widget.focus_set()
 text_widget.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
 
