@@ -8,11 +8,11 @@ Having never used wxPython, this code is going to be a blend of Stackforum code 
 ChatGPT suggestions.
 """
 
-# Looks Beautiful.  No justification.
+# This version uses wx.RichTextCtrl to enable rich text features
 
 
 import wx
-import wx.stc as stc
+import wx.richtext as rt
 
 def create_menu(frame):
     menubar = wx.MenuBar()
@@ -80,11 +80,9 @@ def main():
     app.MainLoop()
 
 def create_text_ctrl(frame):
-    text_ctrl = stc.StyledTextCtrl(frame, style=wx.TE_MULTILINE)
+    text_ctrl = rt.RichTextCtrl(frame, style=wx.TE_MULTILINE)
     text_ctrl.SetMarginWidth(1, 0)
-    text_ctrl.SetWrapMode(stc.STC_WRAP_WORD)
-    text_ctrl.SetMarginType(0, stc.STC_MARGIN_NUMBER)
-    text_ctrl.SetMarginWidth(0, 40)
+    text_ctrl.SetWrapMode(wx.TEXT_ALIGNMENT_JUSTIFIED)
     return text_ctrl
 
 if __name__ == '__main__':
