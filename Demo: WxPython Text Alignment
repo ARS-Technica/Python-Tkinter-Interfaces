@@ -9,106 +9,82 @@ ChatGPT suggestions.
 """
 
 
+import tkinter as tk
+from tkinter import Menu
 import wx
-import wx.richtext as rt
+import wx.stc as stc
 
-def create_menu(frame):
-    menubar = wx.MenuBar()
-    
-    file_menu = wx.Menu()
-    file_menu.Append(wx.ID_NEW, '&New\tCtrl+N')
-    file_menu.Append(wx.ID_OPEN, '&Open\tCtrl+O')
-    file_menu.Append(wx.ID_SAVE, '&Save\tCtrl+S')
-    file_menu.Append(wx.ID_SAVEAS, 'Save &As\tCtrl+Shift+S')
-    file_menu.AppendSeparator()
-    file_menu.Append(wx.ID_EXIT, '&Exit\tCtrl+Q')
-    
-    menubar.Append(file_menu, '&File')
-    frame.SetMenuBar(menubar)
-    
-    frame.Bind(wx.EVT_MENU, on_new, id=wx.ID_NEW)
-    frame.Bind(wx.EVT_MENU, on_open, id=wx.ID_OPEN)
-    frame.Bind(wx.EVT_MENU, on_save, id=wx.ID_SAVE)
-    frame.Bind(wx.EVT_MENU, on_save_as, id=wx.ID_SAVEAS)
-    frame.Bind(wx.EVT_MENU, on_exit, id=wx.ID_EXIT)
+# Initialize the wxPython app
+app = wx.App(False)
 
-def on_new(event):
-    text_ctrl.Clear()
+# Function to left-align the selected text
+def left_align():
+    start = text_widget.index(tk.SEL_FIRST)
+    end = text_widget.index(tk.SEL_LAST)
+    text_widget.tag_add("left", start, end)
+    text_widget.tag_configure("left", justify=tk.LEFT)
 
-def on_open(event):
-    openFileDialog = wx.FileDialog(frame, "Open", "", "", 
-                                    "Text files (*.txt)|*.txt", 
-                                    wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
-    if openFileDialog.ShowModal() == wx.ID_CANCEL:
-        return
+# Function to center-align the selected text
+def center_align():
+    start = text_widget.index(tk.SEL_FIRST)
+    end = text_widget.index(tk.SEL_LAST)
+    text_widget.tag_add("center", start, end)
+    text_widget.tag_configure("center", justify=tk.CENTER)
+
+# Function to right-align the selected text
+def right_align():
+    start = text_widget.index(tk.SEL_FIRST)
+    end = text_widget.index(tk.SEL_LAST)
+    text_widget.tag_add("right", start, end)
+    text_widget.tag_configure("right", justify=tk.RIGHT)
+
+# Function to justify-align the selected text using wxPython
+def justify_align():
+    start = text_widget.index(tk.SEL_FIRST)
+    end = text_widget.index(tk.SEL_LAST)
+    selected_text = text_widget.get(start, end)
     
-    filepath = openFileDialog.GetPath()
-    with open(filepath, 'r') as file:
-        text_ctrl.SetValue(file.read())
-
-def on_save(event):
-    save_file()
-
-def on_save_as(event):
-    save_file(save_as=True)
-
-def save_file(save_as=False):
-    fileDialog = wx.FileDialog(frame, "Save As" if save_as else "Save", "", "", 
-                               "Text files (*.txt)|*.txt", 
-                               wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
-    if save_as or not hasattr(frame, 'current_file'):
-        if fileDialog.ShowModal() == wx.ID_CANCEL:
-            return
-        frame.current_file = fileDialog.GetPath()
-
-    with open(frame.current_file, 'w') as file:
-        file.write(text_ctrl.GetValue())
-
-def on_exit(event):
-    frame.Close()
-
-def on_justify(event):
-    # Apply justified alignment to the selected text or entire text if none selected
-    selection = text_ctrl.GetSelection()
-    start, end = selection.GetRange()
+    # Create a temporary wx.Frame and wx.StyledTextCtrl to justify text
+    frame = wx.Frame(None, -1, 'temp', size=(1, 1))
+    style_text_ctrl = stc.StyledTextCtrl(frame)
+    style_text_ctrl.SetText(selected_text)
+    style_text_ctrl.SetWrapMode(stc.STC_WRAP_WORD)
+    style_text_ctrl.SetMarginWidth(1, 0)
+    style_text_ctrl.StyleSetSpec(stc.STC_STYLE_DEFAULT, "align:justify")
+    justified_text = style_text_ctrl.GetText()
     
-    attr = rt.RichTextAttr()
-    attr.SetAlignment(wx.TEXT_ALIGNMENT_JUSTIFIED)
-    text_ctrl.SetStyle(start, end, attr)
+    text_widget.delete(start, end)
+    text_widget.insert(start, justified_text)
+    
+    frame.Destroy()
 
-def main():
-    app = wx.App()
-    global frame
-    frame = wx.Frame(None, title='Simple Notepad', size=(800, 600))
-    
-    panel = wx.Panel(frame)
-    vbox = wx.BoxSizer(wx.VERTICAL)
-    
-    global text_ctrl
-    text_ctrl = create_text_ctrl(panel)
-    vbox.Add(text_ctrl, 1, wx.EXPAND | wx.ALL, 5)
-    
-    justify_button = wx.Button(panel, label="Justify Text")
-    vbox.Add(justify_button, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-    justify_button.Bind(wx.EVT_BUTTON, on_justify)
-    
-    panel.SetSizer(vbox)
-    
-    create_menu(frame)
-    frame.Show(True)
-    app.MainLoop()
+# Create the main window
+root = tk.Tk()
+root.title("Simple Text Editor")
 
-def create_text_ctrl(panel):
-    text_ctrl = rt.RichTextCtrl(panel, style=wx.TE_MULTILINE)
-    text_ctrl.SetMinSize((800, 600))
-    
-    # Set default text alignment to justified
-    para_style = rt.RichTextAttr()
-    para_style.SetAlignment(wx.TEXT_ALIGNMENT_JUSTIFIED)
-    text_ctrl.SetDefaultStyle(para_style)
-    
-    return text_ctrl
+# Create a Text widget
+text_widget = tk.Text(root, wrap=tk.WORD)
+text_widget.pack(expand=True, fill=tk.BOTH)
 
-if __name__ == '__main__':
-    main()
+# Create a menu bar
+menu_bar = Menu(root)
+
+# Create a format menu
+format_menu = Menu(menu_bar, tearoff=0)
+format_menu.add_command(label="Left Align", command=left_align)
+format_menu.add_command(label="Center Align", command=center_align)
+format_menu.add_command(label="Right Align", command=right_align)
+format_menu.add_command(label="Justify Align", command=justify_align)
+
+# Add the format menu to the menu bar
+menu_bar.add_cascade(label="Format", menu=format_menu)
+
+# Configure the menu bar
+root.config(menu=menu_bar)
+
+# Start the Tkinter main loop
+root.mainloop()
+
+# Start the wxPython app
+app.MainLoop()
 
