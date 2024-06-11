@@ -1,0 +1,10 @@
+"""
+After repeated failures to find a method of reliably justifying text in Tknter's 
+text widget, I'm now attempting to create a simple Notepad application in Python 
+using the wxPython TextCtrl widget to support justified text alignment through the 
+StyleTextCtrl class.  I found this suggestion on Reddit.
+
+Having never used wxPython, this code is going to be a blend of Stackforum code and
+ChatGPT suggestions.
+"""
+
