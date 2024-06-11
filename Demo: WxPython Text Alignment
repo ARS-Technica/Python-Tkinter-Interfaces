@@ -69,12 +69,9 @@ def on_exit(event):
 
 def on_justify(event):
     # Apply justified alignment to the selected text or entire text if none selected
-    if text_ctrl.HasSelection():
-        start, end = text_ctrl.GetSelection()
-    else:
-        start, end = 0, text_ctrl.GetLastPosition()
+    selection = text_ctrl.GetSelection()
+    start, end = selection.GetRange()
     
-    text_ctrl.SetSelection(start, end)
     attr = rt.RichTextAttr()
     attr.SetAlignment(wx.TEXT_ALIGNMENT_JUSTIFIED)
     text_ctrl.SetStyle(start, end, attr)
