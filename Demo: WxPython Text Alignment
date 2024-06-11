@@ -8,3 +8,73 @@ Having never used wxPython, this code is going to be a blend of Stackforum code 
 ChatGPT suggestions.
 """
 
+# No classes as usual.  The plan is to add classes to my finished project.
+
+
+import wx
+import wx.stc as stc
+
+def create_menu(frame):
+    menubar = wx.MenuBar()
+    
+    file_menu = wx.Menu()
+    file_menu.Append(wx.ID_NEW, '&New\tCtrl+N')
+    file_menu.Append(wx.ID_OPEN, '&Open\tCtrl+O')
+    file_menu.Append(wx.ID_SAVE, '&Save\tCtrl+S')
+    file_menu.Append(wx.ID_SAVEAS, 'Save &As\tCtrl+Shift+S')
+    file_menu.AppendSeparator()
+    file_menu.Append(wx.ID_EXIT, '&Exit\tCtrl+Q')
+    
+    menubar.Append(file_menu, '&File')
+    frame.SetMenuBar(menubar)
+    
+    frame.Bind(wx.EVT_MENU, on_new, id=wx.ID_NEW)
+    frame.Bind(wx.EVT_MENU, on_open, id=wx.ID_OPEN)
+    frame.Bind(wx.EVT_MENU, on_save, id=wx.ID_SAVE)
+    frame.Bind(wx.EVT_MENU, on_save_as, id=wx.ID_SAVEAS)
+    frame.Bind(wx.EVT_MENU, on_exit, id=wx.ID_EXIT)
+
+def on_new(event):
+    text_ctrl.Clear()
+
+def on_open(event):
+    openFileDialog = wx.FileDialog(frame, "Open", "", "", 
+                                    "Text files (*.txt)|*.txt", 
+                                    wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+    if openFileDialog.ShowModal() == wx.ID_CANCEL:
+        return
+    
+    filepath = openFileDialog.GetPath()
+    with open(filepath, 'r') as file:
+        text_ctrl.SetValue(file.read())
+
+def on_save(event):
+    pass  # To be implemented
+
+def on_save_as(event):
+    pass  # To be implemented
+
+def on_exit(event):
+    frame.Close()
+
+def main():
+    app = wx.App()
+    frame = wx.Frame(None, title='Simple Notepad', size=(800, 600))
+    global text_ctrl
+    text_ctrl = create_text_ctrl(frame)
+    create_menu(frame)
+    frame.Show(True)
+    app.MainLoop()
+
+def create_text_ctrl(frame):
+    text_ctrl = stc.StyledTextCtrl(frame, style=wx.TE_MULTILINE)
+    text_ctrl.SetMarginWidth(1, 0)
+    text_ctrl.SetWrapMode(stc.STC_WRAP_WORD)
+    text_ctrl.SetMarginType(0, stc.STC_MARGIN_NUMBER)
+    text_ctrl.SetMarginWidth(0, 40)
+    text_ctrl.StyleSetAlignment(stc.STC_STYLE_DEFAULT, stc.STC_ALIGN_JUSTIFIED)
+    return text_ctrl
+
+if __name__ == '__main__':
+    main()
+
