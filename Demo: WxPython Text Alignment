@@ -9,45 +9,51 @@ ChatGPT suggestions.
 """
 
 
-import tkinter as tk
-from tkinter import ttk
 
-def left_align():
-    text.tag_configure("left", justify='left')
+import wx
+import wx.stc as stc
 
-def center_align():
-    text.tag_configure("center", justify='center')
+def create_menu_bar(frame, stc_ctrl):
+    menubar = wx.MenuBar()
 
-def right_align():
-    text.tag_configure("right", justify='right')
+    format_menu = wx.Menu()
+    left_align = format_menu.Append(wx.ID_ANY, "Left Align")
+    center_align = format_menu.Append(wx.ID_ANY, "Center Align")
+    right_align = format_menu.Append(wx.ID_ANY, "Right Align")
+    justify_align = format_menu.Append(wx.ID_ANY, "Justify")
 
-def justify():
-    text.tag_configure("justify", justify='justify')
+    frame.Bind(wx.EVT_MENU, lambda event: on_align(event, stc_ctrl, 'left'), left_align)
+    frame.Bind(wx.EVT_MENU, lambda event: on_align(event, stc_ctrl, 'center'), center_align)
+    frame.Bind(wx.EVT_MENU, lambda event: on_align(event, stc_ctrl, 'right'), right_align)
+    frame.Bind(wx.EVT_MENU, lambda event: on_align(event, stc_ctrl, 'justify'), justify_align)
 
-def on_apply_alignment(alignment):
-    selected_text = text.tag_ranges(tk.SEL)
+    menubar.Append(format_menu, "Format")
+    frame.SetMenuBar(menubar)
+
+def on_align(event, stc_ctrl, alignment):
+    selected_text = stc_ctrl.GetSelectedText()
     if selected_text:
-        text.tag_add(alignment, selected_text[0], selected_text[1])
+        start, end = stc_ctrl.GetSelection()
+        stc_ctrl.SetSelection(start, end)
+        if alignment == 'left':
+            stc_ctrl.SetStyle(start, end, wx.TextAttr(wx.ALIGN_LEFT))
+        elif alignment == 'center':
+            stc_ctrl.SetStyle(start, end, wx.TextAttr(wx.ALIGN_CENTER))
+        elif alignment == 'right':
+            stc_ctrl.SetStyle(start, end, wx.TextAttr(wx.ALIGN_RIGHT))
+        elif alignment == 'justify':
+            stc_ctrl.SetStyle(start, end, wx.TextAttr(wx.ALIGN_JUSTIFY))
 
-def create_menu():
-    menubar = tk.Menu(root)
-    format_menu = tk.Menu(menubar, tearoff=0)
-    format_menu.add_command(label="Left Align", command=lambda: on_apply_alignment("left"))
-    format_menu.add_command(label="Center Align", command=lambda: on_apply_alignment("center"))
-    format_menu.add_command(label="Right Align", command=lambda: on_apply_alignment("right"))
-    format_menu.add_command(label="Justify", command=lambda: text.config(justify='justify'))
-    menubar.add_cascade(label="Format", menu=format_menu)
-    root.config(menu=menubar)
+def main():
+    app = wx.App(False)
+    frame = wx.Frame(None, wx.ID_ANY, "Simple Text Editor", size=(800, 600))
+    stc_ctrl = stc.StyledTextCtrl(frame, style=wx.TE_MULTILINE | wx.TE_WORDWRAP)
+    
+    create_menu_bar(frame, stc_ctrl)
 
-root = tk.Tk()
-root.title("Simple Text Editor")
+    frame.Show()
+    app.MainLoop()
 
-# Create text widget
-text = tk.Text(root, wrap='word')
-text.pack(fill='both', expand=True)
-
-# Create menu
-create_menu()
-
-root.mainloop()
+if __name__ == "__main__":
+    main()
 
