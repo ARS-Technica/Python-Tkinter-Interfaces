@@ -10,81 +10,46 @@ ChatGPT suggestions.
 
 
 import tkinter as tk
-from tkinter import Menu
+from tkinter import ttk
 import wx
-import wx.stc as stc
+import wx.stc
 
-# Initialize the wxPython app
-app = wx.App(False)
-
-# Function to left-align the selected text
 def left_align():
-    start = text_widget.index(tk.SEL_FIRST)
-    end = text_widget.index(tk.SEL_LAST)
-    text_widget.tag_add("left", start, end)
-    text_widget.tag_configure("left", justify=tk.LEFT)
+    text.tag_configure("left", justify='left')
 
-# Function to center-align the selected text
 def center_align():
-    start = text_widget.index(tk.SEL_FIRST)
-    end = text_widget.index(tk.SEL_LAST)
-    text_widget.tag_add("center", start, end)
-    text_widget.tag_configure("center", justify=tk.CENTER)
+    text.tag_configure("center", justify='center')
 
-# Function to right-align the selected text
 def right_align():
-    start = text_widget.index(tk.SEL_FIRST)
-    end = text_widget.index(tk.SEL_LAST)
-    text_widget.tag_add("right", start, end)
-    text_widget.tag_configure("right", justify=tk.RIGHT)
+    text.tag_configure("right", justify='right')
 
-# Function to justify-align the selected text using wxPython
-def justify_align():
-    start = text_widget.index(tk.SEL_FIRST)
-    end = text_widget.index(tk.SEL_LAST)
-    selected_text = text_widget.get(start, end)
-    
-    # Create a temporary wx.Frame and wx.StyledTextCtrl to justify text
-    frame = wx.Frame(None, -1, 'temp', size=(1, 1))
-    style_text_ctrl = stc.StyledTextCtrl(frame)
-    style_text_ctrl.SetText(selected_text)
-    style_text_ctrl.SetWrapMode(stc.STC_WRAP_WORD)
-    style_text_ctrl.SetMarginWidth(1, 0)
-    style_text_ctrl.StyleSetSpec(stc.STC_STYLE_DEFAULT, "align:justify")
-    justified_text = style_text_ctrl.GetText()
-    
-    text_widget.delete(start, end)
-    text_widget.insert(start, justified_text)
-    
-    frame.Destroy()
+def justify():
+    text.tag_configure("justify", justify='justify')
 
-# Create the main window
+def on_apply_alignment(alignment):
+    selected_text = text.tag_ranges(tk.SEL)
+    if selected_text:
+        text.tag_add(alignment, selected_text[0], selected_text[1])
+
+def create_menu():
+    menubar = tk.Menu(root)
+    format_menu = tk.Menu(menubar, tearoff=0)
+    format_menu.add_command(label="Left Align", command=lambda: on_apply_alignment("left"))
+    format_menu.add_command(label="Center Align", command=lambda: on_apply_alignment("center"))
+    format_menu.add_command(label="Right Align", command=lambda: on_apply_alignment("right"))
+    format_menu.add_command(label="Justify", command=lambda: on_apply_alignment("justify"))
+    menubar.add_cascade(label="Format", menu=format_menu)
+    root.config(menu=menubar)
+
 root = tk.Tk()
 root.title("Simple Text Editor")
 
-# Create a Text widget
-text_widget = tk.Text(root, wrap=tk.WORD)
-text_widget.pack(expand=True, fill=tk.BOTH)
+# Create text widget
+text = tk.Text(root, wrap='word')
+text.pack(fill='both', expand=True)
 
-# Create a menu bar
-menu_bar = Menu(root)
+# Create menu
+create_menu()
 
-# Create a format menu
-format_menu = Menu(menu_bar, tearoff=0)
-format_menu.add_command(label="Left Align", command=left_align)
-format_menu.add_command(label="Center Align", command=center_align)
-format_menu.add_command(label="Right Align", command=right_align)
-format_menu.add_command(label="Justify Align", command=justify_align)
-
-# Add the format menu to the menu bar
-menu_bar.add_cascade(label="Format", menu=format_menu)
-
-# Configure the menu bar
-root.config(menu=menu_bar)
-
-# Start the Tkinter main loop
 root.mainloop()
-
-# Start the wxPython app
-app.MainLoop()
 
