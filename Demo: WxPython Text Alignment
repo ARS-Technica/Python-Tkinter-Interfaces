@@ -11,8 +11,6 @@ ChatGPT suggestions.
 
 import tkinter as tk
 from tkinter import ttk
-import wx
-import wx.stc
 
 def left_align():
     text.tag_configure("left", justify='left')
@@ -37,7 +35,7 @@ def create_menu():
     format_menu.add_command(label="Left Align", command=lambda: on_apply_alignment("left"))
     format_menu.add_command(label="Center Align", command=lambda: on_apply_alignment("center"))
     format_menu.add_command(label="Right Align", command=lambda: on_apply_alignment("right"))
-    format_menu.add_command(label="Justify", command=lambda: on_apply_alignment("justify"))
+    format_menu.add_command(label="Justify", command=lambda: text.config(justify='justify'))
     menubar.add_cascade(label="Format", menu=format_menu)
     root.config(menu=menubar)
 
