@@ -8,7 +8,7 @@ Having never used wxPython, this code is going to be a blend of Stackforum code 
 ChatGPT suggestions.
 """
 
-# No classes as usual.  The plan is to add classes to my finished project.
+# Looks Beautiful.  No justification.
 
 
 import wx
@@ -49,16 +49,29 @@ def on_open(event):
         text_ctrl.SetValue(file.read())
 
 def on_save(event):
-    pass  # To be implemented
+    save_file()
 
 def on_save_as(event):
-    pass  # To be implemented
+    save_file(save_as=True)
+
+def save_file(save_as=False):
+    fileDialog = wx.FileDialog(frame, "Save As" if save_as else "Save", "", "", 
+                               "Text files (*.txt)|*.txt", 
+                               wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+    if save_as or not hasattr(frame, 'current_file'):
+        if fileDialog.ShowModal() == wx.ID_CANCEL:
+            return
+        frame.current_file = fileDialog.GetPath()
+
+    with open(frame.current_file, 'w') as file:
+        file.write(text_ctrl.GetValue())
 
 def on_exit(event):
     frame.Close()
 
 def main():
     app = wx.App()
+    global frame
     frame = wx.Frame(None, title='Simple Notepad', size=(800, 600))
     global text_ctrl
     text_ctrl = create_text_ctrl(frame)
@@ -72,7 +85,6 @@ def create_text_ctrl(frame):
     text_ctrl.SetWrapMode(stc.STC_WRAP_WORD)
     text_ctrl.SetMarginType(0, stc.STC_MARGIN_NUMBER)
     text_ctrl.SetMarginWidth(0, 40)
-    text_ctrl.StyleSetAlignment(stc.STC_STYLE_DEFAULT, stc.STC_ALIGN_JUSTIFIED)
     return text_ctrl
 
 if __name__ == '__main__':
