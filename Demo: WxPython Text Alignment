@@ -8,8 +8,6 @@ Having never used wxPython, this code is going to be a blend of Stackforum code 
 ChatGPT suggestions.
 """
 
-# wx.RichTextCtrl does not have the SetMarginWidth method!
-
 
 import wx
 import wx.richtext as rt
@@ -69,18 +67,42 @@ def save_file(save_as=False):
 def on_exit(event):
     frame.Close()
 
+def on_justify(event):
+    # Apply justified alignment to the selected text or entire text if none selected
+    if text_ctrl.HasSelection():
+        start, end = text_ctrl.GetSelection()
+    else:
+        start, end = 0, text_ctrl.GetLastPosition()
+    
+    text_ctrl.SetSelection(start, end)
+    attr = rt.RichTextAttr()
+    attr.SetAlignment(wx.TEXT_ALIGNMENT_JUSTIFIED)
+    text_ctrl.SetStyle(start, end, attr)
+
 def main():
     app = wx.App()
     global frame
     frame = wx.Frame(None, title='Simple Notepad', size=(800, 600))
+    
+    panel = wx.Panel(frame)
+    vbox = wx.BoxSizer(wx.VERTICAL)
+    
     global text_ctrl
-    text_ctrl = create_text_ctrl(frame)
+    text_ctrl = create_text_ctrl(panel)
+    vbox.Add(text_ctrl, 1, wx.EXPAND | wx.ALL, 5)
+    
+    justify_button = wx.Button(panel, label="Justify Text")
+    vbox.Add(justify_button, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+    justify_button.Bind(wx.EVT_BUTTON, on_justify)
+    
+    panel.SetSizer(vbox)
+    
     create_menu(frame)
     frame.Show(True)
     app.MainLoop()
 
-def create_text_ctrl(frame):
-    text_ctrl = rt.RichTextCtrl(frame, style=wx.TE_MULTILINE)
+def create_text_ctrl(panel):
+    text_ctrl = rt.RichTextCtrl(panel, style=wx.TE_MULTILINE)
     text_ctrl.SetMinSize((800, 600))
     
     # Set default text alignment to justified
