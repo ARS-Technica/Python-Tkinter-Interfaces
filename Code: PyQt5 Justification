@@ -1,0 +1,51 @@
+"""
+After extensive experimentation, I've discovered that using PyQt
+is a far more sufficent way to justify text on a text widget than
+writing out a text justification function myself.  Here's a sample
+of how PyQt's text alignment works.
+"""
+
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QPushButton, QHBoxLayout
+from PyQt5.QtCore import Qt
+
+def create_text_editor():
+    window = QWidget()
+    layout = QVBoxLayout()
+    
+    text_edit = QTextEdit()
+    layout.addWidget(text_edit)
+    
+    button_layout = QHBoxLayout()
+    
+    left_align_btn = QPushButton('Left Align')
+    left_align_btn.clicked.connect(lambda: text_edit.setAlignment(Qt.AlignLeft))
+    button_layout.addWidget(left_align_btn)
+    
+    right_align_btn = QPushButton('Right Align')
+    right_align_btn.clicked.connect(lambda: text_edit.setAlignment(Qt.AlignRight))
+    button_layout.addWidget(right_align_btn)
+    
+    center_align_btn = QPushButton('Center Align')
+    center_align_btn.clicked.connect(lambda: text_edit.setAlignment(Qt.AlignCenter))
+    button_layout.addWidget(center_align_btn)
+    
+    justify_align_btn = QPushButton('Justify Align')
+    justify_align_btn.clicked.connect(lambda: text_edit.setAlignment(Qt.AlignJustify))
+    button_layout.addWidget(justify_align_btn)
+    
+    layout.addLayout(button_layout)
+    
+    window.setLayout(layout)
+    window.setWindowTitle('Simple Text Editor')
+    return window
+
+def main():
+    app = QApplication(sys.argv)
+    editor = create_text_editor()
+    editor.show()
+    sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()
+
