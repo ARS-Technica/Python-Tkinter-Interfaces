@@ -21,6 +21,12 @@ Bear with me.  I'm still learning.
 # Creates large gutter on right side at smaller font sizes
 # Right side of text still ragged with proportional fonts
 
+# If I continue to struggle to justify both monospaced and proportional fonts
+# with the same mothod, I may need to create a new function to determine which 
+# one the selected text is in order to apply one of two different justification
+# methods to it.  I reaaaaaly don't want to do that, but it would be better than
+# quitting.
+
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
