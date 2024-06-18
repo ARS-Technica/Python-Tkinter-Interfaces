@@ -553,10 +553,8 @@ image_align_right = ImageTk.PhotoImage(photo_align_right)
 align_right_button.config(image=image_align_right)
 align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
-
 # STATUS BAR
 status = tk.Label(root, text="", bd=1, relief=tk.SUNKEN, anchor=tk.W)
-
 
 # BINDINGS
 # Bind events to update the font
@@ -567,7 +565,6 @@ font_size_combo.bind("<<ComboboxSelected>>", update_font)
 text_widget.bind("<Button-1>", update_comboboxes)
 
 root.bind("<Configure>", align_justify)
-
 
 # Mainloop of the Program
 root.mainloop()
