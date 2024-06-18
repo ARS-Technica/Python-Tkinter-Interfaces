@@ -22,15 +22,11 @@ Bear with me.  I'm still learning.
 # Right side of text still ragged with proportional fonts
 
 
-# Combines Text Formatting Skeleton 04u3.py with Text Justification Experiment 5.py
-
-
-from PIL import Image, ImageTk # For buttons on Toolbar
+from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
 from tkinter import colorchooser
 from tkinter import ttk
-
 
 # Set default font
 global default_font
@@ -46,8 +42,7 @@ current_tags = []
 global style_counter  # Serialize the Styles of Font to Create Unique Tags
 style_counter = 0
 
-				
-# MAIN MENU METHODS 
+# MAIN MENU METHODS
 
 # FORMAT BAR METHODS
 
@@ -63,7 +58,7 @@ def apply_font_style(event=None, fontColor=None, fontBackground=None):
     if text_widget.tag_ranges("sel"):
         # Get the tags applied to the selected text
         current_tags = text_widget.tag_names("sel.first")
-       
+
         # Determine font weight, slant, underline, and overstrike
         weight = "bold" if "bold" in current_tags else "normal"
         slant = "italic" if "italic" in current_tags else "roman"
@@ -249,9 +244,6 @@ def highlight(event=None):
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 
-
-
-
 def remove_align_tags(start=None, end=None):
     if start is None or end is None:
         # Get the start and end of the entire text widget
@@ -317,16 +309,6 @@ def align_right(event=None):
         text_widget.tag_configure("right", justify='right')
         text_widget.tag_add("right", start, end)
 
- 
- 
-
- 
-
-
-
-
-
-
 # justify_text
 def align_justify(event=None):
     # Determine if we are justifying selected text or all justified text
@@ -351,11 +333,11 @@ def align_justify(event=None):
         # Get the current font for the text widget
         current_font = font.Font(font=text_widget.cget("font"))
         
-        # Calculate the new width based on the text widget's width and the average character width
-        new_width = text_widget.winfo_width() // current_font.measure("W")  # Approximate character width in pixels
+        # Calculate the new width in pixels based on the text widget's width
+        new_width_px = text_widget.winfo_width()
         
         # Justify the selected text
-        justified_text = align_justify_helper(text, new_width)
+        justified_text = align_justify_helper(text, new_width_px, current_font)
 
         # Replace the selected text with the justified text
         text_widget.delete(start, end)
@@ -365,36 +347,37 @@ def align_justify(event=None):
         new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
         text_widget.tag_add("justified", start, new_end)  # Tag the newly justified text
 
-def align_justify_helper(text, width):
+def align_justify_helper(text, width_px, font):
     # This function justifies the entire text while preserving paragraph breaks
     paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
     justified_paragraphs = []  # List to hold justified paragraphs
     
     for paragraph in paragraphs:
         # For each paragraph, justify its text
-        lines = justify_paragraph(paragraph, width)
+        lines = justify_paragraph(paragraph, width_px, font)
         justified_paragraphs.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
     
     justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters
     return justified_text
 
-def justify_paragraph(paragraph, width):
+def justify_paragraph(paragraph, width_px, font):
     # This function justifies a single paragraph
     words = paragraph.split()  # Split paragraph into individual words
     lines = []  # List to hold the lines of the paragraph
     current_line = []  # List to hold the words of the current line
-    current_length = 0  # Length of the current line
+    current_length = 0  # Length of the current line in pixels
     
     for word in words:
+        word_width = font.measure(word)
         # Check if adding the word would exceed the width
-        if current_length + len(word) + len(current_line) > width:
+        if current_length + word_width + font.measure(" ") * len(current_line) > width_px:
             lines.append(current_line)  # Add the current line to the list of lines
             current_line = [word]  # Start a new line with the current word
-            current_length = len(word)  # Reset the length of the current line
+            current_length = word_width  # Reset the length of the current line
         else:
             # Add the word to the current line
             current_line.append(word)
-            current_length += len(word)  # Update the length of the current line
+            current_length += word_width  # Update the length of the current line
     
     if current_line:
         # Add the last line to the list of lines
@@ -402,9 +385,8 @@ def justify_paragraph(paragraph, width):
     
     justified_lines = []  # List to hold the justified lines
     for line in lines[:-1]:  # Justify all lines except the last one
-        line_length = sum(len(word) for word in line) + 1  # Calculate the total length of words in the line
-        # +1 Necessary for smooth screen re-sizings !!!
-        total_spaces = width - line_length  # Calculate the total number of spaces needed to justify the line
+        line_length = sum(font.measure(word) for word in line)  # Calculate the total length of words in the line
+        total_spaces = width_px - line_length  # Calculate the total number of spaces needed to justify the line
         gaps = len(line) - 1  # Number of gaps between words
         if gaps > 0:
             spaces = total_spaces // gaps  # Minimum spaces to add between each word
@@ -415,7 +397,7 @@ def justify_paragraph(paragraph, width):
                 justified_line += word
                 if i < gaps:
                     # Add spaces after the word if it's not the last word in the line
-                    justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
+                    justified_line += ' ' * (spaces + (1 if i < extra_spaces else 0))
             justified_lines.append(justified_line)  # Add the justified line to the list
         else:
             # If there's only one word in the line, add it as is
@@ -427,7 +409,6 @@ def justify_paragraph(paragraph, width):
     justified_lines.append(last_line)
     
     return justified_lines
-
 
 def unjustify_text(start, end):
     lines = text_widget.get(start, end).split("\n")
@@ -448,41 +429,16 @@ def unjustify_text(start, end):
     text_widget.delete(start, end)
     text_widget.insert(start, removed_justification_text)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # CREATE THE MAIN WINDOW
 root = tk.Tk()
 root.title("Font Selector")
 
-
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 # Create a text widget to display font changes
 text_frame = tk.Frame(root, borderwidth=1, padx=2, relief="sunken")
-# Create a text widget with spacing for justification
-text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0 , undo= True, spacing1=1)
-# This option specifies the extra space between words when the text is justified.
+text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0 , undo= True)
 text_widget.focus_set()
-text_widget.pack(in_=text_frame, side="left", fill="both", expand=True) # pack text object.
-
+text_widget.pack(in_=text_frame, side="left", fill="both", expand=True) # Make the text widget fills the window
 
 # Text for Debugging
 text_widget.insert("end", "This first sentence tests the bold formatting feature.\n")
@@ -492,40 +448,32 @@ text_widget.insert("end", "\n")
 text_widget.insert("end", "This third sentence demonstrates the ability to underline words.\n")
 text_widget.insert("end", "\n")
 
-
-
 # PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
 formattingbar = tk.Frame(root, padx=2, pady=2)
 formattingbar.pack(side="top", fill="x")
 text_frame.pack(side="bottom", fill="both", expand=True)
 text_widget.focus_set()
 
-
 # COMBOBOXES
 # Get all font families
 font_families = list(font.families())
 
-
 # Create a combo box for font selection
 font_family_combo = ttk.Combobox(root, values=font_families)
 font_family_combo.pack(in_=formattingbar, side="left", padx=4, pady=4)
-
 
 if default_font in font_families:  # Check that the default font is installed
     font_family_combo.set(default_font)
 else:
     font_family_combo.set(font_families[0])  # Set the first available font as default
 
-
 # Create a combo box for font size selection
 font_size_combo = ttk.Combobox(root, values=list(range(8, 72)))
 font_size_combo.pack(in_=formattingbar, side="left", padx=4, pady=4)
 font_size_combo.set(default_size)
 
-
-
 # FORMATBAR BUTTONS
-#bold 
+# bold 
 bold_button = tk.Button(name="formatbar_b1", borderwidth=1, command=bold, width=20, height=20, pady=10, padx=10)
 photo_bold = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/bold.png")
 photo_bold = photo_bold.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS) 
@@ -606,7 +554,6 @@ align_right_button.config(image=image_align_right)
 align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 
-
 # STATUS BAR
 status = tk.Label(root, text="", bd=1, relief=tk.SUNKEN, anchor=tk.W)
 
@@ -619,6 +566,7 @@ font_size_combo.bind("<<ComboboxSelected>>", update_font)
 # Bind event to apply font style when text is selected
 text_widget.bind("<Button-1>", update_comboboxes)
 
+root.bind("<Configure>", align_justify)
 
 
 # Mainloop of the Program
