@@ -20,7 +20,7 @@ Bear with me.  I'm still learning.
 """
 The text justification code in the program below works well with proportional 
 fonts. However, when a line perfectly fits the width of the text widget, the 
-code above places the last word in a line on the next line by itself.  
+code below places the last word in a line on the next line by itself.  
 """
 
 
@@ -344,15 +344,6 @@ def align_justify(event=None):
         # Replace the selected text with the justified text
         text_widget.delete(start, end)
         text_widget.insert(start, justified_text)
-        
-        """
-        text_widget.insert(start, justified_text.strip(' '))
-        When a line perfectly fits all the words without extra spaces, the 
-        justification process might not insert any spaces. This can leave the 
-        last word on the line by itself because the text_widget.insert call 
-        replaces the entire selection, including any trailing whitespace that 
-        might have been there before justification.
-        """
 
         # Apply the 'justified' tag to the newly justified text
         new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
@@ -384,14 +375,21 @@ def justify_paragraph(paragraph, widget_width, current_font):
         word_width = current_font.measure(word)  # Width of the word in pixels
         
         # Check if adding the word would exceed the widget's width
-        if current_length + word_width + (len(current_line) * space_width) > widget_width:
-            lines.append(current_line)  # Add the current line to the list of lines
-            current_line = [word]  # Start a new line with the current word
-            current_length = word_width  # Reset the length of the current line
-        else:
+        if current_length + word_width + (len(current_line) * space_width) <= widget_width:
             # Add the word to the current line
             current_line.append(word)
             current_length += word_width  # Update the length of the current line
+        else:
+            # Check if the line length exactly matches the widget width
+            if current_length + word_width + (len(current_line) * space_width) == widget_width:
+                current_line.append(word)
+                lines.append(current_line)
+                current_line = []
+                current_length = 0
+            else:
+                lines.append(current_line)  # Add the current line to the list of lines
+                current_line = [word]  # Start a new line with the current word
+                current_length = word_width  # Reset the length of the current line
     
     if current_line:
         # Add the last line to the list of lines
@@ -423,7 +421,6 @@ def justify_paragraph(paragraph, widget_width, current_font):
     justified_lines.append(last_line)
     
     return justified_lines
-
 
 def unjustify_text(start, end):
     lines = text_widget.get(start, end).split("\n")
