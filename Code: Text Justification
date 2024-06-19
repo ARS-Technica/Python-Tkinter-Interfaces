@@ -339,11 +339,11 @@ def align_justify(event=None):
         # Get the current font for the text widget
         current_font = font.Font(font=text_widget.cget("font"))
         
-        # Calculate the new width in pixels
-        widget_width = text_widget.winfo_width()
+        # Calculate the new width based on the text widget's width
+        new_width = text_widget.winfo_width()
         
         # Justify the selected text
-        justified_text = align_justify_helper(text, widget_width, current_font)
+        justified_text = align_justify_helper(text, new_width, current_font)
 
         # Replace the selected text with the justified text
         text_widget.delete(start, end)
@@ -353,39 +353,40 @@ def align_justify(event=None):
         new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
         text_widget.tag_add("justified", start, new_end)  # Tag the newly justified text
 
-def align_justify_helper(text, width, current_font):
+def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
     paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
     justified_paragraphs = []  # List to hold justified paragraphs
     
     for paragraph in paragraphs:
         # For each paragraph, justify its text
-        lines = justify_paragraph(paragraph, width, current_font)
+        lines = justify_paragraph(paragraph, widget_width, current_font)
         justified_paragraphs.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
     
     justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters
     return justified_text
 
-def justify_paragraph(paragraph, width, current_font):
+def justify_paragraph(paragraph, widget_width, current_font):
     # This function justifies a single paragraph
     words = paragraph.split()  # Split paragraph into individual words
     lines = []  # List to hold the lines of the paragraph
     current_line = []  # List to hold the words of the current line
     current_length = 0  # Length of the current line in pixels
     
-    for word in words:
-        word_length = current_font.measure(word)  # Measure the pixel width of the word
-        space_length = current_font.measure(" ")  # Measure the pixel width of a space
+    space_width = current_font.measure(" ")  # Width of a single space
 
-        # Check if adding the word would exceed the width
-        if current_length + word_length + (len(current_line) * space_length) > width:
+    for word in words:
+        word_width = current_font.measure(word)  # Width of the word in pixels
+        
+        # Check if adding the word would exceed the widget's width
+        if current_length + word_width + (len(current_line) * space_width) > widget_width:
             lines.append(current_line)  # Add the current line to the list of lines
             current_line = [word]  # Start a new line with the current word
-            current_length = word_length  # Reset the length of the current line
+            current_length = word_width  # Reset the length of the current line
         else:
             # Add the word to the current line
             current_line.append(word)
-            current_length += word_length  # Update the length of the current line
+            current_length += word_width  # Update the length of the current line
     
     if current_line:
         # Add the last line to the list of lines
@@ -393,12 +394,11 @@ def justify_paragraph(paragraph, width, current_font):
     
     justified_lines = []  # List to hold the justified lines
     for line in lines[:-1]:  # Justify all lines except the last one
-        line_length = sum(current_font.measure(word) for word in line)  # Calculate the total pixel width of words in the line
-        total_spaces = width - line_length  # Calculate the total number of pixels needed to justify the line
+        line_length = sum(current_font.measure(word) for word in line)  # Calculate the total length of words in the line
+        total_spaces = (widget_width - line_length) // space_width  # Calculate the total number of spaces needed to justify the line
         gaps = len(line) - 1  # Number of gaps between words
-
         if gaps > 0:
-            space_width = total_spaces // gaps  # Minimum space width to add between each word
+            spaces = total_spaces // gaps  # Minimum spaces to add between each word
             extra_spaces = total_spaces % gaps  # Extra spaces to distribute evenly
             justified_line = ''  # String to hold the justified line
             for i, word in enumerate(line):
@@ -406,7 +406,7 @@ def justify_paragraph(paragraph, width, current_font):
                 justified_line += word
                 if i < gaps:
                     # Add spaces after the word if it's not the last word in the line
-                    justified_line += ' ' * (space_width + 1 if i < extra_spaces else space_width)
+                    justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
             justified_lines.append(justified_line)  # Add the justified line to the list
         else:
             # If there's only one word in the line, add it as is
@@ -418,7 +418,6 @@ def justify_paragraph(paragraph, width, current_font):
     justified_lines.append(last_line)
     
     return justified_lines
-
 
 def unjustify_text(start, end):
     lines = text_widget.get(start, end).split("\n")
