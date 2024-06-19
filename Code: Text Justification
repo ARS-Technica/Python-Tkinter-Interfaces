@@ -24,8 +24,6 @@ code below places the last word in a line on the next line by itself.  
 """
 
 
-# Runs words together
-
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
@@ -382,9 +380,14 @@ def justify_paragraph(paragraph, widget_width, current_font):
             current_line.append(word)
             current_length += word_width  # Update the length of the current line
         else:
-            lines.append(current_line)  # Add the current line to the list of lines
-            current_line = [word]  # Start a new line with the current word
-            current_length = word_width  # Reset the length of the current line
+            # If the line is not empty and exactly fits the widget width, append the word to the current line
+            if current_line and current_length + word_width + (len(current_line) * space_width) - space_width == widget_width:
+                current_line.append(word)
+                current_length += word_width
+            else:
+                lines.append(current_line)  # Add the current line to the list of lines
+                current_line = [word]  # Start a new line with the current word
+                current_length = word_width  # Reset the length of the current line
     
     if current_line:
         # Add the last line to the list of lines
@@ -392,7 +395,7 @@ def justify_paragraph(paragraph, widget_width, current_font):
     
     justified_lines = []  # List to hold the justified lines
     for line in lines[:-1]:  # Justify all lines except the last one
-        line_length = sum(current_font.measure(word) for word in line) + (len(line) - 1) * space_width  # Calculate the total length of words in the line including spaces
+        line_length = sum(current_font.measure(word) for word in line)  # Calculate the total length of words in the line
         total_spaces = (widget_width - line_length) // space_width  # Calculate the total number of spaces needed to justify the line
         gaps = len(line) - 1  # Number of gaps between words
         if gaps > 0:
@@ -448,7 +451,12 @@ text_widget.focus_set()
 text_widget.pack(in_=text_frame, side="left", fill="both", expand=True)  # Make the text widget fill the window
 
 # Text for Debugging
-text_widget.insert("end", "She then queried, “Whatever do you suppose made a man like that go into the Church?” Then she added, “You like him, don’t you?” Jane Shelby was quite well aware that her husband practically hero-worshipped the younger Scott. She was quite prepared to look with her dry-humoured understanding on little boys who never grew up but there were unanswered questions about Scott that worried her and she wished that her husband were not quite so enchanted with his virtues.\n")
+text_widget.insert("end", "This first sentence tests the bold formatting feature.\n")
+text_widget.insert("end", "\n")
+text_widget.insert("end", "This second sentence tests the italics formatting feature.\n")
+text_widget.insert("end", "\n")
+text_widget.insert("end", "This third sentence demonstrates the ability to underline words.\n")
+text_widget.insert("end", "\n")
 
 # PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
 formattingbar = tk.Frame(root, padx=2, pady=2)
