@@ -311,6 +311,14 @@ def align_right(event=None):
         text_widget.tag_configure("right", justify='right')
         text_widget.tag_add("right", start, end)
 
+
+
+
+ 
+
+
+
+
 # justify_text
 def align_justify(event=None):
     # Determine if we are justifying selected text or all justified text
@@ -323,7 +331,8 @@ def align_justify(event=None):
     if not selections:
         # No text selected or no justified text found
         return
-    
+        
+    """
     # Iterate over each selected range
     for i in range(0, len(selections), 2):
         start = selections[i]
@@ -348,7 +357,33 @@ def align_justify(event=None):
         # Apply the 'justified' tag to the newly justified text
         new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
         text_widget.tag_add("justified", start, new_end)  # Tag the newly justified text
+    """
+        
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+    
+        # Get the selected text
+        text = text_widget.get(start, end)
+    
+        # Get the current font for the text widget
+        current_font = font.Font(font=text_widget.cget("font"))
+    
+        # Calculate the new width based on the text widget's width
+        new_width = text_widget.winfo_width()
+    
+        # Justify the selected text
+        justified_text = align_justify_helper(text, new_width, current_font)
+    
+        # Replace the selected text with the justified text
+        text_widget.delete(start, end)
+        text_widget.insert(start, justified_text)
+    
+        # Apply the 'justified' tag to the newly justified text
+        new_end = f"{start} + {len(justified_text)}c"
+        text_widget.tag_add("justified", start, new_end)        
 
+"""        
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
     paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
@@ -361,6 +396,50 @@ def align_justify_helper(text, widget_width, current_font):
     
     justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters
     return justified_text
+"""
+
+"""
+def align_justify_helper(text, widget_width, current_font):
+      # ... (rest of the function unchanged)
+    
+      justified_lines = []
+      for line in lines[:-1]:
+        # ... (rest of the loop unchanged)
+    
+      # Add the last line, even if it fits the width exactly
+      last_line = ' '.join(lines[-1])
+      justified_lines.append(last_line)
+    
+      return justified_lines
+"""
+
+def align_justify_helper(text, widget_width, current_font):
+    # This function justifies the entire text while preserving paragraph breaks
+    paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
+    #justified_paragraphs = []  # List to hold justified paragraphs
+    justified_lines = []
+
+    """
+    #for paragraph in paragraphs:
+    for line in lines[:-1]:
+        # For each paragraph, justify its text
+        lines = justify_paragraph(paragraph, widget_width, current_font)
+        justified_paragraphs.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
+    """
+    
+    for paragraph in paragraphs:
+        # For each paragraph, justify its text
+        lines = justify_paragraph(paragraph, widget_width, current_font)
+        justified_lines.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
+    
+    #justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters  
+    #return justified_text
+
+    # Add the last line, even if it fits the width exactly
+    last_line = ' '.join(lines[-1])
+    justified_lines.append(last_line)
+
+    return justified_lines
 
 def justify_paragraph(paragraph, widget_width, current_font):
     # This function justifies a single paragraph
@@ -380,10 +459,9 @@ def justify_paragraph(paragraph, widget_width, current_font):
             current_line.append(word)
             current_length += word_width  # Update the length of the current line
         else:
-            # If the line is not empty and exactly fits the widget width, append the word to the current line
-            if current_line and current_length + word_width + (len(current_line) * space_width) - space_width == widget_width:
+            # Check if the line length exactly matches the widget width
+            if current_length + word_width + ((len(current_line) + 1) * space_width) <= widget_width:
                 current_line.append(word)
-                current_length += word_width
             else:
                 lines.append(current_line)  # Add the current line to the list of lines
                 current_line = [word]  # Start a new line with the current word
@@ -451,12 +529,7 @@ text_widget.focus_set()
 text_widget.pack(in_=text_frame, side="left", fill="both", expand=True)  # Make the text widget fill the window
 
 # Text for Debugging
-text_widget.insert("end", "This first sentence tests the bold formatting feature.\n")
-text_widget.insert("end", "\n")
-text_widget.insert("end", "This second sentence tests the italics formatting feature.\n")
-text_widget.insert("end", "\n")
-text_widget.insert("end", "This third sentence demonstrates the ability to underline words.\n")
-text_widget.insert("end", "\n")
+text_widget.insert("end", "She then queried, “Whatever do you suppose made a man like that go into the Church?” Then she added, “You like him, don’t you?” Jane Shelby was quite well aware that her husband practically hero-worshipped the younger Scott. She was quite prepared to look with her dry-humoured understanding on little boys who never grew up but there were unanswered questions about Scott that worried her and she wished that her husband were not quite so enchanted with his virtues.\n")
 
 # PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
 formattingbar = tk.Frame(root, padx=2, pady=2)
@@ -578,4 +651,4 @@ root.bind("<Configure>", align_justify)
 
 # Mainloop of the Program
 root.mainloop()
-                            
+
