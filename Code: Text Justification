@@ -24,6 +24,9 @@ code below places the last word in a line on the next line by itself.  
 """
 
 
+# I think the problem is in the justify_paragraph function. 
+
+
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
@@ -349,6 +352,7 @@ def align_justify(event=None):
         new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
         text_widget.tag_add("justified", start, new_end)  # Tag the newly justified text
 
+"""
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
     paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
@@ -359,18 +363,34 @@ def align_justify_helper(text, widget_width, current_font):
         lines = justify_paragraph(paragraph, widget_width, current_font)
         justified_paragraphs.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
     
-    #justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters  
-    #return justified_text
+    justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters
+    return justified_text
+"""
 
-    # Add the last line, even if it fits the width exactly
-    last_line = ' '.join(lines[-1])
-    justified_lines.append(last_line)
+def align_justify_helper(text, widget_width, current_font):
+  # This function justifies the entire text while preserving paragraph breaks
+  paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
+  justified_lines = []
 
-    return justified_lines
+  for paragraph in paragraphs:
+    # Justify the paragraph and flatten the list of lines
+    flat_lines = sum([line for line in justify_paragraph(paragraph, widget_width, current_font)], [])
+    justified_lines.append('\n'.join(flat_lines))  # Join the flattened lines back into a paragraph
 
+  # Add the last line, even if it fits the width exactly
+  last_line = ' '.join(lines[-1])
+  justified_lines.append(last_line)
+
+  return justified_lines
+
+
+
+"""
 def justify_paragraph(paragraph, widget_width, current_font):
-    # This function justifies a single paragraph
+    # This function justifies a single 
+    # words = paragraph.splitlines()  # Split the paragraph into lines
     words = paragraph.split()  # Split paragraph into individual words
+    
     lines = []  # List to hold the lines of the paragraph
     current_line = []  # List to hold the words of the current line
     current_length = 0  # Length of the current line in pixels
@@ -424,6 +444,98 @@ def justify_paragraph(paragraph, widget_width, current_font):
     justified_lines.append(last_line)
     
     return justified_lines
+"""
+
+"""
+def justify_paragraph(text, widget_width, current_font):
+    # This function justifies a single paragraph of text
+    words = text.splitlines()  # Split the paragraph into lines
+      
+    lines = []
+    current_line = []
+    current_length = 0
+    space_width = current_font.measure(" ")
+    
+    for word in words:
+      word_width = current_font.measure(word)
+      
+      # Check if adding the word would exceed OR fit exactly the widget's width
+      if current_length + word_width + (len(current_line) * space_width) <= widget_width:
+        current_line.append(word)
+        current_length += word_width
+      else:
+        lines.append(current_line)
+        current_line = [word]
+        current_length = word_width
+      
+    if current_line:
+      lines.append(current_line)
+
+    justified_lines = []  # List to hold the justified lines
+    
+    for line in lines[:-1]:  # Justify all lines except the last one
+        line_length = sum(current_font.measure(word) for word in line)  # Calculate the total length of words in the line
+        total_spaces = (widget_width - line_length) // space_width  # Calculate the total number of spaces needed to justify the line
+        gaps = len(line) - 1  # Number of gaps between words
+        if gaps > 0:
+            spaces = total_spaces // gaps  # Minimum spaces to add between each word
+            extra_spaces = total_spaces % gaps  # Extra spaces to distribute evenly
+            justified_line = ''  # String to hold the justified line
+            for i, word in enumerate(line):
+                # Add the word to the justified line
+                justified_line += word
+                if i < gaps:
+                    # Add spaces after the word if it's not the last word in the line
+                    justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
+            justified_lines.append(justified_line)  # Add the justified line to the list
+        else:
+            # If there's only one word in the line, add it as is
+            if line:  # Check if line is not empty
+                justified_lines.append(line[0])
+    
+    # Add the last line without justification
+    last_line = ' '.join(lines[-1])
+    justified_lines.append(last_line)
+    
+    return justified_lines
+"""
+
+
+def justify_paragraph(text, widget_width, current_font):
+  # This function justifies a single paragraph of text
+  words = text.splitlines()  # Split the paragraph into lines
+
+  lines = []
+  current_line = []
+  current_length = 0
+  space_width = current_font.measure(" ")
+  extra_space = widget_width - current_font.measure(''.join(words))  # Total extra space
+
+  for word in words:
+    word_width = current_font.measure(word)
+    current_length += word_width + space_width
+    extra_space -= word_width + space_width  # Update remaining space
+
+    # Always add the word to the current line
+    current_line.append(word)
+
+  # Add the last line (even if it doesn't fit perfectly)
+  lines.append(current_line)
+
+  # Optional: Distribute extra space (simple justification)
+  if extra_space > 0:
+    num_spaces = len(current_line) - 1  # Number of spaces between words
+    extra_space_per_gap = extra_space // num_spaces  # Space to add between each word
+    new_line = []
+    for word in current_line:
+      new_line.append(word)
+      if len(new_line) > 1:  # Add extra spaces except for the first word
+        new_line.append(' ' * extra_space_per_gap)
+    lines[-1] = new_line
+
+  return lines
+
+
 
 def unjustify_text(start, end):
     lines = text_widget.get(start, end).split("\n")
