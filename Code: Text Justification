@@ -311,14 +311,6 @@ def align_right(event=None):
         text_widget.tag_configure("right", justify='right')
         text_widget.tag_add("right", start, end)
 
-
-
-
- 
-
-
-
-
 # justify_text
 def align_justify(event=None):
     # Determine if we are justifying selected text or all justified text
@@ -331,8 +323,7 @@ def align_justify(event=None):
     if not selections:
         # No text selected or no justified text found
         return
-        
-    """
+    
     # Iterate over each selected range
     for i in range(0, len(selections), 2):
         start = selections[i]
@@ -357,33 +348,7 @@ def align_justify(event=None):
         # Apply the 'justified' tag to the newly justified text
         new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
         text_widget.tag_add("justified", start, new_end)  # Tag the newly justified text
-    """
-        
-    for i in range(0, len(selections), 2):
-        start = selections[i]
-        end = selections[i + 1]
-    
-        # Get the selected text
-        text = text_widget.get(start, end)
-    
-        # Get the current font for the text widget
-        current_font = font.Font(font=text_widget.cget("font"))
-    
-        # Calculate the new width based on the text widget's width
-        new_width = text_widget.winfo_width()
-    
-        # Justify the selected text
-        justified_text = align_justify_helper(text, new_width, current_font)
-    
-        # Replace the selected text with the justified text
-        text_widget.delete(start, end)
-        text_widget.insert(start, justified_text)
-    
-        # Apply the 'justified' tag to the newly justified text
-        new_end = f"{start} + {len(justified_text)}c"
-        text_widget.tag_add("justified", start, new_end)        
 
-"""        
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
     paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
@@ -393,44 +358,6 @@ def align_justify_helper(text, widget_width, current_font):
         # For each paragraph, justify its text
         lines = justify_paragraph(paragraph, widget_width, current_font)
         justified_paragraphs.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
-    
-    justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters
-    return justified_text
-"""
-
-"""
-def align_justify_helper(text, widget_width, current_font):
-      # ... (rest of the function unchanged)
-    
-      justified_lines = []
-      for line in lines[:-1]:
-        # ... (rest of the loop unchanged)
-    
-      # Add the last line, even if it fits the width exactly
-      last_line = ' '.join(lines[-1])
-      justified_lines.append(last_line)
-    
-      return justified_lines
-"""
-
-def align_justify_helper(text, widget_width, current_font):
-    # This function justifies the entire text while preserving paragraph breaks
-    paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
-    #justified_paragraphs = []  # List to hold justified paragraphs
-    justified_lines = []
-
-    """
-    #for paragraph in paragraphs:
-    for line in lines[:-1]:
-        # For each paragraph, justify its text
-        lines = justify_paragraph(paragraph, widget_width, current_font)
-        justified_paragraphs.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
-    """
-    
-    for paragraph in paragraphs:
-        # For each paragraph, justify its text
-        lines = justify_paragraph(paragraph, widget_width, current_font)
-        justified_lines.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
     
     #justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters  
     #return justified_text
