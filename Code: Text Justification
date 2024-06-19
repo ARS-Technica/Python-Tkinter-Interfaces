@@ -17,18 +17,11 @@ Editor, and finally, into my Advanced Text Editor.
 Bear with me.  I'm still learning.
 """
 
-# Works BEAUTIFULLY with Monospaced fonts (Courier New) at any Font Size!
-# Creates large gutter on right side at smaller font sizes
-# Right side of text still ragged with proportional fonts
-
-# If I continue to struggle to justify both monospaced and proportional fonts
-# with the same mothod, I may need to create a new function to determine which 
-# one the selected text is in order to apply one of two different justification
-# methods to it.  I reaaaaaly don't want to do that, but it would be better than
-# quitting.
-
-
-# Works almost perfectly with proportional fonts.  Drops last word to next line
+"""
+The text justification code in the program below works well with proportional 
+fonts. However, when a line perfectly fits the width of the text widget, the 
+code above places the last word in a line on the next line by itself.  
+"""
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -351,6 +344,15 @@ def align_justify(event=None):
         # Replace the selected text with the justified text
         text_widget.delete(start, end)
         text_widget.insert(start, justified_text)
+        
+        """
+        text_widget.insert(start, justified_text.strip(' '))
+        When a line perfectly fits all the words without extra spaces, the 
+        justification process might not insert any spaces. This can leave the 
+        last word on the line by itself because the text_widget.insert call 
+        replaces the entire selection, including any trailing whitespace that 
+        might have been there before justification.
+        """
 
         # Apply the 'justified' tag to the newly justified text
         new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
@@ -421,6 +423,7 @@ def justify_paragraph(paragraph, widget_width, current_font):
     justified_lines.append(last_line)
     
     return justified_lines
+
 
 def unjustify_text(start, end):
     lines = text_widget.get(start, end).split("\n")
