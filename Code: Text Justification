@@ -28,6 +28,9 @@ Bear with me.  I'm still learning.
 # quitting.
 
 
+# Works almost perfectly with proportional fonts.  Drops last word to next line
+
+
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
@@ -438,19 +441,16 @@ def unjustify_text(start, end):
     text_widget.delete(start, end)
     text_widget.insert(start, removed_justification_text)
 
-
 # CREATE THE MAIN WINDOW
 root = tk.Tk()
 root.title("Font Selector")
 
-
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 # Create a text widget to display font changes
 text_frame = tk.Frame(root, borderwidth=1, padx=2, relief="sunken")
-text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0 , undo= True)
+text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0, undo=True)
 text_widget.focus_set()
-text_widget.pack(in_=text_frame, side="left", fill="both", expand=True) # Make the text widget fills the window
-
+text_widget.pack(in_=text_frame, side="left", fill="both", expand=True)  # Make the text widget fill the window
 
 # Text for Debugging
 text_widget.insert("end", "This first sentence tests the bold formatting feature.\n")
@@ -460,13 +460,11 @@ text_widget.insert("end", "\n")
 text_widget.insert("end", "This third sentence demonstrates the ability to underline words.\n")
 text_widget.insert("end", "\n")
 
-
 # PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
 formattingbar = tk.Frame(root, padx=2, pady=2)
 formattingbar.pack(side="top", fill="x")
 text_frame.pack(side="bottom", fill="both", expand=True)
 text_widget.focus_set()
-
 
 # COMBOBOXES
 # Get all font families
@@ -485,7 +483,6 @@ else:
 font_size_combo = ttk.Combobox(root, values=list(range(8, 72)))
 font_size_combo.pack(in_=formattingbar, side="left", padx=4, pady=4)
 font_size_combo.set(default_size)
-
 
 # FORMATBAR BUTTONS
 # bold 
@@ -568,10 +565,8 @@ image_align_right = ImageTk.PhotoImage(photo_align_right)
 align_right_button.config(image=image_align_right)
 align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
-
 # STATUS BAR
 status = tk.Label(root, text="", bd=1, relief=tk.SUNKEN, anchor=tk.W)
-
 
 # BINDINGS
 # Bind events to update the font
@@ -582,7 +577,6 @@ font_size_combo.bind("<<ComboboxSelected>>", update_font)
 text_widget.bind("<Button-1>", update_comboboxes)
 
 root.bind("<Configure>", align_justify)
-
 
 # Mainloop of the Program
 root.mainloop()
