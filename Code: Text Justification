@@ -376,13 +376,11 @@ def justify_paragraph(paragraph, widget_width, current_font):
             current_line.append(word)
             current_length += word_width  # Update the length of the current line
         else:
-            # Check if the line length exactly matches the widget width
-            if current_length + word_width + ((len(current_line) + 1) * space_width) <= widget_width:
-                current_line.append(word)
-            else:
-                lines.append(current_line)  # Add the current line to the list of lines
-                current_line = [word]  # Start a new line with the current word
-                current_length = word_width  # Reset the length of the current line
+            # Add the current line to the list of lines
+            lines.append(current_line)
+            # Start a new line with the current word
+            current_line = [word]
+            current_length = word_width  # Reset the length of the current line
     
     if current_line:
         # Add the last line to the list of lines
