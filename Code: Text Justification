@@ -18,6 +18,9 @@ Bear with me.  I'm still learning.
 """
 
 
+# Works well without wrap="word" except occational mid-word line breaks.
+
+
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
@@ -375,16 +378,15 @@ def justify_paragraph(paragraph, widget_width, current_font):
             current_line.append(word)
             current_length += word_width  # Update the length of the current line
         else:
-            # Add the current line to the list of lines
-            lines.append(current_line)  
-            
-            # Start a new line with the current word
-            current_line = [word]  
+            # Word does not fit, start a new line
+            lines.append(current_line)  # Add the current line to the list of lines
+            current_line = [word]  # Start a new line with the current word
             current_length = word_width  # Reset the length of the current line
     
-    # Add the last line to the list of lines if it's not empty
+    # Don't forget to add the last line
     if current_line:
         lines.append(current_line)
+
         
     
     justified_lines = []  # List to hold the justified lines
@@ -441,7 +443,7 @@ root.title("Font Selector")
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 # Create a text widget to display font changes
 text_frame = tk.Frame(root, borderwidth=1, padx=2, relief="sunken")
-text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0, undo=True)
+text_widget = tk.Text(font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0, undo=True)
 text_widget.focus_set()
 text_widget.pack(in_=text_frame, side="left", fill="both", expand=True)  # Make the text widget fill the window
 
