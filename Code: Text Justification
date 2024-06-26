@@ -18,7 +18,8 @@ Bear with me.  I'm still learning.
 """
 
 
-# The last letter in lines that match widget width are being placed on a separate line CONSISTENTLY
+# JUSTIFICATION WORKS !!!
+# Only problem, Justify reverts font to default
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -332,11 +333,13 @@ def align_justify(event=None):
         current_font = font.Font(font=text_widget.cget("font"))
         
         
+        # THIS IS THE SECRET SAUCE THAT MAKES JUSTIFICATION WORK
+        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING 2 LINES OF CODE!
         space_width = current_font.measure(" ")  # Width of a single space
-        
         # Calculate the new width based on the text widget's width
-        new_width = text_widget.winfo_width() + space_width
-        
+        new_width = text_widget.winfo_width() - space_width
+
+
         # Justify the selected text
         justified_text = align_justify_helper(text, new_width, current_font)
 
