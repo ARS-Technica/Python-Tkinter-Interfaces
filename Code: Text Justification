@@ -18,7 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-# Results in sporadic spacing
+# Justified but last word in line placed on next line when line width equals widget width
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -374,15 +374,11 @@ def justify_paragraph(paragraph, widget_width, current_font):
         if current_length + word_width + (len(current_line) * space_width) <= widget_width:
             # Add the word to the current line
             current_line.append(word)
-            current_length += word_width + space_width  # Update the length of the current line
+            current_length += word_width  # Update the length of the current line
         else:
-            # Check if the line length exactly matches the widget width
-            if current_length + word_width == widget_width:
-                current_line.append(word)
-            else:
-                lines.append(current_line)  # Add the current line to the list of lines
-                current_line = [word]  # Start a new line with the current word
-                current_length = word_width + space_width  # Reset the length of the current line
+            lines.append(current_line)  # Add the current line to the list of lines
+            current_line = [word]  # Start a new line with the current word
+            current_length = word_width  # Reset the length of the current line
     
     if current_line:
         # Add the last line to the list of lines
@@ -471,6 +467,7 @@ else:
 font_size_combo = ttk.Combobox(root, values=list(range(8, 72)))
 font_size_combo.pack(in_=formattingbar, side="left", padx=4, pady=4)
 font_size_combo.set(default_size)
+
 
 # FORMATBAR BUTTONS
 # bold 
