@@ -361,7 +361,6 @@ def align_justify_helper(text, widget_width, current_font):
 def justify_paragraph(paragraph, widget_width, current_font):
     # This function justifies a single paragraph
     words = paragraph.split()  # Split paragraph into individual words
- 
     
     space_width = current_font.measure(" ")  # Width of a single space
 
@@ -386,8 +385,6 @@ def justify_paragraph(paragraph, widget_width, current_font):
     # Don't forget to add the last line
     if current_line:
         lines.append(current_line)
-
-        
     
     justified_lines = []  # List to hold the justified lines
     for line in lines[:-1]:  # Justify all lines except the last one
@@ -415,7 +412,6 @@ def justify_paragraph(paragraph, widget_width, current_font):
     justified_lines.append(last_line)
     
     return justified_lines
-
 
 def unjustify_text(start, end):
     lines = text_widget.get(start, end).split("\n")
