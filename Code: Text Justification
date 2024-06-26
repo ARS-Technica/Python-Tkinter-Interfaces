@@ -18,7 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-# Best attempt yet.  Leaves a single character on the next line.
+# Creates a column one charater wide
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -359,9 +359,7 @@ def align_justify_helper(text, widget_width, current_font):
     return justified_text
 
 def justify_paragraph(paragraph, widget_width, current_font):
-    # This function justifies a single paragraph
     words = paragraph.split()  # Split paragraph into individual words
-    
     space_width = current_font.measure(" ")  # Width of a single space
 
     lines = []  # List to hold lines of text
@@ -371,9 +369,8 @@ def justify_paragraph(paragraph, widget_width, current_font):
     for word in words:
         word_width = current_font.measure(word)  # Width of the word in pixels
         
-        # Check if adding the word would exceed the widget's width
         if current_length + word_width + (len(current_line) * space_width) <= widget_width:
-            # Add the word to the current line
+            # Word fits in current line
             current_line.append(word)
             current_length += word_width  # Update the length of the current line
         else:
@@ -382,36 +379,40 @@ def justify_paragraph(paragraph, widget_width, current_font):
             current_line = [word]  # Start a new line with the current word
             current_length = word_width  # Reset the length of the current line
     
-    # Don't forget to add the last line
+    # Append the last line
     if current_line:
         lines.append(current_line)
-    
+
     justified_lines = []  # List to hold the justified lines
-    for line in lines[:-1]:  # Justify all lines except the last one
-        line_length = sum(current_font.measure(word) for word in line)  # Calculate the total length of words in the line
-        total_spaces = (widget_width - line_length) // space_width  # Calculate the total number of spaces needed to justify the line
-        gaps = len(line) - 1  # Number of gaps between words
+    
+    for line in lines[:-1]:
+        line_length = sum(current_font.measure(word) for word in line)
+        total_spaces = (widget_width - line_length) // space_width
+        gaps = len(line) - 1
+        
         if gaps > 0:
-            spaces = total_spaces // gaps  # Minimum spaces to add between each word
-            extra_spaces = total_spaces % gaps  # Extra spaces to distribute evenly
-            justified_line = ''  # String to hold the justified line
+            spaces = total_spaces // gaps
+            extra_spaces = total_spaces % gaps
+            justified_line = ''
+            
             for i, word in enumerate(line):
-                # Add the word to the justified line
                 justified_line += word
                 if i < gaps:
-                    # Add spaces after the word if it's not the last word in the line
                     justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
-            justified_lines.append(justified_line)  # Add the justified line to the list
+                    
+            justified_lines.append(justified_line)
         else:
-            # If there's only one word in the line, add it as is
-            if line:  # Check if line is not empty
+            if line:
                 justified_lines.append(line[0])
 
     # Add the last line without justification
     last_line = ' '.join(lines[-1])
     justified_lines.append(last_line)
     
-    return justified_lines
+    # Remove trailing spaces and join lines into paragraphs
+    justified_text = '\n'.join(justified_lines).strip()
+    
+    return justified_text
 
 def unjustify_text(start, end):
     lines = text_widget.get(start, end).split("\n")
