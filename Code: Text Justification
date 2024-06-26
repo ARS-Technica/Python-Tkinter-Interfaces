@@ -18,7 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-# Now we're right back to being nothing but right justification.
+# Results in sporadic spacing
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -376,9 +376,13 @@ def justify_paragraph(paragraph, widget_width, current_font):
             current_line.append(word)
             current_length += word_width + space_width  # Update the length of the current line
         else:
-            lines.append(current_line)  # Add the current line to the list of lines
-            current_line = [word]  # Start a new line with the current word
-            current_length = word_width + space_width  # Reset the length of the current line
+            # Check if the line length exactly matches the widget width
+            if current_length + word_width == widget_width:
+                current_line.append(word)
+            else:
+                lines.append(current_line)  # Add the current line to the list of lines
+                current_line = [word]  # Start a new line with the current word
+                current_length = word_width + space_width  # Reset the length of the current line
     
     if current_line:
         # Add the last line to the list of lines
@@ -386,7 +390,7 @@ def justify_paragraph(paragraph, widget_width, current_font):
     
     justified_lines = []  # List to hold the justified lines
     for line in lines[:-1]:  # Justify all lines except the last one
-        line_length = sum(current_font.measure(word) for word in line) + (len(line) - 1) * space_width  # Calculate the total length of words in the line
+        line_length = sum(current_font.measure(word) for word in line)  # Calculate the total length of words in the line
         total_spaces = (widget_width - line_length) // space_width  # Calculate the total number of spaces needed to justify the line
         gaps = len(line) - 1  # Number of gaps between words
         if gaps > 0:
