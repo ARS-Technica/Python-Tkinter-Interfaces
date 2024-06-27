@@ -18,8 +18,8 @@ Bear with me.  I'm still learning.
 """
 
 
-# Re-activated text wrap.  Justification still works!
-# text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0, undo=True)
+# Remove the extra newline character at the end before applying the alignment tag.
+# Re-add the newline character after applying the alignment tag.
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -261,53 +261,100 @@ def remove_align_tags(start=None, end=None):
     if "justified" in all_tags:
         text_widget.tag_remove("justified", start, end)
 
+
 def align_center(event=None):
-    # Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     
-    # Iterate over each selected range
+    if not selections:
+        return
+    
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
 
-        # Remove existing alignment tags within the selected range
+        # Remove the trailing newline character if it exists
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+        
         remove_align_tags(start, end)
-        unjustify_text(start, end)  
-        # Apply center alignment to the selected range
+        unjustify_text(start, end)
+        
         text_widget.tag_configure("center", justify='center')
         text_widget.tag_add("center", start, end)
 
 def align_left(event=None):
-    # Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     
-    # Iterate over each selected range
+    if not selections:
+        return
+    
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
 
-        # Remove existing alignment tags within the selected range
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+        
         remove_align_tags(start, end)
-        unjustify_text(start, end)  
-        # Apply left alignment to the selected range
+        unjustify_text(start, end)
+        
         text_widget.tag_configure("left", justify='left')
         text_widget.tag_add("left", start, end)
 
 def align_right(event=None):
-    # Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     
-    # Iterate over each selected range
+    if not selections:
+        return
+    
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
 
-        # Remove existing alignment tags within the selected range
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+        
         remove_align_tags(start, end)
-        unjustify_text(start, end)  
-        # Apply right alignment to the selected range
+        unjustify_text(start, end)
+        
         text_widget.tag_configure("right", justify='right')
         text_widget.tag_add("right", start, end)
+
+"""
+def align_justify(event=None):
+    if event is None:
+        selections = text_widget.tag_ranges("sel")
+    else:
+        selections = text_widget.tag_ranges("justified")
+    
+    if not selections:
+        return
+    
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+        
+        text = text_widget.get(start, end)
+        current_font = font.Font(font=text_widget.cget("font"))
+        
+        space_width = current_font.measure(" ")
+        new_width = text_widget.winfo_width() - space_width
+        
+        justified_text = align_justify_helper(text, new_width, current_font)
+        
+        text_widget.delete(start, end)
+        text_widget.insert(start, justified_text)
+        
+        new_end = f"{start} + {len(justified_text)}c"
+        text_widget.tag_add("justified", start, new_end)
+"""
 
 def align_justify(event=None):
     # Determine if we are justifying selected text or all justified text
@@ -451,7 +498,10 @@ text_widget.focus_set()
 text_widget.pack(in_=text_frame, side="left", fill="both", expand=True)  # Make the text widget fill the window
 
 # Text for Debugging
-text_widget.insert("end", "She then queried, “Whatever do you suppose made a man like that go into the Church?” Then she added, “You like him, don’t you?” Jane Shelby was quite well aware that her husband practically hero-worshipped the younger Scott. She was quite prepared to look with her dry-humoured understanding on little boys who never grew up but there were unanswered questions about Scott that worried her and she wished that her husband were not quite so enchanted with his virtues.\n")
+text_widget.insert("end", "She then queried, “Whatever do you suppose made a man like that go into the Church?” Then she added, “You like him, don’t you?” Jane Shelby was quite well aware that her husband practically hero-worshipped the younger Scott. She was quite prepared to look with her dry-humoured understanding on little boys who never grew up but there were unanswered questions about Scott that worried her and she wished that her husband were not quite so enchanted with his virtues.\n\n")
+text_widget.insert("end", "Shelby replied, “Yes. He’s quite a boy.”\n\n")
+text_widget.insert("end", "Actually, secretly Scott’s choice of profession worried Dick Shelby, too. What made it all the more difficult for Shelby to understand was that Scott had come from a wealthy family. A spectacularly successful boy, what had led him into the ministry? \n\n")
+text_widget.insert("end", "Shelby himself was neither religious nor irreligious; he was simply a lifelong social and intellectual conformer. He believed that most men went into the church because they were not fit for anything else. The breed was completely foreign to him but because it was incumbent to his position as a Motors Vice President, he alternated Sundays between the exclusive Bloomfield Hills Country Club and the equally exclusive Grosse Point Episcopal Church.")
 
 # PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
 formattingbar = tk.Frame(root, padx=2, pady=2)
