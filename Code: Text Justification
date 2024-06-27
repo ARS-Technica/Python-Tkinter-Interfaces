@@ -19,6 +19,7 @@ Bear with me.  I'm still learning.
 
 
 # Corrected Font face and size reverting to default on alignment issue
+# Justified alignment still reverts font face and font size to default
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
