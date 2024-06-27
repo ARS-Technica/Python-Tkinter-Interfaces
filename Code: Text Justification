@@ -18,8 +18,8 @@ Bear with me.  I'm still learning.
 """
 
 
-# JUSTIFICATION WORKS !!!
-# Only problem, Justify reverts font to default
+# Re-activated text wrap.  Justification still works!
+# text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0, undo=True)
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -446,7 +446,7 @@ root.title("Font Selector")
 # CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
 # Create a text widget to display font changes
 text_frame = tk.Frame(root, borderwidth=1, padx=2, relief="sunken")
-text_widget = tk.Text(font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0, undo=True)
+text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0, undo=True)
 text_widget.focus_set()
 text_widget.pack(in_=text_frame, side="left", fill="both", expand=True)  # Make the text widget fill the window
 
