@@ -18,8 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-# Font face and size reverting to default on alignment
-# Adding font configuration back into alignment functions
+# Corrected Font face and size reverting to default on alignment issue
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -307,20 +306,20 @@ def align_center(event=None):
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
-
         end_char = text_widget.get(f"{end} - 1c", end)
         if end_char == '\n':
             end = f"{end} - 1c"
 
         remove_align_tags(start, end)
+        unjustify_text(start, end)
 
-        tags = text_widget.tag_names(start)
-        for tag in tags:
-            if tag.startswith("custom_font_"):
-                font_info = text_widget.tag_cget(tag, "font")
-                text_widget.tag_add("center", start, end)
-                text_widget.tag_configure("center", justify='center', font=font_info)
-                break
+        # Retrieve current font properties
+        font_info = text_widget.tag_cget("sel", "font")
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+
+        # Apply center alignment
+        text_widget.tag_configure("center", justify='center', font=current_font)
+        text_widget.tag_add("center", start, end)
 
 """
 def align_left(event=None):
@@ -368,20 +367,20 @@ def align_left(event=None):
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
-
         end_char = text_widget.get(f"{end} - 1c", end)
         if end_char == '\n':
             end = f"{end} - 1c"
 
         remove_align_tags(start, end)
+        unjustify_text(start, end)
 
-        tags = text_widget.tag_names(start)
-        for tag in tags:
-            if tag.startswith("custom_font_"):
-                font_info = text_widget.tag_cget(tag, "font")
-                text_widget.tag_add("left", start, end)
-                text_widget.tag_configure("left", justify='left', font=font_info)
-                break
+        # Retrieve current font properties
+        font_info = text_widget.tag_cget("sel", "font")
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+
+        # Apply left alignment
+        text_widget.tag_configure("left", justify='left', font=current_font)
+        text_widget.tag_add("left", start, end)
 
 """
 def align_right(event=None):
@@ -429,20 +428,21 @@ def align_right(event=None):
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
-
         end_char = text_widget.get(f"{end} - 1c", end)
         if end_char == '\n':
             end = f"{end} - 1c"
 
         remove_align_tags(start, end)
+        unjustify_text(start, end)
 
-        tags = text_widget.tag_names(start)
-        for tag in tags:
-            if tag.startswith("custom_font_"):
-                font_info = text_widget.tag_cget(tag, "font")
-                text_widget.tag_add("right", start, end)
-                text_widget.tag_configure("right", justify='right', font=font_info)
-                break
+        # Retrieve current font properties
+        font_info = text_widget.tag_cget("sel", "font")
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+
+        # Apply right alignment
+        text_widget.tag_configure("right", justify='right', font=current_font)
+        text_widget.tag_add("right", start, end)
+
 
 
 
