@@ -18,8 +18,8 @@ Bear with me.  I'm still learning.
 """
 
 
-# Remove the extra newline character at the end before applying the alignment tag.
-# Re-add the newline character after applying the alignment tag.
+# Justification working.  Fully Commented.
+# Font face and size reverting to default on alignment
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -263,11 +263,25 @@ def remove_align_tags(start=None, end=None):
 
 
 def align_center(event=None):
+    """
+    Align the given text to the center of the specified width.
+    
+    Parameters:
+    text (str): The input text to be aligned.
+    width (int): The width within which the text should be aligned.
+    
+    Returns:
+    str: The text aligned to the center.
+    """
+
+	# Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     
     if not selections:
+		# No text selected
         return
-    
+
+    # Iterate over each selected range
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
@@ -279,93 +293,64 @@ def align_center(event=None):
         
         remove_align_tags(start, end)
         unjustify_text(start, end)
-        
+
+		# Apply center alignment to the selected range
         text_widget.tag_configure("center", justify='center')
         text_widget.tag_add("center", start, end)
 
 def align_left(event=None):
+    """
+    Align the given text to the left of the specified width.
+    
+    Parameters:
+    text (str): The input text to be aligned.
+    width (int): The width within which the text should be aligned.
+    
+    Returns:
+    str: The text aligned to the left.
+    """
+
+	# Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     
     if not selections:
+		# No text selected
         return
-    
+
+    # Iterate over each selected range
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
 
+        # Remove the trailing newline character if it exists
         end_char = text_widget.get(f"{end} - 1c", end)
         if end_char == '\n':
             end = f"{end} - 1c"
         
         remove_align_tags(start, end)
         unjustify_text(start, end)
-        
+
+		# Apply center alignment to the selected range        
         text_widget.tag_configure("left", justify='left')
         text_widget.tag_add("left", start, end)
 
 def align_right(event=None):
+    """
+    Align the given text to the right of the specified width.
+    
+    Parameters:
+    text (str): The input text to be aligned.
+    width (int): The width within which the text should be aligned.
+    
+    Returns:
+    str: The text aligned to the right.
+    """
+
+	# Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     
     if not selections:
-        return
-    
-    for i in range(0, len(selections), 2):
-        start = selections[i]
-        end = selections[i + 1]
-
-        end_char = text_widget.get(f"{end} - 1c", end)
-        if end_char == '\n':
-            end = f"{end} - 1c"
-        
-        remove_align_tags(start, end)
-        unjustify_text(start, end)
-        
-        text_widget.tag_configure("right", justify='right')
-        text_widget.tag_add("right", start, end)
-
-"""
-def align_justify(event=None):
-    if event is None:
-        selections = text_widget.tag_ranges("sel")
-    else:
-        selections = text_widget.tag_ranges("justified")
-    
-    if not selections:
-        return
-    
-    for i in range(0, len(selections), 2):
-        start = selections[i]
-        end = selections[i + 1]
-
-        end_char = text_widget.get(f"{end} - 1c", end)
-        if end_char == '\n':
-            end = f"{end} - 1c"
-        
-        text = text_widget.get(start, end)
-        current_font = font.Font(font=text_widget.cget("font"))
-        
-        space_width = current_font.measure(" ")
-        new_width = text_widget.winfo_width() - space_width
-        
-        justified_text = align_justify_helper(text, new_width, current_font)
-        
-        text_widget.delete(start, end)
-        text_widget.insert(start, justified_text)
-        
-        new_end = f"{start} + {len(justified_text)}c"
-        text_widget.tag_add("justified", start, new_end)
-"""
-
-def align_justify(event=None):
-    # Determine if we are justifying selected text or all justified text
-    # Necessary to keep Justified text justified during window re-sizings
-    if event is None:  # Called from the button, justify selected text
-        selections = text_widget.tag_ranges("sel")
-    else:  # Called from the resize event, justify all previously justified text
-        selections = text_widget.tag_ranges("justified")
-    
-    if not selections:
-        # No text selected or no justified text found
+		# No text selected
         return
     
     # Iterate over each selected range
@@ -373,16 +358,61 @@ def align_justify(event=None):
         start = selections[i]
         end = selections[i + 1]
 
-        # Get the selected text
+        # Remove the trailing newline character if it exists
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+        
+        remove_align_tags(start, end)
+        unjustify_text(start, end)
+
+		# Apply center alignment to the selected range
+        text_widget.tag_configure("right", justify='right')
+        text_widget.tag_add("right", start, end)
+
+def align_justify(event=None):
+    """
+    Justify the given text to the specified width.
+    
+    Parameters:
+    text (str): The input text to be justified.
+    width (int): The width within which the text should be justified.
+    
+    Returns:
+    str: The text justified within the specified width.
+    """
+
+    # Determine if we are justifying selected text or all justified text
+    # Necessary to keep Justified text justified during window re-sizings
+    if event is None:  # Called from the button, justify selected 
+        selections = text_widget.tag_ranges("sel")
+    else:  # Called from the resize event, justify all previously justified text
+        selections = text_widget.tag_ranges("justified")
+    
+    if not selections:
+		# No text selected or no justified text found
+        return
+    
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        # Remove the trailing newline character if it exists
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+
+        # Get the selected text        
         text = text_widget.get(start, end)
-        
-        # Get the current font for the text widget
+		
+		# Get the current font for the text widget
         current_font = font.Font(font=text_widget.cget("font"))
-        
-        
+
+
         # THIS IS THE SECRET SAUCE THAT MAKES JUSTIFICATION WORK
-        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING 2 LINES OF CODE!
-        space_width = current_font.measure(" ")  # Width of a single space
+        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING 2 LINES OF CODE        
+        space_width = current_font.measure(" ")
         # Calculate the new width based on the text widget's width
         new_width = text_widget.winfo_width() - space_width
 
@@ -390,11 +420,11 @@ def align_justify(event=None):
         # Justify the selected text
         justified_text = align_justify_helper(text, new_width, current_font)
 
-        # Replace the selected text with the justified text
+        # Replace the selected text with the justified text        
         text_widget.delete(start, end)
         text_widget.insert(start, justified_text)
 
-        # Apply the 'justified' tag to the newly justified text
+        # Apply the 'justified' tag to the newly justified text        
         new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
         text_widget.tag_add("justified", start, new_end)  # Tag the newly justified text
 
