@@ -18,8 +18,8 @@ Bear with me.  I'm still learning.
 """
 
 
-# Justification working.  Fully Commented.
 # Font face and size reverting to default on alignment
+# Adding font configuration back into alignment functions
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -261,9 +261,9 @@ def remove_align_tags(start=None, end=None):
     if "justified" in all_tags:
         text_widget.tag_remove("justified", start, end)
 
-
+"""
 def align_center(event=None):
-    """
+    '''
     Align the given text to the center of the specified width.
     
     Parameters:
@@ -272,7 +272,7 @@ def align_center(event=None):
     
     Returns:
     str: The text aligned to the center.
-    """
+    '''
 
 	# Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
@@ -297,9 +297,34 @@ def align_center(event=None):
 		# Apply center alignment to the selected range
         text_widget.tag_configure("center", justify='center')
         text_widget.tag_add("center", start, end)
+"""
 
+def align_center(event=None):
+    selections = text_widget.tag_ranges("sel")
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+
+        remove_align_tags(start, end)
+
+        tags = text_widget.tag_names(start)
+        for tag in tags:
+            if tag.startswith("custom_font_"):
+                font_info = text_widget.tag_cget(tag, "font")
+                text_widget.tag_add("center", start, end)
+                text_widget.tag_configure("center", justify='center', font=font_info)
+                break
+
+"""
 def align_left(event=None):
-    """
+    '''
     Align the given text to the left of the specified width.
     
     Parameters:
@@ -308,7 +333,7 @@ def align_left(event=None):
     
     Returns:
     str: The text aligned to the left.
-    """
+    '''
 
 	# Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
@@ -333,9 +358,34 @@ def align_left(event=None):
 		# Apply center alignment to the selected range        
         text_widget.tag_configure("left", justify='left')
         text_widget.tag_add("left", start, end)
+"""
 
+def align_left(event=None):
+    selections = text_widget.tag_ranges("sel")
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+
+        remove_align_tags(start, end)
+
+        tags = text_widget.tag_names(start)
+        for tag in tags:
+            if tag.startswith("custom_font_"):
+                font_info = text_widget.tag_cget(tag, "font")
+                text_widget.tag_add("left", start, end)
+                text_widget.tag_configure("left", justify='left', font=font_info)
+                break
+
+"""
 def align_right(event=None):
-    """
+    '''
     Align the given text to the right of the specified width.
     
     Parameters:
@@ -344,7 +394,7 @@ def align_right(event=None):
     
     Returns:
     str: The text aligned to the right.
-    """
+    '''
 
 	# Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
@@ -369,6 +419,33 @@ def align_right(event=None):
 		# Apply center alignment to the selected range
         text_widget.tag_configure("right", justify='right')
         text_widget.tag_add("right", start, end)
+"""
+
+def align_right(event=None):
+    selections = text_widget.tag_ranges("sel")
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+
+        remove_align_tags(start, end)
+
+        tags = text_widget.tag_names(start)
+        for tag in tags:
+            if tag.startswith("custom_font_"):
+                font_info = text_widget.tag_cget(tag, "font")
+                text_widget.tag_add("right", start, end)
+                text_widget.tag_configure("right", justify='right', font=font_info)
+                break
+
+
+
 
 def align_justify(event=None):
     """
