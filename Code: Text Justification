@@ -18,7 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-# Corrected Font face and size reverting to default on alignment issue
+# Stopped font face and size from reverting to default on alignment for center, left, and right
 # Justified alignment still reverts font face and font size to default
 
 
@@ -261,9 +261,9 @@ def remove_align_tags(start=None, end=None):
     if "justified" in all_tags:
         text_widget.tag_remove("justified", start, end)
 
-"""
+
 def align_center(event=None):
-    '''
+    """
     Align the given text to the center of the specified width.
     
     Parameters:
@@ -272,7 +272,7 @@ def align_center(event=None):
     
     Returns:
     str: The text aligned to the center.
-    '''
+    """
 
 	# Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
@@ -294,11 +294,16 @@ def align_center(event=None):
         remove_align_tags(start, end)
         unjustify_text(start, end)
 
+        # Retrieve current font properties
+        font_info = text_widget.tag_cget("sel", "font")
+        # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+
 		# Apply center alignment to the selected range
         text_widget.tag_configure("center", justify='center')
         text_widget.tag_add("center", start, end)
-"""
 
+"""
 def align_center(event=None):
     selections = text_widget.tag_ranges("sel")
     if not selections:
@@ -321,10 +326,10 @@ def align_center(event=None):
         # Apply center alignment
         text_widget.tag_configure("center", justify='center', font=current_font)
         text_widget.tag_add("center", start, end)
-
 """
+
 def align_left(event=None):
-    '''
+    """
     Align the given text to the left of the specified width.
     
     Parameters:
@@ -333,7 +338,7 @@ def align_left(event=None):
     
     Returns:
     str: The text aligned to the left.
-    '''
+    """
 
 	# Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
@@ -355,11 +360,16 @@ def align_left(event=None):
         remove_align_tags(start, end)
         unjustify_text(start, end)
 
+        # Retrieve current font properties
+        font_info = text_widget.tag_cget("sel", "font")
+        # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+
 		# Apply center alignment to the selected range        
         text_widget.tag_configure("left", justify='left')
         text_widget.tag_add("left", start, end)
-"""
 
+"""
 def align_left(event=None):
     selections = text_widget.tag_ranges("sel")
     if not selections:
@@ -382,10 +392,10 @@ def align_left(event=None):
         # Apply left alignment
         text_widget.tag_configure("left", justify='left', font=current_font)
         text_widget.tag_add("left", start, end)
-
 """
+
 def align_right(event=None):
-    '''
+    """
     Align the given text to the right of the specified width.
     
     Parameters:
@@ -394,7 +404,7 @@ def align_right(event=None):
     
     Returns:
     str: The text aligned to the right.
-    '''
+    """
 
 	# Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
@@ -416,11 +426,16 @@ def align_right(event=None):
         remove_align_tags(start, end)
         unjustify_text(start, end)
 
+        # Retrieve current font properties
+        font_info = text_widget.tag_cget("sel", "font")
+        # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+
 		# Apply center alignment to the selected range
         text_widget.tag_configure("right", justify='right')
         text_widget.tag_add("right", start, end)
-"""
 
+"""
 def align_right(event=None):
     selections = text_widget.tag_ranges("sel")
     if not selections:
@@ -443,7 +458,7 @@ def align_right(event=None):
         # Apply right alignment
         text_widget.tag_configure("right", justify='right', font=current_font)
         text_widget.tag_add("right", start, end)
-
+"""
 
 
 
@@ -493,6 +508,12 @@ def align_justify(event=None):
         space_width = current_font.measure(" ")
         # Calculate the new width based on the text widget's width
         new_width = text_widget.winfo_width() - space_width
+
+
+        # Retrieve current font properties
+        font_info = text_widget.tag_cget("sel", "font")
+        # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
 
 
         # Justify the selected text
