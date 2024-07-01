@@ -20,6 +20,7 @@ Bear with me.  I'm still learning.
 
 # Stopped font face and size from reverting to default on alignment for center, left, and right
 # Justified alignment still reverts font face and font size to default
+# Better. Reverts text back to defaults BUT successfully justifies text.
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -480,13 +481,15 @@ def align_justify(event=None):
 
         # Get the selected text        
         text = text_widget.get(start, end)
-
-        # Preserve the font information of the selected text
+        
+        # Preserve the current font information
         font_info = text_widget.tag_cget("sel", "font")
-        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+        current_font = font.Font(font=font_info) if font_info else font.Font()
 
-        # Calculate the width available for justification
+        # Calculate the space width based on the current font
         space_width = current_font.measure(" ")
+        
+        # Calculate the new width based on the text widget's width
         new_width = text_widget.winfo_width() - space_width
 
         # Justify the selected text
