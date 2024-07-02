@@ -18,10 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-# Working alignment buttons.  Preserve font face and size upon change of alignment
-# Added Globals to align_justify
-
-# Next up: re-aligning text when text size is changed.
+# Working on alignment buttons preserving font attributes other than font face and size upon change of alignment
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -263,31 +260,41 @@ def remove_align_tags(start=None, end=None):
     if "justified" in all_tags:
         text_widget.tag_remove("justified", start, end)
 
+def preserve_font_attributes(start, end):
+    tag_ranges = text_widget.tag_ranges("sel")
+    if not tag_ranges:
+        return {}
+    
+    font_attributes = {}
+    font_attributes['font'] = text_widget.tag_cget("sel", "font")
+    font_attributes['foreground'] = text_widget.tag_cget("sel", "foreground")
+    font_attributes['background'] = text_widget.tag_cget("sel", "background")
+    font_attributes['underline'] = text_widget.tag_cget("sel", "underline")
+    font_attributes['overstrike'] = text_widget.tag_cget("sel", "overstrike")
+    
+    return font_attributes
+
+def apply_font_attributes(tag_name, font_attributes):
+    if 'font' in font_attributes:
+        text_widget.tag_configure(tag_name, font=font_attributes['font'])
+    if 'foreground' in font_attributes:
+        text_widget.tag_configure(tag_name, foreground=font_attributes['foreground'])
+    if 'background' in font_attributes:
+        text_widget.tag_configure(tag_name, background=font_attributes['background'])
+    if 'underline' in font_attributes:
+        text_widget.tag_configure(tag_name, underline=font_attributes['underline'])
+    if 'overstrike' in font_attributes:
+        text_widget.tag_configure(tag_name, overstrike=font_attributes['overstrike'])
 
 def align_center(event=None):
-    '''
-    Align the given text to the center of the specified width.
-    
-    Parameters:
-    text (str): The input text to be aligned.
-    width (int): The width within which the text should be aligned.
-    
-    Returns:
-    str: The text aligned to the center.
-    '''
-
-    # Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     if not selections:
-		# No text selected
         return
 
-    # Iterate over each selected range
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
 
-        # Remove the trailing newline character if it exists
         end_char = text_widget.get(f"{end} - 1c", end)
         if end_char == '\n':
             end = f"{end} - 1c"
@@ -295,40 +302,20 @@ def align_center(event=None):
         remove_align_tags(start, end)
         unjustify_text(start, end)
 
-        # Retrieve current font properties
-        font_info = text_widget.tag_cget("sel", "font")
-        # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
-        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
-
-        # Apply center alignment
-        text_widget.tag_configure("center", justify='center', font=current_font)
+        font_attributes = preserve_font_attributes(start, end)
         text_widget.tag_add("center", start, end)
-
+        apply_font_attributes("center", font_attributes)
+        text_widget.tag_configure("center", justify='center')
 
 def align_left(event=None):
-    '''
-    Align the given text to the left of the specified width.
-    
-    Parameters:
-    text (str): The input text to be aligned.
-    width (int): The width within which the text should be aligned.
-    
-    Returns:
-    str: The text aligned to the left.
-    '''
-
-    # Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     if not selections:
-        # No text selected
         return
 
-    # Iterate over each selected range
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
         
-        # Remove the trailing newline character if it exists
         end_char = text_widget.get(f"{end} - 1c", end)
         if end_char == '\n':
             end = f"{end} - 1c"
@@ -336,40 +323,20 @@ def align_left(event=None):
         remove_align_tags(start, end)
         unjustify_text(start, end)
 
-        # Retrieve current font properties
-        font_info = text_widget.tag_cget("sel", "font")
-        # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
-        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
-
-        # Apply left alignment
-        text_widget.tag_configure("left", justify='left', font=current_font)
+        font_attributes = preserve_font_attributes(start, end)
         text_widget.tag_add("left", start, end)
-
+        apply_font_attributes("left", font_attributes)
+        text_widget.tag_configure("left", justify='left')
 
 def align_right(event=None):
-    '''
-    Align the given text to the right of the specified width.
-    
-    Parameters:
-    text (str): The input text to be aligned.
-    width (int): The width within which the text should be aligned.
-    
-    Returns:
-    str: The text aligned to the right.
-    '''
-
-    # Get all ranges of selected text
     selections = text_widget.tag_ranges("sel")
     if not selections:
-		# No text selected
         return
 
-    # Iterate over each selected range
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
         
-        # Remove the trailing newline character if it exists
         end_char = text_widget.get(f"{end} - 1c", end)
         if end_char == '\n':
             end = f"{end} - 1c"
@@ -377,82 +344,46 @@ def align_right(event=None):
         remove_align_tags(start, end)
         unjustify_text(start, end)
 
-        # Retrieve current font properties
-        font_info = text_widget.tag_cget("sel", "font")
-        # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
-        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
-
-        # Apply right alignment
-        text_widget.tag_configure("right", justify='right', font=current_font)
+        font_attributes = preserve_font_attributes(start, end)
         text_widget.tag_add("right", start, end)
-
+        apply_font_attributes("right", font_attributes)
+        text_widget.tag_configure("right", justify='right')
 
 def align_justify(event=None):
-    '''
-    Justify the given text to the specified width.
-    
-    Parameters:
-    text (str): The input text to be justified.
-    width (int): The width within which the text should be justified.
-    
-    Returns:
-    str: The text justified within the specified width.
-    '''
     global current_font_family
     global current_font_size
 
-    # Determine if we are justifying selected text or all justified text
-    # Necessary to keep Justified text justified during window re-sizings
-    if event is None:  # Called from the button, justify selected 
+    if event is None:
         selections = text_widget.tag_ranges("sel")
-    else:  # Called from the resize event, justify all previously justified text
+    else:
         selections = text_widget.tag_ranges("justified")
     
     if not selections:
-        # No text selected or no justified text found
         return
     
-    # Iterate over each selected range
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
 
-        # Remove the trailing newline character if it exists
         end_char = text_widget.get(f"{end} - 1c", end)
         if end_char == '\n':
             end = f"{end} - 1c"
 
-        # Get the selected text        
         text = text_widget.get(start, end)
-		
-        # Get the current font for the text widget
-        font_info = text_widget.tag_cget("sel", "font")
-        # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
-        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
-
-
-        # THIS IS THE SECRET SAUCE THAT MAKES JUSTIFICATION WORK
-        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING TWO LINES OF CODE																					 
-        space_width = current_font.measure(" ")
-        # Calculate the new width based on the text widget's width																  
+        font_attributes = preserve_font_attributes(start, end)
+        space_width = font.Font(font=font_attributes['font']).measure(" ")
         new_width = text_widget.winfo_width() - space_width
 
-																																																
-        # Justify the selected text
-        justified_text = align_justify_helper(text, new_width, current_font)
+        justified_text = align_justify_helper(text, new_width, font.Font(font=font_attributes['font']))
 
-        # Replace the selected text with the justified text        
         text_widget.delete(start, end)
         text_widget.insert(start, justified_text)
 
-        # Apply the 'justified' tag to the newly justified text        
-        new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
-        text_widget.tag_add("justified", start, new_end)  # Tag the newly justified text
-
-        # Preserve the font face and font size of selected text
-        text_widget.tag_configure("justified", font=current_font)
+        new_end = f"{start} + {len(justified_text)}c"
         text_widget.tag_add("justified", start, new_end)
-        # Without this code, justified text reverts back to default font and size
+        apply_font_attributes("justified", font_attributes)
+        text_widget.tag_configure("justified", justify='left')
+
 
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
