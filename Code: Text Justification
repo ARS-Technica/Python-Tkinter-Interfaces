@@ -47,7 +47,6 @@ style_counter = 0
 
 # COMBOBOX METHODS
 
-"""
 def apply_font_style(event=None, fontColor=None, fontBackground=None):
     global current_font_family
     global current_font_size    
@@ -82,7 +81,7 @@ def apply_font_style(event=None, fontColor=None, fontBackground=None):
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
-"""
+
 
 def update_comboboxes(event):
     # Get the index of the clicked position    
@@ -262,106 +261,84 @@ def remove_align_tags(start=None, end=None):
         text_widget.tag_remove("justified", start, end)
 
 
-
-def get_current_font_attributes(tag_name):
+def get_current_font_attributes(tag):
     """
-    Retrieve current font attributes from the given tag name.
+    Helper function to get the current font attributes for a given tag.
     """
-    font_info = text_widget.tag_cget(tag_name, "font")
-    if font_info:
-        current_font = font.Font(font=font_info)
-    else:
-        current_font = font.Font(family=current_font_family, size=current_font_size)
+    font_family = current_font_family
+    font_size = current_font_size
+    weight = "normal"
+    slant = "roman"
+    underline = 0
+    overstrike = 0
+    foreground = None
+    background = None
 
-    weight = "bold" if "bold" in current_tags else "normal"
-    slant = "italic" if "italic" in current_tags else "roman"
-    underline = 1 if "underline" in current_tags else 0
-    overstrike = 1 if "overstrike" in current_tags else 0
+    if tag:
+        font_config = text_widget.tag_cget(tag, "font")
+        if font_config:
+            f = font.Font(font=font_config)
+            font_family = f.actual("family")
+            font_size = f.actual("size")
+            weight = f.actual("weight")
+            slant = f.actual("slant")
+            underline = f.actual("underline")
+            overstrike = f.actual("overstrike")
+        foreground = text_widget.tag_cget(tag, "foreground")
+        background = text_widget.tag_cget(tag, "background")
 
-    foreground = text_widget.tag_cget(tag_name, "foreground")
-    background = text_widget.tag_cget(tag_name, "background")
+    return font_family, font_size, weight, slant, underline, overstrike, foreground, background
 
-    return current_font, weight, slant, underline, overstrike, foreground, background
+
+def apply_alignment(tag_name, justify_type, event=None):
+    # Get all ranges of selected text
+    selections = text_widget.tag_ranges("sel")
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        # Remove the trailing newline character if it exists
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+
+        remove_align_tags(start, end)
+        unjustify_text(start, end)
+
+        # Get the current font attributes
+        font_family, font_size, weight, slant, underline, overstrike, foreground, background = get_current_font_attributes("sel")
+
+        # Apply alignment
+        text_widget.tag_configure(tag_name, justify=justify_type, font=(font_family, font_size, weight, slant),
+                                  underline=underline, overstrike=overstrike, foreground=foreground, background=background)
+        text_widget.tag_add(tag_name, start, end)
 
 
 def align_center(event=None):
-    selections = text_widget.tag_ranges("sel")
-    if not selections:
-        return
-
-    for i in range(0, len(selections), 2):
-        start = selections[i]
-        end = selections[i + 1]
-
-        end_char = text_widget.get(f"{end} - 1c", end)
-        if end_char == '\n':
-            end = f"{end} - 1c"
-
-        remove_align_tags(start, end)
-        unjustify_text(start, end)
-
-        current_font, weight, slant, underline, overstrike, foreground, background = get_current_font_attributes("sel")
-
-        text_widget.tag_configure("center", justify='center', font=current_font, underline=underline,
-                                  overstrike=overstrike, foreground=foreground, background=background)
-        text_widget.tag_add("center", start, end)
+    apply_alignment("center", 'center', event)
 
 
 def align_left(event=None):
-    selections = text_widget.tag_ranges("sel")
-    if not selections:
-        return
-
-    for i in range(0, len(selections), 2):
-        start = selections[i]
-        end = selections[i + 1]
-
-        end_char = text_widget.get(f"{end} - 1c", end)
-        if end_char == '\n':
-            end = f"{end} - 1c"
-
-        remove_align_tags(start, end)
-        unjustify_text(start, end)
-
-        current_font, weight, slant, underline, overstrike, foreground, background = get_current_font_attributes("sel")
-
-        text_widget.tag_configure("left", justify='left', font=current_font, underline=underline,
-                                  overstrike=overstrike, foreground=foreground, background=background)
-        text_widget.tag_add("left", start, end)
+    apply_alignment("left", 'left', event)
 
 
 def align_right(event=None):
-    selections = text_widget.tag_ranges("sel")
-    if not selections:
-        return
-
-    for i in range(0, len(selections), 2):
-        start = selections[i]
-        end = selections[i + 1]
-
-        end_char = text_widget.get(f"{end} - 1c", end)
-        if end_char == '\n':
-            end = f"{end} - 1c"
-
-        remove_align_tags(start, end)
-        unjustify_text(start, end)
-
-        current_font, weight, slant, underline, overstrike, foreground, background = get_current_font_attributes("sel")
-
-        text_widget.tag_configure("right", justify='right', font=current_font, underline=underline,
-                                  overstrike=overstrike, foreground=foreground, background=background)
-        text_widget.tag_add("right", start, end)
+    apply_alignment("right", 'right', event)
 
 
 def align_justify(event=None):
     global current_font_family
     global current_font_size
 
-    if event is None:
+    # Determine if we are justifying selected text or all justified text
+    if event is None:  # Called from the button, justify selected 
         selections = text_widget.tag_ranges("sel")
-    else:
+    else:  # Called from the resize event, justify all previously justified text
         selections = text_widget.tag_ranges("justified")
-
+    
     if not selections:
         return
 
@@ -373,53 +350,21 @@ def align_justify(event=None):
         if end_char == '\n':
             end = f"{end} - 1c"
 
-        text = text_widget.get(start, end)
-
-        current_font, weight, slant, underline, overstrike, foreground, background = get_current_font_attributes("sel")
+        font_family, font_size, weight, slant, underline, overstrike, foreground, background = get_current_font_attributes("sel")
+        current_font = font.Font(family=font_family, size=font_size, weight=weight, slant=slant)
 
         space_width = current_font.measure(" ")
         new_width = text_widget.winfo_width() - space_width
 
-        justified_text = align_justify_helper(text, new_width, current_font)
+        justified_text = align_justify_helper(text_widget.get(start, end), new_width, current_font)
 
         text_widget.delete(start, end)
         text_widget.insert(start, justified_text)
 
         new_end = f"{start} + {len(justified_text)}c"
         text_widget.tag_add("justified", start, new_end)
-
-        text_widget.tag_configure("justified", font=current_font, underline=underline,
-                                  overstrike=overstrike, foreground=foreground, background=background)
-        text_widget.tag_add("justified", start, new_end)
-
-def apply_font_style(event=None, fontColor=None, fontBackground=None):
-    global current_font_family
-    global current_font_size    
-    global style_counter
-    global last_selection
-
-    if text_widget.tag_ranges("sel"):
-        current_tags = text_widget.tag_names("sel.first")
-
-        weight = "bold" if "bold" in current_tags else "normal"
-        slant = "italic" if "italic" in current_tags else "roman"
-        underline = 1 if "underline" in current_tags else 0
-        overstrike = 1 if "overstrike" in current_tags else 0
-
-        tag_name = "custom_font_{}".format(style_counter)
-
-        style_counter += 1        
-        
-        text_widget.tag_add(tag_name, "sel.first", "sel.last")
-
-        text_widget.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
-                           underline=underline, overstrike=overstrike,
-                           foreground=fontColor, background=fontBackground)
-
-    else:
-        tk.messagebox.showinfo("alert", "No text has been selected")
-
-
+        text_widget.tag_configure("justified", justify='left', font=(font_family, font_size, weight, slant),
+                                  underline=underline, overstrike=overstrike, foreground=foreground, background=background)
 
 
 def align_justify_helper(text, widget_width, current_font):
