@@ -379,7 +379,7 @@ def align_justify(event=None):
 
         # Apply new alignment tags
         text_widget.tag_add("justified", start_index, end_index)
-        text_widget.tag_configure("justified", justify="justified")
+        text_widget.tag_configure("justified", justify="left")
 
         # Reapply preserved font tags
         apply_font_tags(current_font_tags, "justified")
