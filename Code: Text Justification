@@ -18,7 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-# Can't see if justification is working because of scrollbar
+# Justifies text. Does NOT preserve text properties.
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -41,46 +41,70 @@ current_tags = []
 global style_counter  # Serialize the Styles of Font to Create Unique Tags
 style_counter = 0
 
+# MAIN MENU METHODS
+
+# FORMAT BAR METHODS
+
+# COMBOBOX METHODS
+
 def apply_font_style(event=None, fontColor=None, fontBackground=None):
     global current_font_family
     global current_font_size    
     global style_counter
     global last_selection
 
+    # Check if any text is selected
     if text_widget.tag_ranges("sel"):
+        # Get the tags applied to the selected text
         current_tags = text_widget.tag_names("sel.first")
 
+        # Determine font weight, slant, underline, and overstrike
         weight = "bold" if "bold" in current_tags else "normal"
         slant = "italic" if "italic" in current_tags else "roman"
         underline = 1 if "underline" in current_tags else 0
         overstrike = 1 if "overstrike" in current_tags else 0
 
+        # Generate a unique tag for the selected text
         tag_name = "custom_font_{}".format(style_counter)
 
+        # Increment style_counter for next font style
         style_counter += 1        
         
+        # Apply font styling to the selected text
         text_widget.tag_add(tag_name, "sel.first", "sel.last")
 
+        # Configure the tag with the desired font and style attributes
         text_widget.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
-                                  underline=underline, overstrike=overstrike,
-                                  foreground=fontColor, background=fontBackground)
+                           underline=underline, overstrike=overstrike,
+                           foreground=fontColor, background=fontBackground)
 
     else:
+        # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+
 def update_comboboxes(event):
+    # Get the index of the clicked position    
     cursor_position = text_widget.index("@{},{}".format(event.x, event.y))
+
+    # Get the tag names associated with the cursor position    
     tags = text_widget.tag_names(cursor_position)
     
+    # Check if the font attribute is not empty and contains the font family
     if tags:
+        # Iterate through tags to find the font attributes
         for tag in tags:
             if tag.startswith("custom_font_"):
                 font_info = text_widget.tag_cget(tag, "font")
+
                 family = font.Font(font=font_info).actual()["family"]
                 size = font.Font(font=font_info).actual()["size"]
+
                 font_family_combo.set(family)
                 font_size_combo.set(size)
+
     else:
+        # Set the font and size comboboxes to display the default font and size
         font_family_combo.set(default_font)
         font_size_combo.set(default_size)
 
@@ -92,74 +116,136 @@ def update_font(event=None):
     selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
     text_widget.tag_configure("custom_font_{}".format(style_counter), font=selected_font)
     
+    # Get the selected font family and size
     current_font_family = font_family_combo.get()
     current_font_size = font_size_combo.get()
 
+    # Apply font styling to the selected text
     apply_font_style()
 
+
+# BUTTON METHODS
+# Bold Text bold_it()
 def bold(event=None):        
+    # Check if any text is selected, otherwise app throws an error
     if text_widget.tag_ranges("sel"):
+        # Define Current tags
         current_tags = list(text_widget.tag_names())
+
+        # Check to see if tag has already been set
         if "bold" in current_tags:
+            # If characters are bold, unbold the range  
             text_widget.tag_delete("bold", "sel.first", "sel.last")
         else:
+            # Bold the whole selection
             text_widget.tag_add("bold", "sel.first", "sel.last")
+    
+        # Compile stle characteristics under a single tag name
         apply_font_style()
     else:
+        # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+# Italics Text italics_it()
 def italic(event=None):
+    # Check if any text is selected, otherwise app throws an error
     if text_widget.tag_ranges("sel"):
+        # Define Current tags
         current_tags = list(text_widget.tag_names())
+
+        # Check to see if tag has already been set
         if "italic" in current_tags:
+            # If characters are italicized, unitalicize the selected text
             text_widget.tag_add("roman", "sel.first", "sel.last")
             text_widget.tag_delete("italic", "sel.first", "sel.last")
         else:
+            # Italicize the whole selection
             text_widget.tag_add("italic", "sel.first", "sel.last")
+    
+        # Compile stle characteristics under a single tag name
         apply_font_style()
     else:
+        # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
-
+        
+# Underline Text underline_it():
 def underline(event=None):
+    # Check if any text is selected, otherwise app throws an error
     if text_widget.tag_ranges("sel"):
+        # Define Current tags
         current_tags = list(text_widget.tag_names())
+
+        # Check to see if tag has already been set
         if "underline" in current_tags:
+            # If characters are underlined, remove underlining from the selected text
             text_widget.tag_delete("underline", "sel.first", "sel.last")
         else:
+            # Underline the whole selection
             text_widget.tag_add("underline", "sel.first", "sel.last")
+
+        # Compile stle characteristics under a single tag name
         apply_font_style()
     else:
+        # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+# Strike Text strike_it()
 def strike(event=None):
+    # Check if any text is selected, otherwise app throws an error
     if text_widget.tag_ranges("sel"):
+        # Define Current tags        									
         current_tags = list(text_widget.tag_names())
+
+        # Check to see if tag has already been set												  
         if "overstrike" in current_tags:
+            # If characters are striked, remove striking from the selected text
             text_widget.tag_delete("overstrike", "sel.first", "sel.last")	
         else:
+            # Strike the whole selection
             text_widget.tag_add("overstrike", "sel.first", "sel.last")
+    
+        # Compile stle characteristics under a single tag name
         apply_font_style()    
     else:
+        # Alert user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+# Change Font Color from Default
 def change_color(event=None):
+    # Ask the user to choose a font color
     color = colorchooser.askcolor(initialcolor="#000000", title="Choose Font Color")
     color_name = color[1]
+    
+    # Don't have to remove tag for fontColor the way I do for tags like bold
+    
+    # Check if any text is selected
     if text_widget.tag_ranges("sel"):
+        # Call apply_font_style with updated fontColor
         apply_font_style(fontColor=color_name)
     else:
+        # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+# Highlight 
 def highlight(event=None):
+    # Ask the user to choose a background color    
     color = colorchooser.askcolor(initialcolor="#FFFF00", title="Choose Highlight Color")
     color_rgb = color[1]
+
+    # Don't have to remove tag for fontBackground the way I do for tags like bold
+
+    # Check if any text is selected
     if text_widget.tag_ranges("sel"):
+        # Call apply_font_style with updated fontBackground
         apply_font_style(fontBackground=color_rgb)
     else:
+        # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
+
 
 def remove_align_tags(start=None, end=None):
     if start is None or end is None:
+        # Get the start and end of the entire text widget
         start = "1.0"
         end = "end"
 
@@ -204,201 +290,343 @@ def apply_font_tags(font_tags, tag_name):
     if "overstrike" in font_tags:
         text_widget.tag_configure(tag_name, overstrike=font_tags["overstrike"])
 
+# Align Center Text center_it():
 def align_center(event=None):
+    # Check if any text is selected
     if text_widget.tag_ranges("sel"):
+        # Align entire selection
         start_index = text_widget.index("sel.first")
         end_index = text_widget.index("sel.last")
+
+        # Get current font tags to preserve them
         current_font_tags = get_current_font_tags(start_index)
+
+        # Remove existing alignment tags within the range
         remove_align_tags(start_index, end_index)
+
+        # Apply new alignment tags
         text_widget.tag_add("center", start_index, end_index)
         text_widget.tag_configure("center", justify="center")
+
+        # Reapply preserved font tags
         apply_font_tags(current_font_tags, "center")
     else:
+        # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+# Align Left Text align_left()
 def align_left(event=None):
+    # Check if any text is selected
     if text_widget.tag_ranges("sel"):
+        # Align entire selection
         start_index = text_widget.index("sel.first")
         end_index = text_widget.index("sel.last")
+
+        # Get current font tags to preserve them
         current_font_tags = get_current_font_tags(start_index)
+
+        # Remove existing alignment tags within the range
         remove_align_tags(start_index, end_index)
+
+        # Apply new alignment tags
         text_widget.tag_add("left", start_index, end_index)
         text_widget.tag_configure("left", justify="left")
+
+        # Reapply preserved font tags
         apply_font_tags(current_font_tags, "left")
     else:
+        # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+# Align Right Text align_right()
 def align_right(event=None):
+    # Check if any text is selected
     if text_widget.tag_ranges("sel"):
+        # Align entire selection
         start_index = text_widget.index("sel.first")
         end_index = text_widget.index("sel.last")
+
+        # Get current font tags to preserve them
         current_font_tags = get_current_font_tags(start_index)
+
+        # Remove existing alignment tags within the range
         remove_align_tags(start_index, end_index)
+
+        # Apply new alignment tags
         text_widget.tag_add("right", start_index, end_index)
         text_widget.tag_configure("right", justify="right")
+
+        # Reapply preserved font tags
         apply_font_tags(current_font_tags, "right")
     else:
+        # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+# Align Justify Text align_justify()
 def align_justify(event=None):
     global current_font_family
     global current_font_size
 
-    if event is None:
+    # Determine if we are justifying selected text or all justified text
+    # Necessary to keep Justified text justified during window re-sizings
+    if event is None:  # Called from the button, justify selected 
         selections = text_widget.tag_ranges("sel")
-    else:
+    else:  # Called from the resize event, justify all previously justified text
         selections = text_widget.tag_ranges("justified")
     
     if not selections:
+        # No text selected or no justified text found
         return
     
+    # Iterate over each selected range
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
 
+        # Remove the trailing newline character if it exists
         end_char = text_widget.get(f"{end} - 1c", end)
         if end_char == '\n':
             end = f"{end} - 1c"
 
+        # Get the selected text        
         text = text_widget.get(start, end)
         
+        # Get the current font for the text widget
         font_info = text_widget.tag_cget("sel", "font")
+        # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
         current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+
+        # THIS IS THE SECRET SAUCE THAT MAKES JUSTIFICATION WORK
+        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING TWO LINES OF CODE                                                                                     
         space_width = current_font.measure(" ")
+        # Calculate the new width based on the text widget's width                                                                  
         new_width = text_widget.winfo_width() - space_width
 
+        # Justify the selected text
         justified_text = align_justify_helper(text, new_width, current_font)
 
+        # Replace the selected text with the justified text        
         text_widget.delete(start, end)
         text_widget.insert(start, justified_text)
 
-        new_end = f"{start} + {len(justified_text)}c"
+        # Apply the 'justified' tag to the newly justified text        
+        new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
+        text_widget.tag_add("justified", start, new_end)  # Tag the newly justified text
+
+        # Preserve the font face and font size of selected text
+        text_widget.tag_configure("justified", font=current_font)
         text_widget.tag_add("justified", start, new_end)
-        
-        current_tags = get_current_font_tags(start)
-        apply_font_tags(current_tags, "justified")
-        text_widget.tag_add("justified", start, new_end)
+        # Without this code, justified text reverts back to default font and size
 
 def align_justify_helper(text, widget_width, current_font):
-    paragraphs = text.split('\n\n')
-    justified_paragraphs = []
+    # This function justifies the entire text while preserving paragraph breaks
+    paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
+    justified_paragraphs = []  # List to hold justified paragraphs
     
     for paragraph in paragraphs:
+        # For each paragraph, justify its text
         lines = justify_paragraph(paragraph, widget_width, current_font)
-        justified_paragraphs.append('\n'.join(lines))
+        justified_paragraphs.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
     
-    justified_text = '\n\n'.join(justified_paragraphs)
+    justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters
     return justified_text
 
 def justify_paragraph(paragraph, widget_width, current_font):
-    words = paragraph.split()
+    # This function justifies a single paragraph
+    words = paragraph.split()  # Split paragraph into individual words
     
-    space_width = current_font.measure(" ")
-    lines = []
-    current_line = []
-    current_length = 0
+    space_width = current_font.measure(" ")  # Width of a single space
+
+    lines = []  # List to hold lines of text
+    current_line = []  # List to hold words for the current line
+    current_length = 0  # Length of the current line in pixels
     
     for word in words:
-        word_width = current_font.measure(word)
+        word_width = current_font.measure(word)  # Width of the word in pixels
         
+        # Check if adding the word would exceed the widget's width
         if current_length + word_width + (len(current_line) * space_width) <= widget_width:
+            # Add the word to the current line
             current_line.append(word)
-            current_length += word_width
+            current_length += word_width #+ space_width  # Update the length of the current line
         else:
-            lines.append(current_line)
-            current_line = [word]
-            current_length = word_width
+            # Word does not fit, start a new line
+            lines.append(current_line)  # Add the current line to the list of lines
+            current_line = [word]  # Start a new line with the current word
+            current_length = word_width #+ space_width  # Reset the length of the current line
     
+    # Don't forget to add the last line
     if current_line:
         lines.append(current_line)
         
-    justified_lines = []
-    for line in lines[:-1]:
-        line_length = sum(current_font.measure(word) for word in line)
-        total_spaces = (widget_width - line_length) // space_width
-        gaps = len(line) - 1
+    justified_lines = []  # List to hold the justified lines
+    for line in lines[:-1]:  # Justify all lines except the last one
+        line_length = sum(current_font.measure(word) for word in line)  # Calculate the total length of words in the line
+        total_spaces = (widget_width - line_length) // space_width  # Calculate the total number of spaces needed to justify the line
+        gaps = len(line) - 1  # Number of gaps between words
         if gaps > 0:
-            spaces = total_spaces // gaps
-            extra_spaces = total_spaces % gaps
-            justified_line = ''
+            spaces = total_spaces // gaps  # Minimum spaces to add between each word
+            extra_spaces = total_spaces % gaps  # Extra spaces to distribute evenly
+            justified_line = ''  # String to hold the justified line
             for i, word in enumerate(line):
+                # Add the word to the justified line
                 justified_line += word
                 if i < gaps:
+                    # Add spaces after the word if it's not the last word in the line
                     justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
-            justified_lines.append(justified_line)
+            justified_lines.append(justified_line)  # Add the justified line to the list
         else:
-            if line:
+            # If there's only one word in the line, add it as is
+            if line:  # Check if line is not empty
                 justified_lines.append(line[0])
 
+    # Add the last line without justification
     last_line = ' '.join(lines[-1])
     justified_lines.append(last_line)
     
     return justified_lines
 
-def change_font(event):
-    selected_font_family = font_family_combo.get()
-    selected_font_size = int(font_size_combo.get())
-    text_widget.tag_configure("custom_font", font=(selected_font_family, selected_font_size))
-    start_index = text_widget.index("sel.first")
-    end_index = text_widget.index("sel.last")
-    text_widget.tag_add("custom_font", start_index, end_index)
-    text_widget.tag_configure("custom_font", font=(selected_font_family, selected_font_size))
-    global current_font_family
-    global current_font_size
-    current_font_family = selected_font_family
-    current_font_size = selected_font_size
+def remove_align_tags(start_index, end_index):
+    # Remove existing alignment tags within the specified range
+    for tag in ["left", "center", "right", "justified"]:
+        text_widget.tag_remove(tag, start_index, end_index)
 
-def select_all(event):
-    text_widget.tag_add("sel", "1.0", "end")
 
-def deselect_all(event):
-    text_widget.tag_remove("sel", "1.0", "end")
-
+# CREATE THE MAIN WINDOW
 root = tk.Tk()
-root.title("Word Processor Clone")
-root.geometry("1200x800")
+root.title("Font Selector")
 
-main_frame = tk.Frame(root)
-main_frame.pack(fill=tk.BOTH, expand=1)
+# CREATING TEXT AREA - FIRST CREATED A FRAME AND THEN APPLIED TEXT OBJECT TO IT.
+# Create a text widget to display font changes
+text_frame = tk.Frame(root, borderwidth=1, padx=2, relief="sunken")
+text_widget = tk.Text(wrap="word", font=(default_font, default_size), background="#FFFFFF", borderwidth=0, highlightthickness=0, undo=True)
+text_widget.focus_set()
+text_widget.pack(in_=text_frame, side="left", fill="both", expand=True)  # Make the text widget fill the window
 
-text_widget = tk.Text(main_frame, wrap=tk.WORD, font=(default_font, default_size), undo=True)
-text_widget.pack(fill=tk.BOTH, expand=1)
+# Text for Debugging
+text_widget.insert("end", "She then queried, “Whatever do you suppose made a man like that go into the Church?” Then she added, “You like him, don’t you?” Jane Shelby was quite well aware that her husband practically hero-worshipped the younger Scott. She was quite prepared to look with her dry-humoured understanding on little boys who never grew up but there were unanswered questions about Scott that worried her and she wished that her husband were not quite so enchanted with his virtues.\n\n")
+text_widget.insert("end", "Shelby replied, “Yes. He’s quite a boy.”\n\n")
+text_widget.insert("end", "Actually, secretly Scott’s choice of profession worried Dick Shelby, too. What made it all the more difficult for Shelby to understand was that Scott had come from a wealthy family. A spectacularly successful boy, what had led him into the ministry? \n\n")
+text_widget.insert("end", "Shelby himself was neither religious nor irreligious; he was simply a lifelong social and intellectual conformer. He believed that most men went into the church because they were not fit for anything else. The breed was completely foreign to him but because it was incumbent to his position as a Motors Vice President, he alternated Sundays between the exclusive Bloomfield Hills Country Club and the equally exclusive Grosse Point Episcopal Church.")
 
-scrollbar = tk.Scrollbar(text_widget)
-scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-text_widget.config(yscrollcommand=scrollbar.set)
-scrollbar.config(command=text_widget.yview)
+# PACK TOOLBAR, FORMATBAR, STATUSBAR AND TEXT FRAME.
+formattingbar = tk.Frame(root, padx=2, pady=2)
+formattingbar.pack(side="top", fill="x")
+text_frame.pack(side="bottom", fill="both", expand=True)
+text_widget.focus_set()
 
-default_font = font.Font(family="Arial", size=12)
-text_widget.configure(font=default_font)
-
+# COMBOBOXES
+# Get all font families
 font_families = list(font.families())
-font_family_combo = ttk.Combobox(main_frame, values=font_families, state="readonly")
-font_family_combo.set(default_font.actual()["family"])
-font_family_combo.pack(side=tk.LEFT, padx=10)
-font_family_combo.bind("<<ComboboxSelected>>", update_font)
 
-font_sizes = list(range(8, 73, 2))
-font_size_combo = ttk.Combobox(main_frame, values=font_sizes, state="readonly")
-font_size_combo.set(default_font.actual()["size"])
-font_size_combo.pack(side=tk.LEFT)
+# Create a combo box for font selection
+font_family_combo = ttk.Combobox(root, values=font_families)
+font_family_combo.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+if default_font in font_families:  # Check that the default font is installed
+    font_family_combo.set(default_font)
+else:
+    font_family_combo.set(font_families[0])  # Set the first available font as default
+
+# Create a combo box for font size selection
+font_size_combo = ttk.Combobox(root, values=list(range(8, 72)))
+font_size_combo.pack(in_=formattingbar, side="left", padx=4, pady=4)
+font_size_combo.set(default_size)
+
+# FORMATBAR BUTTONS
+# bold 
+bold_button = tk.Button(name="formatbar_b1", borderwidth=1, command=bold, width=20, height=20, pady=10, padx=10)
+photo_bold = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/bold.png")
+photo_bold = photo_bold.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS) 
+image_bold = ImageTk.PhotoImage(photo_bold)
+bold_button.config(image=image_bold)
+bold_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# italic		
+italic_button = tk.Button(name="formatbar_b2", borderwidth=1, command=italic, width=20, height=20)
+photo_italic = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/italic.png")
+photo_italic = photo_italic.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_italic = ImageTk.PhotoImage(photo_italic)
+italic_button.config(image=image_italic)
+italic_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# underline		   
+underline_button = tk.Button(name="formatbar_b3", borderwidth=1, command=underline, width=20, height=20)
+photo_underline = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/underline.png")
+photo_underline = photo_underline.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_underline = ImageTk.PhotoImage(photo_underline)
+underline_button.config(image=image_underline)
+underline_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# strike		
+strike_button = tk.Button(name="formatbar_b4", borderwidth=1, command=strike, width=20, height=20)
+photo_strike = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/strike.png")
+photo_strike = photo_strike.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_strike = ImageTk.PhotoImage(photo_strike)
+strike_button.config(image=image_strike)
+strike_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# font_color			
+font_color_button = tk.Button(name="formatbar_b5", borderwidth=1, command=change_color, width=20, height=20)
+photo_font_color = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/font-color.png")
+photo_font_color = photo_font_color.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_font_color = ImageTk.PhotoImage(photo_font_color)
+font_color_button.config(image=image_font_color)
+font_color_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# highlight
+highlight_button = tk.Button(name="formatbar_b6", borderwidth=1, command=highlight, width=20, height=20)
+photo_highlight = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/highlight.png")
+photo_highlight = photo_highlight.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_highlight = ImageTk.PhotoImage(photo_highlight)
+highlight_button.config(image=image_highlight)
+highlight_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# align_center			  
+align_center_button = tk.Button(name="formatbar_b7", borderwidth=1, command=align_center, width=20, height=20)
+photo_align_center = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-center.png")
+photo_align_center = photo_align_center.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_align_center = ImageTk.PhotoImage(photo_align_center)
+align_center_button.config(image=image_align_center)
+align_center_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# align_justify			   
+align_justify_button = tk.Button(name="formatbar_b8", borderwidth=1, command=align_justify, width=20, height=20)
+photo_align_justify = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-justify.png")
+photo_align_justify = photo_align_justify.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_align_justify = ImageTk.PhotoImage(photo_align_justify)
+align_justify_button.config(image=image_align_justify)
+align_justify_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# align_left			
+align_left_button = tk.Button(name="formatbar_b9", borderwidth=1, command=align_left, width=20, height=20)
+photo_align_left = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-left.png")
+photo_align_left = photo_align_left.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_align_left = ImageTk.PhotoImage(photo_align_left)
+align_left_button.config(image=image_align_left)
+align_left_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# align_right			 
+align_right_button = tk.Button(name="formatbar_b10", borderwidth=1, command=align_right, width=20, height=20)
+photo_align_right = Image.open(r"C:\Python\Python38-32\Programs\Tkinter\Text-Editor-master\icons/align-right.png")
+photo_align_right = photo_align_right.resize((18, 18), Image.Resampling.LANCZOS) #Image.ANTIALIAS)
+image_align_right = ImageTk.PhotoImage(photo_align_right)
+align_right_button.config(image=image_align_right)
+align_right_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+
+# STATUS BAR
+status = tk.Label(root, text="", bd=1, relief=tk.SUNKEN, anchor=tk.W)
+
+# BINDINGS
+# Bind events to update the font
+font_family_combo.bind("<<ComboboxSelected>>", update_font)
 font_size_combo.bind("<<ComboboxSelected>>", update_font)
 
-toolbar_frame = tk.Frame(main_frame)
-toolbar_frame.pack(fill=tk.X)
-
-align_left_button = tk.Button(toolbar_frame, text="Align Left", command=align_left)
-align_left_button.pack(side=tk.LEFT, padx=2)
-align_center_button = tk.Button(toolbar_frame, text="Align Center", command=align_center)
-align_center_button.pack(side=tk.LEFT, padx=2)
-align_right_button = tk.Button(toolbar_frame, text="Align Right", command=align_right)
-align_right_button.pack(side=tk.LEFT, padx=2)
-align_justify_button = tk.Button(toolbar_frame, text="Justify", command=align_justify)
-align_justify_button.pack(side=tk.LEFT, padx=2)
-
-root.bind_all("<Control-a>", select_all)
-root.bind_all("<Control-Shift-a>", deselect_all)
+# Bind event to apply font style when text is selected
 text_widget.bind("<Button-1>", update_comboboxes)
 
+root.bind("<Configure>", align_justify)
+
+# Mainloop of the Program
 root.mainloop()
 
