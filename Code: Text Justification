@@ -18,7 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-# Justifies text. Does NOT preserve text properties.
+# Some text alignment buttons preserve text properties.  Others do not.
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -377,29 +377,29 @@ def align_justify(event=None):
     if not selections:
         # No text selected or no justified text found
         return
-    
+
     # Iterate over each selected range
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
+
+        # Get the selected text        
+        text = text_widget.get(start, end)
 
         # Remove the trailing newline character if it exists
         end_char = text_widget.get(f"{end} - 1c", end)
         if end_char == '\n':
             end = f"{end} - 1c"
 
-        # Get the selected text        
-        text = text_widget.get(start, end)
-        
         # Get the current font for the text widget
         font_info = text_widget.tag_cget("sel", "font")
         # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
         current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
 
         # THIS IS THE SECRET SAUCE THAT MAKES JUSTIFICATION WORK
-        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING TWO LINES OF CODE                                                                                     
+        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING TWO LINES OF CODE
         space_width = current_font.measure(" ")
-        # Calculate the new width based on the text widget's width                                                                  
+        # Calculate the new width based on the text widget's width
         new_width = text_widget.winfo_width() - space_width
 
         # Justify the selected text
@@ -486,11 +486,10 @@ def justify_paragraph(paragraph, widget_width, current_font):
     
     return justified_lines
 
+# Helper function to remove alignment tags
 def remove_align_tags(start_index, end_index):
-    # Remove existing alignment tags within the specified range
-    for tag in ["left", "center", "right", "justified"]:
+    for tag in ["center", "left", "right", "justified"]:
         text_widget.tag_remove(tag, start_index, end_index)
-
 
 # CREATE THE MAIN WINDOW
 root = tk.Tk()
