@@ -18,10 +18,6 @@ Bear with me.  I'm still learning.
 """
 
 
-# Prevent text from remaining highlighted after changing the alignment
-# text_widget.tag_remove("sel", "1.0", "end")
-
-
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
@@ -311,9 +307,6 @@ def align_center(event=None):
 
         # Reapply preserved font tags
         apply_font_tags(current_font_tags, "center")
-        
-        # Prevent text from remaining highlighted after changing the alignment
-        text_widget.tag_remove("sel", "1.0", "end")
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
@@ -338,9 +331,6 @@ def align_left(event=None):
 
         # Reapply preserved font tags
         apply_font_tags(current_font_tags, "left")
-        
-        # Prevent text from remaining highlighted after changing the alignment
-        text_widget.tag_remove("sel", "1.0", "end")
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
@@ -365,9 +355,6 @@ def align_right(event=None):
 
         # Reapply preserved font tags
         apply_font_tags(current_font_tags, "right")
-
-        # Prevent text from remaining highlighted after changing the alignment
-        text_widget.tag_remove("sel", "1.0", "end")
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
@@ -433,9 +420,6 @@ def align_justify(event=None):
         # Reapply preserved font tags
         apply_font_tags(current_font_tags, "justified")
         # Without this code, justified text reverts back to default font and size
-        
-        # Prevent text from remaining highlighted after changing the alignment
-        text_widget.tag_remove("sel", "1.0", "end")
 
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
@@ -511,6 +495,21 @@ def justify_paragraph(paragraph, widget_width, current_font):
 def remove_align_tags(start_index, end_index):
     for tag in ["center", "left", "right", "justified"]:
         text_widget.tag_remove(tag, start_index, end_index)
+
+
+# Function to clear the selection when clicking outside of it
+def clear_selection(event):
+    if not text_widget.tag_ranges("sel"):
+        return
+    # Check if the click is inside the selection
+    sel_start = text_widget.index("sel.first")
+    sel_end = text_widget.index("sel.last")
+    click_index = text_widget.index("@{},{}".format(event.x, event.y))
+    if text_widget.compare(click_index, "<", sel_start) or text_widget.compare(click_index, ">", sel_end):
+        text_widget.tag_remove("sel", "sel.first", "sel.last")
+
+
+
 
 # CREATE THE MAIN WINDOW
 root = tk.Tk()
@@ -641,6 +640,9 @@ status = tk.Label(root, text="", bd=1, relief=tk.SUNKEN, anchor=tk.W)
 # Bind events to update the font
 font_family_combo.bind("<<ComboboxSelected>>", update_font)
 font_size_combo.bind("<<ComboboxSelected>>", update_font)
+
+# Bind the clear_selection function to left mouse click
+text_widget.bind("<Button-1>", clear_selection)
 
 # Bind event to apply font style when text is selected
 text_widget.bind("<Button-1>", update_comboboxes)
