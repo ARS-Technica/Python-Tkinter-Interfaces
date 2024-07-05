@@ -18,6 +18,9 @@ Bear with me.  I'm still learning.
 """
 
 
+# Some text alignment buttons preserve text properties.  Others do not.
+
+
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
@@ -287,10 +290,6 @@ def apply_font_tags(font_tags, tag_name):
     if "overstrike" in font_tags:
         text_widget.tag_configure(tag_name, overstrike=font_tags["overstrike"])
 
-def remove_selection():
-    """Remove the selection highlight by clearing the 'sel' tag."""
-    text_widget.tag_remove("sel", "1.0", tk.END)
-    
 # Align Center Text center_it():
 def align_center(event=None):
     # Check if any text is selected
@@ -314,8 +313,6 @@ def align_center(event=None):
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
-        
-    remove_selection()  # Clear the selection
 
 # Align Left Text align_left()
 def align_left(event=None):
@@ -341,8 +338,6 @@ def align_left(event=None):
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-    remove_selection()  # Clear the selection
-
 # Align Right Text align_right()
 def align_right(event=None):
     # Check if any text is selected
@@ -367,8 +362,7 @@ def align_right(event=None):
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-    remove_selection()  # Clear the selection
-
+# Align Justify Text align_justify()
 def align_justify(event=None):
     global current_font_family
     global current_font_size
@@ -388,9 +382,6 @@ def align_justify(event=None):
     for i in range(0, len(selections), 2):
         start = selections[i]
         end = selections[i + 1]
-
-        # Get current font tags to preserve them
-        current_font_tags = get_current_font_tags(start)
 
         # Get the selected text        
         text = text_widget.get(start, end)
@@ -425,13 +416,7 @@ def align_justify(event=None):
         # Preserve the font face and font size of selected text
         text_widget.tag_configure("justified", font=current_font)
         text_widget.tag_add("justified", start, new_end)
-
-        # Reapply preserved font tags
-        apply_font_tags(current_font_tags, "justified")
-
         # Without this code, justified text reverts back to default font and size
-
-    remove_selection()  # Clear the selection
 
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
@@ -464,7 +449,6 @@ def justify_paragraph(paragraph, widget_width, current_font):
             # Add the word to the current line
             current_line.append(word)
             current_length += word_width #+ space_width  # Update the length of the current line
-
         else:
             # Word does not fit, start a new line
             lines.append(current_line)  # Add the current line to the list of lines
@@ -501,7 +485,6 @@ def justify_paragraph(paragraph, widget_width, current_font):
     justified_lines.append(last_line)
     
     return justified_lines
-
 
 # Helper function to remove alignment tags
 def remove_align_tags(start_index, end_index):
