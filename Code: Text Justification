@@ -18,10 +18,6 @@ Bear with me.  I'm still learning.
 """
 
 
-# Get the current font tags before modifying the text.
-# Reapply the preserved font tags after modifying the text.
-
-
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
