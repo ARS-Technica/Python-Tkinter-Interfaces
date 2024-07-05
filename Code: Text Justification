@@ -18,6 +18,10 @@ Bear with me.  I'm still learning.
 """
 
 
+# Prevent text from remaining highlighted after changing the alignment
+# text_widget.tag_remove("sel", "1.0", "end")
+
+
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
@@ -287,10 +291,6 @@ def apply_font_tags(font_tags, tag_name):
     if "overstrike" in font_tags:
         text_widget.tag_configure(tag_name, overstrike=font_tags["overstrike"])
 
-def remove_selection():
-    """Remove the selection highlight by clearing the 'sel' tag."""
-    text_widget.tag_remove("sel", "1.0", tk.END)
-    
 # Align Center Text center_it():
 def align_center(event=None):
     # Check if any text is selected
@@ -311,11 +311,12 @@ def align_center(event=None):
 
         # Reapply preserved font tags
         apply_font_tags(current_font_tags, "center")
+        
+        # Prevent text from remaining highlighted after changing the alignment
+        text_widget.tag_remove("sel", "1.0", "end")
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
-        
-    remove_selection()  # Clear the selection
 
 # Align Left Text align_left()
 def align_left(event=None):
@@ -337,11 +338,12 @@ def align_left(event=None):
 
         # Reapply preserved font tags
         apply_font_tags(current_font_tags, "left")
+        
+        # Prevent text from remaining highlighted after changing the alignment
+        text_widget.tag_remove("sel", "1.0", "end")
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
-
-    remove_selection()  # Clear the selection
 
 # Align Right Text align_right()
 def align_right(event=None):
@@ -363,11 +365,13 @@ def align_right(event=None):
 
         # Reapply preserved font tags
         apply_font_tags(current_font_tags, "right")
+
+        # Prevent text from remaining highlighted after changing the alignment
+        text_widget.tag_remove("sel", "1.0", "end")
     else:
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-    remove_selection()  # Clear the selection
 
 def align_justify(event=None):
     global current_font_family
@@ -428,10 +432,10 @@ def align_justify(event=None):
 
         # Reapply preserved font tags
         apply_font_tags(current_font_tags, "justified")
-
         # Without this code, justified text reverts back to default font and size
-
-    remove_selection()  # Clear the selection
+        
+        # Prevent text from remaining highlighted after changing the alignment
+        text_widget.tag_remove("sel", "1.0", "end")
 
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
