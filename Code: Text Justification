@@ -257,6 +257,147 @@ def remove_align_tags(start=None, end=None):
     if "justified" in all_tags:
         text_widget.tag_remove("justified", start, end)
 
+def preserve_font_attributes(start, end):
+    tag_ranges = text_widget.tag_ranges("sel")
+    if not tag_ranges:
+        return {}
+
+    font_attributes = {}
+    font_attributes['font'] = text_widget.tag_cget("sel", "font")
+    font_attributes['foreground'] = text_widget.tag_cget("sel", "foreground")
+    font_attributes['background'] = text_widget.tag_cget("sel", "background")
+    font_attributes['underline'] = text_widget.tag_cget("sel", "underline")
+    font_attributes['overstrike'] = text_widget.tag_cget("sel", "overstrike")
+
+    return font_attributes
+
+def apply_font_attributes(tag_name, font_attributes):
+    if 'font' in font_attributes:
+        text_widget.tag_configure(tag_name, font=font_attributes['font'])
+    if 'foreground' in font_attributes:
+        text_widget.tag_configure(tag_name, foreground=font_attributes['foreground'])
+    if 'background' in font_attributes:
+        text_widget.tag_configure(tag_name, background=font_attributes['background'])
+    if 'underline' in font_attributes:
+        text_widget.tag_configure(tag_name, underline=font_attributes['underline'])
+    if 'overstrike' in font_attributes:
+        text_widget.tag_configure(tag_name, overstrike=font_attributes['overstrike'])
+
+def align_center(event=None):
+    selections = text_widget.tag_ranges("sel")
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+
+        remove_align_tags(start, end)
+        unjustify_text(start, end)
+
+        font_attributes = preserve_font_attributes(start, end)
+        text_widget.tag_add("center", start, end)
+        apply_font_attributes("center", font_attributes)
+        text_widget.tag_configure("center", justify='center')
+
+    # Clear the selection after alignment
+    text_widget.tag_remove("sel", start, end)
+
+def align_left(event=None):
+    selections = text_widget.tag_ranges("sel")
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+
+        remove_align_tags(start, end)
+        unjustify_text(start, end)
+
+        font_attributes = preserve_font_attributes(start, end)
+        text_widget.tag_add("left", start, end)
+        apply_font_attributes("left", font_attributes)
+        text_widget.tag_configure("left", justify='left')
+
+    # Clear the selection after alignment
+    text_widget.tag_remove("sel", start, end)
+
+def align_right(event=None):
+    selections = text_widget.tag_ranges("sel")
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+
+        remove_align_tags(start, end)
+        unjustify_text(start, end)
+
+        font_attributes = preserve_font_attributes(start, end)
+        text_widget.tag_add("right", start, end)
+        apply_font_attributes("right", font_attributes)
+        text_widget.tag_configure("right", justify='right')
+
+    # Clear the selection after alignment
+    text_widget.tag_remove("sel", start, end)
+
+def align_justify(event=None):
+    global current_font_family
+    global current_font_size
+
+    if event is None:
+        selections = text_widget.tag_ranges("sel")
+    else:
+        selections = text_widget.tag_ranges("justified")
+
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+
+        text = text_widget.get(start, end)
+        font_attributes = preserve_font_attributes(start, end)
+        space_width = font.Font(font=font_attributes['font']).measure(" ")
+        new_width = text_widget.winfo_width() - space_width
+
+        justified_text = align_justify_helper(text, new_width, font.Font(font=font_attributes['font']))
+
+        text_widget.delete(start, end)
+        text_widget.insert(start, justified_text)
+
+        new_end = f"{start} + {len(justified_text)}c"
+        text_widget.tag_add("justified", start, new_end)
+        apply_font_attributes("justified", font_attributes)
+        text_widget.tag_configure("justified", justify='left')
+
+    # Clear the selection after alignment
+    text_widget.tag_remove("sel", start, end)
+
+
+
+
+
+"""
 def get_current_font_tags(start):
     tags = text_widget.tag_names(start)
     font_tags = {}
@@ -421,6 +562,8 @@ def align_justify(event=None):
         apply_font_tags(current_font_tags, "justified")
 
         # Without this code, justified text reverts back to default font and size
+"""
+
 
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
