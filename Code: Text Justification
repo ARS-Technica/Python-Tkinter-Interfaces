@@ -276,13 +276,7 @@ def get_current_font_tags(start):
 
     return font_tags
 
-def apply_font_tags(font_tags, start, end):
-    global style_counter
-    
-    tag_name = "custom_font_{}".format(style_counter)
-
-    style_counter += 1
-    
+def apply_font_tags(font_tags, tag_name):
     if "font" in font_tags:
         text_widget.tag_configure(tag_name, font=font_tags["font"])
     if "foreground" in font_tags:
@@ -294,7 +288,14 @@ def apply_font_tags(font_tags, start, end):
     if "overstrike" in font_tags:
         text_widget.tag_configure(tag_name, overstrike=font_tags["overstrike"])
 
-    text_widget.tag_add(tag_name, start, end)
+    # Temporarily remove selection highlight
+    if text_widget.tag_ranges("sel"):
+        start, end = text_widget.tag_ranges("sel")
+        text_widget.tag_remove("sel", start, end)
+
+    # Restore selection highlight
+    text_widget.tag_add("sel", start, end)
+
 
 """
 def apply_font_tags(font_tags, tag_name):
@@ -444,7 +445,74 @@ def align_justify(event=None):
 
         # Reapply preserved font tags
         apply_font_tags(current_font_tags, "justified")
+
+
+
+"""
+def align_justify(event=None):
+    global current_font_family
+    global current_font_size
+
+    # Determine if we are justifying selected text or all justified text
+    # Necessary to keep Justified text justified during window re-sizings
+    if event is None:  # Called from the button, justify selected 
+        selections = text_widget.tag_ranges("sel")
+    else:  # Called from the resize event, justify all previously justified text
+        selections = text_widget.tag_ranges("justified")
+    
+    if not selections:
+        # No text selected or no justified text found
+        return
+
+    # Iterate over each selected range
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+
+        # Get current font tags to preserve them
+        current_font_tags = get_current_font_tags(start)
+
+        # Remove existing alignment tags within the range
+        remove_align_tags(start, end)
+
+        # Get the selected text        
+        text = text_widget.get(start, end)
+
+        # Remove the trailing newline character if it exists
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+
+        # Get the current font for the text widget
+        font_info = text_widget.tag_cget("sel", "font")
+        # NECESSARY FOR PREVENTING FONT FROM REVERTING TO DEFAULT
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+
+        # THIS IS THE SECRET SAUCE THAT MAKES JUSTIFICATION WORK
+        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING TWO LINES OF CODE
+        space_width = current_font.measure(" ")
+        # Calculate the new width based on the text widget's width
+        new_width = text_widget.winfo_width() - space_width
+
+        # Justify the selected text
+        justified_text = align_justify_helper(text, new_width, current_font)
+
+        # Replace the selected text with the justified text        
+        text_widget.delete(start, end)
+        text_widget.insert(start, justified_text)
+
+        # Apply the 'justified' tag to the newly justified text        
+        new_end = f"{start} + {len(justified_text)}c"  # Calculate the new end position
+        text_widget.tag_add("justified", start, new_end)  # Tag the newly justified text
+
+        # Preserve the font face and font size of selected text
+        text_widget.tag_configure("justified", font=current_font)
+        text_widget.tag_add("justified", start, new_end)
+
+        # Reapply preserved font tags
+        apply_font_tags(current_font_tags, "justified")
         # Without this code, justified text reverts back to default font and size
+"""
 
 """
 # Align Justify Text align_justify()
