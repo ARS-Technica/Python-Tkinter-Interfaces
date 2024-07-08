@@ -276,7 +276,13 @@ def get_current_font_tags(start):
 
     return font_tags
 
-def apply_font_tags(font_tags, tag_name):
+def apply_font_tags(font_tags, start, end):
+    global style_counter
+    
+    tag_name = "custom_font_{}".format(style_counter)
+
+    style_counter += 1
+    
     if "font" in font_tags:
         text_widget.tag_configure(tag_name, font=font_tags["font"])
     if "foreground" in font_tags:
@@ -288,6 +294,21 @@ def apply_font_tags(font_tags, tag_name):
     if "overstrike" in font_tags:
         text_widget.tag_configure(tag_name, overstrike=font_tags["overstrike"])
 
+    text_widget.tag_add(tag_name, start, end)
+
+"""
+def apply_font_tags(font_tags, tag_name):
+    if "font" in font_tags:
+        text_widget.tag_configure(tag_name, font=font_tags["font"])
+    if "foreground" in font_tags:
+        text_widget.tag_configure(tag_name, foreground=font_tags["foreground"])
+    if "background" in font_tags:
+        text_widget.tag_configure(tag_name, background=font_tags["background"])
+    if "underline" in font_tags:
+        text_widget.tag_configure(tag_name, underline=font_tags["underline"])
+    if "overstrike" in font_tags:
+        text_widget.tag_configure(tag_name, overstrike=font_tags["overstrike"])
+"""
 
 # Align Center Text center_it():
 def align_center(event=None):
