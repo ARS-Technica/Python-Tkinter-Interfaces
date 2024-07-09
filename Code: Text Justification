@@ -18,6 +18,9 @@ Bear with me.  I'm still learning.
 """
 
 
+# line 372, in align_justify justified_text += words[-1] + "\n"
+# Returns the error "IndexError: list index out of range"
+
 
 # Center, Left, and Right Alignment work well
 # Justify Alignment works well FIRST TIME
@@ -343,6 +346,63 @@ def align_right(event=None):
     else:
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+
+
+
+def align_justify(event=None):
+    try:
+        start_index = text_widget.index(tk.SEL_FIRST)
+        end_index = text_widget.index(tk.SEL_LAST)
+    except tk.TclError:
+        return
+
+    # Get the selected text
+    selected_text = text_widget.get(start_index, end_index)
+
+    # Split the text into lines
+    lines = selected_text.split("\n")
+    max_line_length = max(len(line) for line in lines)
+
+    # Justify each line by adding spaces
+    justified_text = ""
+    for line in lines:
+        words = line.split()
+        if len(words) == 1:
+            justified_text += words[0].ljust(max_line_length) + "\n"
+        else:
+            total_spaces = max_line_length - sum(len(word) for word in words)
+            spaces_between_words = total_spaces // (len(words) - 1)
+            extra_spaces = total_spaces % (len(words) - 1)
+            for i in range(len(words) - 1):
+                justified_text += words[i] + " " * (spaces_between_words + (1 if i < extra_spaces else 0))
+            justified_text += words[-1] + "\n"
+
+    # Remove the trailing newline added by the loop
+    justified_text = justified_text.rstrip("\n")
+
+    # Save all tags (including font attributes) for the selected text
+    tags = {}
+    index = start_index
+    while index != end_index:
+        current_tags = text_widget.tag_names(index)
+        for tag in current_tags:
+            if tag not in tags:
+                tags[tag] = []
+            tags[tag].append(index)
+        index = text_widget.index(f"{index} + 1c")
+
+    # Delete the selected text and insert the justified text
+    text_widget.delete(start_index, end_index)
+    text_widget.insert(start_index, justified_text)
+
+    # Reapply all tags to the newly inserted text
+    for tag, indices in tags.items():
+        for index in indices:
+            new_index = text_widget.index(f"{start_index} + {index.split('.')[1]}c")
+            text_widget.tag_add(tag, new_index, f"{new_index} + 1c")
+
+
+"""
 def align_justify(event=None):
     global current_font_family
     global current_font_size
@@ -375,10 +435,7 @@ def align_justify(event=None):
         text_widget.tag_add("justified", start, new_end)
         text_widget.tag_configure("justified", font=current_font)
         apply_font_tags(start, new_end, current_font_tags)
-
-
-
-
+"""
 
 
 def align_justify_helper(text, widget_width, current_font):
