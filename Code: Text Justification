@@ -338,6 +338,90 @@ def align_right(event=None):
     else:
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+
+
+
+"""
+def align_justify(event=None):
+    start = "1.0"
+    end = text_widget.index("end-1c")
+    
+    lines = text_widget.get(start, end).splitlines()
+    all_tags = []
+
+    for i, line in enumerate(lines):
+        line_start = f"{i+1}.0"
+        line_end = f"{i+1}.end"
+        words = line.split()
+        
+        if not words:
+            continue
+        
+        total_length = sum(len(word) for word in words)
+        spaces_needed = len(words) - 1
+        total_spaces = text_widget.index(line_end).split('.')[1]
+        extra_spaces = int(total_spaces) - total_length
+        
+        if spaces_needed > 0:
+            space_width = extra_spaces // spaces_needed
+            remainder = extra_spaces % spaces_needed
+            
+            justified_line = ''
+            for j, word in enumerate(words):
+                justified_line += word
+                if j < spaces_needed:
+                    justified_line += ' ' * (space_width + (1 if j < remainder else 0))
+            
+            text_widget.delete(line_start, line_end)
+            text_widget.insert(line_start, justified_line)
+            
+            # Collect and store tags
+            tags = text_widget.tag_names(line_start)
+            all_tags.append((line_start, line_end, tags))
+    
+    for start, end, tags in all_tags:
+        for tag in tags:
+            text_widget.tag_add(tag, start, end)
+"""
+
+"""
+# TypeError: align_justify() takes 0 positional arguments but 1 was given
+
+def align_justify(event=None):
+    try:
+        start_index = text_widget.index("sel.first")
+        end_index = text_widget.index("sel.last")
+    except tk.TclError:
+        return  # No text selected
+
+    selected_text = text_widget.get(start_index, end_index)
+    lines = selected_text.split('\n')
+
+    # Store font attributes
+    font_attributes = []
+    for line_number in range(len(lines)):
+        line_start_index = f"{start_index.split('.')[0]}.{int(start_index.split('.')[1]) + line_number}"
+        line_end_index = f"{line_start_index} lineend"
+        font_attributes.append(
+            [(text_widget.tag_names(index), text_widget.index(index)) for index in text_widget.tag_ranges(f'{line_start_index}')]
+        )
+
+    # Justify each line
+    justified_lines = [line.strip().center(text_widget.winfo_width() // font.Font(font=text_widget["font"]).measure(" "), ' ') for line in lines]
+
+    # Replace the selected text with justified text
+    text_widget.delete(start_index, end_index)
+    text_widget.insert(start_index, '\n'.join(justified_lines))
+
+    # Reapply font attributes
+    for line_number, line_font_attributes in enumerate(font_attributes):
+        line_start_index = f"{start_index.split('.')[0]}.{int(start_index.split('.')[1]) + line_number}"
+        for tags, index in line_font_attributes:
+            for tag in tags:
+                text_widget.tag_add(tag, line_start_index, f"{line_start_index} lineend")
+"""
+
+"""
 def align_justify(event=None):
     global current_font_family
     global current_font_size
@@ -370,11 +454,7 @@ def align_justify(event=None):
         text_widget.tag_add("justified", start, new_end)
         text_widget.tag_configure("justified", font=current_font)
         apply_font_tags(start, new_end, current_font_tags)
-
-
-
-
-
+"""
 
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
