@@ -18,8 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-#     line_start = f"{start.split('.')[0]}.{int(start.split('.')[1])}"
-# ValueError: invalid literal for int() with base 10: 'first'
+# Removes all spaces
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -345,52 +344,48 @@ def align_right(event=None):
 
 
 def align_justify(event=None):
-    start = "sel.first"
-    end = "sel.last"
+    start = text_widget.index("sel.first")
+    end = text_widget.index("sel.last")
     
-    # Get the text within the selected range
-    selected_text = text_widget.get(start, end)
-    
-    # Split the text into lines
-    lines = selected_text.split('\n')
+    # Collect lines of text and their tags
+    lines = text_widget.get(start, end).splitlines()
+    line_tags = []
     
     for i, line in enumerate(lines):
-        line_start = f"{start.split('.')[0]}.{int(start.split('.')[1])}"
-        line_end = f"{start.split('.')[0]}.{int(start.split('.')[1]) + len(line)}"
-        
+        line_start = f"{start.split('.')[0]}.{start.split('.')[1]}"
+        line_end = f"{int(start.split('.')[0]) + i}.end"
         words = line.split()
+        
         if not words:
             continue
-
-        # Calculate the total length of all words and spaces
-        total_length = sum(len(word) for word in words)
-        total_spaces = len(words) - 1
-        extra_spaces = (text_widget.index(line_end).split('.')[1]) - total_length
         
-        if total_spaces > 0:
-            space_width = extra_spaces // total_spaces
-            remainder = extra_spaces % total_spaces
+        total_length = sum(len(word) for word in words)
+        spaces_needed = len(words) - 1
+        total_spaces = text_widget.index(line_end).split('.')[1]
+        extra_spaces = int(total_spaces) - total_length
+        
+        if spaces_needed > 0:
+            space_width = extra_spaces // spaces_needed
+            remainder = extra_spaces % spaces_needed
             
-            # Create the justified line
             justified_line = ''
             for j, word in enumerate(words):
                 justified_line += word
-                if j < total_spaces:
+                if j < spaces_needed:
                     justified_line += ' ' * (space_width + (1 if j < remainder else 0))
-
-            # Save the tags before deletion
-            tags = text_widget.tag_names(line_start)
             
-            # Replace the line with the justified line
+            # Collect tags before deleting text
+            tags = text_widget.tag_names(f"{int(start.split('.')[0]) + i}.0")
+            line_tags.append((line_start, line_end, tags))
+            
             text_widget.delete(line_start, line_end)
             text_widget.insert(line_start, justified_line)
-            
-            # Reapply the tags
-            for tag in tags:
-                text_widget.tag_add(tag, line_start, f"{line_start}+{len(justified_line)}c")
-                
-
-
+    
+    # Reapply tags
+    for start, end, tags in line_tags:
+        for tag in tags:
+            text_widget.tag_add(tag, start, end) 
+               
 
 
 def align_justify_helper(text, widget_width, current_font):
