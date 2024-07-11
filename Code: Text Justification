@@ -18,7 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-# Justify doesn't work at all
+# Justify works.  It doesn't preserve font attributes
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -343,52 +343,51 @@ def align_right(event=None):
 
 
 
-
 def align_justify(event=None):
+    # start = "sel.first"
+    # end = "sel.last"
+
     start = "1.0"
     end = text_widget.index("end-1c")
-
-    # Collect all tags and their ranges before modifying the text
-    all_tags = []
-    for tag in text_widget.tag_names():
-        ranges = text_widget.tag_ranges(tag)
-        for i in range(0, len(ranges), 2):
-            start_range = ranges[i]
-            end_range = ranges[i+1]
-            all_tags.append((tag, start_range, end_range))
-
-    lines = text_widget.get(start, end).splitlines()
     
-    for i, line in enumerate(lines):
-        line_start = f"{i+1}.0"
-        line_end = f"{i+1}.end"
+    lines = text_widget.get(start, end).splitlines()
+    tags_info = []
+
+    # Collect tag information before modification
+    for line_index, line in enumerate(lines, start=int(start.split('.')[0])):
+        line_start_index = f"{line_index}.0"
+        line_end_index = f"{line_index}.end"
+        tags_info.append((line_start_index, line_end_index, text_widget.tag_names(line_start_index)))
+
+    for line_index, line in enumerate(lines, start=int(start.split('.')[0])):
         words = line.split()
-        
         if not words:
             continue
-        
+
         total_length = sum(len(word) for word in words)
         spaces_needed = len(words) - 1
-        total_spaces = text_widget.index(line_end).split('.')[1]
+        line_start_index = f"{line_index}.0"
+        line_end_index = f"{line_index}.end"
+        total_spaces = text_widget.index(line_end_index).split('.')[1]
         extra_spaces = int(total_spaces) - total_length
-        
+
         if spaces_needed > 0:
             space_width = extra_spaces // spaces_needed
             remainder = extra_spaces % spaces_needed
-            
+
             justified_line = ''
             for j, word in enumerate(words):
                 justified_line += word
                 if j < spaces_needed:
                     justified_line += ' ' * (space_width + (1 if j < remainder else 0))
-            
-            text_widget.delete(line_start, line_end)
-            text_widget.insert(line_start, justified_line)
-    
-    # Reapply the collected tags
-    for tag, start_range, end_range in all_tags:
-        text_widget.tag_add(tag, start_range, end_range)
 
+            text_widget.delete(line_start_index, line_end_index)
+            text_widget.insert(line_start_index, justified_line)
+
+    # Re-apply tags after modification
+    for line_start_index, line_end_index, tags in tags_info:
+        for tag in tags:
+            text_widget.tag_add(tag, line_start_index, line_end_index)
 
 
 
