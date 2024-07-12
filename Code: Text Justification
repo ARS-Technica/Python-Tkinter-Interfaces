@@ -301,7 +301,6 @@ def apply_font_tags(start, end, font_tags):
     if "overstrike" in font_tags:
         text_widget.tag_configure(tag_name, overstrike=font_tags["overstrike"])
 
-# Modified alignment functions
 def align_center(event=None):
     if text_widget.tag_ranges("sel"):
         start_index = text_widget.index("sel.first")
@@ -338,8 +337,6 @@ def align_right(event=None):
     else:
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-
-
 def align_justify(event=None):
     global current_font_family
     global current_font_size
@@ -372,7 +369,6 @@ def align_justify(event=None):
         text_widget.tag_add("justified", start, new_end)
         text_widget.tag_configure("justified", font=current_font)
         apply_font_tags(start, new_end, current_font_tags)
-
 
 
 def align_justify_helper(text, widget_width, current_font):
