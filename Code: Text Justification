@@ -344,7 +344,6 @@ def align_right(event=None):
 
 
 
-# Streamlining code
 def align_justify(event=None):
     global current_font_family
     global current_font_size
