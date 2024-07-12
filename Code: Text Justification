@@ -18,7 +18,9 @@ Bear with me.  I'm still learning.
 """
 
 
-# Justify doesn't work
+# Justify Alignment works well FIRST TIME
+# Calling align_justify still strips text of all its font attributes including 
+# weight, slant, underline, overstrike, foreground, and background.
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -268,25 +270,22 @@ def get_current_font_tags(start):
     for tag in tags:
         if tag.startswith("custom_font_"):
             font_tags["font"] = text_widget.tag_cget(tag, "font")
-        if "foreground" in text_widget.tag_names(start):
-            font_tags["foreground"] = text_widget.tag_cget(tag, "foreground")
-        if "background" in text_widget.tag_names(start):
-            font_tags["background"] = text_widget.tag_cget(tag, "background")
-        if "underline" in text_widget.tag_names(start):
-            font_tags["underline"] = text_widget.tag_cget(tag, "underline")
-        if "overstrike" in text_widget.tag_names(start):
-            font_tags["overstrike"] = text_widget.tag_cget(tag, "overstrike")
+        if "foreground" in tags:
+            font_tags["foreground"] = text_widget.tag_cget("foreground", "foreground")
+        if "background" in tags:
+            font_tags["background"] = text_widget.tag_cget("background", "background")
+        if "underline" in tags:
+            font_tags["underline"] = text_widget.tag_cget("underline", "underline")
+        if "overstrike" in tags:
+            font_tags["overstrike"] = text_widget.tag_cget("overstrike", "overstrike")
 
     return font_tags
 
-
-# Modified apply_font_tags function
 def apply_font_tags(start, end, font_tags):
     global style_counter
-        
+    
     # Create a unique tag for the specified range
     tag_name = "custom_font_{}".format(style_counter)
-
     style_counter += 1
 
     # Add the tag to the specified range
@@ -343,55 +342,39 @@ def align_right(event=None):
 
 
 
+# Streamlining code
 def align_justify(event=None):
-    # start, end = text_widget.index("sel.first"), text_widget.index("sel.last")
-    start = "1.0"
-    end = text_widget.index("end-1c")
-    lines = text_widget.get(start, end).splitlines()
-    
-    if not lines:
+    global current_font_family
+    global current_font_size
+
+    if event is None:
+        selections = text_widget.tag_ranges("sel")
+    else:
+        selections = text_widget.tag_ranges("justified")
+
+    if not selections:
         return
 
-    tag_ranges = {}
-
-    # Collect tag ranges
-    for tag in text_widget.tag_names():
-        tag_ranges[tag] = []
-        for start_range, end_range in zip(text_widget.tag_ranges(tag)[::2], text_widget.tag_ranges(tag)[1::2]):
-            tag_ranges[tag].append((text_widget.index(start_range), text_widget.index(end_range)))
-
-    for i, line in enumerate(lines):
-        line_start = f"{int(start.split('.')[0]) + i}.0"
-        line_end = f"{int(start.split('.')[0]) + i}.end"
-        words = line.split()
-        
-        if not words:
-            continue
-        
-        total_length = sum(len(word) for word in words)
-        spaces_needed = len(words) - 1
-        total_spaces = int(text_widget.index(line_end).split('.')[1])
-        extra_spaces = total_spaces - total_length
-        
-        if spaces_needed > 0:
-            space_width = extra_spaces // spaces_needed
-            remainder = extra_spaces % spaces_needed
-            
-            justified_line = ''
-            for j, word in enumerate(words):
-                justified_line += word
-                if j < spaces_needed:
-                    justified_line += ' ' * (space_width + (1 if j < remainder else 0))
-            
-            text_widget.delete(line_start, line_end)
-            text_widget.insert(line_start, justified_line)
-    
-    # Reapply tag ranges
-    for tag, ranges in tag_ranges.items():
-        for start_range, end_range in ranges:
-            text_widget.tag_add(tag, start_range, end_range)
-    
-    return "break"
+    for i in range(0, len(selections), 2):
+        start = selections[i]
+        end = selections[i + 1]
+        current_font_tags = get_current_font_tags(start)
+        remove_align_tags(start, end)
+        text = text_widget.get(start, end)
+        end_char = text_widget.get(f"{end} - 1c", end)
+        if end_char == '\n':
+            end = f"{end} - 1c"
+        font_info = text_widget.tag_cget("sel", "font")
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+        space_width = current_font.measure(" ")
+        new_width = text_widget.winfo_width() - space_width
+        justified_text = align_justify_helper(text, new_width, current_font)
+        text_widget.delete(start, end)
+        text_widget.insert(start, justified_text)
+        new_end = f"{start} + {len(justified_text)}c"
+        text_widget.tag_add("justified", start, new_end)
+        text_widget.tag_configure("justified", font=current_font)
+        apply_font_tags(start, new_end, current_font_tags)
 
 
 
