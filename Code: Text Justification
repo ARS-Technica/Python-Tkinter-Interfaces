@@ -18,9 +18,8 @@ Bear with me.  I'm still learning.
 """
 
 
-# Justify Alignment works well FIRST TIME
-# Calling align_justify still strips text of all its font attributes including 
-# weight, slant, underline, overstrike, foreground, and background.
+# Justify WORKS the first time.  The second time I justify the text, the line
+# "last_line = ' '.join(lines[-1])" returns the error "IndexError: list index out of range"
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -261,7 +260,6 @@ def remove_align_tags(start=None, end=None):
     if "justified" in all_tags:
         text_widget.tag_remove("justified", start, end)
 
-
 def get_current_font_tags(start):
     tags = text_widget.tag_names(start)
     font_tags = {}
@@ -280,8 +278,6 @@ def get_current_font_tags(start):
 
     return font_tags
 
-
-# Modified apply_font_tags function
 def apply_font_tags(start, end, font_tags):
     global style_counter
         
