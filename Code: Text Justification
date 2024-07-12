@@ -244,7 +244,6 @@ def highlight(event=None):
         # Alert the user that no text has been selected  
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-
 def remove_align_tags(start=None, end=None):
     if start is None or end is None:
         # Get the start and end of the entire text widget
@@ -270,22 +269,25 @@ def get_current_font_tags(start):
     for tag in tags:
         if tag.startswith("custom_font_"):
             font_tags["font"] = text_widget.tag_cget(tag, "font")
-        if "foreground" in tags:
-            font_tags["foreground"] = text_widget.tag_cget("foreground", "foreground")
-        if "background" in tags:
-            font_tags["background"] = text_widget.tag_cget("background", "background")
-        if "underline" in tags:
-            font_tags["underline"] = text_widget.tag_cget("underline", "underline")
-        if "overstrike" in tags:
-            font_tags["overstrike"] = text_widget.tag_cget("overstrike", "overstrike")
+        if "foreground" in text_widget.tag_names(start):
+            font_tags["foreground"] = text_widget.tag_cget(tag, "foreground")
+        if "background" in text_widget.tag_names(start):
+            font_tags["background"] = text_widget.tag_cget(tag, "background")
+        if "underline" in text_widget.tag_names(start):
+            font_tags["underline"] = text_widget.tag_cget(tag, "underline")
+        if "overstrike" in text_widget.tag_names(start):
+            font_tags["overstrike"] = text_widget.tag_cget(tag, "overstrike")
 
     return font_tags
 
+
+# Modified apply_font_tags function
 def apply_font_tags(start, end, font_tags):
     global style_counter
-    
+        
     # Create a unique tag for the specified range
     tag_name = "custom_font_{}".format(style_counter)
+
     style_counter += 1
 
     # Add the tag to the specified range
