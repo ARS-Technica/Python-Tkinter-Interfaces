@@ -339,6 +339,57 @@ def align_right(event=None):
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 
+
+"""
+def align_justify(event=None):
+    '''
+    global current_font_family
+    global current_font_size
+
+    if text_widget.tag_ranges("sel"):
+    '''
+    
+    global current_font_family
+    global current_font_size
+
+    if event is None:
+        selections = text_widget.tag_ranges("sel")
+    else:
+        selections = text_widget.tag_ranges("justified")
+
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):    
+        start_index = text_widget.index("sel.first")
+        end_index = text_widget.index("sel.last")
+        current_font_tags = get_current_font_tags(start_index)
+        remove_align_tags(start_index, end_index)
+
+        # Retrieve the text and replace it with justified text
+        text = text_widget.get(start_index, end_index)
+        justified_text = align_justify_helper(text, text_widget.winfo_width(), font.Font(family=current_font_family, size=current_font_size))
+
+        # Replace the text and reapply tags
+        text_widget.delete(start_index, end_index)
+        text_widget.insert(start_index, justified_text)
+        new_end_index = f"{start_index} + {len(justified_text)}c"
+        
+        text_widget.tag_add("justified", start_index, new_end_index)
+        text_widget.tag_configure("justified", justify="left")
+
+        # Reapply the font tags to the justified text
+        apply_font_tags(start_index, new_end_index, current_font_tags)
+    else:
+        tk.messagebox.showinfo("alert", "No text has been selected")
+"""
+
+
+
+
+
+# Works first time.  Clears attributes second time.
+
 def align_justify(event=None):
     global current_font_family
     global current_font_size
@@ -372,17 +423,65 @@ def align_justify(event=None):
         text_widget.tag_configure("justified", justify="left")  # Justification should be handled here
         apply_font_tags(start, new_end, current_font_tags)
 
-# Helper function to remove alignment tags
-def remove_align_tags(start_index, end_index):
-    for tag in ["center", "left", "right", "justified"]:
-        text_widget.tag_remove(tag, start_index, end_index)
 
 
 
+def align_justify_helper(text, widget_width, current_font):
+    paragraphs = text.split('\n\n')
+    justified_paragraphs = []
+
+    for paragraph in paragraphs:
+        lines = justify_paragraph(paragraph, widget_width, current_font)
+        justified_paragraphs.append('\n'.join(lines))
+
+    return '\n\n'.join(justified_paragraphs)
+
+def justify_paragraph(paragraph, widget_width, current_font):
+    words = paragraph.split()
+    space_width = current_font.measure(" ")
+    lines = []
+    current_line = []
+    current_length = 0
+
+    for word in words:
+        word_width = current_font.measure(word)
+        if current_length + word_width + (len(current_line) * space_width) <= widget_width:
+            current_line.append(word)
+            current_length += word_width
+        else:
+            lines.append(current_line)
+            current_line = [word]
+            current_length = word_width
+
+    if current_line:
+        lines.append(current_line)
+
+    justified_lines = []
+    for line in lines[:-1]:
+        line_length = sum(current_font.measure(word) for word in line)
+        total_spaces = (widget_width - line_length) // space_width
+        gaps = len(line) - 1
+        if gaps > 0:
+            spaces = total_spaces // gaps
+            extra_spaces = total_spaces % gaps
+            justified_line = ''
+            for i, word in enumerate(line):
+                justified_line += word
+                if i < gaps:
+                    justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
+            justified_lines.append(justified_line)
+        else:
+            if line:
+                justified_lines.append(line[0])
+
+    last_line = ' '.join(lines[-1])
+    justified_lines.append(last_line)
+
+    return justified_lines
 
 
 
-
+"""
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
     paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
@@ -450,6 +549,7 @@ def justify_paragraph(paragraph, widget_width, current_font):
     justified_lines.append(last_line)
     
     return justified_lines
+"""
 
 # Helper function to remove alignment tags
 def remove_align_tags(start_index, end_index):
