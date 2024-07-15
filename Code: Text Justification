@@ -265,13 +265,13 @@ def get_current_font_tags(start):
     for tag in tags:
         if tag.startswith("custom_font_"):
             font_tags["font"] = text_widget.tag_cget(tag, "font")
-        if text_widget.tag_cget(tag, "foreground"):
+        if "foreground" in text_widget.tag_names(start):
             font_tags["foreground"] = text_widget.tag_cget(tag, "foreground")
-        if text_widget.tag_cget(tag, "background"):
+        if "background" in text_widget.tag_names(start):
             font_tags["background"] = text_widget.tag_cget(tag, "background")
-        if text_widget.tag_cget(tag, "underline"):
+        if "underline" in text_widget.tag_names(start):
             font_tags["underline"] = text_widget.tag_cget(tag, "underline")
-        if text_widget.tag_cget(tag, "overstrike"):
+        if "overstrike" in text_widget.tag_names(start):
             font_tags["overstrike"] = text_widget.tag_cget(tag, "overstrike")
 
     return font_tags
@@ -283,6 +283,7 @@ def apply_font_tags(start, end, font_tags):
         
     # Create a unique tag for the specified range
     tag_name = "custom_font_{}".format(style_counter)
+
     style_counter += 1
 
     # Add the tag to the specified range
@@ -299,7 +300,6 @@ def apply_font_tags(start, end, font_tags):
         text_widget.tag_configure(tag_name, underline=font_tags["underline"])
     if "overstrike" in font_tags:
         text_widget.tag_configure(tag_name, overstrike=font_tags["overstrike"])
-
 
 # Modified alignment functions
 def align_center(event=None):
@@ -339,84 +339,6 @@ def align_right(event=None):
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 
-
-
-
-"""
-def align_justify(event=None):
-    if event is None:
-        selections = text_widget.tag_ranges("sel")
-    else:
-        selections = text_widget.tag_ranges("justified")
-
-    if not selections:
-        return
-
-    for start, end in zip(selections[0::2], selections[1::2]):
-        # Save font attributes for the selected range
-        font_tags = text_widget.tag_names(start)
-        font_attributes = {tag: text_widget.tag_cget(tag, "font") for tag in font_tags if tag not in {"sel", "justified"}}
-
-        # Justify the selected text
-        text_widget.tag_add("justified", start, end)
-        text_widget.tag_configure("justified", justify=tk.LEFT)  # Use LEFT for justification logic
-
-        # Reapply the original font attributes
-        for tag, font in font_attributes.items():
-            text_widget.tag_add(tag, start, end)
-"""
-
-"""
-
-# Centers rather than Justifies
-
-def align_justify(event=None):
-    # Determine which tag to use based on the event
-    if event is None:
-        selections = text_widget.tag_ranges("sel")
-    else:
-        selections = text_widget.tag_ranges("justified")
-
-    # Check if there are any selections
-    if not selections:
-        return
-
-    # Get current font attributes
-    font_attributes = {}
-    for tag in text_widget.tag_names(selections[0]):
-        if tag != "sel" and tag != "justified":
-            font_attributes[tag] = text_widget.tag_cget(tag, "font")
-
-    # Apply justify alignment to the selected text
-    for start, end in zip(selections[0::2], selections[1::2]):
-        text_widget.tag_add("justified", start, end)
-        text_widget.tag_configure("justified", justify=tk.CENTER)
-
-    # Reapply the original font attributes
-    for tag, font in font_attributes.items():
-        text_widget.tag_add(tag, selections[0], selections[1])
-
-"""
-
-"""
-def align_justify(event=None):
-    global current_font_family
-    global current_font_size
-
-    if text_widget.tag_ranges("sel"):
-        start_index = text_widget.index("sel.first")
-        end_index = text_widget.index("sel.last")
-        current_font_tags = get_current_font_tags(start_index)
-        remove_align_tags(start_index, end_index)
-        text_widget.tag_add("justified", start_index, end_index)
-        text_widget.tag_configure("justified", justify="justified")
-        apply_font_tags(start_index, end_index, current_font_tags)
-    else:
-        tk.messagebox.showinfo("alert", "No text has been selected")
-"""
-
-
-"""
 def align_justify(event=None):
     global current_font_family
     global current_font_size
@@ -447,9 +369,18 @@ def align_justify(event=None):
         text_widget.insert(start, justified_text)
         new_end = f"{start} + {len(justified_text)}c"
         text_widget.tag_add("justified", start, new_end)
-        text_widget.tag_configure("justified", font=current_font)
+        text_widget.tag_configure("justified", justify="left")  # Justification should be handled here
         apply_font_tags(start, new_end, current_font_tags)
-"""
+
+# Helper function to remove alignment tags
+def remove_align_tags(start_index, end_index):
+    for tag in ["center", "left", "right", "justified"]:
+        text_widget.tag_remove(tag, start_index, end_index)
+
+
+
+
+
 
 
 def align_justify_helper(text, widget_width, current_font):
