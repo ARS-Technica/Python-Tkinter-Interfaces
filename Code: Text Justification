@@ -18,24 +18,8 @@ Bear with me.  I'm still learning.
 """
 
 
-# Justification preserves all font attributes, even when applied multiple times!
-
-"""
-Explanation of Changes
-
-get_current_font_tags Function: This function retrieves all font-related tags 
-(custom_font_, bold, italic, underline, overstrike) for the selected text.
-
-apply_font_tags Function: This function reapplies the retrieved font-related 
-tags to the selected text after alignment.
-
-Alignment Functions (align_justify, align_center, align_left, align_right): 
-    These functions now call remove_align_tags to remove existing alignment tags, 
-    apply the new alignment tag, and then reapply the font-related tags using apply_font_tags.
-
-This approach ensures that font styles are consistently reapplied after alignment, 
-avoiding the loss of formatting when justifying text multiple times.
-"""
+# Added unjustify_text function back in from Text Justification Experiment 6
+# Each time I call unjustify_text, a blank line is added to the end of the document
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -262,11 +246,18 @@ def highlight(event=None):
 
 # TEXT ALIGNMENT FUNCTIONS
 def apply_font_tags(start, end, font_tags):
+    """
+    This function reapplies the retrieved font-related tags to the selected text after alignment.
+    """
     for tag in font_tags:
         text_widget.tag_add(tag, start, end)
 
 # Helper function to preserve text attributes when justifying text
 def get_current_font_tags(start):
+    """
+    This function retrieves all font-related tags (custom_font_, bold, italic, 
+    underline, overstrike) for the selected text.
+    """
     tags = text_widget.tag_names(start)
     font_tags = []
 
@@ -281,6 +272,25 @@ def remove_align_tags(start_index, end_index):
     for tag in ["center", "left", "justified", "right"]:
         text_widget.tag_remove(tag, start_index, end_index)
 
+def unjustify_text(start, end):
+    lines = text_widget.get(start, end).split("\n")
+    removed_justification_lines = []
+
+    for line in lines:
+        # Preserve spaces between words
+        removed_justification_line = " ".join(line.split())
+
+        # Add two spaces after the end of a sentence
+        removed_justification_line = removed_justification_line.replace(". ", ".  ")
+        removed_justification_line = removed_justification_line.replace("? ", "?  ")
+        removed_justification_line = removed_justification_line.replace("! ", "!  ")
+
+        removed_justification_lines.append(removed_justification_line)
+
+    removed_justification_text = "\n".join(removed_justification_lines)
+    text_widget.delete(start, end)
+    text_widget.insert(start, removed_justification_text)
+
 def align_center(event=None):
     # Check if any text is selected    
     if text_widget.tag_ranges("sel"):
@@ -293,6 +303,7 @@ def align_center(event=None):
         
         # Remove existing alignment tags within the range
         remove_align_tags(start_index, end_index)
+        unjustify_text(start_index, end_index)
 
         # Apply new alignment tags        
         text_widget.tag_add("center", start_index, end_index)
@@ -316,6 +327,7 @@ def align_left(event=None):
         
         # Remove existing alignment tags within the range
         remove_align_tags(start_index, end_index)
+        unjustify_text(start_index, end_index)
         
         # Apply new alignment tags        
         text_widget.tag_add("left", start_index, end_index)
@@ -339,7 +351,8 @@ def align_right(event=None):
         
         # Remove existing alignment tags within the range
         remove_align_tags(start_index, end_index)
-        
+        unjustify_text(start_index, end_index)
+
         # Apply new alignment tags        
         text_widget.tag_add("right", start_index, end_index)
         text_widget.tag_configure("right", justify="right")
