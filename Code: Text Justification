@@ -18,7 +18,24 @@ Bear with me.  I'm still learning.
 """
 
 
-# Justification preserves all font attributes, even when applied multiple times
+# Justification preserves all font attributes, even when applied multiple times!
+
+"""
+Explanation of Changes
+
+get_current_font_tags Function: This function retrieves all font-related tags 
+(custom_font_, bold, italic, underline, overstrike) for the selected text.
+
+apply_font_tags Function: This function reapplies the retrieved font-related 
+tags to the selected text after alignment.
+
+Alignment Functions (align_justify, align_center, align_left, align_right): 
+    These functions now call remove_align_tags to remove existing alignment tags, 
+    apply the new alignment tag, and then reapply the font-related tags using apply_font_tags.
+
+This approach ensures that font styles are consistently reapplied after alignment, 
+avoiding the loss of formatting when justifying text multiple times.
+"""
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
