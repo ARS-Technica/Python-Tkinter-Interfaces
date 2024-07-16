@@ -18,8 +18,7 @@ Bear with me.  I'm still learning.
 """
 
 
-# Added unjustify_text function back in from Text Justification Experiment 6
-# Each time I call unjustify_text, a blank line is added to the end of the document
+# Check if the last line is empty and remove it when Unjustifying text
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -277,6 +276,31 @@ def unjustify_text(start, end):
     removed_justification_lines = []
 
     for line in lines:
+        # Preserves spaces between words
+        removed_justification_line = " ".join(line.split())
+
+        # Add two spaces after the end of a sentence
+        removed_justification_line = removed_justification_line.replace(". ", ".  ")
+        removed_justification_line = removed_justification_line.replace("? ", "?  ")
+        removed_justification_line = removed_justification_line.replace("! ", "!  ")
+
+        removed_justification_lines.append(removed_justification_line)
+
+    # Check if the last line is empty and remove it
+    if removed_justification_lines and not removed_justification_lines[-1].strip():
+        removed_justification_lines.pop()
+
+    removed_justification_text = "\n".join(removed_justification_lines)
+    text_widget.delete(start, end)
+    text_widget.insert(start, removed_justification_text)
+
+
+"""
+def unjustify_text(start, end):
+    lines = text_widget.get(start, end).split("\n")
+    removed_justification_lines = []
+
+    for line in lines:
         # Preserve spaces between words
         removed_justification_line = " ".join(line.split())
 
@@ -290,6 +314,7 @@ def unjustify_text(start, end):
     removed_justification_text = "\n".join(removed_justification_lines)
     text_widget.delete(start, end)
     text_widget.insert(start, removed_justification_text)
+"""
 
 def align_center(event=None):
     # Check if any text is selected    
