@@ -26,9 +26,6 @@ align_justify_button, the program freezes.
 """
 
 
-# Justify doesn't work
-
-
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
@@ -313,33 +310,99 @@ def align_right():
     text_widget.tag_add("right", start_index, end_index)
     text_widget.tag_configure("right", justify=tk.RIGHT)
 
-def align_justify():
-    start = text_widget.index("sel.first")
-    end = text_widget.index("sel.last")
 
-    font_tags = get_all_font_tags(start, end)
-    text_content = text_widget.get(start, end).split('\n')
-    
-    # Clear current selection and justify text
-    text_widget.delete(start, end)
-    text_widget.insert(start, "\n".join([justify_line(line) for line in text_content]))
 
-    reapply_font_tags(start, end, font_tags)
+def align_justify(event=None):
+    global current_font_family
+    global current_font_size
 
-def justify_line(line, width=80):
-    words = line.split()
-    if not words:
-        return line
-    line_len = sum(len(word) for word in words) + len(words) - 1
-    if line_len >= width:
-        return line
-    spaces_to_add = width - line_len
-    gaps = len(words) - 1 or 1
-    spaces = [' '] * gaps
-    for i in range(spaces_to_add):
-        spaces[i % gaps] += ' '
-    justified_line = ''.join(word + space for word, space in zip(words, spaces + ['']))
-    return justified_line
+    if text_widget.tag_ranges("sel"):
+        selections = text_widget.tag_ranges("sel")
+    else:
+        return
+
+    for i in range(0, len(selections), 2):
+        start_index = selections[i]
+        end_index = selections[i + 1]
+
+        current_font_tags = get_all_font_tags(start_index, end_index)
+        remove_align_tags(start_index, end_index)
+
+        text = text_widget.get(start_index, end_index)
+        end_char = text_widget.get(f"{end_index} - 1c", end_index)
+        if end_char == '\n':
+            end_index = f"{end_index} - 1c"
+
+        font_info = text_widget.tag_cget("sel", "font")
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+
+        space_width = current_font.measure(" ")
+        new_width = text_widget.winfo_width() - 2 * space_width
+
+        justified_text = align_justify_helper(text, new_width, current_font)
+
+        text_widget.delete(start_index, end_index)
+        text_widget.insert(start_index, justified_text)
+
+        new_end = f"{start_index} + {len(justified_text)}c"
+        text_widget.tag_add("justified", start_index, new_end)
+        text_widget.tag_configure("justified", justify="left")
+        reapply_font_tags(start_index, new_end, current_font_tags)
+
+def align_justify_helper(text, widget_width, current_font):
+    paragraphs = text.split('\n\n')
+    justified_paragraphs = []
+
+    for paragraph in paragraphs:
+        lines = justify_paragraph(paragraph, widget_width, current_font)
+        justified_paragraphs.append('\n'.join(lines))
+
+    justified_text = '\n\n'.join(justified_paragraphs)
+    return justified_text
+
+def justify_paragraph(paragraph, widget_width, current_font):
+    words = paragraph.split()
+    space_width = current_font.measure(" ")
+
+    lines = []
+    current_line = []
+    current_length = 0
+
+    for word in words:
+        word_width = current_font.measure(word)
+        if current_length + word_width + (len(current_line) * space_width) <= widget_width:
+            current_line.append(word)
+            current_length += word_width
+        else:
+            lines.append(current_line)
+            current_line = [word]
+            current_length = word_width
+
+    if current_line:
+        lines.append(current_line)
+
+    justified_lines = []
+    for line in lines[:-1]:
+        line_length = sum(current_font.measure(word) for word in line)
+        total_spaces = (widget_width - line_length) // space_width
+        gaps = len(line) - 1
+        if gaps > 0:
+            spaces = total_spaces // gaps
+            extra_spaces = total_spaces % gaps
+            justified_line = ''
+            for i, word in enumerate(line):
+                justified_line += word
+                if i < gaps:
+                    justified_line += ' ' * (spaces + (1 if i < extra_spaces else 0))
+            justified_lines.append(justified_line)
+        else:
+            if line:
+                justified_lines.append(line[0])
+
+    last_line = ' '.join(lines[-1])
+    justified_lines.append(last_line)
+
+    return justified_lines
 
 
 # MAIN APPLICATION
