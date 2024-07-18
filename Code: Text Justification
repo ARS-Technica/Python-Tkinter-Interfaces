@@ -312,6 +312,7 @@ def align_right():
 
 
 
+
 def align_justify(event=None):
     global current_font_family
     global current_font_size
@@ -403,6 +404,8 @@ def justify_paragraph(paragraph, widget_width, current_font):
     justified_lines.append(last_line)
 
     return justified_lines
+
+
 
 
 # MAIN APPLICATION
