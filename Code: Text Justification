@@ -346,6 +346,7 @@ def remove_align_tags(start_index, end_index):
         text_widget.tag_remove(tag, start_index, end_index)
 
 
+
 def align_justify(event=None):
     global current_font_family
     global current_font_size
@@ -459,6 +460,7 @@ def justify_paragraph(paragraph, widget_width, current_font, word_widths):
     justified_lines.append(last_line)
     
     return justified_lines
+
 
 
 
