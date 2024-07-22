@@ -418,21 +418,16 @@ def align_right(event=None):
 
 
 
+# Jutifies text.  Destroys attributes.  Reverts text to defaults.  Large margin.
+
 def align_justify(event=None):
     global current_font_family
     global current_font_size
 
-    if event is None:  # Called from the button, justify selected
-        selections = text_widget.tag_ranges("sel")
-    else:  # Called from the resize event, justify all previously justified text
-        selections = text_widget.tag_ranges("justified")
-
-    if not selections:
-        return
-
-    for i in range(0, len(selections), 2):
-        start_index = selections[i]
-        end_index = selections[i + 1]
+    # Check if any text is selected
+    if text_widget.tag_ranges("sel"):
+        start_index = text_widget.index("sel.first")
+        end_index = text_widget.index("sel.last")
 
         current_font_tags = get_all_font_tags(start_index, end_index)
         remove_align_tags(start_index, end_index)
@@ -447,9 +442,9 @@ def align_justify(event=None):
         current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
 
         space_width = current_font.measure(" ")
-        new_width = text_widget.winfo_width() - space_width
+        new_width = text_widget.winfo_width() - 2 * space_width
 
-        justified_text = align_justify_helper(text, new_width, current_font)
+        justified_text = justify_text(text, new_width, current_font)
 
         text_widget.delete(start_index, end_index)
         text_widget.insert(start_index, justified_text)
@@ -458,8 +453,10 @@ def align_justify(event=None):
         text_widget.tag_add("justified", start_index, new_end)
         text_widget.tag_configure("justified", justify="left")
         reapply_font_tags(start_index, new_end, current_font_tags)
+    else:
+        tk.messagebox.showinfo("alert", "No text has been selected")
 
-def align_justify_helper(text, widget_width, current_font):
+def justify_text(text, widget_width, current_font):
     paragraphs = text.split('\n\n')
     justified_paragraphs = []
 
@@ -472,42 +469,49 @@ def align_justify_helper(text, widget_width, current_font):
 def justify_paragraph(paragraph, widget_width, current_font):
     words = paragraph.split()
     space_width = current_font.measure(" ")
+
     lines = []
     current_line = []
     current_length = 0
 
     for word in words:
         word_width = current_font.measure(word)
-
         if current_length + word_width + (len(current_line) * space_width) <= widget_width:
             current_line.append(word)
-            current_length += word_width + space_width
+            current_length += word_width
         else:
-            lines.append(justify_line(current_line, widget_width, current_length - space_width, space_width))
+            lines.append(current_line)
             current_line = [word]
-            current_length = word_width + space_width
+            current_length = word_width
 
     if current_line:
-        lines.append(' '.join(current_line))
+        lines.append(current_line)
 
-    return lines
+    justified_lines = []
+    for line in lines[:-1]:
+        line_length = sum(current_font.measure(word) for word in line)
+        total_spaces = (widget_width - line_length) // space_width
+        gaps = len(line) - 1
+        if gaps > 0:
+            spaces = total_spaces // gaps
+            extra_spaces = total_spaces % gaps
+            justified_line = ''
+            for i, word in enumerate(line):
+                justified_line += word
+                if i < gaps:
+                    justified_line += ' ' * (spaces + (1 if i < extra_spaces else 0))
+            justified_lines.append(justified_line)
+        else:
+            justified_lines.append(line[0])
 
-def justify_line(line, widget_width, line_length, space_width):
-    gaps = len(line) - 1
-    if gaps <= 0:
-        return line[0]
+    last_line = ' '.join(lines[-1])
+    justified_lines.append(last_line)
 
-    total_spaces = widget_width - line_length
-    spaces_per_gap = total_spaces // gaps
-    extra_spaces = total_spaces % gaps
+    return justified_lines
 
-    justified_line = ''
-    for i, word in enumerate(line):
-        justified_line += word
-        if i < gaps:
-            justified_line += ' ' * (spaces_per_gap + (1 if i < extra_spaces else 0))
-
-    return justified_line
+# Example usage:
+align_justify_button = tk.Button(name="align_justify_button", text="Justify", command=align_justify)
+align_justify_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
 
 
 
