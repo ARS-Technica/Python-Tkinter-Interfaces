@@ -418,14 +418,20 @@ def align_right(event=None):
 
 
 
-# Jutifies text.  Destroys attributes.  Reverts text to defaults.  Large margin.
 
 def align_justify(event=None):
     global current_font_family
     global current_font_size
 
-    # Check if any text is selected
-    if text_widget.tag_ranges("sel"):
+    if event is None:  # Called from the button, justify selected
+        selections = text_widget.tag_ranges("sel")
+    else:  # Called from the resize event, justify all previously justified text
+        selections = text_widget.tag_ranges("justified")
+
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):
         start_index = text_widget.index("sel.first")
         end_index = text_widget.index("sel.last")
 
@@ -508,10 +514,7 @@ def justify_paragraph(paragraph, widget_width, current_font):
     justified_lines.append(last_line)
 
     return justified_lines
-
-# Example usage:
-align_justify_button = tk.Button(name="align_justify_button", text="Justify", command=align_justify)
-align_justify_button.pack(in_=formattingbar, side="left", padx=4, pady=4)
+ 
 
 
 
