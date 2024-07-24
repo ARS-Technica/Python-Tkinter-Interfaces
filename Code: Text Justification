@@ -380,10 +380,9 @@ def align_justify(event=None):
         font_info = text_widget.tag_cget("sel", "font")
         current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
 
+        word_widths = {word: current_font.measure(word) for word in text.split()}
         space_width = current_font.measure(" ")
         new_width = text_widget.winfo_width() - space_width
-
-        word_widths = {word: current_font.measure(word) for word in text.split()}
 
         justified_text = align_justify_helper(text, new_width, current_font, word_widths)
 
@@ -409,23 +408,22 @@ def align_justify_helper(text, widget_width, current_font, word_widths):
 def justify_paragraph(paragraph, widget_width, current_font, word_widths):
     words = paragraph.split()
     space_width = current_font.measure(" ")
-    available_space = widget_width
 
     lines = []
     current_line = []
     current_length = 0
-
+    
     for word in words:
         word_width = word_widths[word]
-
-        if current_length + word_width + (len(current_line) * space_width) <= available_space:
+        
+        if current_length + word_width + (len(current_line) * space_width) <= widget_width:
             current_line.append(word)
             current_length += word_width
         else:
             lines.append(current_line)
             current_line = [word]
             current_length = word_width
-
+    
     if current_line:
         lines.append(current_line)
         
