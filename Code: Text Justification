@@ -382,6 +382,7 @@ def align_justify(event=None):
         space_width = current_font.measure(" ")
         new_width = text_widget.winfo_width() - space_width
 
+        # Pre-calculate word widths
         word_widths = {word: current_font.measure(word) for word in text.split()}
 
         justified_text = align_justify_helper(text, new_width, current_font, word_widths)
@@ -417,21 +418,19 @@ def justify_paragraph(paragraph, widget_width, current_font, word_widths):
     current_line = []  # List to hold words for the current line
     current_length = 0  # Length of the current line in pixels
     
-    available_space = widget_width  # Calculate the available space for justification
-
     for word in words:
-        word_width = word_widths[word]  # Width of the word in pixels
+        word_width = word_widths[word]  # Use pre-calculated word width
         
         # Check if adding the word would exceed the widget's width
-        if current_length + word_width + (len(current_line) * space_width) <= available_space:
+        if current_length + word_width + (len(current_line) * space_width) <= widget_width:
             # Add the word to the current line
             current_line.append(word)
-            current_length += word_width  # Update the length of the current line
+            current_length += word_width #+ space_width  # Update the length of the current line
         else:
             # Word does not fit, start a new line
             lines.append(current_line)  # Add the current line to the list of lines
             current_line = [word]  # Start a new line with the current word
-            current_length = word_width  # Reset the length of the current line
+            current_length = word_width #+ space_width  # Reset the length of the current line
     
     # Don't forget to add the last line
     if current_line:
