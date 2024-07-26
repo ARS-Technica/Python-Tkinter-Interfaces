@@ -314,6 +314,8 @@ def align_right():
         text_widget.tag_remove(tag, start, end)
     apply_font_style()
 
+
+
 def align_justify():
     global style_counter
     
@@ -333,33 +335,47 @@ def align_justify():
 
         justified_lines = []
 
-        # Iterate through the lines
+        # Current font settings
+        font_info = text_widget.tag_cget("sel", "font")
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+        space_width = current_font.measure(" ")
+        new_width = widget_width - space_width
+
         for line in lines:
             words = line.split()
             if not words:
                 justified_lines.append("")
                 continue
 
-            current_line = words[0]
-            current_width = font.Font(family=current_font_family, size=current_font_size).measure(current_line)
+            current_line = []
+            current_length = 0
 
-            for word in words[1:]:
-                word_width = font.Font(family=current_font_family, size=current_font_size).measure(word)
-                space_width = font.Font(family=current_font_family, size=current_font_size).measure(" ")
-                if current_width + word_width + space_width <= widget_width:
-                    current_line += " " + word
-                    current_width += word_width + space_width
+            for word in words:
+                word_width = current_font.measure(word)
+
+                if current_length + word_width + (len(current_line) * space_width) <= new_width:
+                    current_line.append(word)
+                    current_length += word_width
                 else:
-                    spaces_needed = widget_width - current_width
-                    spaces_count = current_line.count(" ")
-                    if spaces_count > 0:
-                        extra_space = spaces_needed // spaces_count
-                        current_line = current_line.replace(" ", " " * (extra_space + 1), spaces_count - 1)
-                    justified_lines.append(current_line)
-                    current_line = word
-                    current_width = word_width
+                    # Justify the current line
+                    total_spaces = (new_width - current_length) // space_width
+                    gaps = len(current_line) - 1
+                    if gaps > 0:
+                        spaces = total_spaces // gaps
+                        extra_spaces = total_spaces % gaps
+                        justified_line = ''
+                        for i, w in enumerate(current_line):
+                            justified_line += w
+                            if i < gaps:
+                                justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
+                        justified_lines.append(justified_line)
+                    else:
+                        justified_lines.append(current_line[0])
 
-            justified_lines.append(current_line)
+                    current_line = [word]
+                    current_length = word_width
+
+            justified_lines.append(' '.join(current_line))
 
         # Reconstruct the justified text
         justified_text = "\n".join(justified_lines)
@@ -374,6 +390,7 @@ def align_justify():
 
         # Reapply font tags to the justified text
         apply_font_tags(start, end, get_current_font_tags(start))
+
 
 
 # MAIN APP
