@@ -352,15 +352,22 @@ def align_justify():
 
             for word in words[1:]:
                 word_width = font.Font(family=current_font_family, size=current_font_size).measure(word)
-                if current_width + word_width + font.Font(family=current_font_family, size=current_font_size).measure(" ") <= widget_width:
+                space_width = font.Font(family=current_font_family, size=current_font_size).measure(" ")
+                if current_width + word_width + space_width <= widget_width:
                     current_line += " " + word
-                    current_width += word_width + font.Font(family=current_font_family, size=current_font_size).measure(" ")
+                    current_width += word_width + space_width
                 else:
-                    spaces_needed = widget_width - current_width
+                    # Justify the current line
+                    extra_space = widget_width - current_width
                     spaces_count = current_line.count(" ")
                     if spaces_count > 0:
-                        extra_space = spaces_needed // spaces_count
-                        current_line = current_line.replace(" ", " " * (extra_space + 1), spaces_count - 1)
+                        spaces = current_line.split(" ")
+                        justified_line = spaces[0]
+                        for space in spaces[1:]:
+                            justified_line += " " * (1 + extra_space // spaces_count) + space
+                            extra_space -= extra_space // spaces_count
+                            spaces_count -= 1
+                        current_line = justified_line
                     justified_lines.append(current_line)
                     current_line = word
                     current_width = word_width
