@@ -321,8 +321,6 @@ def align_right():
 
 
 
-# Worse
-
 def align_justify():
     global style_counter
     
@@ -336,15 +334,11 @@ def align_justify():
 
         # Get the width of the text widget
         widget_width = text_widget.winfo_width()
-        
+
         # Split the selected text into lines
         lines = text_widget.get(start, end).splitlines()
 
         justified_lines = []
-
-        # Font object for measuring text width
-        current_font = font.Font(family=current_font_family, size=current_font_size)
-        space_width = current_font.measure(" ")
 
         # Iterate through the lines
         for line in lines:
@@ -354,10 +348,11 @@ def align_justify():
                 continue
 
             current_line = words[0]
-            current_width = current_font.measure(current_line)
+            current_width = font.Font(family=current_font_family, size=current_font_size).measure(current_line)
 
             for word in words[1:]:
-                word_width = current_font.measure(word)
+                word_width = font.Font(family=current_font_family, size=current_font_size).measure(word)
+                space_width = font.Font(family=current_font_family, size=current_font_size).measure(" ")
                 if current_width + word_width + space_width <= widget_width:
                     current_line += " " + word
                     current_width += word_width + space_width
@@ -366,13 +361,13 @@ def align_justify():
                     spaces_count = current_line.count(" ")
                     if spaces_count > 0:
                         extra_space = spaces_needed // spaces_count
-                        extra_spaces = spaces_needed % spaces_count
-                        parts = current_line.split(" ")
-                        for i in range(spaces_count):
-                            parts[i] += " " * (extra_space + 1)
-                        for i in range(extra_spaces):
-                            parts[i] += " "
-                        current_line = " ".join(parts)
+                        remainder_space = spaces_needed % spaces_count
+                        new_line = ""
+                        for i, part in enumerate(current_line.split(" ")):
+                            new_line += part
+                            if i < spaces_count:
+                                new_line += " " * (1 + extra_space + (1 if i < remainder_space else 0))
+                        current_line = new_line.rstrip()
                     justified_lines.append(current_line)
                     current_line = word
                     current_width = word_width
