@@ -26,7 +26,9 @@ align_justify_button, the program freezes.
 """
 
 
-# This could be a more efficent implementation of align_justify, but its placing the second half of lines on the next line.
+# Attempting to improve efficiency of Justification to avoid program freezing
+# Re-wrote align_justify function to incorporate all its helper functions
+# Justification no long fits text to text_widget width
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -317,6 +319,8 @@ def align_right():
         text_widget.tag_remove(tag, start, end)
     apply_font_style()
 
+
+
 def align_justify():
     global style_counter
     
@@ -376,6 +380,7 @@ def align_justify():
 
         # Reapply font tags to the justified text
         apply_font_tags(start, end, get_current_font_tags(start))
+
 
 
 # MAIN APP
