@@ -361,8 +361,11 @@ def align_justify():
                     if spaces_count > 0:
                         extra_space = spaces_needed // spaces_count
                         remainder_space = spaces_needed % spaces_count
-                        current_line = current_line.replace(" ", " " * (extra_space + 1), remainder_space)
-                        current_line = current_line.replace(" ", " " * extra_space)
+                        parts = current_line.split(" ")
+                        current_line = ""
+                        for i, part in enumerate(parts[:-1]):
+                            current_line += part + " " * (extra_space + 1 + (1 if i < remainder_space else 0))
+                        current_line += parts[-1]
                     justified_lines.append(current_line)
                     current_line = word
                     current_width = word_width
