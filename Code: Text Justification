@@ -30,9 +30,6 @@ align_justify_button, the program freezes.
 # Is there a way to call align_justify ONLY when the font size is changed?
 
 
-# Successfully re-justify text upon re-sizing.
-
-
 from PIL import Image, ImageTk  # For buttons on Toolbar
 import tkinter as tk
 from tkinter import font
@@ -128,7 +125,6 @@ def update_comboboxes(event):
         font_size_combo.set(default_size)
 
 
-
 def update_font(event=None):
     global current_font_family
     global current_font_size
@@ -156,24 +152,6 @@ def update_font(event=None):
     if size_changed:
         align_justify()
 
-
-
-"""
-def update_font(event=None):
-    global current_font_family
-    global current_font_size
-    global style_counter
-
-    selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
-    text_widget.tag_configure("custom_font_{}".format(style_counter), font=selected_font)
-    
-    # Get the selected font family and size
-    current_font_family = font_family_combo.get()
-    current_font_size = font_size_combo.get()
-
-    # Apply font styling to the selected text
-    apply_font_style()
-"""
 
 # BUTTON METHODS
 # Bold Text bold_it()
