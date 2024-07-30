@@ -26,11 +26,7 @@ align_justify_button, the program freezes.
 """
 
 
-# Continued from Text Justification Experiment 9a 
-
-# Starting over, without functions that preserve multiple font attributes
-# Added unjustify_text function back in from Text Justification Experiment 6
-# Remove any trailing newline that might have been introduced
+# Reapply justification in apply_font_style if justified in current_tags
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -89,6 +85,11 @@ def apply_font_style(event=None, fontColor=None, fontBackground=None):
         text_widget.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
+        
+        # Re-justify text if it has the justified tag
+        # Prevents mid-line breaks after changing font size of justified text
+        if "justified" in current_tags:
+            align_justify()
 
     else:
         # Alert the user that no text has been selected
@@ -152,7 +153,7 @@ def bold(event=None):
             # Bold the whole selection
             text_widget.tag_add("bold", "sel.first", "sel.last")
     
-        # Compile stle characteristics under a single tag name
+        # Compile style characteristics under a single tag name
         apply_font_style()
     else:
         # Alert user that no text has been selected
@@ -174,7 +175,7 @@ def italic(event=None):
             # Italicize the whole selection
             text_widget.tag_add("italic", "sel.first", "sel.last")
     
-        # Compile stle characteristics under a single tag name
+        # Compile style characteristics under a single tag name
         apply_font_style()
     else:
         # Alert user that no text has been selected
@@ -195,7 +196,7 @@ def underline(event=None):
             # Underline the whole selection
             text_widget.tag_add("underline", "sel.first", "sel.last")
 
-        # Compile stle characteristics under a single tag name
+        # Compile style characteristics under a single tag name
         apply_font_style()
     else:
         # Alert user that no text has been selected
@@ -216,7 +217,7 @@ def strike(event=None):
             # Strike the whole selection
             text_widget.tag_add("overstrike", "sel.first", "sel.last")
     
-        # Compile stle characteristics under a single tag name
+        # Compile style characteristics under a single tag name
         apply_font_style()    
     else:
         # Alert user that no text has been selected
@@ -314,8 +315,6 @@ def unjustify_text(start, end):
     # Remove any trailing newline that might have been introduced
     if text_widget.get(f"{end} - 1c") == "\n":
         text_widget.delete(f"{end} - 1c")
-
-
 
 def align_center(event=None):
     # Check if any text is selected    
@@ -665,4 +664,6 @@ root.bind("<Configure>", align_justify)
 
 # Mainloop of the Program
 root.mainloop()
+
+
 
