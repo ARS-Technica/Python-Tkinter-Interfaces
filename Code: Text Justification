@@ -30,7 +30,7 @@ align_justify_button, the program freezes.
 
 # Starting over, without functions that preserve multiple font attributes
 # Added unjustify_text function back in from Text Justification Experiment 6
-# Each time I call unjustify_text, a blank line is added to the end of the document
+# Remove any trailing newline that might have been introduced
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -286,23 +286,34 @@ def remove_align_tags(start_index, end_index):
 
 
 def unjustify_text(start, end):
-    lines = text_widget.get(start, end).split("\n")
-    removed_justification_lines = []
-
+    # Retrieve the text within the specified range
+    text = text_widget.get(start, end)
+    
+    # Split the text into lines and process each line
+    lines = text.split("\n")
+    processed_lines = []
+    
     for line in lines:
         # Preserve spaces between words
-        removed_justification_line = " ".join(line.split())
+        processed_line = " ".join(line.split())
 
         # Add two spaces after the end of a sentence
-        removed_justification_line = removed_justification_line.replace(". ", ".  ")
-        removed_justification_line = removed_justification_line.replace("? ", "?  ")
-        removed_justification_line = removed_justification_line.replace("! ", "!  ")
+        processed_line = processed_line.replace(". ", ".  ")
+        processed_line = processed_line.replace("? ", "?  ")
+        processed_line = processed_line.replace("! ", "!  ")
 
-        removed_justification_lines.append(removed_justification_line)
+        processed_lines.append(processed_line)
 
-    removed_justification_text = "\n".join(removed_justification_lines)
+    # Join the processed lines back together with newlines
+    result_text = "\n".join(processed_lines)
+
+    # Replace the original text with the processed text
     text_widget.delete(start, end)
-    text_widget.insert(start, removed_justification_text)
+    text_widget.insert(start, result_text)
+
+    # Remove any trailing newline that might have been introduced
+    if text_widget.get(f"{end} - 1c") == "\n":
+        text_widget.delete(f"{end} - 1c")
 
 
 
