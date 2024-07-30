@@ -27,6 +27,10 @@ align_justify_button, the program freezes.
 
 
 # Reapply justification in apply_font_style if justified in current_tags
+# Is there a way to call align_justify ONLY when the font size is changed?
+
+
+# Successfully re-justify text upon re-sizing.
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -86,10 +90,12 @@ def apply_font_style(event=None, fontColor=None, fontBackground=None):
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
         
+        """
         # Re-justify text if it has the justified tag
         # Prevents mid-line breaks after changing font size of justified text
         if "justified" in current_tags:
             align_justify()
+        """
 
     else:
         # Alert the user that no text has been selected
@@ -121,6 +127,38 @@ def update_comboboxes(event):
         font_family_combo.set(default_font)
         font_size_combo.set(default_size)
 
+
+
+def update_font(event=None):
+    global current_font_family
+    global current_font_size
+    global style_counter
+
+    selected_font_family = font_family_combo.get()
+    selected_font_size = int(font_size_combo.get())
+
+    # Check if the font size has changed
+    size_changed = selected_font_size != current_font_size
+
+    # Get the selected font family and size
+    current_font_family = selected_font_family
+    current_font_size = selected_font_size
+
+    selected_font = font.Font(family=current_font_family, size=current_font_size)
+    text_widget.tag_configure("custom_font_{}".format(style_counter), font=selected_font)
+
+    # Apply font styling to the selected text
+    apply_font_style()
+
+    # Re-justify text if it has the justified tag
+    # Prevents mid-line breaks after changing font size of justified text
+    # Call align_justify only if the font size has changed
+    if size_changed:
+        align_justify()
+
+
+
+"""
 def update_font(event=None):
     global current_font_family
     global current_font_size
@@ -135,7 +173,7 @@ def update_font(event=None):
 
     # Apply font styling to the selected text
     apply_font_style()
-
+"""
 
 # BUTTON METHODS
 # Bold Text bold_it()
@@ -664,6 +702,4 @@ root.bind("<Configure>", align_justify)
 
 # Mainloop of the Program
 root.mainloop()
-
-
 
