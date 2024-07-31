@@ -134,7 +134,7 @@ def update_font(event=None):
     selected_font_size = int(font_size_combo.get())
 
     # Check if the font size has changed
-    size_changed = selected_font_size != current_font_size
+    # size_changed = selected_font_size != current_font_size
 
     # Get the selected font family and size
     current_font_family = selected_font_family
@@ -146,11 +146,23 @@ def update_font(event=None):
     # Apply font styling to the selected text
     apply_font_style()
 
+
     # Re-justify text if it has the justified tag
     # Prevents mid-line breaks after changing font size of justified text
     # Call align_justify only if the font size has changed
-    if size_changed:
-        align_justify()
+    # if size_changed:
+        # align_justify()
+        
+    # Get the tags applied to the selected text
+    current_tags = text_widget.tag_names("sel.first")
+    # Check if the font size has changed
+    size_changed = selected_font_size != current_font_size
+    
+    # Re-justify text if it has the justified tag
+    # Prevents mid-line breaks after changing font size of justified text
+    if "justified" in current_tags:
+        if size_changed:    
+            align_justify()
 
 
 # BUTTON METHODS
@@ -454,7 +466,6 @@ def justify_paragraph(paragraph, widget_width, current_font):
 
     return justified_lines
  
-
 
 
 
