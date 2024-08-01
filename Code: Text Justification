@@ -386,39 +386,40 @@ def align_right(event=None):
 
 
 
-# Keeps poping up error that no text had been selected
-
 justified_ranges = []
 
+# Function to justify text
 def align_justify(event=None):
-    global style_counter, justified_ranges
+    global style_counter
+    global justified_ranges
+    
+    # Get the current width of the text widget
+    widget_width = text_widget.winfo_width()
 
-    if event is None:  # Called from the button, justify selected text
-        selections = text_widget.tag_ranges("sel")
-        if not selections:
-            return
-        start_index = text_widget.index("sel.first")
-        end_index = text_widget.index("sel.last")
-        justified_ranges.append((start_index, end_index))
-    else:  # Called from the resize event, justify all previously justified text
-        if not justified_ranges:
-            return
-        start_index, end_index = justified_ranges[-1]
+    # When called by a resize event, justify previously justified text
+    if event:
+        for start, end in justified_ranges:
+            justify_text_range(start, end, widget_width)
+        return
+    
+    # Justify selected text
+    if text_widget.tag_ranges("sel"):
+        start = text_widget.index("sel.first")
+        end = text_widget.index("sel.last")
+        justify_text_range(start, end, widget_width)
+        
+        # Update the justified ranges
+        justified_ranges.append((start, end))
 
-    justify_text_range(start_index, end_index)
-
-def justify_text_range(start, end):
+def justify_text_range(start, end, widget_width):
     global style_counter
 
     # Get all current font tags to preserve them
     current_font_tags = get_all_font_tags(start, end)
-        
+    
     # Define the tag for justified text
     justify_tag = "justify_{}".format(style_counter)
     style_counter += 1
-
-    # Get the width of the text widget
-    widget_width = text_widget.winfo_width()
 
     # Split the selected text into lines
     lines = text_widget.get(start, end).splitlines()
@@ -469,7 +470,7 @@ def justify_text_range(start, end):
 
     # Reconstruct the justified text
     justified_text = "\n".join(justified_lines)
-
+    
     # Apply the justified text and tags back to the widget
     text_widget.delete(start, end)
     text_widget.insert(start, justified_text)
@@ -480,6 +481,7 @@ def justify_text_range(start, end):
 
     # Reapply preserved font tags
     reapply_font_tags(start, end, current_font_tags)
+ 
 
 
 
