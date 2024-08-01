@@ -386,25 +386,11 @@ def align_right(event=None):
 
 
 
+# "No Text Selected" error pops up constantly from the launch of the program
+
 def align_justify(event=None):
     global style_counter
 
-    if event is None:  # Called from the button, justify selected text
-        if text_widget.tag_ranges("sel"):
-            start = text_widget.index("sel.first")
-            end = text_widget.index("sel.last")
-            justify_text_range(start, end)
-    else:  # Called from the resize event, justify all text
-        start = text_widget.index("1.0")
-        end = text_widget.index("end-1c")
-        justify_text_range(start, end)
-
-def justify_text_range(start, end):
-    global style_counter
-
-    # Get all current font tags to preserve them
-    current_font_tags = get_all_font_tags(start, end)
-        
     # Define the tag for justified text
     justify_tag = "justify_{}".format(style_counter)
     style_counter += 1
@@ -412,8 +398,11 @@ def justify_text_range(start, end):
     # Get the width of the text widget
     widget_width = text_widget.winfo_width()
     
-    # Split the selected text into lines
-    lines = text_widget.get(start, end).splitlines()
+    # Get the entire content of the text widget
+    text_content = text_widget.get("1.0", tk.END).strip()
+    
+    # Split the content into lines
+    lines = text_content.splitlines()
 
     justified_lines = []
 
@@ -463,18 +452,12 @@ def justify_text_range(start, end):
     justified_text = "\n".join(justified_lines)
     
     # Apply the justified text and tags back to the widget
-    text_widget.delete(start, end)
-    text_widget.insert(start, justified_text)
-    text_widget.tag_add(justify_tag, start, f"{start} + {len(justified_text)}c")
+    text_widget.delete("1.0", tk.END)
+    text_widget.insert("1.0", justified_text)
+    text_widget.tag_add(justify_tag, "1.0", f"1.0 + {len(justified_text)}c")
     text_widget.tag_configure(justify_tag, justify=tk.LEFT)
 
     apply_font_style()
-
-    # Reapply font tags to the justified text
-    # apply_font_tags(start, end, get_current_font_tags(start))
-
-    # Reapply preserved font tags to the justified text
-    reapply_font_tags(start, end, current_font_tags)
 
 
 
