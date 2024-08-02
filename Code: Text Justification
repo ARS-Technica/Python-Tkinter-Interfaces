@@ -388,106 +388,89 @@ def align_right(event=None):
 
 
 
-# TclError: bad window path name ".!frame"
-
-justified_ranges = [] 
-
 def align_justify(event=None):
-    global style_counter
     global justified_ranges
     
     if event is None:  # Called from the button, justify selected text
         selections = text_widget.tag_ranges("sel")
+        justified_ranges.extend([(text_widget.index(selections[i]), text_widget.index(selections[i+1])) for i in range(0, len(selections), 2)])
     else:  # Called from the resize event, justify all previously justified text
-        selections = []
         for start, end in justified_ranges:
-            selections.append(start)
-            selections.append(end)
+            justify_text_range(start, end)
 
-    if not selections:
-        return
+def justify_text_range(start, end):
+    global style_counter
+
+    # Get all current font tags to preserve them
+    current_font_tags = get_all_font_tags(start, end)
+
+    # Define the tag for justified text
+    justify_tag = "justify_{}".format(style_counter)
+    style_counter += 1
 
     # Get the width of the text widget
     widget_width = text_widget.winfo_width()
+    
+    # Split the selected text into lines
+    lines = text_widget.get(start, end).splitlines()
 
-    for i in range(0, len(selections), 2):
-        start_index = selections[i]
-        end_index = selections[i + 1]
+    justified_lines = []
 
-        # Get all current font tags to preserve them
-        current_font_tags = get_all_font_tags(start, end)
+    # Current font settings
+    font_info = text_widget.tag_cget("sel", "font")
+    current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+    space_width = current_font.measure(" ")
+    new_width = widget_width - space_width
 
-        # Define the tag for justified text
-        justify_tag = "justify_{}".format(style_counter)
-        style_counter += 1
+    for line in lines:
+        words = line.split()
+        if not words:
+            justified_lines.append("")
+            continue
 
-        # Split the selected text into lines
-        lines = text_widget.get(start_index, end_index).splitlines()
+        current_line = []
+        current_length = 0
 
-        justified_lines = []
+        for word in words:
+            word_width = current_font.measure(word)
 
-        # Current font settings
-        font_info = text_widget.tag_cget("sel", "font")
-        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
-        space_width = current_font.measure(" ")
-        new_width = widget_width - space_width
-
-        for line in lines:
-            words = line.split()
-            if not words:
-                justified_lines.append("")
-                continue
-
-            current_line = []
-            current_length = 0
-
-            for word in words:
-                word_width = current_font.measure(word)
-
-                if current_length + word_width + (len(current_line) * space_width) <= new_width:
-                    current_line.append(word)
-                    current_length += word_width
+            if current_length + word_width + (len(current_line) * space_width) <= new_width:
+                current_line.append(word)
+                current_length += word_width
+            else:
+                # Justify the current line
+                total_spaces = (new_width - current_length) // space_width
+                gaps = len(current_line) - 1
+                if gaps > 0:
+                    spaces = total_spaces // gaps
+                    extra_spaces = total_spaces % gaps
+                    justified_line = ''
+                    for i, w in enumerate(current_line):
+                        justified_line += w
+                        if i < gaps:
+                            justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
+                    justified_lines.append(justified_line)
                 else:
-                    # Justify the current line
-                    total_spaces = (new_width - current_length) // space_width
-                    gaps = len(current_line) - 1
-                    if gaps > 0:
-                        spaces = total_spaces // gaps
-                        extra_spaces = total_spaces % gaps
-                        justified_line = ''
-                        for i, w in enumerate(current_line):
-                            justified_line += w
-                            if i < gaps:
-                                justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
-                        justified_lines.append(justified_line)
-                    else:
-                        justified_lines.append(current_line[0])
+                    justified_lines.append(current_line[0])
 
-                    current_line = [word]
-                    current_length = word_width
+                current_line = [word]
+                current_length = word_width
 
-            justified_lines.append(' '.join(current_line))
+        justified_lines.append(' '.join(current_line))
 
-        # Reconstruct the justified text
-        justified_text = "\n".join(justified_lines)
-        
-        # Apply the justified text and tags back to the widget
-        text_widget.delete(start_index, end_index)
-        text_widget.insert(start_index, justified_text)
-        text_widget.tag_add(justify_tag, start_index, f"{start_index} + {len(justified_text)}c")
-        text_widget.tag_configure(justify_tag, justify=tk.LEFT)
+    # Reconstruct the justified text
+    justified_text = "\n".join(justified_lines)
+    
+    # Apply the justified text and tags back to the widget
+    text_widget.delete(start, end)
+    text_widget.insert(start, justified_text)
+    text_widget.tag_add(justify_tag, start, f"{start} + {len(justified_text)}c")
+    text_widget.tag_configure(justify_tag, justify=tk.LEFT)
 
-        apply_font_style()
+    apply_font_style()
 
-        # Reapply font tags to the justified text
-        #apply_font_tags(start_index, end_index, get_current_font_tags(start_index))
-
-        # Reapply preserved font tags to the justified text
-        reapply_font_tags(start, end, current_font_tags)
-
-
-    if event is None:  # If this was a user action, update justified ranges
-        justified_ranges = [(text_widget.index(selections[i]), text_widget.index(selections[i+1])) for i in range(0, len(selections), 2)]
+    # Reapply preserved font tags to the justified text
+    reapply_font_tags(start, end, current_font_tags)
 
 
 
