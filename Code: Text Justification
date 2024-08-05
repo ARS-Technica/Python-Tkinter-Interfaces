@@ -397,85 +397,56 @@ def align_right(event=None):
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
-'''
+
+
 def align_justify(event=None):
-    """
-    Justify the given text to the specified width.
-    
-    Parameters:
-    text (str): The input text to be justified.
-    width (int): The width within which the text should be justified.
-    
-    Returns:
-    str: The text justified within the specified width.
     """
     global current_font_family
     global current_font_size
-																		
-    # Determine if we are justifying selected text or all justified text
-    # Necessary to keep Justified text justified during window re-sizings																		 
+
     if event is None:  # Called from the button, justify selected
         selections = text_widget.tag_ranges("sel")
     else:  # Called from the resize event, justify all previously justified text
         selections = text_widget.tag_ranges("justified")
 
     if not selections:
-		# No text selected or no justified text found
         return
-		# tk.messagebox.showinfo("alert", "No text has been selected")
 
     for i in range(0, len(selections), 2):
         start_index = selections[i]
         end_index = selections[i + 1]
-'''
-
-
-
-def align_justify(event=None):    
+    """
+    
     global style_counter
     
     if text_widget.tag_ranges("sel"):
         start_index = text_widget.index("sel.first")
         end_index = text_widget.index("sel.last")
 
-		# Preserve font attributes that aren't current_font_family or current_font_size																				 
-        current_font_tags = get_current_font_tags(start_index)
+        current_font_tags = get_all_font_tags(start_index, end_index)
         remove_align_tags(start_index, end_index)
 
-        # Get the selected text
         text = text_widget.get(start_index, end_index)
 
-		# Remove the trailing newline character if it exists													
         end_char = text_widget.get(f"{end_index} - 1c", end_index)
         if end_char == '\n':
             end_index = f"{end_index} - 1c"
 
         font_info = text_widget.tag_cget("sel", "font")
-		# Get the current font for the text widget									
         current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
 
-
-																
-        # THIS IS THE SECRET SAUCE THAT MAKES JUSTIFICATION WORK
-        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING TWO LINES OF CODE        
         space_width = current_font.measure(" ")
-        # Calculate the new width based on the text widget's width
         new_width = text_widget.winfo_width() - space_width
 
-
-
-        # Justify the selected text											 
         justified_text = align_justify_helper(text, new_width, current_font)
-		
-		# Replace the selected text with the justified text        		
+
         text_widget.delete(start_index, end_index)
         text_widget.insert(start_index, justified_text)
 
-		# Apply the 'justified' tag to the newly justified text
-        new_end = f"{start_index} + {len(justified_text)}c"	# Calculate the new end position
-        text_widget.tag_add("justified", start_index, new_end)	# Tag the newly justified text
-        text_widget.tag_configure("justified", justify="left")  # Justification is just Left with extra spaces! 
-        apply_font_tags(start_index, new_end, current_font_tags)# Reapply font attributes from apply_font_style				
+        new_end = f"{start_index} + {len(justified_text)}c"
+        text_widget.tag_add("justified", start_index, new_end)
+        text_widget.tag_configure("justified", justify="left")
+        reapply_font_tags(start_index, new_end, current_font_tags)			
 
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
