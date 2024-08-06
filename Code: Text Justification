@@ -39,7 +39,7 @@ preserved.
 """
 
 
-# Modifications to the functions to preserve and reapply all font style tags
+# Justified Text re-justifies upon re-sizing
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -98,6 +98,13 @@ def apply_font_style(event=None, fontColor=None, fontBackground=None):
         text_widget.tag_configure(tag_name, font=(current_font_family, current_font_size, weight, slant),
                            underline=underline, overstrike=overstrike,
                            foreground=fontColor, background=fontBackground)
+        
+        """
+        # Re-justify text if it has the justified tag
+        # Prevents mid-line breaks after changing font size of justified text
+        if "justified" in current_tags:
+            align_justify()
+        """
 
     else:
         # Alert the user that no text has been selected
@@ -129,20 +136,38 @@ def update_comboboxes(event):
         font_family_combo.set(default_font)
         font_size_combo.set(default_size)
 
+
 def update_font(event=None):
     global current_font_family
     global current_font_size
     global style_counter
 
-    selected_font = font.Font(family=font_family_combo.get(), size=int(font_size_combo.get()))
-    text_widget.tag_configure("custom_font_{}".format(style_counter), font=selected_font)
-    
+    selected_font_family = font_family_combo.get()
+    selected_font_size = int(font_size_combo.get())
+
+    # Check if the font size has changed
+    size_changed = selected_font_size != current_font_size
+    # Keep this above current_font_size reassignment below
+
     # Get the selected font family and size
-    current_font_family = font_family_combo.get()
-    current_font_size = font_size_combo.get()
+    current_font_family = selected_font_family
+    current_font_size = selected_font_size
+
+    selected_font = font.Font(family=current_font_family, size=current_font_size)
+    text_widget.tag_configure("custom_font_{}".format(style_counter), font=selected_font)
 
     # Apply font styling to the selected text
     apply_font_style()
+       
+    # Get the tags applied to the selected text
+    current_tags = text_widget.tag_names("sel.first")
+    
+    # Re-justify text if it has the justified tag
+    # Prevents mid-line breaks after changing font size of justified text   
+    if "justified" in current_tags:
+        # Call align_justify only if the font size has changed
+        if size_changed:    
+            align_justify()
 
 
 # BUTTON METHODS
@@ -161,7 +186,7 @@ def bold(event=None):
             # Bold the whole selection
             text_widget.tag_add("bold", "sel.first", "sel.last")
     
-        # Compile stle characteristics under a single tag name
+        # Compile style characteristics under a single tag name
         apply_font_style()
     else:
         # Alert user that no text has been selected
@@ -183,7 +208,7 @@ def italic(event=None):
             # Italicize the whole selection
             text_widget.tag_add("italic", "sel.first", "sel.last")
     
-        # Compile stle characteristics under a single tag name
+        # Compile style characteristics under a single tag name
         apply_font_style()
     else:
         # Alert user that no text has been selected
@@ -204,7 +229,7 @@ def underline(event=None):
             # Underline the whole selection
             text_widget.tag_add("underline", "sel.first", "sel.last")
 
-        # Compile stle characteristics under a single tag name
+        # Compile style characteristics under a single tag name
         apply_font_style()
     else:
         # Alert user that no text has been selected
@@ -225,7 +250,7 @@ def strike(event=None):
             # Strike the whole selection
             text_widget.tag_add("overstrike", "sel.first", "sel.last")
     
-        # Compile stle characteristics under a single tag name
+        # Compile style characteristics under a single tag name
         apply_font_style()    
     else:
         # Alert user that no text has been selected
@@ -265,6 +290,9 @@ def highlight(event=None):
 
 
 # TEXT ALIGNMENT FUNCTIONS
+
+
+
 def apply_font_tags(start, end, font_tags):
     """
     This function reapplies the retrieved font-related tags to the selected text after alignment.
@@ -272,236 +300,178 @@ def apply_font_tags(start, end, font_tags):
     for tag in font_tags:
         text_widget.tag_add(tag, start, end)
 
-# Helper function to preserve text attributes when justifying text
-def get_current_font_tags(start, end):
+def get_current_font_tags(start):
     """
     This function retrieves all font-related tags (custom_font_, bold, italic, 
-    underline, overstrike) for the selected text range.
+    underline, overstrike) for the selected text.
     """
-    font_tags = set()
-    current_index = start
+    tags = text_widget.tag_names(start)
+    font_tags = []
 
-    # Iterate through each character in the range and collect font tags
-    while current_index != end:
-        tags = text_widget.tag_names(current_index)
-        for tag in tags:
-            if tag.startswith("custom_font_") or tag in ["bold", "italic", "underline", "overstrike"]:
-                font_tags.add(tag)
-        current_index = text_widget.index(f"{current_index} + 1c")
+    for tag in tags:
+        if tag.startswith("custom_font_") or tag in ["bold", "italic", "underline", "overstrike"]:
+            font_tags.append(tag)
 
-    return list(font_tags)
+    return font_tags
 
-# Modifications to alignment functions to use the updated get_current_font_tags
+def remove_align_tags(start_index, end_index):
+    for tag in ["center", "left", "justified", "right"]:
+        text_widget.tag_remove(tag, start_index, end_index)
+
+def unjustify_text(start, end):
+    text = text_widget.get(start, end)
+    lines = text.split("\n")
+    processed_lines = []
+
+    for line in lines:
+        processed_line = " ".join(line.split())
+        processed_line = processed_line.replace(". ", ".  ")
+        processed_line = processed_line.replace("? ", "?  ")
+        processed_line = processed_line.replace("! ", "!  ")
+        processed_lines.append(processed_line)
+
+    result_text = "\n".join(processed_lines)
+    text_widget.delete(start, end)
+    text_widget.insert(start, result_text)
+
+    if text_widget.get(f"{end} - 1c") == "\n":
+        text_widget.delete(f"{end} - 1c")
+
 def align_center(event=None):
-    # Check if any text is selected
     if text_widget.tag_ranges("sel"):
-        # Align entire selection
         start_index = text_widget.index("sel.first")
         end_index = text_widget.index("sel.last")
-        
-        # Get current font tags to preserve them
-        current_font_tags = get_current_font_tags(start_index, end_index)
-        
-        # Remove existing alignment tags within the range
+        current_font_tags = get_current_font_tags(start_index)
         remove_align_tags(start_index, end_index)
         unjustify_text(start_index, end_index)
-
-        # Apply new alignment tags        
         text_widget.tag_add("center", start_index, end_index)
         text_widget.tag_configure("center", justify="center")
-
-        # Reapply preserved font tags
         apply_font_tags(start_index, end_index, current_font_tags)
     else:
-        # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 def align_left(event=None):
-    # Check if any text is selected
     if text_widget.tag_ranges("sel"):
-        # Align entire selection
         start_index = text_widget.index("sel.first")
         end_index = text_widget.index("sel.last")
-
-        # Get current font tags to preserve them
-        current_font_tags = get_current_font_tags(start_index, end_index)
-        
-        # Remove existing alignment tags within the range
+        current_font_tags = get_current_font_tags(start_index)
         remove_align_tags(start_index, end_index)
         unjustify_text(start_index, end_index)
-        
-        # Apply new alignment tags        
         text_widget.tag_add("left", start_index, end_index)
         text_widget.tag_configure("left", justify="left")
-        
-        # Reapply preserved font tags
         apply_font_tags(start_index, end_index, current_font_tags)
     else:
-        # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 def align_right(event=None):
-    # Check if any text is selected
     if text_widget.tag_ranges("sel"):
-        # Align entire selection
         start_index = text_widget.index("sel.first")
         end_index = text_widget.index("sel.last")
-        
-        # Get current font tags to preserve them
-        current_font_tags = get_current_font_tags(start_index, end_index)
-        
-        # Remove existing alignment tags within the range
+        current_font_tags = get_current_font_tags(start_index)
         remove_align_tags(start_index, end_index)
         unjustify_text(start_index, end_index)
-
-        # Apply new alignment tags        
         text_widget.tag_add("right", start_index, end_index)
         text_widget.tag_configure("right", justify="right")
-        
-        # Reapply preserved font tags
         apply_font_tags(start_index, end_index, current_font_tags)
     else:
-        # Alert the user that no text has been selected
-
         tk.messagebox.showinfo("alert", "No text has been selected")
 
 def align_justify(event=None):
-    """
-    Justify the given text to the specified width.
-    
-    Parameters:
-    text (str): The input text to be justified.
-    width (int): The width within which the text should be justified.
-    
-    Returns:
-    str: The text justified within the specified width.
-    """
     global current_font_family
     global current_font_size
-                                                                        
-    # Determine if we are justifying selected text or all justified text
-    # Necessary to keep Justified text justified during window re-sizings                                                                         
-    if event is None:  # Called from the button, justify selected
+
+    if event is None:
         selections = text_widget.tag_ranges("sel")
-    else:  # Called from the resize event, justify all previously justified text
+    else:
         selections = text_widget.tag_ranges("justified")
 
     if not selections:
-        # No text selected or no justified text found
         return
-        # tk.messagebox.showinfo("alert", "No text has been selected")
 
     for i in range(0, len(selections), 2):
         start_index = selections[i]
         end_index = selections[i + 1]
-
-        # Preserve font attributes that aren't current_font_family or current_font_size                                                                                 
-        current_font_tags = get_current_font_tags(start_index, end_index)
+        current_font_tags = get_current_font_tags(start_index)
         remove_align_tags(start_index, end_index)
-
-        # Get the selected text
         text = text_widget.get(start_index, end_index)
-
-        # Remove the trailing newline character if it exists                                                    
         end_char = text_widget.get(f"{end_index} - 1c", end_index)
+
         if end_char == '\n':
             end_index = f"{end_index} - 1c"
 
         font_info = text_widget.tag_cget("sel", "font")
-        # Get the current font for the text widget                                     
         current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
-
-
-                                                                
-        # THIS IS THE SECRET SAUCE THAT MAKES JUSTIFICATION WORK
-        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING TWO LINES OF CODE        
         space_width = current_font.measure(" ")
-        # Calculate the new width based on the text widget's width
         new_width = text_widget.winfo_width() - space_width
-
-
-
-        # Justify the selected text                                             
         justified_text = align_justify_helper(text, new_width, current_font)
-        
-        # Replace the selected text with the justified text                
+
         text_widget.delete(start_index, end_index)
         text_widget.insert(start_index, justified_text)
-
-        # Apply the 'justified' tag to the newly justified text
-        new_end = f"{start_index} + {len(justified_text)}c"    # Calculate the new end position
-        text_widget.tag_add("justified", start_index, new_end)    # Tag the newly justified text
-        text_widget.tag_configure("justified", justify="left")  # Justification is just Left with extra spaces! 
-        apply_font_tags(start_index, new_end, current_font_tags)# Reapply font attributes from apply_font_style                
-
+        new_end = f"{start_index} + {len(justified_text)}c"
+        text_widget.tag_add("justified", start_index, new_end)
+        text_widget.tag_configure("justified", justify="left")
+        apply_font_tags(start_index, new_end, current_font_tags)
 
 def align_justify_helper(text, widget_width, current_font):
-    # This function justifies the entire text while preserving paragraph breaks
-    paragraphs = text.split('\n\n')  # Split text into paragraphs by double newline characters
-    justified_paragraphs = []  # List to hold justified paragraphs
-    
+    paragraphs = text.split('\n\n')
+    justified_paragraphs = []
+
     for paragraph in paragraphs:
-        # For each paragraph, justify its text
         lines = justify_paragraph(paragraph, widget_width, current_font)
-        justified_paragraphs.append('\n'.join(lines))  # Join the lines back into a single string for the paragraph
-    
-    justified_text = '\n\n'.join(justified_paragraphs)  # Join all paragraphs with double newline characters
+        justified_paragraphs.append('\n'.join(lines))
+
+    justified_text = '\n\n'.join(justified_paragraphs)
     return justified_text
 
 def justify_paragraph(paragraph, widget_width, current_font):
-    # This function justifies a single paragraph
-    words = paragraph.split()  # Split paragraph into individual words
-    
-    space_width = current_font.measure(" ")  # Width of a single space
+    words = paragraph.split()
+    space_width = current_font.measure(" ")
+    lines = []
+    current_line = []
+    current_length = 0
 
-    lines = []  # List to hold lines of text
-    current_line = []  # List to hold words for the current line
-    current_length = 0  # Length of the current line in pixels
-    
     for word in words:
-        word_width = current_font.measure(word)  # Width of the word in pixels
-        
-        # Check if adding the word would exceed the widget's width
+        word_width = current_font.measure(word)
+
         if current_length + word_width + (len(current_line) * space_width) <= widget_width:
-            # Add the word to the current line
             current_line.append(word)
-            current_length += word_width #+ space_width  # Update the length of the current line
+            current_length += word_width
         else:
-            # Word does not fit, start a new line
-            lines.append(current_line)  # Add the current line to the list of lines
-            current_line = [word]  # Start a new line with the current word
-            current_length = word_width #+ space_width  # Reset the length of the current line
-    
-    # Don't forget to add the last line
+            lines.append(current_line)
+            current_line = [word]
+            current_length = word_width
+
     if current_line:
         lines.append(current_line)
-        
-    justified_lines = []  # List to hold the justified lines
-    for line in lines[:-1]:  # Justify all lines except the last one
-        line_length = sum(current_font.measure(word) for word in line)  # Calculate the total length of words in the line
-        total_spaces = (widget_width - line_length) // space_width  # Calculate the total number of spaces needed to justify the line
-        gaps = len(line) - 1  # Number of gaps between words
+
+    justified_lines = []
+
+    for line in lines[:-1]:
+        line_length = sum(current_font.measure(word) for word in line)
+        total_spaces = (widget_width - line_length) // space_width
+        gaps = len(line) - 1
+
         if gaps > 0:
-            spaces = total_spaces // gaps  # Minimum spaces to add between each word
-            extra_spaces = total_spaces % gaps  # Extra spaces to distribute evenly
-            justified_line = ''  # String to hold the justified line
+            spaces = total_spaces // gaps
+            extra_spaces = total_spaces % gaps
+            justified_line = ''
+
             for i, word in enumerate(line):
-                # Add the word to the justified line
                 justified_line += word
                 if i < gaps:
-                    # Add spaces after the word if it's not the last word in the line
                     justified_line += ' ' * (spaces + 1 if i < extra_spaces else spaces)
-            justified_lines.append(justified_line)  # Add the justified line to the list
+
+            justified_lines.append(justified_line)
         else:
-            # If there's only one word in the line, add it as is
-            if line:  # Check if line is not empty
+            if line:
                 justified_lines.append(line[0])
 
-    # Add the last line without justification
     last_line = ' '.join(lines[-1])
     justified_lines.append(last_line)
-    
+
     return justified_lines
+ 
+
 
 
 # CREATE THE MAIN WINDOW
