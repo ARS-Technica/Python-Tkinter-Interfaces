@@ -39,7 +39,7 @@ preserved.
 """
 
 
-# Justified Text re-justifies upon re-sizing
+# Justified Text DOES NOT re-justify upon re-sizing
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -380,6 +380,7 @@ def align_justify(event=None):
     global current_font_family
     global current_font_size
 
+    """
     if event is None:
         selections = text_widget.tag_ranges("sel")
     else:
@@ -391,6 +392,12 @@ def align_justify(event=None):
     for i in range(0, len(selections), 2):
         start_index = selections[i]
         end_index = selections[i + 1]
+    """
+
+    if text_widget.tag_ranges("sel"):
+        start_index = text_widget.index("sel.first")
+        end_index = text_widget.index("sel.last")
+
         current_font_tags = get_current_font_tags(start_index)
         remove_align_tags(start_index, end_index)
         text = text_widget.get(start_index, end_index)
@@ -471,6 +478,17 @@ def justify_paragraph(paragraph, widget_width, current_font):
 
     return justified_lines
  
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -607,7 +625,44 @@ font_size_combo.bind("<<ComboboxSelected>>", update_font)
 # Bind event to apply font style when text is selected
 text_widget.bind("<Button-1>", update_comboboxes)
 
-root.bind("<Configure>", align_justify)
+
+"""
+def resize_window():
+    selections = text_widget.tag_ranges("justified")
+
+    for i in range(0, len(selections), 2):
+        start_index = selections[i]
+        end_index = selections[i + 1]
+
+        # align_justify(start_index, end_index) # Nope
+"""
+
+
+"""
+Resizing the window does not cause resize_window to re-justify the text.  
+Try again.  For the sake of brevity, only show the code you've changed not the entire program.
+"""
+
+"""
+# Re-align text when window is resized
+def resize_window(event=None):
+    selections = text_widget.tag_ranges("justified")
+    
+    for i in range(0, len(selections), 2):
+        text_widget.tag_remove("justified", selections[i], selections[i + 1])
+        text_widget.tag_add("justified", selections[i], selections[i + 1])
+"""
+
+"""
+# Re-align text when window is resized
+def resize_window(event=None):
+    text_widget.update_idletasks()
+    text_widget.tag_remove("justified", "1.0", tk.END)
+    text_widget.tag_add("justified", "1.0", tk.END)
+    text_widget.tag_configure("justified", justify="left", lmargin1=0, lmargin2=0, rmargin=0)
+"""
+
+root.bind("<Configure>", resize_window)
 
 # Mainloop of the Program
 root.mainloop()
