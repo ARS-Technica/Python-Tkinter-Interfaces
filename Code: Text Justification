@@ -38,8 +38,9 @@ different portions of the text, only the first set of font style tags will be
 preserved.
 """
 
-
+ 
 # Justified Text DOES NOT re-justify upon re-sizing
+# Write two versions of align-justify.  Second function "re-justify"
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -290,6 +291,9 @@ def highlight(event=None):
 
 
 # TEXT ALIGNMENT FUNCTIONS
+
+
+
 def apply_font_tags(start, end, font_tags):
     """
     This function reapplies the retrieved font-related tags to the selected text after alignment.
@@ -420,6 +424,53 @@ def align_justify(event=None):
         apply_font_tags(start_index, new_end, current_font_tags)
 
 
+def rejustify(event=None):
+    global current_font_family
+    global current_font_size
+
+    """
+    if event is None:
+        selections = text_widget.tag_ranges("sel")
+    else:
+        selections = text_widget.tag_ranges("justified")
+
+    if not selections:
+        return
+
+    for i in range(0, len(selections), 2):
+        start_index = selections[i]
+        end_index = selections[i + 1]
+    """
+
+    selections = text_widget.tag_ranges("justified")
+
+    for i in range(0, len(selections), 2):
+        start_index = selections[i]
+        end_index = selections[i + 1]
+
+        current_font_tags = get_current_font_tags(start_index)
+        remove_align_tags(start_index, end_index)
+        text = text_widget.get(start_index, end_index)
+        end_char = text_widget.get(f"{end_index} - 1c", end_index)
+
+        if end_char == '\n':
+            end_index = f"{end_index} - 1c"
+
+        font_info = text_widget.tag_cget("sel", "font")
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+        space_width = current_font.measure(" ")
+        new_width = text_widget.winfo_width() - space_width
+        justified_text = align_justify_helper(text, new_width, current_font)
+
+        text_widget.delete(start_index, end_index)
+        text_widget.insert(start_index, justified_text)
+        new_end = f"{start_index} + {len(justified_text)}c"
+        text_widget.tag_add("justified", start_index, new_end)
+        text_widget.tag_configure("justified", justify="left")
+        apply_font_tags(start_index, new_end, current_font_tags)
+
+
+
 def align_justify_helper(text, widget_width, current_font):
     paragraphs = text.split('\n\n')
     justified_paragraphs = []
@@ -479,6 +530,18 @@ def justify_paragraph(paragraph, widget_width, current_font):
 
     return justified_lines
  
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # CREATE THE MAIN WINDOW
@@ -625,7 +688,7 @@ def resize_window(event=None):
     text_widget.tag_remove("justified", start, end)
     text_widget.tag_add("justified", start, end)
 '''
-
+'''
 # Re-align text when window is resized
 def resize_window(event=None):
     # Get all tags in the text widget
@@ -636,9 +699,9 @@ def resize_window(event=None):
             start, end = text_widget.tag_ranges(tag)
             text_widget.tag_remove(tag, start, end)
             text_widget.tag_add(tag, start, end)
+'''
 
-
-root.bind("<Configure>", resize_window)
+root.bind("<Configure>", rejustify)
 
 # Mainloop of the Program
 root.mainloop()
