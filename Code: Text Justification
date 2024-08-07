@@ -38,9 +38,9 @@ different portions of the text, only the first set of font style tags will be
 preserved.
 """
 
- 
-# Justified Text DOES NOT re-justify upon re-sizing
-# Write two versions of align-justify.  Second function "re-justify"
+
+# Justified Text re-justify upon re-sizing
+# NEXT STEP: Preserve text attributes upon alignment
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -384,20 +384,6 @@ def align_justify(event=None):
     global current_font_family
     global current_font_size
 
-    """
-    if event is None:
-        selections = text_widget.tag_ranges("sel")
-    else:
-        selections = text_widget.tag_ranges("justified")
-
-    if not selections:
-        return
-
-    for i in range(0, len(selections), 2):
-        start_index = selections[i]
-        end_index = selections[i + 1]
-    """
-
     if text_widget.tag_ranges("sel"):
         start_index = text_widget.index("sel.first")
         end_index = text_widget.index("sel.last")
@@ -427,20 +413,6 @@ def align_justify(event=None):
 def rejustify(event=None):
     global current_font_family
     global current_font_size
-
-    """
-    if event is None:
-        selections = text_widget.tag_ranges("sel")
-    else:
-        selections = text_widget.tag_ranges("justified")
-
-    if not selections:
-        return
-
-    for i in range(0, len(selections), 2):
-        start_index = selections[i]
-        end_index = selections[i + 1]
-    """
 
     selections = text_widget.tag_ranges("justified")
 
@@ -530,19 +502,6 @@ def justify_paragraph(paragraph, widget_width, current_font):
 
     return justified_lines
  
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # CREATE THE MAIN WINDOW
 root = tk.Tk()
@@ -677,30 +636,7 @@ font_size_combo.bind("<<ComboboxSelected>>", update_font)
 # Bind event to apply font style when text is selected
 text_widget.bind("<Button-1>", update_comboboxes)
 
-
-'''
-# Re-align text when window is resized
-def resize_window(event=None):
-    # Iterate through all text to apply justification
-    text_widget.tag_configure("justified", justify="left", lmargin1=0, lmargin2=0, rmargin=0)
-    text_widget.update_idletasks()
-    start, end = "1.0", tk.END
-    text_widget.tag_remove("justified", start, end)
-    text_widget.tag_add("justified", start, end)
-'''
-'''
-# Re-align text when window is resized
-def resize_window(event=None):
-    # Get all tags in the text widget
-    for tag in text_widget.tag_names():
-        # Check if the tag is 'justified'
-        if tag == "justified":
-            # Remove and re-add the 'justified' tag to update the text alignment
-            start, end = text_widget.tag_ranges(tag)
-            text_widget.tag_remove(tag, start, end)
-            text_widget.tag_add(tag, start, end)
-'''
-
+# Width of Justified text changes with text widget
 root.bind("<Configure>", rejustify)
 
 # Mainloop of the Program
