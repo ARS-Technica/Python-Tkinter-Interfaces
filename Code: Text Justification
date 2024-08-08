@@ -26,16 +26,8 @@ align_justify_button, the program freezes.
 """
 
 
-# Text Justification Experiment 10 (Undoing New Justification).py
-# Continued from Text Justification Experiment 9a 
-
-# Updated update_font funtion from Text Justification Experiment 10b 
-# to check if text was justified before reapplying justification on window resize 
-
-# Reapply justification in apply_font_style if justified in current_tags
-# Successfully re-justify text upon re-sizing.
-
-# Next up: Simplify align_justify with rejustify function from Text Justification Experiment 12c
+# Simplify align_justify with rejustify function from Text Justification Experiment 12c
+# Next up: Add code into Justification code to preserve multiple font attributes
 
 
 from PIL import Image, ImageTk  # For buttons on Toolbar
@@ -131,6 +123,10 @@ def update_comboboxes(event):
         # Set the font and size comboboxes to display the default font and size
         font_family_combo.set(default_font)
         font_size_combo.set(default_size)
+
+
+
+
 
 
 def update_font(event=None):
@@ -466,6 +462,8 @@ def align_right(event=None):
         # Alert the user that no text has been selected
         tk.messagebox.showinfo("alert", "No text has been selected")
 
+
+'''
 def align_justify(event=None):
     """
     Justify the given text to the specified width.
@@ -492,6 +490,67 @@ def align_justify(event=None):
         return
 		# tk.messagebox.showinfo("alert", "No text has been selected")
 
+    for i in range(0, len(selections), 2):
+        start_index = selections[i]
+        end_index = selections[i + 1]
+'''
+
+def align_justify(event=None):
+    global current_font_family
+    global current_font_size
+
+    if text_widget.tag_ranges("sel"):
+        start_index = text_widget.index("sel.first")
+        end_index = text_widget.index("sel.last")
+
+		# Preserve font attributes that aren't current_font_family or current_font_size																				 
+        current_font_tags = get_current_font_tags(start_index)
+        remove_align_tags(start_index, end_index)
+
+        # Get the selected text
+        text = text_widget.get(start_index, end_index)
+
+		# Remove the trailing newline character if it exists													
+        end_char = text_widget.get(f"{end_index} - 1c", end_index)
+        if end_char == '\n':
+            end_index = f"{end_index} - 1c"
+
+        font_info = text_widget.tag_cget("sel", "font")
+		# Get the current font for the text widget									
+        current_font = font.Font(font=font_info) if font_info else font.Font(family=current_font_family, size=current_font_size)
+
+
+																
+        # THIS IS THE SECRET SAUCE THAT MAKES JUSTIFICATION WORK
+        # DO NOT, UNDER ANY CIRCUMSTANCES TOUCH THE FOLLOWING TWO LINES OF CODE        
+        space_width = current_font.measure(" ")
+        # Calculate the new width based on the text widget's width
+        new_width = text_widget.winfo_width() - space_width
+
+
+
+        # Justify the selected text											 
+        justified_text = align_justify_helper(text, new_width, current_font)
+		
+		# Replace the selected text with the justified text        		
+        text_widget.delete(start_index, end_index)
+        text_widget.insert(start_index, justified_text)
+
+		# Apply the 'justified' tag to the newly justified text
+        new_end = f"{start_index} + {len(justified_text)}c"	# Calculate the new end position
+        text_widget.tag_add("justified", start_index, new_end)	# Tag the newly justified text
+        text_widget.tag_configure("justified", justify="left")  # Justification is just Left with extra spaces! 
+        apply_font_tags(start_index, new_end, current_font_tags)# Reapply font attributes from apply_font_style				
+
+
+def rejustify(event=None):
+    global current_font_family
+    global current_font_size
+
+    selections = text_widget.tag_ranges("justified")
+																		
+	# The following loop makes the program freeze 
+	# If left in align_justify, clashes with code to preserve multiple font attributes 
     for i in range(0, len(selections), 2):
         start_index = selections[i]
         end_index = selections[i + 1]
@@ -534,6 +593,8 @@ def align_justify(event=None):
         text_widget.tag_add("justified", start_index, new_end)	# Tag the newly justified text
         text_widget.tag_configure("justified", justify="left")  # Justification is just Left with extra spaces! 
         apply_font_tags(start_index, new_end, current_font_tags)# Reapply font attributes from apply_font_style				
+
+
 
 def align_justify_helper(text, widget_width, current_font):
     # This function justifies the entire text while preserving paragraph breaks
@@ -738,7 +799,8 @@ font_size_combo.bind("<<ComboboxSelected>>", update_font)
 # Bind event to apply font style when text is selected
 text_widget.bind("<Button-1>", update_comboboxes)
 
-root.bind("<Configure>", align_justify)
+# Width of Justified text changes with text widget
+root.bind("<Configure>", rejustify) # Rejustify
 
 # Mainloop of the Program
 root.mainloop()
