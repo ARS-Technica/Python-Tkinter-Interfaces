@@ -1,6 +1,8 @@
 """
 A demonstration of the correct (safest) way to work with temporary files in 
 Python using the tempfile library.
+
+Docs: https://docs.python.org/3/library/tempfile.html#tempfile.NamedTemporaryFile
 """
 
 
