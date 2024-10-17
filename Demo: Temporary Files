@@ -1,0 +1,21 @@
+"""
+A demonstration of the correct (safest) way to work with temporary files in 
+Python using the tempfile library.
+"""
+
+
+# Create a temporary, randomly named file:
+
+from pathlib import Path
+from tempfile import NamedTemporaryFile, TemporaryDirectory
+
+with NamedTemporaryFile(prefix="temp_", suffix=".txt") as f:    # Suffix MUST include the dot
+    print(f.name)   # Show the path of the newly generated temporary file
+    # File name includes the prefix "tmp" (lowercase) by default
+
+    temppath = Path(f.name)
+    print(temppath.is_file())   # Should return True
+
+# The tempfile library automatically deletes temporary file after the loop terminates
+print(temppath.exists())    # Should return False as the file has been erased
+
