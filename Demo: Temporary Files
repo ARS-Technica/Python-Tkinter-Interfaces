@@ -19,3 +19,26 @@ with NamedTemporaryFile(prefix="temp_", suffix=".txt") as f:    # Suffix MUST in
 # The tempfile library automatically deletes temporary file after the loop terminates
 print(temppath.exists())    # Should return False as the file has been erased
 
+
+#%%
+
+
+# Create a temporary, randomly named directory (folder):
+
+from pathlib import Path
+from tempfile import NamedTemporaryFile, TemporaryDirectory
+
+
+with TemporaryDirectory() as d:
+    print(d)    # Show the path of the newly generated temporary directory
+    # Directory name includes the prefix "tmp_" (lowercase) by default
+
+    # Note: d.name is invalid because "d" is a string
+
+    temppath = Path(d)
+    print(temppath.is_dir())   # Should return True
+
+# The tempfile library automatically deletes temporary directory after the loop terminates
+print(temppath.exists())    # Should return False as the directory has been erased
+
+
