@@ -42,3 +42,28 @@ with TemporaryDirectory() as d:
 print(temppath.exists())    # Should return False as the directory has been erased
 
 
+#%%
+
+
+# Create a temporary file inside a temporary directory:
+
+from pathlib import Path
+from tempfile import NamedTemporaryFile, TemporaryDirectory
+
+
+with TemporaryDirectory() as d, NamedTemporaryFile(dir=d, prefix="temp_", suffix=".txt") as f:
+    print(d)    # Show the path of the newly generated temporary directory
+    print(f.name)   # Show the path of the newly generated temporary file
+
+    tempfile = Path(f.name)
+    tempdir = Path(d)
+    
+    print(tempfile.is_file())   # Should return True
+    print(tempdir.is_dir())   # Should return True
+
+print(tempfile.exists())    # Should return False as the file has been erased
+print(tempdir.exists())    # Should return False as the directory has been erased
+
+
+#%%
+
