@@ -1,0 +1,13 @@
+"""
+TreeView with Rollover Effects
+
+Create a two column treeview widget in Python's tkinter library.  The two 
+columns should be populated with the key, value pairs of a dictionary 
+instantiated at the top of the file.  Style the treeview so that the rows 
+backgrounds alternate between white and light grey.  When a user selects one 
+of the rows, set that row's background to a light blue.  When a mouse hovers 
+over a row, change that row's background a darker grey.
+"""
+
+
+
