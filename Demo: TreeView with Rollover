@@ -10,61 +10,82 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Set a style for highlighting the selected row for better visual feedback
+# Created create_input_frame with input to display link text
 
 import tkinter as tk
 from tkinter import ttk
 
 def on_double_click(event):
+    # Get the clicked row's URL and insert it into the text input
     item_id = event.widget.focus()
     item = event.widget.item(item_id)
-    values = item['values']
+    values = item["values"]
     url = values[0]
+    if url:
+        regex_entry.delete(0, tk.END)  # Clear the current text
+        regex_entry.insert(0, url)  # Insert the URL
+
+
+def create_input_frame(parent):
+    # Create a frame to hold the label and text input
+    input_frame = ttk.Frame(parent)
+    input_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+
+    # Add a label and entry widget
+    label = ttk.Label(input_frame, text="Regular Expression")
+    label.grid(row=0, column=0, sticky="w", padx=(0, 5))
     
-    print("This links to the url:", url)
+    global regex_entry
+    regex_entry = ttk.Entry(input_frame, width=50)
+    regex_entry.grid(row=0, column=1, sticky="ew")
+
+    input_frame.columnconfigure(1, weight=1)  # Make the entry stretchable
 
 
-def create_directory():
-    directory = ttk.Treeview(window)
+def create_directory_frame(parent):
+    # Create a frame to hold the Treeview
+    directory_frame = ttk.Frame(parent)
+    directory_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=(0, 5))
+
+    directory = ttk.Treeview(directory_frame)
     directory.pack(fill="both", expand=True)
 
-    # Styling for the selected row
-    style = ttk.Style()
-    style.map("Treeview", 
-          background=[("selected", "lightblue")],
-          foreground=[("selected", "black")])
-    
+    # Configure columns
     directory["columns"] = ("URL",)
-    directory.column("#0", width=100, anchor="w")  # Tree column (for 'text')
+    directory.column("#0", width=100, anchor="w")
     directory.column("URL", width=300, anchor="w")
     directory.heading("#0", text="Item")
     directory.heading("URL", text="Link")
 
-    
+    # Bind double-click event
     directory.bind("<Double-Button-1>", on_double_click)
-    
+
+    # Add items
     for x in range(10):
-        url = "http://example.com/%d" % x
-        text = "item %d" % x
-        directory.insert("", x,  text=text, values=[url])
+        url = f"http://example.com/{x}"
+        text = f"item {x}"
+        directory.insert("", x, text=text, values=[url])
 
 
 def create_window():
     global window
-   
-    # Create the main window
     window = tk.Tk()
-    window.title("Treeview Widget with Linked Rows")
-    #window.geometry("1200x690")
-    window.resizable(True, True)    
+    window.title("Treeview with Text Input")
+    window.geometry("600x400")
+    window.resizable(True, True)
 
-    create_directory()
-    
+    # Configure grid
+    window.columnconfigure(0, weight=1)
+    window.rowconfigure(1, weight=1)
+
+    # Create input frame and directory frame
+    create_input_frame(window)
+    create_directory_frame(window)
+
     # Run the application
     window.mainloop()
 
 
 if __name__ == "__main__":
-    # Run the application
     create_window()
 
