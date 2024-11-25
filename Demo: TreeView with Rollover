@@ -21,16 +21,21 @@ def on_double_click(event):
     
     print("This links to the url:", url)
 
-root = tk.Tk()
-t=ttk.Treeview(root)
-t.pack(fill="both", expand=True)
 
-t.bind("<Double-Button-1>", on_double_click)
 
 for x in range(10):
     url = "http://example.com/%d" % x
     text = "item %d" % x
-    t.insert("", x,  text=text, values=[url])
+    directory.insert("", x,  text=text, values=[url])
 
-root.mainloop()
+def create_window():
+    root = tk.Tk()
+    directory = ttk.Treeview(root)
+    directory.pack(fill="both", expand=True)
+    
+    directory.bind("<Double-Button-1>", on_double_click)
+
+
+if __name__ == "__main__":
+    root.mainloop()
 
