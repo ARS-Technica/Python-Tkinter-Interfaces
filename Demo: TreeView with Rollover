@@ -10,9 +10,6 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Different tkinter binding for any ttk treeview row
-# Source: https://stackoverflow.com/questions/46592551/different-tkinter-binding-for-any-ttk-treeview-row
-
 import tkinter as tk
 from tkinter import ttk
 
@@ -21,7 +18,8 @@ def on_double_click(event):
     item = event.widget.item(item_id)
     values = item['values']
     url = values[0]
-    print("the url is:", url)
+    
+    print("This links to the url:", url)
 
 root = tk.Tk()
 t=ttk.Treeview(root)
