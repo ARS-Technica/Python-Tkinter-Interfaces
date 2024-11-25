@@ -10,6 +10,9 @@ over a row, change that row's background a darker grey.
 """
 
 
+# Different tkinter binding for any ttk treeview row
+# Source: https://stackoverflow.com/questions/46592551/different-tkinter-binding-for-any-ttk-treeview-row
+
 import tkinter as tk
 from tkinter import ttk
 
@@ -22,20 +25,31 @@ def on_double_click(event):
     print("This links to the url:", url)
 
 
-
-for x in range(10):
-    url = "http://example.com/%d" % x
-    text = "item %d" % x
-    directory.insert("", x,  text=text, values=[url])
-
-def create_window():
-    root = tk.Tk()
-    directory = ttk.Treeview(root)
+def create_directory():
+    directory = ttk.Treeview(window)
     directory.pack(fill="both", expand=True)
     
     directory.bind("<Double-Button-1>", on_double_click)
+    
+    for x in range(10):
+        url = "http://example.com/%d" % x
+        text = "item %d" % x
+        directory.insert("", x,  text=text, values=[url])
+
+
+def create_window():
+    global window
+   
+    # Create the main window
+    window = tk.Tk()
+    window.title("Treeview Widget with Linked Rows")
+    #window.geometry("1200x690")
+    window.resizable(True, True)    
+
+    create_directory()
 
 
 if __name__ == "__main__":
-    root.mainloop()
+    # Run the application
+    create_window()
 
