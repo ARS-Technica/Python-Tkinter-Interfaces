@@ -10,10 +10,8 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Add headers for better readability using directory["columns"].
-# Set column widths or alignment for a polished look:
+# Set a style for highlighting the selected row for better visual feedback
 
-    
 import tkinter as tk
 from tkinter import ttk
 
@@ -29,7 +27,13 @@ def on_double_click(event):
 def create_directory():
     directory = ttk.Treeview(window)
     directory.pack(fill="both", expand=True)
-   
+
+    # Styling for the selected row
+    style = ttk.Style()
+    style.map("Treeview", 
+          background=[("selected", "lightblue")],
+          foreground=[("selected", "black")])
+    
     directory["columns"] = ("URL",)
     directory.column("#0", width=100, anchor="w")  # Tree column (for 'text')
     directory.column("URL", width=300, anchor="w")
