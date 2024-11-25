@@ -10,20 +10,20 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Created create_input_frame with input to display link text
+# Insert "Item" column text into regex_entry field
 
 import tkinter as tk
 from tkinter import ttk
 
 def on_double_click(event):
-    # Get the clicked row's URL and insert it into the text input
+    # Get the clicked row's "Item" text and insert it into the text input
     item_id = event.widget.focus()
     item = event.widget.item(item_id)
-    values = item["values"]
-    url = values[0]
-    if url:
+    item_text = item["text"]  # Get the text from the first column ("Item")
+    if item_text:
+		   
         regex_entry.delete(0, tk.END)  # Clear the current text
-        regex_entry.insert(0, url)  # Insert the URL
+        regex_entry.insert(0, item_text)  # Insert the "Item" text
 
 
 def create_input_frame(parent):
@@ -52,8 +52,8 @@ def create_directory_frame(parent):
 
     # Configure columns
     directory["columns"] = ("URL",)
-    directory.column("#0", width=100, anchor="w")
-    directory.column("URL", width=300, anchor="w")
+    directory.column("#0", width=100, anchor="w")  # The first column (Treeview's text)
+    directory.column("URL", width=300, anchor="w")  # The second column
     directory.heading("#0", text="Item")
     directory.heading("URL", text="Link")
 
