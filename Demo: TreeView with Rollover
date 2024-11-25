@@ -10,9 +10,10 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Different tkinter binding for any ttk treeview row
-# Source: https://stackoverflow.com/questions/46592551/different-tkinter-binding-for-any-ttk-treeview-row
+# Add headers for better readability using directory["columns"].
+# Set column widths or alignment for a polished look:
 
+    
 import tkinter as tk
 from tkinter import ttk
 
@@ -28,6 +29,13 @@ def on_double_click(event):
 def create_directory():
     directory = ttk.Treeview(window)
     directory.pack(fill="both", expand=True)
+   
+    directory["columns"] = ("URL",)
+    directory.column("#0", width=100, anchor="w")  # Tree column (for 'text')
+    directory.column("URL", width=300, anchor="w")
+    directory.heading("#0", text="Item")
+    directory.heading("URL", text="Link")
+
     
     directory.bind("<Double-Button-1>", on_double_click)
     
@@ -47,6 +55,9 @@ def create_window():
     window.resizable(True, True)    
 
     create_directory()
+    
+    # Run the application
+    window.mainloop()
 
 
 if __name__ == "__main__":
