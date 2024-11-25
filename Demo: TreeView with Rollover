@@ -10,10 +10,18 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Insert "Item" column text into regex_entry field
+# Treeview now displays key, value pairs from dictionary regex_code
 
 import tkinter as tk
 from tkinter import ttk
+
+# Sample dictionary for regex_code
+regex_code = {
+    "Email": r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",
+    "Phone": r"\+?\d[\d -]{8,}\d",
+    "URL": r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+",
+    "Date": r"\b\d{1,2}/\d{1,2}/\d{2,4}\b",
+}
 
 def on_double_click(event):
     # Get the clicked row's "Item" text and insert it into the text input
@@ -21,10 +29,8 @@ def on_double_click(event):
     item = event.widget.item(item_id)
     item_text = item["text"]  # Get the text from the first column ("Item")
     if item_text:
-		   
         regex_entry.delete(0, tk.END)  # Clear the current text
         regex_entry.insert(0, item_text)  # Insert the "Item" text
-
 
 def create_input_frame(parent):
     # Create a frame to hold the label and text input
@@ -41,7 +47,6 @@ def create_input_frame(parent):
 
     input_frame.columnconfigure(1, weight=1)  # Make the entry stretchable
 
-
 def create_directory_frame(parent):
     # Create a frame to hold the Treeview
     directory_frame = ttk.Frame(parent)
@@ -51,21 +56,18 @@ def create_directory_frame(parent):
     directory.pack(fill="both", expand=True)
 
     # Configure columns
-    directory["columns"] = ("URL",)
-    directory.column("#0", width=100, anchor="w")  # The first column (Treeview's text)
-    directory.column("URL", width=300, anchor="w")  # The second column
+    directory["columns"] = ("Link",)
+    directory.column("#0", width=150, anchor="w")  # The first column (Treeview's text)
+    directory.column("Link", width=300, anchor="w")  # The second column
     directory.heading("#0", text="Item")
-    directory.heading("URL", text="Link")
+    directory.heading("Link", text="Link")
 
     # Bind double-click event
     directory.bind("<Double-Button-1>", on_double_click)
 
-    # Add items
-    for x in range(10):
-        url = f"http://example.com/{x}"
-        text = f"item {x}"
-        directory.insert("", x, text=text, values=[url])
-
+    # Populate the Treeview with dictionary key-value pairs
+    for key, value in regex_code.items():
+        directory.insert("", "end", text=key, values=[value])
 
 def create_window():
     global window
@@ -84,7 +86,6 @@ def create_window():
 
     # Run the application
     window.mainloop()
-
 
 if __name__ == "__main__":
     create_window()
