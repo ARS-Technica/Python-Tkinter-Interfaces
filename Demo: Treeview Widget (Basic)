@@ -88,7 +88,7 @@ def create_directory_frame(parent):
         # Identify the row being hovered over
         item_id = directory.identify_row(event.y)
     
-        # Remove the hover tag from all rows to ensure clean state
+        # Remove the hover tag from all rows to ensure a clean state
         for child in directory.get_children():
             directory.item(child, tags=())
     
@@ -100,6 +100,12 @@ def create_directory_frame(parent):
         # Remove the hover tag from all rows to restore original styles
         for child in directory.get_children():
             directory.item(child, tags=())
+    
+            # Re-apply the original row styles (even/odd)
+            if child % 2 == 0:
+                directory.item(child, tags=("evenrow",))
+            else:
+                directory.item(child, tags=("oddrow",))
 
 
 
