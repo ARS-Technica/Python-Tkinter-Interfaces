@@ -94,7 +94,41 @@ def create_directory_frame(parent):
     
         # Add the hover tag to the specific row, preserving original styles
         directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
+        tags = ["hover"]
+        index = directory.index(item_id)
+        if index % 2 == 0:
+            tags.append("evenrow")
+        else:
+            tags.append("oddrow")
+        directory.item(item_id, tags=tags)
+
+    """
+    def on_mouse_over(event):
+        # Identify the row being hovered over
+        item_id = directory.identify_row(event.y)
+    
+        # Remove the hover tag from all rows to ensure a clean state
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    
+        # Add the hover tag to the specific row, preserving original styles
+        directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
+        directory.item(item_id, tags=("hover", "evenrow" if item_id % 2 == 0 else "oddrow"))
+    """
+    """
+    def on_mouse_over(event):
+        # Identify the row being hovered over
+        item_id = directory.identify_row(event.y)
+    
+        # Remove the hover tag from all rows to ensure a clean state
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    
+        # Add the hover tag to the specific row, preserving original styles
+        directory.tag_configure("hover", background="#d0d0d0")  # Adjust highlight color as needed
         directory.item(item_id, tags=("hover",))
+    """
+  
     
     def on_mouse_leave(event):
         # Remove the hover tag from all rows to restore original styles
