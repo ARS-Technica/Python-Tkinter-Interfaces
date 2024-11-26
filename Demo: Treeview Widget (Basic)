@@ -84,16 +84,20 @@ def create_directory_frame(parent):
 
 
 
-    # Moused over rows stay highlighted
     def on_mouse_over(event):
-        # Highlight the row being moused over
+        # Identify the row being hovered over
         item_id = directory.identify_row(event.y)
-        # Add a new tag for the hovered row, preserving original styles
+    
+        # Remove the hover tag from all rows to ensure clean state
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    
+        # Add the hover tag to the specific row, preserving original styles
         directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
         directory.item(item_id, tags=("hover",))
     
     def on_mouse_leave(event):
-        # Remove the hover tag from all rows
+        # Remove the hover tag from all rows to restore original styles
         for child in directory.get_children():
             directory.item(child, tags=())
 
