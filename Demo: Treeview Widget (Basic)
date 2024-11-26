@@ -75,13 +75,14 @@ def create_directory_frame(parent):
     # Apply alternating row colors and mouse-over effect
     def apply_row_styles():
         for i, child in enumerate(directory.get_children()):
-            # Alternate row background colors
             if i % 2 == 0:
                 directory.tag_configure("evenrow", background="white")
                 directory.item(child, tags=("evenrow",))
             else:
                 directory.tag_configure("oddrow", background="#f2f2f2")
                 directory.item(child, tags=("oddrow",))
+
+
 
     def on_mouse_over(event):
         # Highlight the row being moused over
@@ -95,6 +96,8 @@ def create_directory_frame(parent):
     def on_mouse_leave(event):
         # Reapply the original row styles on mouse leave
         apply_row_styles()
+
+
 
     directory.bind("<Motion>", on_mouse_over)
     directory.bind("<Leave>", on_mouse_leave)
