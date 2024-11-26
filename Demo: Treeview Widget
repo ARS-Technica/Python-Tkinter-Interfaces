@@ -1,0 +1,39 @@
+# -*- coding: utf-8 -*-
+"""
+Demonstration of a Treeview Widget that displays the key, value data of 
+a nested dictionary.
+"""
+
+
+import tkinter as tk
+from tkinter import ttk
+
+def create_treeview(root, data):
+    tree = ttk.Treeview(root, columns=("Key", "Value"))
+    tree.heading("#0", text="Category")
+    tree.heading("Key", text="Key")
+    tree.heading("Value", text="Value")
+    tree.pack()
+
+    for category, items in data.items():
+        parent = tree.insert("", "end", text=category)
+        for key, value in items.items():
+            tree.insert(parent, "end", text="", values=(key, value))
+
+# Sample dictionary data
+data = {
+    "Category 1": {
+        "key1": "value1",
+        "key2": "value2"
+    },
+    "Category 2": {
+        "key3": "value3",
+        "key4": "value4"
+    },
+}
+
+
+root = tk.Tk()
+create_treeview(root, data)
+root.mainloop()
+
