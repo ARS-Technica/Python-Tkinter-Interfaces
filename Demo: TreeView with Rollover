@@ -10,17 +10,19 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Treeview now displays key, value pairs from dictionary regex_code
+# To ensure the alternating row colors remain intact while still allowing a 
+# mouse-over effect, you can modify the on_mouse_over function to apply the hover 
+# effect without overriding the alternating row styles.
 
 import tkinter as tk
 from tkinter import ttk
 
-# Sample dictionary for regex_code
+# Example dictionary
 regex_code = {
-    "Email": r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}",
-    "Phone": r"\+?\d[\d -]{8,}\d",
-    "URL": r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+",
-    "Date": r"\b\d{1,2}/\d{1,2}/\d{2,4}\b",
+    "Item 1": "https://example.com/1",
+    "Item 2": "https://example.com/2",
+    "Item 3": "https://example.com/3",
+    "Item 4": "https://example.com/4",
 }
 
 def on_double_click(event):
@@ -52,7 +54,19 @@ def create_directory_frame(parent):
     directory_frame = ttk.Frame(parent)
     directory_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=(0, 5))
 
-    directory = ttk.Treeview(directory_frame)
+    # Configure Treeview Style
+    style = ttk.Style()
+    style.configure("Custom.Treeview", rowheight=25)
+    style.map(
+        "Custom.Treeview", 
+        background=[("selected", "#cce5ff")],  # Highlight color when selected
+        foreground=[("selected", "black")],   # Text color when selected
+    )
+    style.layout(
+        "Custom.Treeview", [("Treeview.treearea", {"sticky": "nswe"})]
+    )
+
+    directory = ttk.Treeview(directory_frame, style="Custom.Treeview")
     directory.pack(fill="both", expand=True)
 
     # Configure columns
@@ -62,12 +76,38 @@ def create_directory_frame(parent):
     directory.heading("#0", text="Item")
     directory.heading("Link", text="Link")
 
-    # Bind double-click event
-    directory.bind("<Double-Button-1>", on_double_click)
+    # Apply alternating row colors and mouse-over effect
+    def apply_row_styles():
+        for i, child in enumerate(directory.get_children()):
+            # Alternate row background colors
+            if i % 2 == 0:
+                directory.tag_configure("evenrow", background="white", foreground="black")
+                directory.item(child, tags=("evenrow",))
+            else:
+                directory.tag_configure("oddrow", background="#f2f2f2", foreground="black")
+                directory.item(child, tags=("oddrow",))
+
+    def on_mouse_over(event):
+        # Highlight the row being moused over
+        item_id = directory.identify_row(event.y)
+        if item_id:  # Ensure an item is hovered over
+            original_tags = directory.item(item_id, "tags")  # Get original tags
+            directory.tag_configure("hover", background="#d9d9d9")
+            directory.item(item_id, tags=("hover", *original_tags))  # Add hover tag
+
+    def on_mouse_leave(event):
+        # Reapply the original row styles on mouse leave
+        apply_row_styles()
+
+    directory.bind("<Motion>", on_mouse_over)
+    directory.bind("<Leave>", on_mouse_leave)
 
     # Populate the Treeview with dictionary key-value pairs
     for key, value in regex_code.items():
         directory.insert("", "end", text=key, values=[value])
+
+    # Apply initial row styles
+    apply_row_styles()
 
 def create_window():
     global window
