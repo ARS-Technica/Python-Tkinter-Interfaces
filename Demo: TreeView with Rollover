@@ -10,9 +10,7 @@ over a row, change that row's background a darker grey.
 """
 
 
-# To ensure the alternating row colors remain intact while still allowing a 
-# mouse-over effect, you can modify the on_mouse_over function to apply the hover 
-# effect without overriding the alternating row styles.
+# Alternating style remains.  Selected style remains.  No rollover.
 
 import tkinter as tk
 from tkinter import ttk
@@ -26,13 +24,13 @@ regex_code = {
 }
 
 def on_double_click(event):
-    # Get the clicked row's "Item" text and insert it into the text input
+    # Get the clicked row's "Item" text (from column "#0") and insert it into the text input
     item_id = event.widget.focus()
-    item = event.widget.item(item_id)
-    item_text = item["text"]  # Get the text from the first column ("Item")
-    if item_text:
-        regex_entry.delete(0, tk.END)  # Clear the current text
-        regex_entry.insert(0, item_text)  # Insert the "Item" text
+    if item_id:  # Ensure a valid item is clicked
+        item_text = event.widget.item(item_id)["text"]  # Access the text in column "#0"
+        if item_text:
+            regex_entry.delete(0, tk.END)  # Clear the current text
+            regex_entry.insert(0, item_text)  # Insert the "Item" text
 
 def create_input_frame(parent):
     # Create a frame to hold the label and text input
@@ -101,6 +99,9 @@ def create_directory_frame(parent):
 
     directory.bind("<Motion>", on_mouse_over)
     directory.bind("<Leave>", on_mouse_leave)
+
+    # Bind double-click event
+    directory.bind("<Double-Button-1>", on_double_click)
 
     # Populate the Treeview with dictionary key-value pairs
     for key, value in regex_code.items():
