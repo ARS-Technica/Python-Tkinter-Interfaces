@@ -78,6 +78,7 @@ def create_directory_frame(parent):
                 directory.tag_configure("oddrow", background="#f2f2f2", foreground="black")
                 directory.item(child, tags=("oddrow",))
 
+
     # Add hover effect while retaining alternating colors
     def on_mouse_over(event):
         item_id = directory.identify_row(event.y)
@@ -95,6 +96,7 @@ def create_directory_frame(parent):
             if "hover" not in tags:
                 directory.item(item_id, tags=("hover", *tags))
 
+    
     def on_mouse_leave(event):
         # Reapply the alternating row styles on mouse leave
         apply_row_styles()
