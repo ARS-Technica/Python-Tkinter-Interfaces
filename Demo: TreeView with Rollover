@@ -79,22 +79,27 @@ def create_directory_frame(parent):
                 directory.item(child, tags=("oddrow",))
 
 
-    # Add hover effect while retaining alternating colors
     def on_mouse_over(event):
         item_id = directory.identify_row(event.y)
-        if item_id:
-            # Remove hover tag from all rows first
-            for child in directory.get_children():
-                tags = directory.item(child, "tags")
-                if "hover" in tags:
-                    tags = tuple(tag for tag in tags if tag != "hover")
-                    directory.item(child, tags=tags)
-
-            # Add hover tag to the currently hovered row
-            tags = directory.item(item_id, "tags")
-            directory.tag_configure("hover", background="#d9d9d9", foreground="black")
-            if "hover" not in tags:
-                directory.item(item_id, tags=("hover", *tags))
+        if not item_id:
+            return
+    
+        # Get previously hovered item (if any)
+        previously_hovered = directory.item(directory.focus(), "tags")
+        if previously_hovered:
+            try:
+                # Remove hover tag from previously hovered row (if different from current)
+                if previously_hovered[0] != "hover" or previously_hovered[1] != item_id:
+                    directory.item(previously_hovered[1], tags=tuple(tag for tag in previously_hovered if tag != "hover"))
+            except IndexError:
+                # Handle potential IndexError if previously_hovered doesn't have an item ID
+                pass
+    
+        # Add hover tag to the currently hovered row
+        tags = directory.item(item_id, "tags")
+        directory.tag_configure("hover", background="#d9d9d9", foreground="black")
+        if "hover" not in tags:
+            directory.item(item_id, tags=("hover", item_id, *tags))
 
     
     def on_mouse_leave(event):
