@@ -1,170 +1,40 @@
 # -*- coding: utf-8 -*-
 """
-Demonstration of a Treeview Widget that displays the key, value data of 
-a nested dictionary.
+Code for Tkinter's Treeview Widget
+Created on Tue Aug 20 15:48:19 2024
+
+The "Treeview" widget provides a flexible and customizable interface for displaying
+hierarchical data structures, with support for features such as data binding, 
+column headers, and item selection. Treeview items are represented as rows in 
+a table, with each row corresponding to a node in the tree structure.
+
+Source: Galvin M. Hands-on Python GUI Development Course With Exercises...2024
 """
 
-
-# Added Alternating Row Colors and Mouse-Over Effect
 
 import tkinter as tk
 from tkinter import ttk
 
-# Example dictionary
-regex_code = {
-    "Item 1": "https://example.com/1",
-    "Item 2": "https://example.com/2",
-    "Item 3": "https://example.com/3",
-    "Item 4": "https://example.com/4",
-}
+# Create the main window
+root = tk.Tk()
+root.title("Treeview Example")
 
-def on_double_click(event):
-    # Get the clicked row's "Item" text and insert it into the text input
-    item_id = event.widget.focus()
-    item = event.widget.item(item_id)
-    item_text = item["text"]  # Get the text from the first column ("Item")
-    if item_text:
-        regex_entry.delete(0, tk.END)  # Clear the current text
-        regex_entry.insert(0, item_text)  # Insert the "Item" text
+# Create a Treeview widget
+tree = ttk.Treeview(root)
+tree.pack(fill=tk.BOTH, expand=True)
 
-def create_input_frame(parent):
-    # Create a frame to hold the label and text input
-    input_frame = ttk.Frame(parent)
-    input_frame.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+# Define columns
+tree["columns"] = ("Name", "Type")
 
-    # Add a label and entry widget
-    label = ttk.Label(input_frame, text="Regular Expression")
-    label.grid(row=0, column=0, sticky="w", padx=(0, 5))
-    
-    global regex_entry
-    regex_entry = ttk.Entry(input_frame, width=50)
-    regex_entry.grid(row=0, column=1, sticky="ew")
+# Configure column headings
+tree.heading("#0", text="ID")
+tree.heading("Name", text="Name")
+tree.heading("Type", text="Type")
 
-    input_frame.columnconfigure(1, weight=1)  # Make the entry stretchable
-
-def create_directory_frame(parent):
-    # Create a frame to hold the Treeview
-    directory_frame = ttk.Frame(parent)
-    directory_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=(0, 5))
-
-    # Configure Treeview Style
-    style = ttk.Style()
-    style.configure("Custom.Treeview", rowheight=25)
-    style.map(
-        "Custom.Treeview", 
-        background=[("selected", "#cce5ff")],  # Highlight color when selected
-        foreground=[("selected", "black")],   # Text color when selected
-    )
-    style.layout(
-        "Custom.Treeview", [("Treeview.treearea", {"sticky": "nswe"})]
-    )
-
-    directory = ttk.Treeview(directory_frame, style="Custom.Treeview")
-    directory.pack(fill="both", expand=True)
-
-    # Configure columns
-    directory["columns"] = ("Link",)
-    directory.column("#0", width=150, anchor="w")  # The first column (Treeview's text)
-    directory.column("Link", width=300, anchor="w")  # The second column
-    directory.heading("#0", text="Item")
-    directory.heading("Link", text="Link")
-
-    # Bind double-click event
-    directory.bind("<Double-Button-1>", on_double_click)
-
-    # Apply alternating row colors and mouse-over effect
-    def apply_row_styles():
-        for i, child in enumerate(directory.get_children()):
-            if i % 2 == 0:
-                directory.tag_configure("evenrow", background="white")
-                directory.item(child, tags=("evenrow",))
-            else:
-                directory.tag_configure("oddrow", background="#f2f2f2")
-                directory.item(child, tags=("oddrow",))
-
-
-
-    def on_mouse_over(event):
-        # Identify the row being hovered over
-        item_id = directory.identify_row(event.y)
-    
-        # Remove the hover tag from all rows to ensure a clean state
-        for child in directory.get_children():
-            directory.item(child, tags=())
-    
-        # Add the hover tag to the specific row, preserving original styles
-        directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
-        tags = ["hover"]
-        index = directory.index(item_id)
-        if index % 2 == 0:
-            tags.append("evenrow")
-        else:
-            tags.append("oddrow")
-        directory.item(item_id, tags=tags)
-
-    """
-    def on_mouse_over(event):
-        # Identify the row being hovered over
-        item_id = directory.identify_row(event.y)
-    
-        # Remove the hover tag from all rows to ensure a clean state
-        for child in directory.get_children():
-            directory.item(child, tags=())
-    
-        # Add the hover tag to the specific row, preserving original styles
-        directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
-        directory.item(item_id, tags=("hover", "evenrow" if item_id % 2 == 0 else "oddrow"))
-    """
-    """
-    def on_mouse_over(event):
-        # Identify the row being hovered over
-        item_id = directory.identify_row(event.y)
-    
-        # Remove the hover tag from all rows to ensure a clean state
-        for child in directory.get_children():
-            directory.item(child, tags=())
-    
-        # Add the hover tag to the specific row, preserving original styles
-        directory.tag_configure("hover", background="#d0d0d0")  # Adjust highlight color as needed
-        directory.item(item_id, tags=("hover",))
-    """
-  
-    
-    def on_mouse_leave(event):
-        # Remove the hover tag from all rows to restore original styles
-        for child in directory.get_children():
-            directory.item(child, tags=())
-
-
-
-    directory.bind("<Motion>", on_mouse_over)
-    directory.bind("<Leave>", on_mouse_leave)
-
-    # Populate the Treeview with dictionary key-value pairs
-    for key, value in regex_code.items():
-        directory.insert("", "end", text=key, values=[value])
-
-    # Apply initial row styles
-    apply_row_styles()
-
-def create_window():
-    global window
-    window = tk.Tk()
-    window.title("Treeview with Text Input")
-    window.geometry("600x400")
-    window.resizable(True, True)
-
-    # Configure grid
-    window.columnconfigure(0, weight=1)
-    window.rowconfigure(1, weight=1)
-
-    # Create input frame and directory frame
-    create_input_frame(window)
-    create_directory_frame(window)
-
-    # Run the application
-    window.mainloop()
-
-if __name__ == "__main__":
-    create_window()
+# Insert data into the treeview
+tree.insert("", "end", text="1", values=("Folder 1", "Folder"))
+tree.insert("", "end", text="2", values=("File 1", "File"))
+#tree.insert("1", "end", text="3", values=("Subfolder 1", "Folder"))
+#tree.insert("1", "end", text="4", values=("File 2", "File"))
+root.mainloop()
 
