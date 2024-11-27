@@ -22,13 +22,12 @@ regex_code = {
 }
 
 def on_double_click(event):
-    # Get the clicked row's "Item" text (from column "#0") and insert it into the text input
+    # Get the clicked row's "Item" text and insert it into the text input
     item_id = event.widget.focus()
     if item_id:  # Ensure a valid item is clicked
         item_text = event.widget.item(item_id)["text"]  # Access the text in column "#0"
-        if item_text:
-            regex_entry.delete(0, tk.END)  # Clear the current text
-            regex_entry.insert(0, item_text)  # Insert the "Item" text
+        regex_entry.delete(0, tk.END)  # Clear the current text
+        regex_entry.insert(0, item_text)  # Insert the "Item" text
 
 def create_input_frame(parent):
     # Create a frame to hold the label and text input
@@ -54,12 +53,9 @@ def create_directory_frame(parent):
     style = ttk.Style()
     style.configure("Custom.Treeview", rowheight=25)
     style.map(
-        "Custom.Treeview", 
+        "Custom.Treeview",
         background=[("selected", "#cce5ff")],  # Highlight color when selected
         foreground=[("selected", "black")],   # Text color when selected
-    )
-    style.layout(
-        "Custom.Treeview", [("Treeview.treearea", {"sticky": "nswe"})]
     )
 
     directory = ttk.Treeview(directory_frame, style="Custom.Treeview")
@@ -82,37 +78,30 @@ def create_directory_frame(parent):
                 directory.tag_configure("oddrow", background="#f2f2f2", foreground="black")
                 directory.item(child, tags=("oddrow",))
 
-    # Add hover effect without overwriting alternating styles
-    hovered_row = None  # Keep track of the currently hovered row
-
+    # Add hover effect while retaining alternating colors
     def on_mouse_over(event):
-        nonlocal hovered_row
         item_id = directory.identify_row(event.y)
-        if item_id and item_id != hovered_row:
-            # Restore original tags for the previously hovered row
-            if hovered_row:
-                original_tags = directory.item(hovered_row, "tags")
-                directory.item(hovered_row, tags=original_tags)
+        if item_id:
+            # Remove hover tag from all rows first
+            for child in directory.get_children():
+                tags = directory.item(child, "tags")
+                if "hover" in tags:
+                    tags = tuple(tag for tag in tags if tag != "hover")
+                    directory.item(child, tags=tags)
 
-            # Apply hover effect
-            original_tags = directory.item(item_id, "tags")
+            # Add hover tag to the currently hovered row
+            tags = directory.item(item_id, "tags")
             directory.tag_configure("hover", background="#d9d9d9", foreground="black")
-            directory.item(item_id, tags=("hover", *original_tags))
-            hovered_row = item_id
+            if "hover" not in tags:
+                directory.item(item_id, tags=("hover", *tags))
 
     def on_mouse_leave(event):
-        nonlocal hovered_row
-        if hovered_row:
-            # Restore the original tags for the last hovered row
-            original_tags = directory.item(hovered_row, "tags")
-            directory.item(hovered_row, tags=original_tags)
-            hovered_row = None
+        # Reapply the alternating row styles on mouse leave
+        apply_row_styles()
 
+    # Bind mouse events for hover
     directory.bind("<Motion>", on_mouse_over)
     directory.bind("<Leave>", on_mouse_leave)
-
-    # Bind double-click event
-    directory.bind("<Double-Button-1>", on_double_click)
 
     # Populate the Treeview with dictionary key-value pairs
     for key, value in regex_code.items():
