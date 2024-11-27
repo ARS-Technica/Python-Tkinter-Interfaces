@@ -10,8 +10,6 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Alternating style remains.  Selected style remains.  No rollover.
-
 import tkinter as tk
 from tkinter import ttk
 
@@ -74,10 +72,9 @@ def create_directory_frame(parent):
     directory.heading("#0", text="Item")
     directory.heading("Link", text="Link")
 
-    # Apply alternating row colors and mouse-over effect
+    # Apply alternating row colors
     def apply_row_styles():
         for i, child in enumerate(directory.get_children()):
-            # Alternate row background colors
             if i % 2 == 0:
                 directory.tag_configure("evenrow", background="white", foreground="black")
                 directory.item(child, tags=("evenrow",))
@@ -85,17 +82,31 @@ def create_directory_frame(parent):
                 directory.tag_configure("oddrow", background="#f2f2f2", foreground="black")
                 directory.item(child, tags=("oddrow",))
 
+    # Add hover effect without overwriting alternating styles
+    hovered_row = None  # Keep track of the currently hovered row
+
     def on_mouse_over(event):
-        # Highlight the row being moused over
+        nonlocal hovered_row
         item_id = directory.identify_row(event.y)
-        if item_id:  # Ensure an item is hovered over
-            original_tags = directory.item(item_id, "tags")  # Get original tags
-            directory.tag_configure("hover", background="#d9d9d9")
-            directory.item(item_id, tags=("hover", *original_tags))  # Add hover tag
+        if item_id and item_id != hovered_row:
+            # Restore original tags for the previously hovered row
+            if hovered_row:
+                original_tags = directory.item(hovered_row, "tags")
+                directory.item(hovered_row, tags=original_tags)
+
+            # Apply hover effect
+            original_tags = directory.item(item_id, "tags")
+            directory.tag_configure("hover", background="#d9d9d9", foreground="black")
+            directory.item(item_id, tags=("hover", *original_tags))
+            hovered_row = item_id
 
     def on_mouse_leave(event):
-        # Reapply the original row styles on mouse leave
-        apply_row_styles()
+        nonlocal hovered_row
+        if hovered_row:
+            # Restore the original tags for the last hovered row
+            original_tags = directory.item(hovered_row, "tags")
+            directory.item(hovered_row, tags=original_tags)
+            hovered_row = None
 
     directory.bind("<Motion>", on_mouse_over)
     directory.bind("<Leave>", on_mouse_leave)
