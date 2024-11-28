@@ -10,7 +10,7 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Broke the create_directory_frame function into smaller functions. 
+# Last Stable single panel TreeView widget
 
 
 import tkinter as tk
