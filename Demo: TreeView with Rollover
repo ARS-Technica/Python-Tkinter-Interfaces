@@ -10,7 +10,8 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Alternating Row Colors and Mouse-Over Effect BOTH Visible!!!
+# Refactored create_directory_frame funtion into smaller functions
+ 
 
 import tkinter as tk
 from tkinter import ttk
@@ -47,12 +48,11 @@ def create_input_frame(parent):
 
     input_frame.columnconfigure(1, weight=1)  # Make the entry stretchable
 
-def create_directory_frame(parent):
-    # Create a frame to hold the Treeview
-    directory_frame = ttk.Frame(parent)
-    directory_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=(0, 5))
 
-    # Configure Treeview Style
+# Functions to Create Directory (Treeview Widget) ----------------------------
+
+def create_treeview_style():
+    """Configure the Treeview widget's style."""
     style = ttk.Style()
     style.configure("Custom.Treeview", rowheight=25)
     style.map(
@@ -64,59 +64,99 @@ def create_directory_frame(parent):
         "Custom.Treeview", [("Treeview.treearea", {"sticky": "nswe"})]
     )
 
-    directory = ttk.Treeview(directory_frame, style="Custom.Treeview")
+def setup_treeview(parent):
+    """Create and configure the Treeview widget."""
+    directory = ttk.Treeview(parent, style="Custom.Treeview")
     directory.pack(fill="both", expand=True)
-
-    # Configure columns
     directory["columns"] = ("Link",)
-    directory.column("#0", width=150, anchor="w")  # The first column (Treeview's text)
+    directory.column("#0", width=150, anchor="w")  # The first column
     directory.column("Link", width=300, anchor="w")  # The second column
     directory.heading("#0", text="Item")
     directory.heading("Link", text="Link")
+    return directory
+
+def apply_row_styles(treeview):
+    """Apply alternating row styles to the Treeview."""
+    for i, child in enumerate(treeview.get_children()):
+        if i % 2 == 0:
+            treeview.tag_configure("evenrow", background="white")
+            treeview.item(child, tags=("evenrow",))
+        else:
+            treeview.tag_configure("oddrow", background="#f2f2f2")
+            treeview.item(child, tags=("oddrow",))
+
+def configure_hover_effects(treeview, apply_row_styles):
+    """Add hover effects to the Treeview."""
+    def on_mouse_over(event):
+        item_id = treeview.identify_row(event.y)
+        for child in treeview.get_children():
+            treeview.item(child, tags=())
+
+            # Most important line of code in this function:
+            apply_row_styles(treeview) # REQUIRED to keep alternating styles visible during rollover effects
+            
+        if item_id:
+            treeview.tag_configure("hover", background="#d9d9d9")
+            treeview.item(item_id, tags=("hover",))
     
-    def apply_row_styles():
-        for i, child in enumerate(directory.get_children()):
-            if i % 2 == 0:
-                directory.tag_configure("evenrow", background="white")
-                directory.item(child, tags=("evenrow",))
-            else:
-                directory.tag_configure("oddrow", background="#f2f2f2")
-                directory.item(child, tags=("oddrow",))    
-    #apply_row_styles()
+    def on_mouse_leave(event):
+        for child in treeview.get_children():
+            treeview.item(child, tags=())
+        apply_row_styles(treeview)
+
+    treeview.bind("<Motion>", on_mouse_over)
+    treeview.bind("<Leave>", on_mouse_leave)
+
+def populate_treeview(treeview, data):
+    """Populate the Treeview with data from a dictionary."""
+    for key, value in data.items():
+        treeview.insert("", "end", text=key, values=[value])
+
+# Ensure that the alternating row styles are visible from launch
+def create_directory_frame(parent):
+    """Main function to set up the directory frame."""
+    directory_frame = ttk.Frame(parent)
+    directory_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=(0, 5))
+
+    # Create and configure the Treeview
+    create_treeview_style()
+    directory = setup_treeview(directory_frame)
+
+    # Populate the Treeview
+    populate_treeview(directory, regex_code)
+
+    # Apply alternating row styles initially
+    apply_row_styles(directory)  # Critical call to ensure styles appear at startup
+
+    # Configure hover effects
+    configure_hover_effects(directory, apply_row_styles)
 
     # Bind double-click event
     directory.bind("<Double-Button-1>", on_double_click)
 
-    # Moused over rows stay highlighted
-    def on_mouse_over(event):
-        # Identify the row being hovered over
-        item_id = directory.identify_row(event.y)
-    
-        # Remove the hover tag from all rows to ensure clean state
-        for child in directory.get_children():
-            directory.item(child, tags=())
-            # Most important line of code in this function:
-            apply_row_styles() # REQUIRED to keep alternating styles visible during rollover effects
-            
-        # Add the hover tag to the specific row, preserving original styles
-        directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
-        directory.item(item_id, tags=("hover",))
+'''
+def create_directory_frame(parent):
+    """Main function to set up the directory frame."""
+    directory_frame = ttk.Frame(parent)
+    directory_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=(0, 5))
 
-    def on_mouse_leave(event):
-        # Remove the hover tag from all rows to restore original styles
-        for child in directory.get_children():
-            directory.item(child, tags=())
-        apply_row_styles()
-    
-    directory.bind("<Motion>", on_mouse_over)
-    directory.bind("<Leave>", on_mouse_leave)
+    # Create and configure the Treeview
+    create_treeview_style()
+    directory = setup_treeview(directory_frame)
 
-    # Populate the Treeview with dictionary key-value pairs
-    for key, value in regex_code.items():
-        directory.insert("", "end", text=key, values=[value])
+    # Apply styles and configure behavior
+    apply_row_styles(directory)
+    configure_hover_effects(directory, apply_row_styles)
 
-    # Apply initial row styles
-    apply_row_styles()
+    # Populate the Treeview
+    populate_treeview(directory, regex_code)
+
+    # Bind double-click event
+    directory.bind("<Double-Button-1>", on_double_click)
+'''
+
+# /Functions to Create Directory (Treeview Widget) ----------------------------
+
 
 def create_window():
     global window
