@@ -1,0 +1,53 @@
+"""
+Demonstration of two Treeview Widgets linked together.
+"""
+
+
+import tkinter as tk
+from tkinter import ttk
+
+def update_key_value_tree(event):
+    selected_category = event.widget.selection()[0]
+    category_name = event.widget.item(selected_category, "text")
+
+    key_value_tree.delete(*key_value_tree.get_children())
+    for key, value in data[category_name].items():
+        key_value_tree.insert("", "end", text="", values=(key, value))
+
+# Sample dictionary data
+data = {
+    "Category 1": {
+        "key1": "value1",
+        "key2": "value2"
+    },
+    "Category 2": {
+        "key3": "value3",
+        "key4": "value4"
+    },
+    # ... other categories
+}
+
+# Create the main window
+root = tk.Tk()
+
+# Create the category Treeview
+category_tree = ttk.Treeview(root)
+category_tree.heading("#0", text="Category")
+category_tree.pack(side="left", fill="y")
+
+# Populate the category Treeview
+for category in data:
+    category_tree.insert("", "end", text=category)
+
+# Create the key-value Treeview
+key_value_tree = ttk.Treeview(root, columns=("Key", "Value"))
+key_value_tree.heading("#0", text="")
+key_value_tree.heading("Key", text="Key")
+key_value_tree.heading("Value", text="Value")
+key_value_tree.pack(side="right", fill="both", expand=True)
+
+# Bind the selection event to the category Treeview
+category_tree.bind("<<TreeviewSelect>>", update_key_value_tree)
+
+root.mainloop()
+
