@@ -10,6 +10,8 @@ over a row, change that row's background a darker grey.
 """
 
 
+# Added Alternating Row Colors and Mouse-Over Effect
+
 import tkinter as tk
 from tkinter import ttk
 
@@ -24,8 +26,9 @@ regex_code = {
 def on_double_click(event):
     # Get the clicked row's "Item" text and insert it into the text input
     item_id = event.widget.focus()
-    if item_id:  # Ensure a valid item is clicked
-        item_text = event.widget.item(item_id)["text"]  # Access the text in column "#0"
+    item = event.widget.item(item_id)
+    item_text = item["text"]  # Get the text from the first column ("Item")
+    if item_text:
         regex_entry.delete(0, tk.END)  # Clear the current text
         regex_entry.insert(0, item_text)  # Insert the "Item" text
 
@@ -53,9 +56,12 @@ def create_directory_frame(parent):
     style = ttk.Style()
     style.configure("Custom.Treeview", rowheight=25)
     style.map(
-        "Custom.Treeview",
+        "Custom.Treeview", 
         background=[("selected", "#cce5ff")],  # Highlight color when selected
         foreground=[("selected", "black")],   # Text color when selected
+    )
+    style.layout(
+        "Custom.Treeview", [("Treeview.treearea", {"sticky": "nswe"})]
     )
 
     directory = ttk.Treeview(directory_frame, style="Custom.Treeview")
@@ -68,36 +74,171 @@ def create_directory_frame(parent):
     directory.heading("#0", text="Item")
     directory.heading("Link", text="Link")
 
-    # Apply alternating row colors
+    # Bind double-click event
+    directory.bind("<Double-Button-1>", on_double_click)
+
+
+    """
+    # Apply alternating row colors and mouse-over effect
+    def apply_row_styles():
+        for i, child in enumerate(directory.get_children()):
+            # Alternate row background colors
+            if i % 2 == 0:
+                directory.tag_configure("evenrow", background="white")
+                directory.item(child, tags=("evenrow",))
+            else:
+                directory.tag_configure("oddrow", background="#f2f2f2")
+                directory.item(child, tags=("oddrow",))
+    """
+
     def apply_row_styles():
         for i, child in enumerate(directory.get_children()):
             if i % 2 == 0:
-                directory.tag_configure("evenrow", background="white", foreground="black")
+                directory.tag_configure("evenrow", background="white")
                 directory.item(child, tags=("evenrow",))
             else:
-                directory.tag_configure("oddrow", background="#f2f2f2", foreground="black")
+                directory.tag_configure("oddrow", background="#f2f2f2")
                 directory.item(child, tags=("oddrow",))
 
+     ''' 
     def on_mouse_over(event):
+        # Identify the row being hovered over
         item_id = directory.identify_row(event.y)
-        if item_id:
-            # Configure the "hover" tag
-            directory.tag_configure("hover", background="#d9d9d9")
     
-            # Remove the "hover" tag from the previously hovered item
-            previously_hovered = directory.focus()
-            if previously_hovered:
-                directory.item(previously_hovered, tags=[tag for tag in directory.item(previously_hovered)['tags'] if tag != 'hover'])
+        # Remove the hover tag from all rows to ensure a clean state
+        for child in directory.get_children():
+            directory.item(child, tags=())
     
-            # Add the "hover" tag to the currently hovered item
-            directory.item(item_id, tags=(*directory.item(item_id)['tags'], 'hover'))
-
+        # Add the hover tag to the specific row, preserving original styles
+        directory.tag_configure("hover", background="#d0d0d0")  # Adjust highlight color as needed
+        directory.item(item_id, tags=("hover",))
+    '''        
     
+        
     def on_mouse_leave(event):
-        # Reapply the alternating row styles on mouse leave
+        # Remove the hover tag from all rows to restore original styles
+        for child in directory.get_children():
+            directory.item(child, tags=())
+            
+        # Reapply the original row styles on mouse leave
         apply_row_styles()
 
-    # Bind mouse events for hover
+
+    def on_mouse_over(event):
+        # Identify the row being hovered over
+        item_id = directory.identify_row(event.y)
+    
+        # Remove the hover tag from all rows to ensure a clean state
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    
+        # Add the hover tag to the specific row, preserving original styles
+        directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
+        directory.item(item_id, tags=("hover",))
+ 
+
+    """
+    # Very close.  Alternating rows diappear on mouseover.
+    def on_mouse_over(event):
+        # Identify the row being hovered over
+        item_id = directory.identify_row(event.y)
+    
+        # Remove the hover tag from all rows to ensure a clean state
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    
+        # Add the hover tag to the specific row, preserving original styles
+        directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
+        directory.item(item_id, tags=("hover",))
+    
+    def on_mouse_leave(event):
+        # Remove the hover tag from all rows to restore original styles
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    
+            # Re-apply the original row styles (even/odd) based on dictionary index
+            item_text = directory.item(child)["text"]
+            index = list(regex_code.keys()).index(item_text)
+            if index % 2 == 0:
+                directory.item(child, tags=("evenrow",))
+            else:
+                directory.item(child, tags=("oddrow",))
+    """    
+
+    """
+    def on_mouse_over(event):
+        # Identify the row being hovered over
+        item_id = directory.identify_row(event.y)
+    
+        # Remove the hover tag from all rows to ensure a clean state
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    
+        # Add the hover tag to the specific row, preserving original styles
+        directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
+        directory.item(item_id, tags=("hover",))
+    
+    def on_mouse_leave(event):
+        # Remove the hover tag from all rows to restore original styles
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    
+            # Re-apply the original row styles (even/odd)
+            if child % 2 == 0:
+                directory.item(child, tags=("evenrow",))
+            else:
+                directory.item(child, tags=("oddrow",))
+    """
+    
+    """
+    def on_mouse_over(event):
+        # Identify the row being hovered over
+        item_id = directory.identify_row(event.y)
+    
+        # Remove the hover tag from all rows to ensure clean state
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    
+        # Add the hover tag to the specific row, preserving original styles
+        directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
+        directory.item(item_id, tags=("hover",))
+    
+    def on_mouse_leave(event):
+        # Remove the hover tag from all rows to restore original styles
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    """
+    
+    """
+    # Moused over rows stay highlighted
+    def on_mouse_over(event):
+        # Highlight the row being moused over
+        item_id = directory.identify_row(event.y)
+        # Add a new tag for the hovered row, preserving original styles
+        directory.tag_configure("hover", background="#d9d9d9")  # Adjust highlight color as needed
+        directory.item(item_id, tags=("hover",))
+    
+    def on_mouse_leave(event):
+        # Remove the hover tag from all rows
+        for child in directory.get_children():
+            directory.item(child, tags=())
+    """
+
+    """
+    def on_mouse_over(event):
+        # Highlight the row being moused over
+        item_id = directory.identify_row(event.y)
+        for child in directory.get_children():
+            directory.tag_configure("hover", background="#d9d9d9")
+            directory.item(child, tags=())
+        if item_id:
+            directory.item(item_id, tags=("hover",))
+
+    def on_mouse_leave(event):
+        # Reapply the original row styles on mouse leave
+        apply_row_styles()
+    """
+
     directory.bind("<Motion>", on_mouse_over)
     directory.bind("<Leave>", on_mouse_leave)
 
