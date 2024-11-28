@@ -10,11 +10,12 @@ over a row, change that row's background a darker grey.
 """
 
 
-# Corrected errors from adding scrollbar to TreeView widget
+# Broke the create_directory_frame function into smaller functions. 
 
 
 import tkinter as tk
 from tkinter import ttk
+
 
 # Example dictionary (to 99)
 regex_code = {'Item 1': 'https://example.com/1', 'Item 2': 'https://example.com/2', 'Item 3': 'https://example.com/3', 'Item 4': 'https://example.com/4', 'Item 5': 'https://example.com/5', 'Item 6': 'https://example.com/6', 'Item 7': 'https://example.com/7', 'Item 8': 'https://example.com/8', 'Item 9': 'https://example.com/9', 'Item 10': 'https://example.com/10', 'Item 11': 'https://example.com/11', 'Item 12': 'https://example.com/12', 'Item 13': 'https://example.com/13', 'Item 14': 'https://example.com/14', 'Item 15': 'https://example.com/15', 'Item 16': 'https://example.com/16', 'Item 17': 'https://example.com/17', 'Item 18': 'https://example.com/18', 'Item 19': 'https://example.com/19', 'Item 20': 'https://example.com/20', 'Item 21': 'https://example.com/21', 'Item 22': 'https://example.com/22', 'Item 23': 'https://example.com/23', 'Item 24': 'https://example.com/24', 'Item 25': 'https://example.com/25', 'Item 26': 'https://example.com/26', 'Item 27': 'https://example.com/27', 'Item 28': 'https://example.com/28', 'Item 29': 'https://example.com/29', 'Item 30': 'https://example.com/30', 'Item 31': 'https://example.com/31', 'Item 32': 'https://example.com/32', 'Item 33': 'https://example.com/33', 'Item 34': 'https://example.com/34', 'Item 35': 'https://example.com/35', 'Item 36': 'https://example.com/36', 'Item 37': 'https://example.com/37', 'Item 38': 'https://example.com/38', 'Item 39': 'https://example.com/39', 'Item 40': 'https://example.com/40', 'Item 41': 'https://example.com/41', 'Item 42': 'https://example.com/42', 'Item 43': 'https://example.com/43', 'Item 44': 'https://example.com/44', 'Item 45': 'https://example.com/45', 'Item 46': 'https://example.com/46', 'Item 47': 'https://example.com/47', 'Item 48': 'https://example.com/48', 'Item 49': 'https://example.com/49', 'Item 50': 'https://example.com/50', 'Item 51': 'https://example.com/51', 'Item 52': 'https://example.com/52', 'Item 53': 'https://example.com/53', 'Item 54': 'https://example.com/54', 'Item 55': 'https://example.com/55', 'Item 56': 'https://example.com/56', 'Item 57': 'https://example.com/57', 'Item 58': 'https://example.com/58', 'Item 59': 'https://example.com/59', 'Item 60': 'https://example.com/60', 'Item 61': 'https://example.com/61', 'Item 62': 'https://example.com/62', 'Item 63': 'https://example.com/63', 'Item 64': 'https://example.com/64', 'Item 65': 'https://example.com/65', 'Item 66': 'https://example.com/66', 'Item 67': 'https://example.com/67', 'Item 68': 'https://example.com/68', 'Item 69': 'https://example.com/69', 'Item 70': 'https://example.com/70', 'Item 71': 'https://example.com/71', 'Item 72': 'https://example.com/72', 'Item 73': 'https://example.com/73', 'Item 74': 'https://example.com/74', 'Item 75': 'https://example.com/75', 'Item 76': 'https://example.com/76', 'Item 77': 'https://example.com/77', 'Item 78': 'https://example.com/78', 'Item 79': 'https://example.com/79', 'Item 80': 'https://example.com/80', 'Item 81': 'https://example.com/81', 'Item 82': 'https://example.com/82', 'Item 83': 'https://example.com/83', 'Item 84': 'https://example.com/84', 'Item 85': 'https://example.com/85', 'Item 86': 'https://example.com/86', 'Item 87': 'https://example.com/87', 'Item 88': 'https://example.com/88', 'Item 89': 'https://example.com/89', 'Item 90': 'https://example.com/90', 'Item 91': 'https://example.com/91', 'Item 92': 'https://example.com/92', 'Item 93': 'https://example.com/93', 'Item 94': 'https://example.com/94', 'Item 95': 'https://example.com/95', 'Item 96': 'https://example.com/96', 'Item 97': 'https://example.com/97', 'Item 98': 'https://example.com/98', 'Item 99': 'https://example.com/99'}
@@ -43,69 +44,80 @@ def create_input_frame(parent):
 
     input_frame.columnconfigure(1, weight=1)  # Make the entry stretchable
 
-def create_directory_frame(parent):
-    """Creates a directory frame containing a Treeview and a scrollbar."""
-    directory_frame = ttk.Frame(parent)
-    directory_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=(0, 5))
-
-    # Configure Treeview Style
+def configure_treeview_style():
+    """Configures the Treeview widget style."""
     style = ttk.Style()
     style.configure("Custom.Treeview", rowheight=25)
     style.map(
-        "Custom.Treeview", 
-        background=[("selected", "#cce5ff")],  # Highlight color when selected
-        foreground=[("selected", "black")],   # Text color when selected
+        "Custom.Treeview",
+        background=[("selected", "#cce5ff")],
+        foreground=[("selected", "black")],
     )
 
-    # Create the Treeview widget
-    directory = ttk.Treeview(directory_frame, columns=("Link",), style="Custom.Treeview")
-    directory.grid(row=0, column=0, sticky="nsew")
-
-    # Configure columns
-    directory.heading("#0", text="Item")
-    directory.heading("Link", text="Link")
-    directory.column("#0", width=150, anchor="w")
-    directory.column("Link", width=300, anchor="w")
-
-    # Add a vertical scrollbar
-    scrollbar = ttk.Scrollbar(directory_frame, orient="vertical", command=directory.yview)
-    scrollbar.grid(row=0, column=1, sticky="ns")
-    directory.configure(yscrollcommand=scrollbar.set)
-
-    # Populate the Treeview
+def populate_treeview(treeview):
+    """Populates the Treeview with data from the regex_code dictionary."""
     for key, value in regex_code.items():
-        directory.insert("", "end", text=key, values=[value])
+        treeview.insert("", "end", text=key, values=[value])
 
-    # Apply alternating row styles
-    def apply_row_styles():
-        for i, child in enumerate(directory.get_children()):
-            if i % 2 == 0:
-                directory.tag_configure("evenrow", background="white")
-                directory.item(child, tags=("evenrow",))
-            else:
-                directory.tag_configure("oddrow", background="#f2f2f2")
-                directory.item(child, tags=("oddrow",))
-    apply_row_styles()
+def apply_row_styles(treeview):
+    """Applies alternating row styles to the Treeview."""
+    for i, child in enumerate(treeview.get_children()):
+        if i % 2 == 0:
+            treeview.tag_configure("evenrow", background="white")
+            treeview.item(child, tags=("evenrow",))
+        else:
+            treeview.tag_configure("oddrow", background="#f2f2f2")
+            treeview.item(child, tags=("oddrow",))
 
-    # Configure hover effect
+def configure_hover_effect(treeview):
+    """Configures the hover effect for the Treeview rows."""
     def on_mouse_over(event):
-        item_id = directory.identify_row(event.y)
-        for child in directory.get_children():
-            directory.tag_configure("hover", background="#d9d9d9")
-            apply_row_styles()  # Ensure alternating styles are maintained
+        item_id = treeview.identify_row(event.y)
+        for child in treeview.get_children():
+            treeview.tag_configure("hover", background="#d9d9d9")
+            apply_row_styles(treeview)
         if item_id:
-            directory.item(item_id, tags=("hover",))
+            treeview.item(item_id, tags=("hover",))
+
     def on_mouse_leave(event):
-        apply_row_styles()  # Restore alternating styles
-    directory.bind("<Motion>", on_mouse_over)
-    directory.bind("<Leave>", on_mouse_leave)
+        apply_row_styles(treeview)
 
-    # Bind double-click event
-    directory.bind("<Double-Button-1>", on_double_click)
+    treeview.bind("<Motion>", on_mouse_over)
+    treeview.bind("<Leave>", on_mouse_leave)
 
-    # Configure resizing
+def create_treeview_with_scrollbar(parent):
+    """Creates the Treeview widget with a scrollbar."""
+    directory_frame = ttk.Frame(parent)
+    directory_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=(0, 5))
+
+    treeview = ttk.Treeview(directory_frame, columns=("Link",), style="Custom.Treeview")
+    treeview.grid(row=0, column=0, sticky="nsew")
+
+    # Configure Treeview columns
+    treeview.heading("#0", text="Item")
+    treeview.heading("Link", text="Link")
+    treeview.column("#0", width=150, anchor="w")
+    treeview.column("Link", width=300, anchor="w")
+
+    # Add scrollbar
+    scrollbar = ttk.Scrollbar(directory_frame, orient="vertical", command=treeview.yview)
+    scrollbar.grid(row=0, column=1, sticky="ns")
+    treeview.configure(yscrollcommand=scrollbar.set)
+
+    # Allow resizing
     directory_frame.columnconfigure(0, weight=1)
     directory_frame.rowconfigure(0, weight=1)
+
+    return treeview
+
+def create_directory_frame(parent):
+    """Creates the directory frame containing the Treeview."""
+    configure_treeview_style()
+    treeview = create_treeview_with_scrollbar(parent)
+    populate_treeview(treeview)
+    apply_row_styles(treeview)
+    configure_hover_effect(treeview)
+    treeview.bind("<Double-Button-1>", on_double_click)
 
 def create_window():
     """Creates the main application window."""
