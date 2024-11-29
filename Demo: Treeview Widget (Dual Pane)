@@ -10,6 +10,9 @@ external .JSON file.
 """
 
 
+# Eliminated the extra column and ensure that the "Key" and "Value" columns fill the entire width of the Treeview widget on the right
+
+
 import tkinter as tk
 from tkinter import ttk
 
@@ -47,9 +50,14 @@ for category in data:
     category_tree.insert("", "end", text=category)
 
 # Create the key-value Treeview
-key_value_tree = ttk.Treeview(root, columns=("Key", "Value"), displaycolumns=("Key", "Value"))
+key_value_tree = ttk.Treeview(root, columns=("Key", "Value"), show="headings")  # "show=headings" removes the default #0 column
 key_value_tree.heading("Key", text="Key")
 key_value_tree.heading("Value", text="Value")
+
+# Set columns to fill the widget width
+key_value_tree.column("Key", anchor="w", width=150, stretch=True)
+key_value_tree.column("Value", anchor="w", width=150, stretch=True)
+
 key_value_tree.pack(side="right", fill="both", expand=True)
 
 # Bind the selection event to the category Treeview
