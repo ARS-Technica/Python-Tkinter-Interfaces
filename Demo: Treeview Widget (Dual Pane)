@@ -19,7 +19,7 @@ def update_key_value_tree(event):
 
     key_value_tree.delete(*key_value_tree.get_children())
     for key, value in data[category_name].items():
-        key_value_tree.insert("", "end", text="", values=(key, value))
+        key_value_tree.insert("", "end", values=(key, value))
 
 # Sample dictionary data
 data = {
@@ -47,8 +47,7 @@ for category in data:
     category_tree.insert("", "end", text=category)
 
 # Create the key-value Treeview
-key_value_tree = ttk.Treeview(root, columns=("Key", "Value"))
-key_value_tree.heading("#0", text="")
+key_value_tree = ttk.Treeview(root, columns=("Key", "Value"), displaycolumns=("Key", "Value"))
 key_value_tree.heading("Key", text="Key")
 key_value_tree.heading("Value", text="Value")
 key_value_tree.pack(side="right", fill="both", expand=True)
