@@ -10,7 +10,7 @@ external .JSON file.
 """
 
 
-# Eliminated the extra column and ensure that the "Key" and "Value" columns fill the entire width of the Treeview widget on the right
+# Added scrollbar to right treeview widget
 
 
 import tkinter as tk
@@ -26,16 +26,18 @@ def update_key_value_tree(event):
 
 # Sample dictionary data
 data = {
-    "Category 1": {
-        "key1": "value1",
-        "key2": "value2"
-    },
-    "Category 2": {
-        "key3": "value3",
-        "key4": "value4"
-    },
-    # ... other categories
-}
+        'Category 0': {'Key1': 'Value1', 'Key2': 'Value2', 'Key3': 'Value3', 'Key4': 'Value4', 'Key5': 'Value5', 'Key6': 'Value6', 'Key7': 'Value7', 'Key8': 'Value8', 'Key9': 'Value9', 'Key10': 'Value10', 'Key11': 'Value11', 'Key12': 'Value12', 'Key13': 'Value13', 'Key14': 'Value14', 'Key15': 'Value15', 'Key16': 'Value16', 'Key17': 'Value17', 'Key18': 'Value18', 'Key19': 'Value19', 'Key20': 'Value20', 'Key21': 'Value21', 'Key22': 'Value22', 'Key23': 'Value23', 'Key24': 'Value24', 'Key25': 'Value25'}, 
+        'Category 1': {'Key26': 'Value26', 'Key27': 'Value27', 'Key28': 'Value28', 'Key29': 'Value29', 'Key30': 'Value30', 'Key31': 'Value31', 'Key32': 'Value32', 'Key33': 'Value33', 'Key34': 'Value34', 'Key35': 'Value35', 'Key36': 'Value36', 'Key37': 'Value37', 'Key38': 'Value38', 'Key39': 'Value39', 'Key40': 'Value40', 'Key41': 'Value41', 'Key42': 'Value42', 'Key43': 'Value43', 'Key44': 'Value44', 'Key45': 'Value45', 'Key46': 'Value46', 'Key47': 'Value47', 'Key48': 'Value48', 'Key49': 'Value49', 'Key50': 'Value50'}, 
+        'Category 2': {'Key51': 'Value51', 'Key52': 'Value52', 'Key53': 'Value53', 'Key54': 'Value54', 'Key55': 'Value55', 'Key56': 'Value56', 'Key57': 'Value57', 'Key58': 'Value58', 'Key59': 'Value59', 'Key60': 'Value60', 'Key61': 'Value61', 'Key62': 'Value62', 'Key63': 'Value63', 'Key64': 'Value64', 'Key65': 'Value65', 'Key66': 'Value66', 'Key67': 'Value67', 'Key68': 'Value68', 'Key69': 'Value69', 'Key70': 'Value70', 'Key71': 'Value71', 'Key72': 'Value72', 'Key73': 'Value73', 'Key74': 'Value74', 'Key75': 'Value75'}, 
+        'Category 3': {'Key76': 'Value76', 'Key77': 'Value77', 'Key78': 'Value78', 'Key79': 'Value79', 'Key80': 'Value80', 'Key81': 'Value81', 'Key82': 'Value82', 'Key83': 'Value83', 'Key84': 'Value84', 'Key85': 'Value85', 'Key86': 'Value86', 'Key87': 'Value87', 'Key88': 'Value88', 'Key89': 'Value89', 'Key90': 'Value90', 'Key91': 'Value91', 'Key92': 'Value92', 'Key93': 'Value93', 'Key94': 'Value94', 'Key95': 'Value95', 'Key96': 'Value96', 'Key97': 'Value97', 'Key98': 'Value98', 'Key99': 'Value99', 'Key100': 'Value100'}, 
+        'Category 4': {'Key101': 'Value101', 'Key102': 'Value102', 'Key103': 'Value103', 'Key104': 'Value104', 'Key105': 'Value105', 'Key106': 'Value106', 'Key107': 'Value107', 'Key108': 'Value108', 'Key109': 'Value109', 'Key110': 'Value110', 'Key111': 'Value111', 'Key112': 'Value112', 'Key113': 'Value113', 'Key114': 'Value114', 'Key115': 'Value115', 'Key116': 'Value116', 'Key117': 'Value117', 'Key118': 'Value118', 'Key119': 'Value119', 'Key120': 'Value120', 'Key121': 'Value121', 'Key122': 'Value122', 'Key123': 'Value123', 'Key124': 'Value124', 'Key125': 'Value125'}, 
+        'Category 5': {'Key126': 'Value126', 'Key127': 'Value127', 'Key128': 'Value128', 'Key129': 'Value129', 'Key130': 'Value130', 'Key131': 'Value131', 'Key132': 'Value132', 'Key133': 'Value133', 'Key134': 'Value134', 'Key135': 'Value135', 'Key136': 'Value136', 'Key137': 'Value137', 'Key138': 'Value138', 'Key139': 'Value139', 'Key140': 'Value140', 'Key141': 'Value141', 'Key142': 'Value142', 'Key143': 'Value143', 'Key144': 'Value144', 'Key145': 'Value145', 'Key146': 'Value146', 'Key147': 'Value147', 'Key148': 'Value148', 'Key149': 'Value149', 'Key150': 'Value150'}, 
+        'Category 6': {'Key151': 'Value151', 'Key152': 'Value152', 'Key153': 'Value153', 'Key154': 'Value154', 'Key155': 'Value155', 'Key156': 'Value156', 'Key157': 'Value157', 'Key158': 'Value158', 'Key159': 'Value159', 'Key160': 'Value160', 'Key161': 'Value161', 'Key162': 'Value162', 'Key163': 'Value163', 'Key164': 'Value164', 'Key165': 'Value165', 'Key166': 'Value166', 'Key167': 'Value167', 'Key168': 'Value168', 'Key169': 'Value169', 'Key170': 'Value170', 'Key171': 'Value171', 'Key172': 'Value172', 'Key173': 'Value173', 'Key174': 'Value174', 'Key175': 'Value175'}, 
+        'Category 7': {'Key176': 'Value176', 'Key177': 'Value177', 'Key178': 'Value178', 'Key179': 'Value179', 'Key180': 'Value180', 'Key181': 'Value181', 'Key182': 'Value182', 'Key183': 'Value183', 'Key184': 'Value184', 'Key185': 'Value185', 'Key186': 'Value186', 'Key187': 'Value187', 'Key188': 'Value188', 'Key189': 'Value189', 'Key190': 'Value190', 'Key191': 'Value191', 'Key192': 'Value192', 'Key193': 'Value193', 'Key194': 'Value194', 'Key195': 'Value195', 'Key196': 'Value196', 'Key197': 'Value197', 'Key198': 'Value198', 'Key199': 'Value199', 'Key200': 'Value200'}, 
+        'Category 8': {'Key201': 'Value201', 'Key202': 'Value202', 'Key203': 'Value203', 'Key204': 'Value204', 'Key205': 'Value205', 'Key206': 'Value206', 'Key207': 'Value207', 'Key208': 'Value208', 'Key209': 'Value209', 'Key210': 'Value210', 'Key211': 'Value211', 'Key212': 'Value212', 'Key213': 'Value213', 'Key214': 'Value214', 'Key215': 'Value215', 'Key216': 'Value216', 'Key217': 'Value217', 'Key218': 'Value218', 'Key219': 'Value219', 'Key220': 'Value220', 'Key221': 'Value221', 'Key222': 'Value222', 'Key223': 'Value223', 'Key224': 'Value224', 'Key225': 'Value225'}, 
+        'Category 9': {'Key226': 'Value226', 'Key227': 'Value227', 'Key228': 'Value228', 'Key229': 'Value229', 'Key230': 'Value230', 'Key231': 'Value231', 'Key232': 'Value232', 'Key233': 'Value233', 'Key234': 'Value234', 'Key235': 'Value235', 'Key236': 'Value236', 'Key237': 'Value237', 'Key238': 'Value238', 'Key239': 'Value239', 'Key240': 'Value240', 'Key241': 'Value241', 'Key242': 'Value242', 'Key243': 'Value243', 'Key244': 'Value244', 'Key245': 'Value245', 'Key246': 'Value246', 'Key247': 'Value247', 'Key248': 'Value248', 'Key249': 'Value249', 'Key250': 'Value250'}, 
+        'Category 10': {'Key251': 'Value251', 'Key252': 'Value252', 'Key253': 'Value253', 'Key254': 'Value254', 'Key255': 'Value255', 'Key256': 'Value256', 'Key257': 'Value257', 'Key258': 'Value258', 'Key259': 'Value259', 'Key260': 'Value260', 'Key261': 'Value261', 'Key262': 'Value262', 'Key263': 'Value263', 'Key264': 'Value264', 'Key265': 'Value265', 'Key266': 'Value266', 'Key267': 'Value267', 'Key268': 'Value268', 'Key269': 'Value269', 'Key270': 'Value270', 'Key271': 'Value271', 'Key272': 'Value272', 'Key273': 'Value273', 'Key274': 'Value274', 'Key275': 'Value275'}
+        }
 
 # Create the main window
 root = tk.Tk()
@@ -49,16 +51,24 @@ category_tree.pack(side="left", fill="y")
 for category in data:
     category_tree.insert("", "end", text=category)
 
+# Create a frame for the key-value Treeview and its scrollbar
+right_frame = tk.Frame(root)
+right_frame.pack(side="right", fill="both", expand=True)
+
 # Create the key-value Treeview
-key_value_tree = ttk.Treeview(root, columns=("Key", "Value"), show="headings")  # "show=headings" removes the default #0 column
+key_value_tree = ttk.Treeview(right_frame, columns=("Key", "Value"), show="headings")
 key_value_tree.heading("Key", text="Key")
 key_value_tree.heading("Value", text="Value")
 
 # Set columns to fill the widget width
 key_value_tree.column("Key", anchor="w", width=150, stretch=True)
 key_value_tree.column("Value", anchor="w", width=150, stretch=True)
+key_value_tree.pack(side="left", fill="both", expand=True)
 
-key_value_tree.pack(side="right", fill="both", expand=True)
+# Add a vertical scrollbar
+tree_scrollbar = ttk.Scrollbar(right_frame, orient="vertical", command=key_value_tree.yview)
+key_value_tree.configure(yscrollcommand=tree_scrollbar.set)
+tree_scrollbar.pack(side="right", fill="y")
 
 # Bind the selection event to the category Treeview
 category_tree.bind("<<TreeviewSelect>>", update_key_value_tree)
