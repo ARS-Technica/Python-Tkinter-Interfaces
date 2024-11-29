@@ -10,7 +10,7 @@ external .JSON file.
 """
 
 
-# Added scrollbar to right treeview widget
+# Added scrollbar to left treeview widget
 
 
 import tkinter as tk
@@ -42,10 +42,19 @@ data = {
 # Create the main window
 root = tk.Tk()
 
+# Create a frame for the category Treeview and its scrollbar
+left_frame = tk.Frame(root)
+left_frame.pack(side="left", fill="y")
+
 # Create the category Treeview
-category_tree = ttk.Treeview(root)
+category_tree = ttk.Treeview(left_frame)
 category_tree.heading("#0", text="Category")
 category_tree.pack(side="left", fill="y")
+
+# Add a vertical scrollbar to the category Treeview
+category_scrollbar = ttk.Scrollbar(left_frame, orient="vertical", command=category_tree.yview)
+category_tree.configure(yscrollcommand=category_scrollbar.set)
+category_scrollbar.pack(side="right", fill="y")
 
 # Populate the category Treeview
 for category in data:
@@ -65,7 +74,7 @@ key_value_tree.column("Key", anchor="w", width=150, stretch=True)
 key_value_tree.column("Value", anchor="w", width=150, stretch=True)
 key_value_tree.pack(side="left", fill="both", expand=True)
 
-# Add a vertical scrollbar
+# Add a vertical scrollbar to the key-value Treeview
 tree_scrollbar = ttk.Scrollbar(right_frame, orient="vertical", command=key_value_tree.yview)
 key_value_tree.configure(yscrollcommand=tree_scrollbar.set)
 tree_scrollbar.pack(side="right", fill="y")
