@@ -10,7 +10,7 @@ external .JSON file.
 """
 
 
-# Eliminated the extra column and ensure that the "Key" and "Value" columns fill the entire width of the Treeview widget on the right
+# Added scrollbar to right treeview widget
 
 
 import tkinter as tk
@@ -26,16 +26,8 @@ def update_key_value_tree(event):
 
 # Sample dictionary data
 data = {
-    "Category 1": {
-        "key1": "value1",
-        "key2": "value2"
-    },
-    "Category 2": {
-        "key3": "value3",
-        "key4": "value4"
-    },
-    # ... other categories
-}
+        'Category 0': {'Key1': 'Value1', 'Key2': 'Value2', 'Key3': 'Value3', 'Key4': 'Value4', 'Key5': 'Value5', 'Key6': 'Value6', 'Key7': 'Value7', 'Key8': 'Value8', 'Key9': 'Value9', 'Key10': 'Value10', 'Key11': 'Value11', 'Key12': 'Value12', 'Key13': 'Value13', 'Key14': 'Value14', 'Key15': 'Value15', 'Key16': 'Value16', 'Key17': 'Value17', 'Key18': 'Value18', 'Key19': 'Value19', 'Key20': 'Value20', 'Key21': 'Value21', 'Key22': 'Value22', 'Key23': 'Value23', 'Key24': 'Value24', 'Key25': 'Value25'}, 
+        }
 
 # Create the main window
 root = tk.Tk()
@@ -49,16 +41,24 @@ category_tree.pack(side="left", fill="y")
 for category in data:
     category_tree.insert("", "end", text=category)
 
+# Create a frame for the key-value Treeview and its scrollbar
+right_frame = tk.Frame(root)
+right_frame.pack(side="right", fill="both", expand=True)
+
 # Create the key-value Treeview
-key_value_tree = ttk.Treeview(root, columns=("Key", "Value"), show="headings")  # "show=headings" removes the default #0 column
+key_value_tree = ttk.Treeview(right_frame, columns=("Key", "Value"), show="headings")
 key_value_tree.heading("Key", text="Key")
 key_value_tree.heading("Value", text="Value")
 
 # Set columns to fill the widget width
 key_value_tree.column("Key", anchor="w", width=150, stretch=True)
 key_value_tree.column("Value", anchor="w", width=150, stretch=True)
+key_value_tree.pack(side="left", fill="both", expand=True)
 
-key_value_tree.pack(side="right", fill="both", expand=True)
+# Add a vertical scrollbar
+tree_scrollbar = ttk.Scrollbar(right_frame, orient="vertical", command=key_value_tree.yview)
+key_value_tree.configure(yscrollcommand=tree_scrollbar.set)
+tree_scrollbar.pack(side="right", fill="y")
 
 # Bind the selection event to the category Treeview
 category_tree.bind("<<TreeviewSelect>>", update_key_value_tree)
