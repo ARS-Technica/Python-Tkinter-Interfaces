@@ -1,5 +1,12 @@
 """
-Demonstration of two Treeview Widgets linked together.
+Demonstration of two interlinked Treeview Widgets.
+In this case, the Treeview Widgets are populated
+from a nested dictionary.  The left Treeview displays
+the "Category" data from the top-level dictionary,
+while the right Treeview displays the key, value
+data from the nested dictionary.  This simplifies the
+code which would more often be populated by an
+external .JSON file.
 """
 
 
