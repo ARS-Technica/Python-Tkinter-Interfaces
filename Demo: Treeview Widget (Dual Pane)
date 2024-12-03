@@ -10,8 +10,6 @@ external .JSON file.
 """
 
 
-# Integrated the dual Treeview setup from Demo TreeView Widget (Dual Pane)
-
 import tkinter as tk
 from tkinter import ttk
 
@@ -35,8 +33,30 @@ def display_key_value_pairs(category):
     """Populates the right Treeview (key_value_tree) based on the selected category."""
     key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
     if category in categories:
-        for key, value in categories[category].items():
-            key_value_tree.insert("", "end", text=key, values=(value,))
+        for i, (key, value) in enumerate(categories[category].items()):
+            tag = "evenrow" if i % 2 == 0 else "oddrow"
+            key_value_tree.insert("", "end", text=key, values=(value,), tags=(tag,))
+
+def apply_row_styles(treeview):
+    """Applies alternating row styles to the Treeview."""
+    treeview.tag_configure("evenrow", background="white")
+    treeview.tag_configure("oddrow", background="#f2f2f2")
+
+def configure_hover_effect(treeview):
+    """Configures the hover effect for the Treeview rows."""
+    def on_mouse_over(event):
+        item_id = treeview.identify_row(event.y)
+        for child in treeview.get_children():
+            treeview.tag_configure("hover", background="#d9d9d9")
+            apply_row_styles(treeview)
+        if item_id:
+            treeview.item(item_id, tags=("hover",))
+
+    def on_mouse_leave(event):
+        apply_row_styles(treeview)
+
+    treeview.bind("<Motion>", on_mouse_over)
+    treeview.bind("<Leave>", on_mouse_leave)
 
 def create_category_treeview(parent):
     """Creates the left Treeview (category_tree) to display categories."""
@@ -78,6 +98,10 @@ def create_key_value_treeview(parent):
 
     frame.columnconfigure(0, weight=1)
     frame.rowconfigure(0, weight=1)
+
+    # Apply alternating row styles and hover effect
+    apply_row_styles(tree)
+    configure_hover_effect(tree)
 
     return tree
 
