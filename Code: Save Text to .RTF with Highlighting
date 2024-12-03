@@ -1,0 +1,35 @@
+"""
+How to save the contents of a text widget to a rich text file with highlighting 
+from the text widget in tact.
+"""
+
+
+import tkinter as tk
+from tkinter import Text
+
+# Create the main window
+root = tk.Tk()
+
+# Create a text widget
+text_widget = Text(root)
+text_widget.pack()
+
+# Insert some text with highlighting (e.g., using tags)
+text_widget.tag_configure("red", foreground="red")
+text_widget.insert(tk.END, "This is ", "red")
+text_widget.insert(tk.END, "highlighted ", "red")
+text_widget.insert(tk.END, "text.")
+
+# Function to save the text widget content to a file
+def save_as_rtf():
+    content = text_widget.get("1.0", tk.END)
+    with open("output.rtf", "w") as f:
+        f.write(content)
+
+# Create a button to save the content
+save_button = tk.Button(root, text="Save as RTF", command=save_as_rtf)
+save_button.pack()
+
+# Run the main loop
+root.mainloop()
+
