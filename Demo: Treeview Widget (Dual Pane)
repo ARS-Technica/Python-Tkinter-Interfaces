@@ -9,10 +9,11 @@ code which would more often be populated by an
 external .JSON file.
 """
 
-# Re-incorporated alternating row styles and rollover effects
+# Re-organizing code
 
 import tkinter as tk
 from tkinter import ttk
+
 
 # Example data
 categories = {
@@ -30,70 +31,47 @@ categories = {
 }
 
 
-def on_double_click(event):
-    """Handles the double-click event on a Treeview row."""
-    item_id = event.widget.focus()
-    item = event.widget.item(item_id)
-    item_text = item["text"]  # Get the text from the first column ("Item")
-    if item_text:
-        regex_entry.delete(0, tk.END)  # Clear the current text
-        regex_entry.insert(0, item_text)  # Insert the "Item" text
+# Functions to create User Interface ------------------------------------------
 
+def create_window():
+    """Creates and launches the main application window."""
+    global category_tree, key_value_tree, window
 
-def configure_treeview_style():
-    """Configures the Treeview widget style."""
-    style = ttk.Style()
-    style.configure("Custom.Treeview", rowheight=25)
-    style.map(
-        "Custom.Treeview",
-        background=[("selected", "#cce5ff")],
-        foreground=[("selected", "black")],
-    )
+    window = tk.Tk()
+    window.title("RegEx Editor with Two Treeviews")
+    window.geometry("800x400")
+    window.resizable(True, True)
+    
+    # Configures the main application window layout.
+    window.columnconfigure(0, weight=1)
+    window.columnconfigure(1, weight=1)
+    window.rowconfigure(1, weight=1)
 
-def apply_row_styles(tree):
-    """Applies alternating row styles to the Treeview."""
-    for i, child in enumerate(tree.get_children()):
-        if i % 2 == 0:
-            tree.tag_configure("evenrow", background="white")
-            tree.item(child, tags=("evenrow",))
-        else:
-            tree.tag_configure("oddrow", background="#f2f2f2")
-            tree.item(child, tags=("oddrow",))
+    # Create input frame and directory frame
+    create_input_frame(window)
+    category_tree = create_category_treeview(window)
+    key_value_tree = create_key_value_treeview(window)
 
-def configure_hover_effect(tree):
-    """Configures the hover effect for the Treeview rows."""
-    def on_mouse_over(event):
-        item_id = tree.identify_row(event.y)
-        for child in tree.get_children():
-            tree.tag_configure("hover", background="#d9d9d9")
-            apply_row_styles(tree)
-        if item_id:
-            tree.item(item_id, tags=("hover",))
+    # Bind events
+    category_tree.bind("<<TreeviewSelect>>", on_category_select)
 
-    def on_mouse_leave(event):
-        apply_row_styles(tree)
+    # Start the main event loop
+    window.mainloop()
 
-    tree.bind("<Motion>", on_mouse_over)
-    tree.bind("<Leave>", on_mouse_leave)
-        
-def on_category_select(event):
-    """Handles selection in the left Treeview (category_tree)."""
-    selected_item = category_tree.focus()
-    if not selected_item:
-        return
+def create_input_frame(parent):
+    """Creates a frame with a text input for regular expressions."""
+    input_frame = ttk.Frame(parent)
+    input_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
-    selected_category = category_tree.item(selected_item, "text")
-    display_key_value_pairs(selected_category)
+    label = ttk.Label(input_frame, text="Regular Expression:")
+    label.grid(row=0, column=0, sticky="w", padx=(0, 5))
 
-def display_key_value_pairs(category):
-    """Populates the right Treeview (key_value_tree) based on the selected category."""
-    key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
-    if category in categories:
-        for key, value in categories[category].items():
-            key_value_tree.insert("", "end", text=key, values=(value,))
+    global regex_entry
+    regex_entry = ttk.Entry(input_frame, width=50)
+    regex_entry.grid(row=0, column=1, sticky="ew")
 
-    apply_row_styles(key_value_tree) # REQUIRED to keep alternating styles visible during rollover effects 
-
+    input_frame.columnconfigure(1, weight=1)
+    
 def create_category_treeview(parent):
     """Creates the left Treeview (category_tree) to display categories."""
     frame = ttk.Frame(parent)
@@ -144,44 +122,81 @@ def create_key_value_treeview(parent):
 
     return tree
 
-def create_input_frame(parent):
-    """Creates a frame with a text input for regular expressions."""
-    input_frame = ttk.Frame(parent)
-    input_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+# /Functions to create User Interface -----------------------------------------
 
-    label = ttk.Label(input_frame, text="Regular Expression:")
-    label.grid(row=0, column=0, sticky="w", padx=(0, 5))
 
-    global regex_entry
-    regex_entry = ttk.Entry(input_frame, width=50)
-    regex_entry.grid(row=0, column=1, sticky="ew")
+# Functions for Treeview Interactions -----------------------------------------
 
-    input_frame.columnconfigure(1, weight=1)
+def on_category_select(event):
+    """Handles selection in the left Treeview (category_tree)."""
+    selected_item = category_tree.focus()
+    if not selected_item:
+        return
 
-def create_window():
-    """Creates and launches the main application window."""
-    global category_tree, key_value_tree, window
+    selected_category = category_tree.item(selected_item, "text")
+    display_key_value_pairs(selected_category)
 
-    window = tk.Tk()
-    window.title("RegEx Editor with Two Treeviews")
-    window.geometry("800x400")
-    window.resizable(True, True)
-    
-    # Configures the main application window layout.
-    window.columnconfigure(0, weight=1)
-    window.columnconfigure(1, weight=1)
-    window.rowconfigure(1, weight=1)
+def display_key_value_pairs(category):
+    """Populates the right Treeview (key_value_tree) based on the selected category."""
+    key_value_tree.delete(*key_value_tree.get_children())  # Clear existing data
+    if category in categories:
+        for key, value in categories[category].items():
+            key_value_tree.insert("", "end", text=key, values=(value,))
 
-    # Create input frame and directory frame
-    create_input_frame(window)
-    category_tree = create_category_treeview(window)
-    key_value_tree = create_key_value_treeview(window)
+    apply_row_styles(key_value_tree) # REQUIRED to keep alternating styles visible during rollover effects 
 
-    # Bind events
-    category_tree.bind("<<TreeviewSelect>>", on_category_select)
+# /Functions for Treeview Interactions ----------------------------------------
 
-    # Start the main event loop
-    window.mainloop()
+
+# Functions for Styling Widgets -----------------------------------------------
+
+def apply_row_styles(tree):
+    """Applies alternating row styles to the Treeview."""
+    for i, child in enumerate(tree.get_children()):
+        if i % 2 == 0:
+            tree.tag_configure("evenrow", background="white")
+            tree.item(child, tags=("evenrow",))
+        else:
+            tree.tag_configure("oddrow", background="#f2f2f2")
+            tree.item(child, tags=("oddrow",))
+
+def configure_hover_effect(tree):
+    """Configures the hover effect for the Treeview rows."""
+    def on_mouse_over(event):
+        item_id = tree.identify_row(event.y)
+        for child in tree.get_children():
+            tree.tag_configure("hover", background="#d9d9d9")
+            apply_row_styles(tree)
+        if item_id:
+            tree.item(item_id, tags=("hover",))
+
+    def on_mouse_leave(event):
+        apply_row_styles(tree)
+
+    tree.bind("<Motion>", on_mouse_over)
+    tree.bind("<Leave>", on_mouse_leave)
+
+def configure_treeview_style():
+    """Configures the Treeview widget style."""
+    style = ttk.Style()
+    style.configure("Custom.Treeview", rowheight=25)
+    style.map(
+        "Custom.Treeview",
+        background=[("selected", "#cce5ff")],
+        foreground=[("selected", "black")],
+    )
+
+def on_double_click(event):
+    """Handles the double-click event on a Treeview row."""
+    item_id = event.widget.focus()
+    item = event.widget.item(item_id)
+    item_text = item["text"]  # Get the text from the first column ("Item")
+    if item_text:
+        regex_entry.delete(0, tk.END)  # Clear the current text
+        regex_entry.insert(0, item_text)  # Insert the "Item" text
+
+# /Functions for Styling Widgets ----------------------------------------------
+
 
 if __name__ == "__main__":
     create_window()
