@@ -1,5 +1,14 @@
 """
-In this code, a drop down menu offers users two possible widget options to attach to the foot of a text widget: a Status Bar or a Search Bar.  The objective of this code is create the functions that will toggle between the two options.  First, the functions will check if the other option is currently visible.  If the alternative option is visible it will be destoryed.  Then, the functions will create their respective widgets.  Finally, each function will destory itself if its associated checkbutton is deselected in the drop down menu, leaving no visible widget at the footer of the text widget.
+In this code, a drop down menu offers users two possible widget 
+options to attach to the foot of a text widget: a Status Bar or 
+a Search Bar.  The objective of this code is create the functions 
+that will toggle between the two options.  First, the functions 
+will check if the other option is currently visible.  If the 
+alternative option is visible it will be destoryed.  Then, the
+functions will create their respective widgets.  Finally, each 
+function will destory itself if its associated checkbutton is 
+deselected in the drop down menu, leaving no visible widget at 
+the footer of the text widget.
 """
 
 
