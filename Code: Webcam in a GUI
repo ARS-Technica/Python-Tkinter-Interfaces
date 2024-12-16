@@ -1,0 +1,28 @@
+"""
+7 lines of Python code to show your webcam in a GUI window using OpenCV
+Source: MikeTheWatchGuy
+https://www.reddit.com/r/Python/comments/cpymni/7_lines_of_python_code_to_show_your_webcam_in_a/
+
+Result: https://user-images.githubusercontent.com/13696193/62974873-1b063f00-bde7-11e9-903e-d87a7def96b0.gif
+"""
+
+import PySimpleGUI as sg            # Uncomment 1 to run on that framework
+import cv2
+
+# Window layout
+layout = [[sg.Image(filename='', key='_IMAGE_')]]
+
+# Create the window and show it without the plot
+window = sg.Window('Demo Application - OpenCV Integration', layout, location=(800,400))
+
+# Event LOOP: Read and display frames
+cap = cv2.VideoCapture(0)                               # Setup the OpenCV capture device (webcam)
+
+while True:
+    event, values = window.Read(timeout=20, timeout_key='timeout')
+    if event is None:
+        break
+
+    ret, frame = cap.read()                               # Read image from capture device (camera)
+    imgbytes=cv2.imencode('.png', frame)[1].tobytes()     # Convert the image to PNG Bytes
+    window.FindElement('_IMAGE_').Update(data=imgbytes)   # Change the Image Element to show the new image
