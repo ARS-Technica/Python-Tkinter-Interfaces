@@ -1,0 +1,47 @@
+"""
+
+A demonstration of how to create a chiming sound in tkinter interfaces with
+and without the the winsound library.
+
+"""
+
+
+import tkinter as tk
+from tkinter import messagebox
+import winsound
+
+def play_chime():
+    winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
+
+def show_confirmation():
+    result = messagebox.askquestion("Confirm", "Are you sure?")
+    if result == 'yes':
+        play_chime()
+
+root = tk.Tk()
+root.title("Windows Chime with windsound Library")
+button = tk.Button(root, text="Confirm", command=show_confirmation)
+button.pack()
+root.mainloop()
+
+
+#%%
+
+
+import tkinter as tk
+from tkinter import ttk
+
+def trigger_alert():
+    root.bell()  # Emits a beep or alert
+
+root = tk.Tk()
+root.title("Windows Bell without winsound Library")
+
+label = ttk.Label(root, text="Click the button to hear a beep.")
+label.pack(pady=10)
+
+button = ttk.Button(root, text="Trigger Bell", command=trigger_alert)
+button.pack(pady=10)
+
+root.mainloop()
+
