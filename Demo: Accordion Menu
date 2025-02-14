@@ -1,0 +1,49 @@
+import tkinter as tk
+from tkinter import ttk
+
+def toggle_section(section):
+    """Toggles visibility of a section."""
+    if section.winfo_viewable():
+        section.grid_remove()  # Hide the section
+    else:
+        section.grid()  # Show the section
+
+# Create the main window
+root = tk.Tk()
+root.title("Accordion Menu Example")
+
+# Create the main container frame
+container = ttk.Frame(root, padding=10)
+container.grid(row=0, column=0, sticky="nsew")
+
+# Section 1
+header1 = ttk.Button(container, text="Section 1", command=lambda: toggle_section(section1))
+header1.grid(row=0, column=0, sticky="ew")
+
+section1 = ttk.Frame(container, padding=10, relief="ridge")
+section1.grid(row=1, column=0, sticky="ew")
+ttk.Label(section1, text="Content for Section 1").pack()
+
+# Section 2
+header2 = ttk.Button(container, text="Section 2", command=lambda: toggle_section(section2))
+header2.grid(row=2, column=0, sticky="ew")
+
+section2 = ttk.Frame(container, padding=10, relief="ridge")
+section2.grid(row=3, column=0, sticky="ew")
+ttk.Label(section2, text="Content for Section 2").pack()
+
+# Section 3
+header3 = ttk.Button(container, text="Section 3", command=lambda: toggle_section(section3))
+header3.grid(row=4, column=0, sticky="ew")
+
+section3 = ttk.Frame(container, padding=10, relief="ridge")
+section3.grid(row=5, column=0, sticky="ew")
+ttk.Label(section3, text="Content for Section 3").pack()
+
+# Hide all sections initially
+section1.grid_remove()
+section2.grid_remove()
+section3.grid_remove()
+
+# Run the application
+root.mainloop()
