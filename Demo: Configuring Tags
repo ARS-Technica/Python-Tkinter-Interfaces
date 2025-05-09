@@ -13,7 +13,6 @@ def create_button(root):
 
     global my_label
 
-    create_widget(root)
     button = tk.Button(root, text="Update Label", command=configure_widget)
     button.pack()
 
