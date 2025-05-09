@@ -27,6 +27,13 @@ def configure_widget():
     my_label.config(text="Updated Text", fg="red")
 
 
-
 if __name__ == "__main__":
     root = tk.Tk()
+
+    create_widget(root)
+    button = tk.Button(root, text="Update Label", command=configure_widget)
+    button.pack()
+
+    root.mainloop
+
+
