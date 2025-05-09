@@ -24,7 +24,7 @@ def create_widget(root):
 
     global my_label
 
-    my_label = tk.Label(root, text="This text is black.")
+    my_label = tk.Label(root, text="This text is black.", fg="black")
     my_label.pack()
 
 
@@ -37,9 +37,11 @@ def configure_widget():
 
     current_color = my_label.cget("fg")
     current_label = my_label.cget("text")
-    label_text = "This text is red" if label_text == "This text is black" else "This text is black"
+
     new_color = "red" if current_color == "black" else "black"
-    my_label.config(text=label_text, fg=new_color)
+    new_text = "This text is red." if current_label == "This text is black." else "This text is black."
+
+    my_label.config(text=new_text, fg=new_color)
 
 
 if __name__ == "__main__":
@@ -49,3 +51,4 @@ if __name__ == "__main__":
     create_button(root)
 
     root.mainloop()
+
