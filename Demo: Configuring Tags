@@ -31,12 +31,14 @@ def create_widget(root):
 
 def configure_widget():
     """
-    Configures the label widget created in create_widget.
+    Toggles the text color of the label created in create_widget between red and black.
     """
 
     global my_label
-    
-    my_label.config(text="Updated Text", fg="red")
+
+    current_color = my_label.cget("fg")
+    new_color = "red" if current_color == "black" else "black"
+    my_label.config(text="Updated Text", fg=new_color)
 
 
 if __name__ == "__main__":
@@ -46,4 +48,3 @@ if __name__ == "__main__":
     create_button(root)
 
     root.mainloop()
-
