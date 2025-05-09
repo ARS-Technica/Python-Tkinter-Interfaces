@@ -46,6 +46,9 @@ def configure_widget():
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.title("Configure Tags")
+    root.geometry("200x100")        # Set fixed window size
+    root.resizable(False, False)    # Prevent resizing
 
     create_widget(root)
     create_button(root)
