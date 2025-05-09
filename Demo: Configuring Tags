@@ -17,5 +17,16 @@ def create_widget(root):
     my_label.pack()
 
 
+def configure_widget():
+    """
+    Configures the label widget created in create_widget.
+    """
+    
+    global my_label
+    
+    my_label.config(text="Updated Text", fg="red")
+
+
+
 if __name__ == "__main__":
     root = tk.Tk()
