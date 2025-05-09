@@ -14,7 +14,7 @@ def create_button(root):
     global my_label
 
     button = tk.Button(root, text="Update Label", command=configure_widget)
-    button.pack()
+    button.pack(padx=20, pady=10)  # Add spacing around the button
 
 
 def create_widget(root):
@@ -25,7 +25,7 @@ def create_widget(root):
     global my_label
 
     my_label = tk.Label(root, text="This text is black.", fg="black")
-    my_label.pack()
+    my_label.pack(padx=20, pady=10)  # Add spacing around the label
 
 
 def configure_widget():
