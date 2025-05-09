@@ -1,16 +1,28 @@
 # -*- coding: utf-8 -*-
 """
-How to alter Tkinter elements by configuring tags.
+A demonstration of using the config() method to alter widget properties.
 """
 
 import tkinter as tk
+
+
+def create_button(root):
+    """
+    Creates a button widget that updates the label widget when clicked.
+    """
+
+    global my_label
+
+    create_widget(root)
+    button = tk.Button(root, text="Update Label", command=configure_widget)
+    button.pack()
 
 
 def create_widget(root):
     """
     Creates a label widget and stores it globally.
     """
-    
+
     global my_label
 
     my_label = tk.Label(root, text="Initial Text")
@@ -21,7 +33,7 @@ def configure_widget():
     """
     Configures the label widget created in create_widget.
     """
-    
+
     global my_label
     
     my_label.config(text="Updated Text", fg="red")
@@ -31,9 +43,7 @@ if __name__ == "__main__":
     root = tk.Tk()
 
     create_widget(root)
-    button = tk.Button(root, text="Update Label", command=configure_widget)
-    button.pack()
+    create_button(root)
 
-    root.mainloop
-
+    root.mainloop()
 
