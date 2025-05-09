@@ -24,7 +24,7 @@ def create_widget(root):
 
     global my_label
 
-    my_label = tk.Label(root, text="Initial Text")
+    my_label = tk.Label(root, text="This text is black.")
     my_label.pack()
 
 
@@ -36,8 +36,10 @@ def configure_widget():
     global my_label
 
     current_color = my_label.cget("fg")
+    current_label = my_label.cget("text")
+    label_text = "This text is red" if label_text == "This text is black" else "This text is black"
     new_color = "red" if current_color == "black" else "black"
-    my_label.config(text="Updated Text", fg=new_color)
+    my_label.config(text=label_text, fg=new_color)
 
 
 if __name__ == "__main__":
