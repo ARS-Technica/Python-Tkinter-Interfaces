@@ -3,3 +3,19 @@
 How to alter Tkinter elements by configuring tags.
 """
 
+import tkinter as tk
+
+
+def create_widget(root):
+    """
+    Creates a label widget and stores it globally.
+    """
+    
+    global my_label
+
+    my_label = tk.Label(root, text="Initial Text")
+    my_label.pack()
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
