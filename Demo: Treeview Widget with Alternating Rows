@@ -1,0 +1,29 @@
+"""
+Demo: Treeview Widget with Alternating Rows
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+root = tk.Tk()
+style = ttk.Style()
+style.theme_use('default')
+
+tree = ttk.Treeview(root, columns=("A", "B"), show="headings", height=10)
+tree.heading("A", text="A")
+tree.heading("B", text="B")
+tree.pack(fill="both", expand=True)
+
+for i in range(10):
+    tree.insert("", "end", values=(i, f"Row {i}"))
+
+def apply_row_styles(tree):
+    tree.tag_configure("evenrow", background="red") 
+    tree.tag_configure("oddrow", background="yellow")
+
+    for index, child in enumerate(tree.get_children()):
+        tag = "evenrow" if index % 2 == 0 else "oddrow"
+        tree.item(child, tags=(tag,))
+
+apply_row_styles(tree)
+root.mainloop()
