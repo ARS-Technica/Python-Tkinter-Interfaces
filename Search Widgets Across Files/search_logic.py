@@ -42,6 +42,13 @@ def find_all(text_widget, query, tag_name="search"):
     # Purpose: Loop through the entire document and apply a highlight tag to every match.
     # Logic: Uses a while loop with text_widget.search() and calculates the end_index for each match.
 
+    '''
+    Note: Include a toggle for case sensitivity. 
+    In Tkinter's .search() method, this is handled by a boolean flag:
+    nocase=True (Ignore capitalization)
+    nocase=False (Strict matching)
+    '''
+
     pass
 
 
