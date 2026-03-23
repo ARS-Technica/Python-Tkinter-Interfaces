@@ -34,7 +34,14 @@ Define a function that takes the Text widget and the search string as parameters
 Import the search function and pass your local Text widget instance to it when a button is clicked.
 """
 
+# imports
 
+def find_all(text_widget, query, tag_name="search"):
+    # Start with the primary engine driving the search
+    # Purpose: Loop through the entire document and apply a highlight tag to every match.
+    # Logic: Uses a while loop with text_widget.search() and calculates the end_index for each match.
+
+    pass
 
 
 
