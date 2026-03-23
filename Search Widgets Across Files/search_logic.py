@@ -53,6 +53,15 @@ def clear_highlights(text_widget, tag_name="search"):
     pass
 
 
+def get_match_count(text_widget, query):
+    # Display the number of matches found in the text.  Ex. "Found 5 matches."
+    # Purpose: Return the integer count of how many times the string appears. 
+    # Logic: A "dry run" of the search loop that increments a counter instead of applying tags.
+
+    pass
+
+
+
 
 
 
