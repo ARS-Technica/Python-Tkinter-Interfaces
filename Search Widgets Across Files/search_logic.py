@@ -61,10 +61,10 @@ def get_match_count(text_widget, query):
     pass
 
 
+def find_next(text_widget, query, last_index):
+    # "Find Next" functionality (like hitting F3 in a browser).
+    # Purpose: Find only the match that appears after the current cursor position.
+    # Logic: Takes a starting index as an argument and returns the position of next match.
 
-
-
-
-
-
+    pass
 
