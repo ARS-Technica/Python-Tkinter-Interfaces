@@ -69,6 +69,12 @@ def update_status(message):
     pass
 
 
+# Binding
+    # Bind the Return (Enter) key to the search function. 
+    # Allows the user to type a word and just hit Enter instead of reaching for the mouse—a standard feature in any real-world text editor.
+
+
+
 
 
 
