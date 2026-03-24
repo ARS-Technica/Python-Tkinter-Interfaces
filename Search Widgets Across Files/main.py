@@ -61,6 +61,16 @@ def on_clear_click():
     pass
 
 
+def update_status(message):
+    # Reports the number of search instances in the document
+    # Purpose: Updates a label at the bottom of the window (e.g., "Found 3 matches" or "No results").
+    # Logic: Configures a tk.Label text property dynamically.
+
+    pass
+
+
+
+
 
 
 
