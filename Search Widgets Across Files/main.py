@@ -46,13 +46,20 @@ def setup_ui(root):
 
 
 def on_search_click():
-    # This is the "Bridge" or "Controller" function. It connects the UI to your search_logic.py.
-
+    # This is the "Bridge" or "Controller" function. It connects the UI to the search_logic.py
     # Purpose: Triggered when the user clicks "Search" or presses the Enter key.
-
-    # Logic: It pulls the string from the Entry widget, calls find_all() from your logic file, and perhaps updates a status label.
+    # Logic: Pulls the string from the Entry widget, calls find_all() from the logic file, and updates a status label.
 
     pass
+
+
+def on_clear_click():
+    # The reset switch.
+    # Purpose: Clears all highlights and empties the search box.
+    # Logic: Calls clear_highlights() from the logic file and uses entry.delete(0, tk.END).
+
+    pass
+
 
 
 
