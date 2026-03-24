@@ -34,6 +34,17 @@ Define a function that takes the Text widget and the search string as parameters
 Import the search function and pass your local Text widget instance to it when a button is clicked.
 """
 
+# imports
+
+
+def setup_ui(root):
+    # Layout engine.  This function organizes the interface.
+    # Purpose: Create the Text widget, the Entry field for searching, and the action buttons.
+    # Logic: Uses Frames to group the "Search Tools" at the top and text input below.
+
+    pass
+
+
 
 
 
