@@ -45,6 +45,17 @@ def setup_ui(root):
     pass
 
 
+def on_search_click():
+    # This is the "Bridge" or "Controller" function. It connects the UI to your search_logic.py.
+
+    # Purpose: Triggered when the user clicks "Search" or presses the Enter key.
+
+    # Logic: It pulls the string from the Entry widget, calls find_all() from your logic file, and perhaps updates a status label.
+
+    pass
+
+
+
 
 
 
