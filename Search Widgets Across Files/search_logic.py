@@ -59,17 +59,32 @@ def clear_highlights(widget, tag_name="found"):
 
 
 
-def find_all(text_widget, query, tag_name="search"):
-    # This is your primary engine.
-    # Purpose: Loop through the entire document and apply a highlight tag to every match.
-    # Logic: Uses a while loop with text_widget.search() and calculates the end_index for each match.
+def find_all(widget, query, tag_name="found", ignore_case=True):
+    """
+    Locate all occurrence of 'query' and highlights each of them.
+    Returns the total count of matches found.
 
-    '''
-    Note: Include a toggle for case sensitivity. 
-    In Tkinter's .search() method, this is handled by a boolean flag:
-    nocase=True (Ignore capitalization)
-    nocase=False (Strict matching)
-    '''
+    Args:
+        widget: The tk.Text instance to be searched.
+        query (str): The text string to find.
+        tag_name (str): The tag being applied to query results for highlighting.  
+
+    Returns:
+        int: The number of matches found.
+    """
+    
+    # 1. Reset previous search state 
+    # 2. Set the search flag for case sensitivity
+
+    # 3. Perform the search        
+    # If no more matches are found, exit the loop
+ 
+    # 4. Mark the match
+    # Calculate end: 'pos' + 'length' characters ('c')
+
+    # 5. Move start_pos forward to just after this match
+
+    # 6. Visual configuration for the 'found' tag
 
     pass
 
