@@ -37,6 +37,14 @@ Import the search function and pass your local Text widget instance to it when a
 # imports
 
 
+def clear_highlights(text_widget, tag_name="search"):
+    # Resets the search tool so that it can be used again
+    # Purpose: Remove the visual background/foreground colors from the widget.
+    # Logic: Uses text_widget.tag_remove(tag_name, "1.0", "end").
+
+    pass
+
+
 def find_all(text_widget, query, tag_name="search"):
     # This is your primary engine.
     # Purpose: Loop through the entire document and apply a highlight tag to every match.
@@ -52,10 +60,10 @@ def find_all(text_widget, query, tag_name="search"):
     pass
 
 
-def clear_highlights(text_widget, tag_name="search"):
-    # Resets the search tool so that it can be used again
-    # Purpose: Remove the visual background/foreground colors from the widget.
-    # Logic: Uses text_widget.tag_remove(tag_name, "1.0", "end").
+def find_next(text_widget, query, last_index):
+    # "Find Next" functionality (like hitting F3 in a browser).
+    # Purpose: Find only the match that appears after the current cursor position.
+    # Logic: Takes a starting index as an argument and returns the position of next match.
 
     pass
 
@@ -67,11 +75,4 @@ def get_match_count(text_widget, query):
 
     pass
 
-
-def find_next(text_widget, query, last_index):
-    # "Find Next" functionality (like hitting F3 in a browser).
-    # Purpose: Find only the match that appears after the current cursor position.
-    # Logic: Takes a starting index as an argument and returns the position of next match.
-
-    pass
 
