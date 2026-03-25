@@ -34,15 +34,14 @@ Define a function that takes the Text widget and the search string as parameters
 Import the search function and pass your local Text widget instance to it when a button is clicked.
 """
 
-# imports
+import tkinter as tk
 
 
 def clear_highlights(text_widget, tag_name="search"):
-    # Resets the search tool so that it can be used again
-    # Purpose: Remove the visual background/foreground colors from the widget.
-    # Logic: Uses text_widget.tag_remove(tag_name, "1.0", "end").
+    """Removes all search-related highlighting from the text widget
+    in order to prepare for a new search."""
 
-    pass
+    text_widget.tag_remove(tag_name, "1.0", tk.END)
 
 
 def find_all(text_widget, query, tag_name="search"):
