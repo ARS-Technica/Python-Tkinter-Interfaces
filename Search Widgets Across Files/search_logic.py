@@ -37,11 +37,18 @@ Import the search function and pass your local Text widget instance to it when a
 import tkinter as tk
 
 
-def clear_highlights(text_widget, tag_name="search"):
-    """Removes all search-related highlighting from the text widget
-    in order to prepare for a new search."""
+def clear_highlights(widget, tag_name="search"):
+    """
+    Removes all search-related highlighting from the text widget
+    in order to prepare for a new search.
 
-    text_widget.tag_remove(tag_name, "1.0", tk.END)
+    Args:
+        Pass the widget, pass the tag as parameters:
+        widget: Whichevever text instance of the tk.Text widget is targeted.
+        tag_name: The name of the tag to remove (Default is "search" for now).
+    """
+
+    widget.tag_remove(tag_name, "1.0", tk.END)
 
 
 def find_all(text_widget, query, tag_name="search"):
