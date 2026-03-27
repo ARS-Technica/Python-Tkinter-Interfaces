@@ -129,11 +129,19 @@ def find_next(widget, query, last_index, tag_name="found", **flags):
 
     if not query:
         return None
-    
+
     # Perform a single search from the current cursor/start point
     pos = text_widget.search(query, start_from, stopindex=tk.END, nocase=ignore_case)    
 
-    
+    if pos:
+        # Highlight just one result and...
+        clear_tags(widget)
+        end_pos = f"{pos}+{len(query)}c"
+        widget.tag_add('next', pos, end_pos)
+        # Scroll to the one search result
+        widget.see(pos)
+
+        return pos
 
     return None
 
