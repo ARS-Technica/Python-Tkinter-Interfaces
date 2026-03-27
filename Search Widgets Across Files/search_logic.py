@@ -121,12 +121,21 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
     return count
 
 
-def find_next(text_widget, query, last_index):
-    # "Find Next" functionality (like hitting F3 in a browser).
-    # Purpose: Find only the match that appears after the current cursor position.
-    # Logic: Takes a starting index as an argument and returns the position of next match.
+def find_next(widget, query, last_index, tag_name="found", **flags):
+    """
+    Finds the next occurrence of the query starting from a specific index.
+    Default 'start_from' is 'insert' (the current cursor position).
+    """
 
-    pass
+    if not query:
+        return None
+    
+    # Perform a single search from the current cursor/start point
+    pos = text_widget.search(query, start_from, stopindex=tk.END, nocase=ignore_case)    
+
+    
+
+    return None
 
 
 def get_match_count(text_widget, query):
