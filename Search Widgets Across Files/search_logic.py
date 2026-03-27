@@ -76,20 +76,24 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
     """
     
     # Reset previous search state
-    clear_highlights(widget)
+    clear_highlights(widget, tag_name)
 
     # Ensure that the query is not empty to avoid unnecessary processing
     if not query:
         # Todo: Add error message to status bar
         return 0
 
-    #Variable for counting instances of query
+    # Variable for counting instances of query
     count = 0
-    start_pos = '1.0'   # Start from the top of the text widget
+    current_pos = startindex  # Start from the top of the text widget by default
 
-    
-    # 2. Set the search flag for case sensitivity
+    # Default values for search flags to be unpacked in function call:
+    search_flags = {
+        'nocase' : True,    # Is search query case sensitive (e.g., 'smith' matches 'Smith')
+        'regex' : False,    # Are there regular expression in search query?
+    }
 
+ 
     # 3. Perform the search        
     # If no more matches are found, exit the loop
  
