@@ -34,7 +34,12 @@ Define a function that takes the Text widget and the search string as parameters
 Import the search function and pass your local Text widget instance to it when a button is clicked.
 """
 
-# imports
+# Search results highlighting configurations.  Adjusts the visual style of search results. 
+HIGHLIGHTING_CONFIGURATIONS = {
+    "active": ("blue", "white"),
+	"error": ("red", "white"),
+	"found": ("yellow", "black")
+    }
 
 
 def setup_ui(root):
