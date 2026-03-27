@@ -107,10 +107,13 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
          if not pos:
             break
 
-    # 4. Mark the match
-    # Calculate end: 'pos' + 'length' characters ('c')
-
-    # 5. Move start_pos forward to just after this match
+        # Mark the match
+        end_pos = f"{pos}+{len(query)}c"     # Calculate end: 'pos' + 'length' characters ('c')
+        widget.tag_add(tag_name, pos, end_pos)    # Apply tag to the string
+    
+        # Move the cursor forward to just after this match to find the next occurence of query
+        current_pos = end_pos     # Place cursor at the end of the last occurence of query
+        count += 1    # Keep a running count of how many instances of the query have been found
 
     # 6. Visual configuration for the 'found' tag
 
