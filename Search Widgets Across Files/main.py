@@ -42,6 +42,16 @@ HIGHLIGHTING_CONFIGURATIONS = {
     }
 
 
+def define_highlights(text_widget, styles_dict):
+    """
+    Iterate through a style dictionary and configures the widget tags.
+    Maximizes modularity by eliminating the need to define highlights inside search.
+    """
+    for tag, colors in styles_dict.items():
+        # **colors unpacks the dict into: background="yellow", foreground="black"
+        text_widget.tag_config(tag, **colors)  
+
+
 def setup_ui(root):
     # Layout engine.  This function organizes the interface.
     # Purpose: Create the Text widget, the Entry field for searching, and the action buttons.
