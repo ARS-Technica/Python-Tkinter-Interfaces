@@ -58,18 +58,21 @@ def clear_highlights(widget, tag_name="found"):
     widget.tag_remove(tag_name, "1.0", "end")
 
 
-def find_all(widget, query, tag_name="found", ignore_case=True):
+def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found", **flags):
     """
     Locate all occurrence of 'query' and highlights each of them.
     Returns the total count of matches found.
 
     Args:
         widget: The tk.Text instance to be searched.
-        query (str): The text string to find.
-        tag_name (str): The tag being applied to query results for highlighting.  
+        query (str): The text string to find inside widget.
+        startindex (str): The coordinate to begin searching. (Default "1.0") 
+        stopindex (str): The coordinate to stop searching. (Default "end") 
+        tag_name (str): The tag being applied to query results for highlighting. (Default "found")
+        **flags: Expandable Tkinter search options to unpack (e.g., nocase=True, regexp=True).
 
     Returns:
-        int: The number of matches found.
+        int: The number of matches found. (Displayed in Status Bar)
     """
     
     # Reset previous search state
