@@ -81,7 +81,7 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
     # Ensure that the query is not empty to avoid unnecessary processing
     if not query:
         # Todo: Add error message to status bar
-        return 0
+        return None
 
     # Variable for counting instances of query
     count = 0
@@ -97,10 +97,16 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
     #  Merge the user-provided 'flags' into our settings
     search_flags.update(flags) # Overwrites defaults ONLY if the user provides an alternative
 
+    # Search and continue performing the search until stopindex
+    while True:
+        # Perform the search for the next occurrence
+        # stopindex="end" prevents the search from wrapping around
+        pos = widget.search(query, current_pos, stopindex=stopindex, **flags)
 
-    # 3. Perform the search        
-    # If no more matches are found, exit the loop
- 
+        # If no more matches are found, exit the loop
+         if not pos:
+            break
+
     # 4. Mark the match
     # Calculate end: 'pos' + 'length' characters ('c')
 
@@ -108,7 +114,7 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
 
     # 6. Visual configuration for the 'found' tag
 
-    pass
+    return count
 
 
 def find_next(text_widget, query, last_index):
