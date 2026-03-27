@@ -104,7 +104,7 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
         pos = widget.search(query, current_pos, stopindex=stopindex, **flags)
 
         # If no more matches are found, exit the loop
-         if not pos:
+        if not pos:
             break
 
         # Mark the match
@@ -115,7 +115,8 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
         current_pos = end_pos     # Place cursor at the end of the last occurence of query
         count += 1    # Keep a running count of how many instances of the query have been found
 
-    # 6. Visual configuration for the 'found' tag
+    # Visual configuration for the tag (IF there's only one type of tag)
+    widget.tag_config(tag_name, background="yellow", foreground="black")
 
     return count
 
