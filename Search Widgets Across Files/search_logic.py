@@ -58,7 +58,6 @@ def clear_highlights(widget, tag_name="found"):
     widget.tag_remove(tag_name, "1.0", "end")
 
 
-
 def find_all(widget, query, tag_name="found", ignore_case=True):
     """
     Locate all occurrence of 'query' and highlights each of them.
@@ -73,7 +72,19 @@ def find_all(widget, query, tag_name="found", ignore_case=True):
         int: The number of matches found.
     """
     
-    # 1. Reset previous search state 
+    # Reset previous search state
+    clear_highlights(widget)
+
+    # Ensure that the query is not empty to avoid unnecessary processing
+    if not query:
+        # Todo: Add error message to status bar
+        return 0
+
+    #Variable for counting instances of query
+    count = 0
+    start_pos = '1.0'   # Start from the top of the text widget
+
+    
     # 2. Set the search flag for case sensitivity
 
     # 3. Perform the search        
