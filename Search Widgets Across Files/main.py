@@ -42,6 +42,14 @@ HIGHLIGHTING_CONFIGURATIONS = {
     }
 
 
+def clear_highlights():
+    try:
+        search_logic.clear_tags(text_area, tag_name="found")
+        status_label.config(text="Highlights successfully cleared.", fg="black")
+    except AttributeError:
+        status_label.config(text="Error: Could not access text area.", fg="red")
+
+
 def define_highlights(text_widget, styles_dict):
     """
     Iterate through a style dictionary and configures the widget tags.
@@ -50,6 +58,8 @@ def define_highlights(text_widget, styles_dict):
     for tag, colors in styles_dict.items():
         # **colors unpacks the dict into: background="yellow", foreground="black"
         text_widget.tag_config(tag, **colors)  
+
+# apply_styles(text_area, HIGHLIGHTING_CONFIGURATIONS)
 
 
 def setup_ui(root):
