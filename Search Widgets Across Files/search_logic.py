@@ -90,10 +90,14 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
     # Default values for search flags to be unpacked in function call:
     search_flags = {
         'nocase' : True,    # Is search query case sensitive (e.g., 'smith' matches 'Smith')
-        'regex' : False,    # Are there regular expression in search query?
+        'regex' : False     # Are there regular expression in search query?
+        # Todo: Add more flags for an increasingly customizable search
     }
 
- 
+    #  Merge the user-provided 'flags' into our settings
+    search_flags.update(flags) # Overwrites defaults ONLY if the user provides an alternative
+
+
     # 3. Perform the search        
     # If no more matches are found, exit the loop
  
