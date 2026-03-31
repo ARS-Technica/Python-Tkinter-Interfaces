@@ -37,9 +37,9 @@ Import the search function and pass your local Text widget instance to it when a
 import tkinter as tk
 
 
-def clear_highlights(widget, tag_name="found"):
+def clear_tags(widget, tag_name="found"):
     """
-    Removes all search-related highlighting from the text widget
+    Removes all search-related highlighting tags from the text widget
     in order to prepare for a new search.
 
     Args:
@@ -55,7 +55,7 @@ def clear_highlights(widget, tag_name="found"):
     if not hasattr(widget, "tag_remove"):
         raise AttributeError(f"The provided widget '{type(widget).__name__}' is not a valid Tkinter Text widget.")
     
-    widget.tag_remove(tag_name, "1.0", "end")
+    widget.tag_remove(tag_name, "1.0", tk.END)
 
 
 def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found", **flags):
@@ -74,9 +74,9 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
     Returns:
         int: The number of matches found. (Displayed in Status Bar)
     """
-    
+
     # Reset previous search state
-    clear_highlights(widget, tag_name)
+    clear_tags(widget, tag_name)
 
     # Ensure that the query is not empty to avoid unnecessary processing
     if not query:
@@ -90,18 +90,27 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
     # Default values for search flags to be unpacked in function call:
     search_flags = {
         'nocase' : True,    # Is search query case sensitive (e.g., 'smith' matches 'Smith')
-        'regex' : False     # Are there regular expression in search query?
+        'regexp' : False     # Are there regular expression in search query?
         # Todo: Add more flags for an increasingly customizable search
     }
 
+    """
+    Note: Include a toggle for case sensitivity. 
+    In Tkinter's .search() method, this is handled by a boolean flag:
+    nocase=True (Ignore capitalization)
+    nocase=False (Strict matching)
+    """
+
     #  Merge the user-provided 'flags' into our settings
     search_flags.update(flags) # Overwrites defaults ONLY if the user provides an alternative
+
+    # Search Loop:
 
     # Search and continue performing the search until stopindex
     while True:
         # Perform the search for the next occurrence
         # stopindex="end" prevents the search from wrapping around
-        pos = widget.search(query, current_pos, stopindex=stopindex, **flags)
+        pos = widget.search(query, current_pos, stopindex=stopindex, **search_flags)
 
         # If no more matches are found, exit the loop
         if not pos:
@@ -116,7 +125,8 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
         count += 1    # Keep a running count of how many instances of the query have been found
 
     # Visual configuration for the tag (IF there's only one type of tag)
-    widget.tag_config(tag_name, background="yellow", foreground="black")
+    # widget.tag_config(tag_name, background="yellow", foreground="black")
+    # Deprecated in favor of configuration dictionary in main.py
 
     return count
 
@@ -187,5 +197,4 @@ def get_match_count(widget, query, startindex="1.0", stopindex="end", **flags):
         current_pos = f"{pos}+{len(query)}c"
             
     return count
-
 
