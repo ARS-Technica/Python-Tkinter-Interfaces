@@ -113,7 +113,20 @@ def on_key_release(event):
     match_label.config(text=f"Matches found: {num_matches}")
 
 
+def user_interface():
+    root = tk.Tk()
+    root.title("Modular Tkinter Search")
 
+    # 1. Control Panel (Header)
+
+    # 2. Text Area (Body)
+
+    # 3. Status Bar (Footer)    
+
+
+if __name__ == "__main__":
+    user_interface()
+    main()
 
 
 
