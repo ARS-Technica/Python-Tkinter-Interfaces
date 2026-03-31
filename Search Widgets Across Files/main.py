@@ -121,6 +121,17 @@ def user_interface():
     header = tk.Frame(root)
     header.pack(pady=10, padx=10, fill='x')
 
+    # Search Form
+    search_entry = tk.Entry(header)
+    search_entry.pack(side=tk.LEFT, expand=True, fill='x', padx=5)
+    search_entry.bind("<Return>", lambda e: handle_search()) # Bind 'Enter' key
+
+    btn_search = tk.Button(header, text="Find All", command=handle_search)
+    btn_search.pack(side=tk.LEFT, padx=2)
+
+    btn_clear = tk.Button(header, text="Clear", command=handle_clear)
+    btn_clear.pack(side=tk.LEFT, padx=2)
+
     # Text Area (Body)
     text_area = tk.Text(root, wrap='word', height=15)
     text_area.pack(padx=10, pady=5, fill='both', expand=True)
