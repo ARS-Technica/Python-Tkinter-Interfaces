@@ -146,7 +146,7 @@ def find_next(widget, query, last_index, tag_name="found", **flags):
     return None
 
 
-def get_match_count(text_widget, query):
+def get_match_count(widget, query, startindex="1.0", stopindex="end", **flags):
     """
     Returns the integer count of how many times the query appears in the widget.
     
@@ -167,10 +167,14 @@ def get_match_count(text_widget, query):
     if not query:
         return 0
 
-        # Initialize the counter and starting position
-        count = 0
-        current_pos = startindex
-    
+    # Initialize the counter and starting position
+    count = 0
+    current_pos = startindex
+        
+    # Set default flags (matching your find_all logic)
+    search_settings = {'nocase': True}
+    search_settings.update(flags)
+
     while True:
         # Search for the next occurrence of query
         pos = widget.search(query, current_pos, stopindex=stopindex, **search_settings)
