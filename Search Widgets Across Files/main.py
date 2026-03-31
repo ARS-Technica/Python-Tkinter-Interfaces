@@ -117,11 +117,17 @@ def user_interface():
     root = tk.Tk()
     root.title("Modular Tkinter Search")
 
-    # 1. Control Panel (Header)
+    # Control Panel (Header)
+    header = tk.Frame(root)
+    header.pack(pady=10, padx=10, fill='x')
 
-    # 2. Text Area (Body)
+    # Text Area (Body)
+    text_area = tk.Text(root, wrap='word', height=15)
+    text_area.pack(padx=10, pady=5, fill='both', expand=True)
 
-    # 3. Status Bar (Footer)    
+    # Status Bar (Footer)    
+    status_label = tk.Label(root, text="Ready", bd=1, relief=tk.SUNKEN, anchor=tk.W)
+    status_label.pack(side=tk.BOTTOM, fill='x')
 
 
 if __name__ == "__main__":
