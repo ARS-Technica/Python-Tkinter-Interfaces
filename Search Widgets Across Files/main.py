@@ -99,7 +99,18 @@ def update_status(message):
     # Allows the user to type a word and just hit Enter instead of reaching for the mouse—a standard feature in any real-world text editor.
 
 
+def on_key_release(event):
+    """
+    Example: Updates 'Matches Found' label in status bar.
+    """
 
+    query = search_entry.get()
+    
+    # We call the dry-run count function
+    num_matches = search_logic.get_match_count(text_area, query)
+    
+    # Update the UI without actually highlighting anything yet
+    match_label.config(text=f"Matches found: {num_matches}")
 
 
 
