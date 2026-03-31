@@ -39,6 +39,7 @@ import search_logic
 
 # Table of Contents
     # Constants
+    # Global Variables
     # Search Function
     # Search Helper Functions
     # User Interface
@@ -54,6 +55,14 @@ HIGHLIGHTING_CONFIGURATIONS = {
 	"found": ("yellow", "black"),
 	"next": ("orange", "black")    
     }
+
+
+# GLOBAL VARIABLES ------------------------------------------------------------------------
+
+# Declare variables for UI elements as None
+search_entry = None
+status_label = None
+text_area = None
 
 
 # SEARCH FUNCTION -------------------------------------------------------------------------
