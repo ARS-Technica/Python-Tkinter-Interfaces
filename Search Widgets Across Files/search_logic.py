@@ -163,7 +163,14 @@ def get_match_count(text_widget, query):
         int: The total number of occurrences found.
     """
 
-    # 1. Initialize our counter and starting position    
+    # Check if there's a query
+    if not query:
+        return 0
+
+        # Initialize the counter and starting position
+        count = 0
+        current_pos = startindex
+    
     # 2. Set default flags (matching your find_all logic)
     # 3. Search for the next occurrence
     # 4. Increment count and move the pointer past this match
