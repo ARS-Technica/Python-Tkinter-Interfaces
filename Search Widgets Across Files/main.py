@@ -34,13 +34,32 @@ Define a function that takes the Text widget and the search string as parameters
 Import the search function and pass your local Text widget instance to it when a button is clicked.
 """
 
+import tkinter as tk
+import search_logic
+
+# Table of Contents
+    # Constants
+    # Search Function
+    # Search Helper Functions
+    # User Interface
+    # Key Bindings
+
+
+# CONSTANTS ------------------------------------------------------------------------------
+
 # Search results highlighting configurations.  Adjusts the visual style of search results. 
 HIGHLIGHTING_CONFIGURATIONS = {
     "active": ("blue", "white"),
 	"error": ("red", "white"),
-	"found": ("yellow", "black")
+	"found": ("yellow", "black"),
+	"next": ("orange", "black")    
     }
 
+
+# SEARCH FUNCTION -------------------------------------------------------------------------
+
+
+# SEARCH HELPER FUNCTIONS ------------------------------------------------------------------
 
 def clear_highlights():
     try:
@@ -62,18 +81,13 @@ def define_highlights(text_widget, styles_dict):
 # apply_styles(text_area, HIGHLIGHTING_CONFIGURATIONS)
 
 
-def setup_ui(root):
-    # Layout engine.  This function organizes the interface.
-    # Purpose: Create the Text widget, the Entry field for searching, and the action buttons.
-    # Logic: Uses Frames to group the "Search Tools" at the top and text input below.
-
-    pass
-
-
 def on_search_click():
     # This is the "Bridge" or "Controller" function. It connects the UI to the search_logic.py
     # Purpose: Triggered when the user clicks "Search" or presses the Enter key.
     # Logic: Pulls the string from the Entry widget, calls find_all() from the logic file, and updates a status label.
+
+    # apply_styles(text_area, HIGHLIGHTING_CONFIGURATIONS)
+
 
     pass
 
@@ -94,26 +108,13 @@ def update_status(message):
     pass
 
 
-# Binding
-    # Bind the Return (Enter) key to the search function. 
-    # Allows the user to type a word and just hit Enter instead of reaching for the mouse—a standard feature in any real-world text editor.
+# USER INTERFACE  ------------------------------------------------------------------------
 
+def user_interface(root):
+    # Layout engine.  This function organizes the interface.
+    # Purpose: Create the Text widget, the Entry field for searching, and the action buttons.
+    # Logic: Uses Frames to group the "Search Tools" at the top and text input below.
 
-def on_key_release(event):
-    """
-    Example: Updates 'Matches Found' label in status bar.
-    """
-
-    query = search_entry.get()
-    
-    # We call the dry-run count function
-    num_matches = search_logic.get_match_count(text_area, query)
-    
-    # Update the UI without actually highlighting anything yet
-    match_label.config(text=f"Matches found: {num_matches}")
-
-
-def user_interface():
     root = tk.Tk()
     root.title("Modular Tkinter Search")
 
@@ -136,28 +137,38 @@ def user_interface():
     text_area = tk.Text(root, wrap='word', height=15)
     text_area.pack(padx=10, pady=5, fill='both', expand=True)
 
+    # Sample text for Text Area
+    text_area.insert("1.0", "Python is a powerful language.\n
+                     Tkinter makes GUIs easy.\n
+                     Modular code is clean code!")
+
     # Status Bar (Footer)    
     status_label = tk.Label(root, text="Ready", bd=1, relief=tk.SUNKEN, anchor=tk.W)
     status_label.pack(side=tk.BOTTOM, fill='x')
 
 
+# KEY BINDINGS ---------------------------------------------------------------------------
+
+# Binding
+    # Bind the Return (Enter) key to the search function. 
+    # Allows the user to type a word and just hit Enter instead of reaching for the mouse—a standard feature in any real-world text editor.
+
+
+def on_key_release(event):
+    """
+    Example: Updates 'Matches Found' label in status bar.
+    """
+
+    query = search_entry.get()
+    
+    # We call the dry-run count function
+    num_matches = search_logic.get_match_count(text_area, query)
+    
+    # Update the UI without actually highlighting anything yet
+    match_label.config(text=f"Matches found: {num_matches}")
+
+
 if __name__ == "__main__":
-    user_interface()
-    main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    root.user_interface()
+    root.main()
 
