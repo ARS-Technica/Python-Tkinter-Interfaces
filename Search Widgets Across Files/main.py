@@ -71,6 +71,7 @@ text_area = None
 # SEARCH HELPER FUNCTIONS ------------------------------------------------------------------
 
 def clear_highlights():
+    """Resets all tags in the text widget in order to remove highlighting of text."""
     try:
         search_logic.clear_tags(text_area, tag_name="found")
         status_label.config(text="Highlights successfully cleared.", fg="black")
@@ -80,7 +81,7 @@ def clear_highlights():
 
 def define_highlights(text_widget, styles_dict):
     """
-    Iterate through a style dictionary and configures the widget tags.
+    Iterate through the style dictionary and configures the widget tags.
     Maximizes modularity by eliminating the need to define highlights inside search.
     """
     for tag, colors in styles_dict.items():
@@ -110,11 +111,12 @@ def on_clear_click():
 
 
 def update_status(message):
-    # Reports the number of search instances in the document
-    # Purpose: Updates a label at the bottom of the window (e.g., "Found 3 matches" or "No results").
-    # Logic: Configures a tk.Label text property dynamically.
+    """
+    Updates the status bar label with the number of search instances in the document
+    "Found 3 matches" or "No results"
+    """
 
-    pass
+    status_label.config(text=message, fg="black")
 
 
 # USER INTERFACE  ------------------------------------------------------------------------
@@ -180,4 +182,3 @@ def on_key_release(event):
 if __name__ == "__main__":
     root.user_interface()
     root.main()
-
