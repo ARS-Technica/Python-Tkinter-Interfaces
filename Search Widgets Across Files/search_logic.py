@@ -171,10 +171,17 @@ def get_match_count(text_widget, query):
         count = 0
         current_pos = startindex
     
-    # 2. Set default flags (matching your find_all logic)
-    # 3. Search for the next occurrence
-    # 4. Increment count and move the pointer past this match
-
+    while True:
+        # Search for the next occurrence of query
+        pos = widget.search(query, current_pos, stopindex=stopindex, **search_settings)
+            
+        if not pos:
+            break
+                
+        # Increment count and move the pointer past this match
+        count += 1
+        current_pos = f"{pos}+{len(query)}c"
+            
     return count
 
 
