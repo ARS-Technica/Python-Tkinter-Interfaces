@@ -131,7 +131,7 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
     return count
 
 
-def find_next(widget, query, last_index, tag_name="found", **flags):
+def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     """
     Finds the next occurrence of the query starting from a specific index.
     Default 'start_from' is 'insert' (the current cursor position).
@@ -140,14 +140,21 @@ def find_next(widget, query, last_index, tag_name="found", **flags):
     if not query:
         return None
 
+    # Merge flags for consistency
+    search_settings = {'nocase': True,  # Is search query case sensitive?
+                       'regexp': False  # Are there regular expression in search query?
+                       }
+    search_settings.update(flags)
+
     # Perform a single search from the current cursor/start point
-    pos = text_widget.search(query, start_from, stopindex=tk.END, nocase=ignore_case)    
+    pos = widget.search(query, start_from, stopindex=tk.END, **search_settings)
 
     if pos:
         # Highlight just one result and...
-        clear_tags(widget)
+        widget.tag_remove(tag_name, "1.0", tk.END)  # tag_name is specified in parameters
         end_pos = f"{pos}+{len(query)}c"
-        widget.tag_add('next', pos, end_pos)
+        widget.tag_add(tag_name, pos, end_pos)
+
         # Scroll to the one search result
         widget.see(pos)
 
