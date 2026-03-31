@@ -147,10 +147,6 @@ def find_next(widget, query, last_index, tag_name="found", **flags):
 
 
 def get_match_count(text_widget, query):
-    # Display the number of matches found in the text.  Ex. "Found 5 matches."
-    # Purpose: Return the integer count of how many times the string appears. 
-    # Logic: A "dry run" of the search loop that increments a counter instead of applying tags.
-
     """
     Returns the integer count of how many times the query appears in the widget.
     
@@ -167,6 +163,11 @@ def get_match_count(text_widget, query):
         int: The total number of occurrences found.
     """
 
-    pass
+    # 1. Initialize our counter and starting position    
+    # 2. Set default flags (matching your find_all logic)
+    # 3. Search for the next occurrence
+    # 4. Increment count and move the pointer past this match
+
+    return count
 
 
