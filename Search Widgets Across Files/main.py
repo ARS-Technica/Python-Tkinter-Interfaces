@@ -103,11 +103,14 @@ def on_search_click():
 
 
 def on_clear_click():
-    # The reset switch.
-    # Purpose: Clears all highlights and empties the search box.
-    # Logic: Calls clear_highlights() from the logic file and uses entry.delete(0, tk.END).
+    """
+    Clears all highlights and empties the search box.
+    Calls clear_highlights() from the logic file and uses entry.delete(0, tk.END).
+    """
 
-    pass
+    search_entry.delete(0, tk.END)
+    search_logic.clear_tags(text_area, tag_name="found")
+    update_status("Highlights successfully cleared.")
 
 
 def update_status(message):
@@ -126,6 +129,8 @@ def user_interface(root):
     # Purpose: Create the Text widget, the Entry field for searching, and the action buttons.
     # Logic: Uses Frames to group the "Search Tools" at the top and text input below.
 
+    global search_entry, status_label, text_area
+
     root = tk.Tk()
     root.title("Modular Tkinter Search")
 
@@ -136,7 +141,7 @@ def user_interface(root):
     # Search Form
     search_entry = tk.Entry(header)
     search_entry.pack(side=tk.LEFT, expand=True, fill='x', padx=5)
-    search_entry.bind("<Return>", lambda e: handle_search()) # Bind 'Enter' key
+    search_entry.bind("<Return>", lambda e: handle_search())    # Bind 'Enter' key
 
     btn_search = tk.Button(header, text="Find All", command=handle_search)
     btn_search.pack(side=tk.LEFT, padx=2)
@@ -149,9 +154,9 @@ def user_interface(root):
     text_area.pack(padx=10, pady=5, fill='both', expand=True)
 
     # Sample text for Text Area
-    text_area.insert("1.0", "Python is a powerful language.\n
+    text_area.insert("1.0", """Python is a powerful language.\n
                      Tkinter makes GUIs easy.\n
-                     Modular code is clean code!")
+                     Modular code is clean code!""")
 
     # Status Bar (Footer)    
     status_label = tk.Label(root, text="Ready", bd=1, relief=tk.SUNKEN, anchor=tk.W)
@@ -179,6 +184,9 @@ def on_key_release(event):
     match_label.config(text=f"Matches found: {num_matches}")
 
 
+# MAIN EXECUTION ---------------------------------------------------------------------------
+
 if __name__ == "__main__":
-    root.user_interface()
-    root.main()
+    main_window = tk.Tk()
+    user_interface(main_window)
+    main_window.mainloop()
