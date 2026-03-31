@@ -151,6 +151,22 @@ def get_match_count(text_widget, query):
     # Purpose: Return the integer count of how many times the string appears. 
     # Logic: A "dry run" of the search loop that increments a counter instead of applying tags.
 
+    """
+    Returns the integer count of how many times the query appears in the widget.
+    
+    This "dry run" of the search logic does not apply any tags to the widget.
+
+    Args:
+        widget: The tk.Text instance to search.
+        query (str): The text string to find.
+        startindex (str): Where to begin the count.
+        stopindex (str): Where to end the count.
+        **flags: Search options (e.g., nocase=True, regexp=True).
+
+    Returns:
+        int: The total number of occurrences found.
+    """
+
     pass
 
 
