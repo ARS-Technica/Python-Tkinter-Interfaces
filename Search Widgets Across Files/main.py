@@ -92,11 +92,16 @@ def define_highlights(text_widget, styles_dict):
 
 
 def on_search_click():
-    # This is the "Bridge" or "Controller" function. It connects the UI to the search_logic.py
-    # Purpose: Triggered when the user clicks "Search" or presses the Enter key.
-    # Logic: Pulls the string from the Entry widget, calls find_all() from the logic file, and updates a status label.
-
-    # apply_styles(text_area, HIGHLIGHTING_CONFIGURATIONS)
+    """
+    The 'Bridge' Controller: Orchestrates the search process between the UI and Logic.
+    
+    This function acts as the central coordinator. It performs the following roles:
+    1. Input Validation: Ensures the user provided a search term.
+    2. Data Retrieval: Pulls the current state from the GUI (search_entry).
+    3. External Execution: Passes the local widget instance to the external 
+       'search_logic' module.
+    4. UI Feedback: Interprets the results and updates the Status Bar for the user.
+    """
 
 
     pass
