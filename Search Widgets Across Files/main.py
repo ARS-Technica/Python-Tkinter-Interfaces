@@ -103,6 +103,24 @@ def on_search_click():
     4. UI Feedback: Interprets the results and updates the Status Bar for the user.
     """
 
+	# Step 1: Data Retrieval
+	# Pull the string currently typed in the Entry widget.
+
+	# Step 2: Input Validation (Guard Clause)
+	# If the user clicks search with an empty box, stop early to save resources
+
+	# Step 3: Dependency Injection (The Core of the Project)
+	# Pass the local 'text_area' (a widget instance) and the 'query' 
+	# to the find_all function defined in search_logic.py.
+
+	# Step 4: Conditional UI Update
+	# Update the status bar with the integer returned from the logic file.
+
+	# Step 5: UX Enhancement
+	# Scroll the first occurrence of the 'found' tag into the user's view.
+
+	# Step 6: Error Handling
+	# If the widget instance is lost or corrupted, catch the error 
 
     pass
 
