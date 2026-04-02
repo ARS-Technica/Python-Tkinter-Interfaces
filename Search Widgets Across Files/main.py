@@ -35,6 +35,7 @@ Import the search function and pass your local Text widget instance to it when a
 """
 
 import tkinter as tk
+from tkinter import messagebox
 import search_logic
 
 # Table of Contents
@@ -50,11 +51,11 @@ import search_logic
 
 # Search results highlighting configurations.  Adjusts the visual style of search results. 
 HIGHLIGHTING_CONFIGURATIONS = {
-    "active": ("blue", "white"),
-	"error": ("red", "white"),
-	"found": ("yellow", "black"),
-	"next": ("orange", "black")    
-    }
+    "active": {"background": "blue",   "foreground": "white"},
+    "error":  {"background": "red",    "foreground": "white"},
+    "found":  {"background": "yellow", "foreground": "black"},
+    "next":   {"background": "orange", "foreground": "black"}    
+}
 
 
 # GLOBAL VARIABLES ------------------------------------------------------------------------
@@ -74,7 +75,7 @@ def clear_highlights():
     """
     Resets all tags in the text widget in order to remove highlighting of text.
     """
-    
+
     try:
         search_logic.clear_tags(text_area, tag_name="found")
         status_label.config(text="Highlights successfully cleared.", fg="black")
@@ -87,9 +88,7 @@ def define_highlights(text_widget, styles_dict):
     Iterate through the style dictionary and configures the widget tags.
     Maximizes modularity by eliminating the need to define highlights inside search.
     """
-
     for tag, colors in styles_dict.items():
-        # **colors unpacks the dict into: background="yellow", foreground="black"
         text_widget.tag_config(tag, **colors)  
 
 
@@ -128,7 +127,7 @@ def on_search_click():
 
         # Step 4: Conditional UI Update
         # Update the status bar with the integer returned from the logic file.
-        if match_count > 0:
+        if match_count and match_count > 0:
             update_status(f"Success: Found {match_count} matches.")        
 
             # Step 5: UX Enhancement
@@ -149,18 +148,16 @@ def on_clear_click():
     Clears all highlights and empties the search box.
     Calls clear_highlights() from the logic file and uses entry.delete(0, tk.END).
     """
-
     search_entry.delete(0, tk.END)
     search_logic.clear_tags(text_area, tag_name="found")
     update_status("Highlights successfully cleared.")
 
 
-def update_status(message):
+def update_status(message, color="black"):
     """
     Updates the status bar label with the number of search instances in the document
     "Found 3 matches" or "No results"
     """
-
     status_label.config(text=message, fg=color)
 
 
@@ -209,7 +206,7 @@ def build_user_interface(root):
                      Modular code is clean code!""")
 
     # Define the styles immediately after the text_area widget is created. 
-    apply_styles(text_area, HIGHLIGHTING_CONFIGURATIONS)
+    define_highlights(text_area, HIGHLIGHTING_CONFIGURATIONS)
 
 
     # Status Bar (Footer)    
@@ -241,6 +238,8 @@ def on_key_release(event):
 # MAIN EXECUTION ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
+    # Create the root before we build the UI
     main_window = tk.Tk()
     build_user_interface(main_window)
     main_window.mainloop()
+
