@@ -34,6 +34,7 @@ Define a function that takes the Text widget and the search string as parameters
 Import the search function and pass your local Text widget instance to it when a button is clicked.
 """
 
+from logging import root
 import tkinter as tk
 from tkinter import messagebox
 import search_logic
@@ -67,30 +68,6 @@ text_area = None
 
 
 # SEARCH FUNCTION -------------------------------------------------------------------------
-
-
-# SEARCH HELPER FUNCTIONS ------------------------------------------------------------------
-
-def clear_highlights():
-    """
-    Resets all tags in the text widget in order to remove highlighting of text.
-    """
-
-    try:
-        search_logic.clear_tags(text_area, tag_name="found")
-        status_label.config(text="Highlights successfully cleared.", fg="black")
-    except AttributeError:
-        status_label.config(text="Error: Could not access text area.", fg="red")
-
-
-def define_highlights(text_widget, styles_dict):
-    """
-    Iterate through the style dictionary and configures the widget tags.
-    Maximizes modularity by eliminating the need to define highlights inside search.
-    """
-    for tag, colors in styles_dict.items():
-        text_widget.tag_config(tag, **colors)  
-
 
 def on_search_click():
     """
@@ -143,14 +120,32 @@ def on_search_click():
         print(f"Developer Debug Log: {e}")
 
 
+# SEARCH HELPER FUNCTIONS ------------------------------------------------------------------
+
+def define_highlights(text_widget, styles_dict):
+    """
+    Iterate through the style dictionary and configures the widget tags.
+    Maximizes modularity by eliminating the need to define highlights inside search.
+    """
+    for tag, colors in styles_dict.items():
+        text_widget.tag_config(tag, **colors)  
+
+
 def on_clear_click():
     """
     Clears all highlights and empties the search box.
-    Calls clear_highlights() from the logic file and uses entry.delete(0, tk.END).
+    Calls clear_tags() from the logic file and uses entry.delete(0, tk.END).
     """
+    # Clear the UI entry box
     search_entry.delete(0, tk.END)
-    search_logic.clear_tags(text_area, tag_name="found")
-    update_status("Highlights successfully cleared.")
+
+    try:
+        # Call the logic function to wipe all tags from the text area 
+        search_logic.clear_tags(text_area)
+        # Provide user feedback
+        status_label.config(text="Highlights successfully cleared.", fg="black")
+    except AttributeError:
+        status_label.config(text="Error: Could not access text area.", fg="red")
 
 
 def update_status(message, color="black"):
@@ -179,7 +174,6 @@ def build_user_interface(root):
     header = tk.Frame(root)
     header.pack(pady=10, padx=10, fill='x')
 
-
     # Search Form
     search_entry = tk.Entry(header)
     search_entry.pack(side=tk.LEFT, expand=True, fill='x', padx=5)
@@ -187,14 +181,6 @@ def build_user_interface(root):
 
     tk.Button(header, text="Find All", command=on_search_click).pack(side=tk.LEFT, padx=2)
     tk.Button(header, text="Clear", command=on_clear_click).pack(side=tk.LEFT, padx=2)
-
-    """
-    btn_search = tk.Button(header, text="Find All", command=handle_search)
-    btn_search.pack(side=tk.LEFT, padx=2)
-
-    btn_clear = tk.Button(header, text="Clear", command=handle_clear)
-    btn_clear.pack(side=tk.LEFT, padx=2)
-    """
 
     # Text Area (Body)
     text_area = tk.Text(root, wrap='word', height=15)
@@ -207,7 +193,6 @@ def build_user_interface(root):
 
     # Define the styles immediately after the text_area widget is created. 
     define_highlights(text_area, HIGHLIGHTING_CONFIGURATIONS)
-
 
     # Status Bar (Footer)    
     status_label = tk.Label(root, text="Ready", bd=1, relief=tk.SUNKEN, anchor=tk.W)
