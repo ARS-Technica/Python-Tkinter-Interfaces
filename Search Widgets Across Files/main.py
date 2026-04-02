@@ -103,8 +103,7 @@ def on_search_click():
     
     1. Input Validation: Ensures the user provided a search term.
     2. Data Retrieval: Pulls the current state from the GUI (search_entry).
-    3. External Execution: Passes the local widget instance to the external 
-       'search_logic' module.
+    3. External Execution: Passes the local widget instance to external search_logic.find_all
     4. UI Feedback: Interprets the results and updates the Status Bar for the user.
     """
 
@@ -112,6 +111,9 @@ def on_search_click():
     # Pull the string currently typed in the Entry widget.
     query = search_entry.get()
     
+    # Variable for the tag name to avoid hardcoding strings in the logic call
+    target_tag = "found"     
+
     # Step 2: Input Validation (Guard Clause)
     # If the user clicks search with an empty box, stop early to save resources
     if not query:
@@ -122,7 +124,7 @@ def on_search_click():
         # Step 3: Dependency Injection (The Core of the Project)
         # Pass the local 'text_area' (a widget instance) and the 'query' 
         # to the find_all function defined in search_logic.py.
-        match_count = search_logic.find_all(text_area, query, tag_name="found")
+        match_count = search_logic.find_all(text_area, query, tag_name=target_tag)
 
         # Step 4: Conditional UI Update
         # Update the status bar with the integer returned from the logic file.
@@ -131,14 +133,14 @@ def on_search_click():
 
             # Step 5: UX Enhancement
             # Scroll the first occurrence of the 'found' tag into the user's view.
-            text_area.see("found.first")
+            text_area.see(f"{target_tag}.first")
         else:
             update_status("Search complete: No matches found.", "blue")
 
-    except AttributeError as e:
+    except Exception as e:
         # Step 6: Error Handling
         # If the widget instance is lost or corrupted, catch the error
-        update_status("Technical Error: UI component is unreachable.", "red")
+        update_status("Technical Error: Search failed.", "red")
         print(f"Developer Debug Log: {e}")
 
 
