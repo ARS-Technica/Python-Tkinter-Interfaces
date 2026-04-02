@@ -127,11 +127,13 @@ def on_search_click():
             # Step 5: UX Enhancement
             # Scroll the first occurrence of the 'found' tag into the user's view.
             text_area.see("found.first")
-
+        else:
+            update_status("Search complete: No matches found.", "blue")
     except:
         # Step 6: Error Handling
-        # If the widget instance is lost or corrupted, catch the error 
-
+        # If the widget instance is lost or corrupted, catch the error
+        update_status("Technical Error: UI component is unreachable.", "red")
+        print(f"Developer Debug Log: {e}")        
 
     # apply_styles(text_area, HIGHLIGHTING_CONFIGURATIONS)
 
