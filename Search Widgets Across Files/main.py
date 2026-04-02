@@ -71,7 +71,10 @@ text_area = None
 # SEARCH HELPER FUNCTIONS ------------------------------------------------------------------
 
 def clear_highlights():
-    """Resets all tags in the text widget in order to remove highlighting of text."""
+    """
+    Resets all tags in the text widget in order to remove highlighting of text.
+    """
+    
     try:
         search_logic.clear_tags(text_area, tag_name="found")
         status_label.config(text="Highlights successfully cleared.", fg="black")
@@ -84,18 +87,20 @@ def define_highlights(text_widget, styles_dict):
     Iterate through the style dictionary and configures the widget tags.
     Maximizes modularity by eliminating the need to define highlights inside search.
     """
+
     for tag, colors in styles_dict.items():
         # **colors unpacks the dict into: background="yellow", foreground="black"
         text_widget.tag_config(tag, **colors)  
 
-# apply_styles(text_area, HIGHLIGHTING_CONFIGURATIONS)
-
 
 def on_search_click():
     """
-    The 'Bridge' Controller: Orchestrates the search process between the UI and Logic.
+    Connects the GUI in main.py to the search logic in search_logic.py
+
+    Triggered when the user clicks "Search" or presses the Enter key.  This function
+    pulls the string from the Entry widget, calls find_all() from the logic file, and 
+    updates a status label.
     
-    This function acts as the central coordinator. It performs the following roles:
     1. Input Validation: Ensures the user provided a search term.
     2. Data Retrieval: Pulls the current state from the GUI (search_entry).
     3. External Execution: Passes the local widget instance to the external 
@@ -129,13 +134,12 @@ def on_search_click():
             text_area.see("found.first")
         else:
             update_status("Search complete: No matches found.", "blue")
-    except:
+
+    except AttributeError as e:
         # Step 6: Error Handling
         # If the widget instance is lost or corrupted, catch the error
         update_status("Technical Error: UI component is unreachable.", "red")
-        print(f"Developer Debug Log: {e}")        
-
-    # apply_styles(text_area, HIGHLIGHTING_CONFIGURATIONS)
+        print(f"Developer Debug Log: {e}")
 
 
 def on_clear_click():
@@ -155,15 +159,17 @@ def update_status(message):
     "Found 3 matches" or "No results"
     """
 
-    status_label.config(text=message, fg="black")
+    status_label.config(text=message, fg=color)
 
 
 # USER INTERFACE  ------------------------------------------------------------------------
 
-def user_interface(root):
-    # Layout engine.  This function organizes the interface.
-    # Purpose: Create the Text widget, the Entry field for searching, and the action buttons.
-    # Logic: Uses Frames to group the "Search Tools" at the top and text input below.
+def build_user_interface(root):
+    """
+    Layout engine.  This function organizes the interface.
+    Create the Text widget, the Entry field for searching, and the action buttons.
+    Uses Frames to group the "Search Tools" at the top and text input below.
+    """
 
     global search_entry, status_label, text_area
 
@@ -174,16 +180,18 @@ def user_interface(root):
     header = tk.Frame(root)
     header.pack(pady=10, padx=10, fill='x')
 
+
     # Search Form
     search_entry = tk.Entry(header)
     search_entry.pack(side=tk.LEFT, expand=True, fill='x', padx=5)
-    search_entry.bind("<Return>", lambda e: handle_search())    # Bind 'Enter' key
+    search_entry.bind("<Return>", lambda e: on_search_click())    # Bind 'Enter' key
 
     btn_search = tk.Button(header, text="Find All", command=handle_search)
     btn_search.pack(side=tk.LEFT, padx=2)
 
     btn_clear = tk.Button(header, text="Clear", command=handle_clear)
     btn_clear.pack(side=tk.LEFT, padx=2)
+
 
     # Text Area (Body)
     text_area = tk.Text(root, wrap='word', height=15)
@@ -193,6 +201,10 @@ def user_interface(root):
     text_area.insert("1.0", """Python is a powerful language.\n
                      Tkinter makes GUIs easy.\n
                      Modular code is clean code!""")
+
+    # Define the styles immediately after the text_area widget is created. 
+    apply_styles(text_area, HIGHLIGHTING_CONFIGURATIONS)
+
 
     # Status Bar (Footer)    
     status_label = tk.Label(root, text="Ready", bd=1, relief=tk.SUNKEN, anchor=tk.W)
@@ -224,5 +236,5 @@ def on_key_release(event):
 
 if __name__ == "__main__":
     main_window = tk.Tk()
-    user_interface(main_window)
+    build_user_interface(main_window)
     main_window.mainloop()
