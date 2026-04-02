@@ -117,12 +117,16 @@ def on_search_click():
         # Step 3: Dependency Injection (The Core of the Project)
         # Pass the local 'text_area' (a widget instance) and the 'query' 
         # to the find_all function defined in search_logic.py.
+        match_count = search_logic.find_all(text_area, query, tag_name="found")
 
         # Step 4: Conditional UI Update
         # Update the status bar with the integer returned from the logic file.
+        if match_count > 0:
+            update_status(f"Success: Found {match_count} matches.")        
 
-        # Step 5: UX Enhancement
-        # Scroll the first occurrence of the 'found' tag into the user's view.
+            # Step 5: UX Enhancement
+            # Scroll the first occurrence of the 'found' tag into the user's view.
+            text_area.see("found.first")
 
     except:
         # Step 6: Error Handling
