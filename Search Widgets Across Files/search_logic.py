@@ -37,7 +37,7 @@ Import the search function and pass your local Text widget instance to it when a
 import tkinter as tk
 
 
-def clear_tags(widget, tag_name="found"):
+def clear_tags(widget):
     """
     Removes all search-related highlighting tags from the text widget
     in order to prepare for a new search.
@@ -45,7 +45,6 @@ def clear_tags(widget, tag_name="found"):
     Args:
         Pass the widget, pass the tag as parameters:
         widget: Whichevever tk.Text widget is targeted to be cleared.
-        tag_name (str): The name of the tag to remove (Default is "found" for now).
 
     Raises:
         AttributeError: If the provided widget does not have a tag_remove method.
@@ -55,7 +54,11 @@ def clear_tags(widget, tag_name="found"):
     if not hasattr(widget, "tag_remove"):
         raise AttributeError(f"The provided widget '{type(widget).__name__}' is not a valid Tkinter Text widget.")
     
-    widget.tag_remove(tag_name, "1.0", tk.END)
+    # widget.tag_names() returns a list of every tag currently in the widget
+    for tag in widget.tag_names():
+        # We usually skip the 'sel' tag as that's the user's mouse selection
+        if tag != "sel":
+            widget.tag_remove(tag, "1.0", tk.END)
 
 
 def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found", **flags):
