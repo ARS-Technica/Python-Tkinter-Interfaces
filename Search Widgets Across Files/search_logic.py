@@ -177,6 +177,51 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     return None
 
 
+def find_prev(widget, query, start_from="insert", tag_name="next", **flags):
+    """
+    Finds the previous instance of the query starting from a specific index.  
+    Wraps it in a 'next' tag. 
+    Default 'start_from' is 'insert' (the current cursor position).
+    """
+    query = search_entry.get()
+    
+    if not query:
+        update_status("Error: Enter text to find previous.", "red")
+        return None
+
+    target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
+
+    # Setup search settings with 'backwards' enabled
+    search_settings = {
+        'nocase': True, 
+        'regexp': False, 
+        'backwards': True  # This is the "Magic" flag for Prev
+    }
+    search_settings.update(flags)
+
+    # Search from current point toward the beginning (1.0)
+    pos = widget.search(query, start_from, stopindex="1.0", **search_settings)
+
+    if pos:
+        # Clear only the previous 'next' highlight (Keep 'found' highlights visible)
+        widget.tag_remove(tag_name, "1.0", tk.END)  # tag_name is specified in parameters
+        
+        # Calculate end value and apply the "next" tag
+        end_pos = f"{pos}+{len(query)}c"
+        
+        # Calculate the span of the word
+        widget.tag_add(tag_name, pos, end_pos)
+        
+        # Move the cursor to the START of the match
+        # When going backwards, we want the next 'prev' click to start before the word
+        widget.mark_set("insert", pos) # This "saves" the position for the next click
+        widget.see(pos)
+        
+        return pos
+
+    return None
+
+
 def get_match_count(widget, query, startindex="1.0", stopindex="end", **flags):
     """
     Returns the integer count of how many times the query appears in the widget.
