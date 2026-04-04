@@ -167,7 +167,7 @@ def build_user_interface(root):
 
     global search_entry, status_label, text_area
 
-    root = tk.Tk()
+    # root = tk.Tk() # Moved to the if __name__ == "__main__": block at the bottom
     root.title("Modular Tkinter Search")
 
     # Search Control Panel (Header)
@@ -187,16 +187,14 @@ def build_user_interface(root):
     text_area.pack(padx=10, pady=5, fill='both', expand=True)
 
     # Sample text for Text Area
-    text_area.insert("1.0", """Python is a powerful language.\n
-                     Tkinter makes GUIs easy.\n
-                     Modular code is clean code!""")
+    text_area.insert("1.0", "This project demonstrates how to search a Text Widget from another python file.\n\nTo search text in a tkinter Text Widget from another file, you must pass the widget instance as an argument to a function in the second file.\n\nIn this example, I am triggering the search logic in search_logic.py with the on_search_click function in main.py.")
 
     # Define the styles immediately after the text_area widget is created. 
     define_highlights(text_area, HIGHLIGHTING_CONFIGURATIONS)
 
     # Status Bar (Footer)    
-    status_label = tk.Label(root, text="Ready", bd=1, relief=tk.SUNKEN, anchor=tk.W)
-    status_label.pack(side=tk.BOTTOM, fill='x')
+    status_label = tk.Label(root, text="Ready", bd=1, anchor=tk.W)
+    status_label.pack(side=tk.BOTTOM, fill='x', padx=(10, 0))
 
 
 # KEY BINDINGS ---------------------------------------------------------------------------
