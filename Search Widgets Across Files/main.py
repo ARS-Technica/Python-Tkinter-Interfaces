@@ -189,10 +189,15 @@ def on_find_prev_click():
         text_area.mark_set("insert", tk.END)
         
         # Search again from the very end
-        pos = search_logic.find_prev(text_area, query, start_from=tk.END, tag_name=target_tag)
+        pos = search_logic.find_prev(text_area, query, start_from="end", tag_name=target_tag)
         
-        if not pos:
-            update_status("No matches found.", "red")
+        if pos:
+             update_status(f"Match found at {pos}")
+        else:
+             update_status("No matches found.", "red")
+             
+    else:
+        update_status(f"Match found at {pos}")
 
 
 def on_clear_click():
