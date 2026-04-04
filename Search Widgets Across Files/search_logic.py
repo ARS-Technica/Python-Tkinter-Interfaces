@@ -153,11 +153,13 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     pos = widget.search(query, start_from, stopindex=tk.END, **search_settings)
 
     if pos:
-        # Highlight just one result and...
+        # Clear only the 'next' highlight (Keep 'found' highlights visible)
         widget.tag_remove(tag_name, "1.0", tk.END)  # tag_name is specified in parameters
         
         # Calculate end value and apply the "next" tag
         end_pos = f"{pos}+{len(query)}c"
+
+        # Calculate the span of the word
         widget.tag_add(tag_name, pos, end_pos)
 
         # Scroll to the next search result and move cursor there
