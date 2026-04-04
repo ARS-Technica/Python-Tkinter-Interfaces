@@ -148,7 +148,8 @@ def on_find_next_click():
     target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
 
     # We start searching from the current cursor 'insert' position
-    pos = search_logic.find_next(text_area, query, start_pos="insert", tag_name=target_tag)
+    pos = search_logic.find_next(text_area, query, start_from="insert", tag_name=target_tag)
+    # Use "start_from" not "start_pos"!
 
     if not pos:
         # If no match is found from the current cursor to the end...
@@ -156,16 +157,43 @@ def on_find_next_click():
         update_status("Reached end. Wrapping to top...", "blue")
         text_area.mark_set("insert", "1.0")
 
+        # Search again from the very end
         pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
         
         if pos:
             update_status(f"Match found at {pos}")
-        """
-        else:
-            # If we hit the end, offer to start over from the top
-            update_status("No more matches found. Starting over...", "blue")
-            text_area.mark_set("insert", "1.0")
-        """
+
+
+def on_find_prev_click():
+    """
+    Highlights previous instance of query.  Wraps it in a 'next' tag.
+    Uses the widget's internal 'insert' mark to track progress.
+    Wraps to the bottom if the top of the document is reached.
+    """
+    query = search_entry.get()
+
+    if not query:
+        update_status("Error: Enter text to find.", "red")
+        return
+
+    target_tag = "next" # This will keep using the 'next' style for the active match
+
+    # We start searching from the current cursor 'insert' position
+    pos = search_logic.find_prev(text_area, query, start_from="insert", tag_name=target_tag)
+    # Use "start_from" not "start_pos"!
+
+    if not pos:
+        # If no match is found from the current cursor to the beginning...
+        # Reset the cursor to the end and try one more time (Wrap Around)
+        update_status("Reached top. Wrapping to bottom...", "blue")
+        text_area.mark_set("insert", tk.END)
+        
+        # Search again from the very end
+        pos = search_logic.find_prev(text_area, query, start_from=tk.END, tag_name=target_tag)
+        
+        if not pos:
+            update_status("No matches found.", "red")
+
 
 def on_clear_click():
     """
