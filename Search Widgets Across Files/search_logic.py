@@ -155,6 +155,12 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     }
     search_settings.update(flags)
 
+    # Index Collision Handling:
+    # If starting from the cursor, move 1 character forward to avoid re-finding current match.
+    # This prevents having to click "Find Next" or "Find Prev" twice to reverse direction
+    if start_from == "insert":
+        start_from = f"{start_from}+1c"   
+
     # Perform a single search from the current cursor position to the end
     pos = widget.search(query, start_from, stopindex=tk.END, **search_settings)
 
