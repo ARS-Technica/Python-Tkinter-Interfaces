@@ -131,6 +131,29 @@ def define_highlights(text_widget, styles_dict):
         text_widget.tag_config(tag, **colors)  
 
 
+def on_find_next_click():
+    """
+    Highlights next instance of query.  Wraps it in a 'next' tag.
+    Uses the widget's internal 'insert' mark to track progress.
+    """
+    query = search_entry.get()
+    target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
+
+    if not query:
+        update_status("Error: Enter text to find next.", "red")
+        return
+
+    # We start searching from the current cursor 'insert' position
+    pos = search_logic.find_next(text_area, query, start_pos="insert", tag_name=target_tag)
+
+    if pos:
+        update_status(f"Match found at {pos}")
+    else:
+        # If we hit the end, offer to start over from the top
+        update_status("No more matches found. Starting over...", "blue")
+        text_area.mark_set("insert", "1.0")
+
+
 def on_clear_click():
     """
     Clears all highlights and empties the search box.
