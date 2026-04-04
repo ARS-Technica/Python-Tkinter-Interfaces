@@ -204,6 +204,7 @@ def build_user_interface(root):
 
     tk.Button(header, text="Find All", command=on_search_click).pack(side=tk.LEFT, padx=2)
     tk.Button(header, text="Clear", command=on_clear_click).pack(side=tk.LEFT, padx=2)
+    tk.Button(header, text="Find Next", command=on_find_next_click).pack(side=tk.LEFT, padx=2)
 
     # Text Area (Body)
     text_area = tk.Text(root, wrap='word', height=15)
