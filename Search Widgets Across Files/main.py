@@ -130,6 +130,9 @@ def define_highlights(text_widget, styles_dict):
     for tag, colors in styles_dict.items():
         text_widget.tag_config(tag, **colors)  
 
+    # Ensure the 'next' tag always replaces the 'found' tage
+    text_widget.tag_raise("next", "found")
+
 
 def on_find_next_click():
     """
