@@ -189,22 +189,28 @@ def find_prev(widget, query, start_from="insert", tag_name="next", **flags):
     Wraps it in a 'next' tag. 
     Default 'start_from' is 'insert' (the current cursor position).
     """
-    query = search_entry.get()
-    
     if not query:
         update_status("Error: Enter text to find previous.", "red")
         return None
 
+    # query = search_entry.get() # Removed because the 'query' is passed in as an argument!
+    
     target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
 
     # Setup search settings with 'backwards' enabled
     search_settings = {
-        'nocase': True, 
-        'regexp': False, 
+		'nocase': True,  # Is search query case sensitive?
+        'regexp': False,  # Are there regular expression in search query?
         'backwards': True  # This is the "Magic" flag for Prev
     }
     search_settings.update(flags)
 
+    # Index Collision Handling:
+    # If starting from the cursor, move 1 character forward to avoid re-finding current match.
+    # This prevents having to click "Find Next" or "Find Prev" twice to reverse direction
+    if start_from == "insert":
+        start_from = f"{start_from}-1c"   
+    
     # Search from current point toward the beginning (1.0)
     pos = widget.search(query, start_from, stopindex="1.0", **search_settings)
 
