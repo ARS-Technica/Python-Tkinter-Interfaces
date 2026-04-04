@@ -139,19 +139,19 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     Finds the next occurrence of the query starting from a specific index.
     Default 'start_from' is 'insert' (the current cursor position).
     """
-    query = search_entry.get()
-	
     if not query:
         update_status("Error: Enter text to find next.", "red")
         return None
-	
-	target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
+
+    # query = search_entry.get() # Removed because the 'query' is passed in as an argument!
+		
+    target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
 
     # Setup search settings
     search_settings = {
 		'nocase': True,  # Is search query case sensitive?
-        'regexp': False  # Are there regular expression in search query?
-		'backwards': False  # Keep search moving top to bottom
+        'regexp': False,  # Are there regular expression in search query?
+        'backwards': False  # Keep search moving top to bottom
     }
     search_settings.update(flags)
 
