@@ -139,17 +139,23 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     Finds the next occurrence of the query starting from a specific index.
     Default 'start_from' is 'insert' (the current cursor position).
     """
-
+    query = search_entry.get()
+	
     if not query:
+        update_status("Error: Enter text to find next.", "red")
         return None
+	
+	target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
 
-    # Merge flags for consistency
-    search_settings = {'nocase': True,  # Is search query case sensitive?
-                       'regexp': False  # Are there regular expression in search query?
-                       }
+    # Setup search settings
+    search_settings = {
+		'nocase': True,  # Is search query case sensitive?
+        'regexp': False  # Are there regular expression in search query?
+		'backwards': False  # Keep search moving top to bottom
+    }
     search_settings.update(flags)
 
-    # Perform a single search from the current cursor/start point to the end
+    # Perform a single search from the current cursor position to the end
     pos = widget.search(query, start_from, stopindex=tk.END, **search_settings)
 
     if pos:
@@ -163,8 +169,8 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
         widget.tag_add(tag_name, pos, end_pos)
 
         # Scroll to the next search result and move cursor there
-        widget.see(pos)
         widget.mark_set("insert", end_pos) # This "saves" the position for the next click
+        widget.see(pos)
 
         return pos
 
