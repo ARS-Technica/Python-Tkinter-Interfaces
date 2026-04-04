@@ -149,17 +149,20 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
                        }
     search_settings.update(flags)
 
-    # Perform a single search from the current cursor/start point
+    # Perform a single search from the current cursor/start point to the end
     pos = widget.search(query, start_from, stopindex=tk.END, **search_settings)
 
     if pos:
         # Highlight just one result and...
         widget.tag_remove(tag_name, "1.0", tk.END)  # tag_name is specified in parameters
+        
+        # Calculate end value and apply the "next" tag
         end_pos = f"{pos}+{len(query)}c"
         widget.tag_add(tag_name, pos, end_pos)
 
-        # Scroll to the one search result
+        # Scroll to the next search result and move cursor there
         widget.see(pos)
+        widget.mark_set("insert", end_pos) # This "saves" the position for the next click
 
         return pos
 
