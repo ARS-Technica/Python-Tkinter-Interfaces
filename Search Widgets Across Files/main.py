@@ -127,7 +127,7 @@ def define_highlights(text_widget, styles_dict):
     Iterate through the style dictionary and configures the widget tags.
     Maximizes modularity by eliminating the need to define highlights inside search.
     """
-    for tag, colors in styles_dict.items():
+    for tag, colors in HIGHLIGHTING_CONFIGURATIONS.items():
         text_widget.tag_config(tag, **colors)  
 
     # Ensure the 'next' tag always replaces the 'found' tage
