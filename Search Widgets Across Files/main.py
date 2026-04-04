@@ -150,16 +150,19 @@ def on_find_next_click():
     if not pos:
         # If no match is found from the current cursor to the end...
         # Reset the cursor to the beginning and try one more time (Wrap Around)
+        update_status("Reached end. Wrapping to top...", "blue")
         text_area.mark_set("insert", "1.0")
-        pos = search_logic.find_next(text_area, query, start_pos="insert")
+
+        pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
         
         if pos:
             update_status(f"Match found at {pos}")
+        """
         else:
             # If we hit the end, offer to start over from the top
             update_status("No more matches found. Starting over...", "blue")
             text_area.mark_set("insert", "1.0")
-
+        """
 
 def on_clear_click():
     """
