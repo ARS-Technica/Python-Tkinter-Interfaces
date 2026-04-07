@@ -183,18 +183,36 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     return None
 
 
-def find_prev(widget, query, start_from="insert", tag_name="next"):
-    if not query: return None
+def find_prev(widget, query, start_from="insert", tag_name="next", **flags):
+    """
+    Finds the previous instance of the query starting from a specific index.  
+    Wraps it in a 'next' tag. 
+    Default 'start_from' is 'insert' (the current cursor position).
+    """
+    if not query: 
+        # Update Status Bar with error message from main.py
+        return None
+    
+    # Setup search settings with 'backwards' enabled
+    search_settings = {
+		'nocase': True,  # Is search query case sensitive?
+        'regexp': False,  # Are there regular expression in search query?
+        'backwards': True  # This is the "Magic" flag for Prev
+    }
+    # Overwrite defaults with whatever the UI sends over
+    search_settings.update(flags)
+
     actual_start = f"{start_from}-1c" if start_from == "insert" else start_from
-    pos = widget.search(query, actual_start, stopindex="1.0", backwards=True, nocase=True)
+    pos = widget.search(query, actual_start, stopindex="1.0", **search_settings)
 
     if pos:
         widget.tag_remove(tag_name, "1.0", "end")
         end_pos = f"{pos}+{len(query)}c" # Calculate it
-        widget.tag_add(tag_name, pos, end_pos) # USE IT HERE
+        widget.tag_add(tag_name, pos, end_pos) 
         widget.mark_set("insert", pos) 
         widget.see(pos)
         return pos
+	
     return None
 
 
