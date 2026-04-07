@@ -79,7 +79,7 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
     """
 
     # Reset previous search state
-    clear_tags(widget, tag_name)
+    clear_tags(widget)
 
     # Ensure that the query is not empty to avoid unnecessary processing
     if not query:
@@ -155,7 +155,7 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     }
     search_settings.update(flags)
 
-    # Index Collision Handling:
+    # Index Collision Handling
     # If starting from the cursor, move 1 character forward to avoid re-finding current match.
     # This prevents having to click "Find Next" or "Find Prev" twice to reverse direction
     if start_from == "insert":
@@ -183,54 +183,18 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     return None
 
 
-def find_prev(widget, query, start_from="insert", tag_name="next", **flags):
-    """
-    Finds the previous instance of the query starting from a specific index.  
-    Wraps it in a 'next' tag. 
-    Default 'start_from' is 'insert' (the current cursor position).
-    """
-    if not query:
-        update_status("Error: Enter text to find previous.", "red")
-        return None
-
-    # query = search_entry.get() # Removed because the 'query' is passed in as an argument!
-    
-    target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
-
-    # Setup search settings with 'backwards' enabled
-    search_settings = {
-		'nocase': True,  # Is search query case sensitive?
-        'regexp': False,  # Are there regular expression in search query?
-        'backwards': True  # This is the "Magic" flag for Prev
-    }
-    search_settings.update(flags)
-
-    # Index Collision Handling:
-    # If starting from the cursor, move 1 character forward to avoid re-finding current match.
-    # This prevents having to click "Find Next" or "Find Prev" twice to reverse direction
-    if start_from == "insert":
-        start_from = f"{start_from}-1c"   
-    
-    # Search from current point toward the beginning (1.0)
-    pos = widget.search(query, start_from, stopindex="1.0", **search_settings)
+def find_prev(widget, query, start_from="insert", tag_name="next"):
+    if not query: return None
+    actual_start = f"{start_from}-1c" if start_from == "insert" else start_from
+    pos = widget.search(query, actual_start, stopindex="1.0", backwards=True, nocase=True)
 
     if pos:
-        # Clear only the previous 'next' highlight (Keep 'found' highlights visible)
-        widget.tag_remove(tag_name, "1.0", tk.END)  # tag_name is specified in parameters
-        
-        # Calculate end value and apply the "next" tag
-        end_pos = f"{pos}+{len(query)}c"
-        
-        # Calculate the span of the word
-        widget.tag_add(tag_name, pos, end_pos)
-        
-        # Move the cursor to the START of the match
-        # When going backwards, we want the next 'prev' click to start before the word
-        widget.mark_set("insert", pos) # This "saves" the position for the next click
+        widget.tag_remove(tag_name, "1.0", "end")
+        end_pos = f"{pos}+{len(query)}c" # Calculate it
+        widget.tag_add(tag_name, pos, end_pos) # USE IT HERE
+        widget.mark_set("insert", pos) 
         widget.see(pos)
-        
         return pos
-
     return None
 
 
@@ -260,7 +224,11 @@ def get_match_count(widget, query, startindex="1.0", stopindex="end", **flags):
     current_pos = startindex
         
     # Set default flags (matching your find_all logic)
-    search_settings = {'nocase': True}
+    search_settings = {
+		'nocase': True,  # Is search query case sensitive?
+        'regexp': False,  # Are there regular expression in search query?
+        'backwards': False  # Keep search moving top to bottom
+    }
     search_settings.update(flags)
 
     while True:
