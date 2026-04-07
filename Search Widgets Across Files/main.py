@@ -176,9 +176,6 @@ def on_find_next_click():
 
         # Search again from the very end
         pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
-        
-        if pos:
-            update_status(f"Match found at {pos}")
 
 
 def on_find_prev_click():
