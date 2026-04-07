@@ -191,6 +191,7 @@ def find_prev(widget, query, start_from="insert", tag_name="next", **flags):
         # Update Status Bar with error message from main.py   
         return None
 
+
     # Configuration: Set defaults, then override them with any incoming 'flags'.
     search_settings = {     # Setup search settings with 'backwards' enabled
 		'nocase': True,  # Is search query case sensitive?
