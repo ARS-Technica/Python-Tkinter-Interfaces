@@ -65,7 +65,7 @@ HIGHLIGHTING_CONFIGURATIONS = {
 search_entry = None
 status_label = None
 status_timer_id = None
-text_area = None
+text_area = None    # Addresses NameError issues
 
 
 # SEARCH FUNCTION -------------------------------------------------------------------------
