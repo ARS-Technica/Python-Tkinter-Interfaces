@@ -160,7 +160,7 @@ def on_find_next_click():
 
     if not query:
         update_status("Error: Enter text to find next.", "red")
-        return
+        return # Stop right here; don't even talk to search_logic
     
     target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
 
@@ -175,7 +175,15 @@ def on_find_next_click():
         text_area.mark_set("insert", "1.0")
 
         # Search again from the very end
-        pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
+        #pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
+
+        # Try searching from the very top
+        new_pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
+
+        if new_pos:
+            update_status("Reached end. Wrapping to top...", "blue")
+        else:
+            update_status("No matches found in document.", "red")
 
 
 def on_find_prev_click():
