@@ -186,17 +186,13 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
 
 
 def find_prev(widget, query, start_from="insert", tag_name="next", **flags):
-    """
-    Finds the previous instance of the query starting from a specific index.  
-    Wraps it in a 'next' tag. 
-    Default 'start_from' is 'insert' (the current cursor position).
-    """
+    # Guard Clause: If the user didn't type anything, stop immediately.
     if not query: 
-        # Update Status Bar with error message from main.py
+        # Update Status Bar with error message from main.py   
         return None
-    
-    # Setup search settings with 'backwards' enabled
-    search_settings = {
+
+    # Configuration: Set defaults, then override them with any incoming 'flags'.
+    search_settings = {     # Setup search settings with 'backwards' enabled
 		'nocase': True,  # Is search query case sensitive?
         'regexp': False,  # Are there regular expression in search query?
         'backwards': True  # This is the "Magic" flag for Prev
@@ -204,17 +200,37 @@ def find_prev(widget, query, start_from="insert", tag_name="next", **flags):
     # Overwrite defaults with whatever the UI sends over
     search_settings.update(flags)
 
-    actual_start = f"{start_from}-1c" if start_from == "insert" else start_from
-    pos = widget.search(query, actual_start, stopindex="1.0", **search_settings)
+    # The Nudge: If we are starting from the cursor ('insert'), move back 1 character.
+    # This ensures we don't 're-find' the word the cursor is currently sitting on.
+    # Use widget.index to normalize the starting coordinate
+    if start_from == "insert":
+        # widget.index converts the coordinate to a standard "line.char" string.
+        start_from = widget.index(f"{start_from}-1c")
 
+    # Execution: Search from the starting point UP towards the top ("1.0").
+    pos = widget.search(query, start_from, stopindex="1.0", **search_settings)
+
+    # If a match string (like "5.12") is returned...
     if pos:
+        # Clean up: Remove any existing orange highlight from anywhere in the text.
         widget.tag_remove(tag_name, "1.0", "end")
-        end_pos = f"{pos}+{len(query)}c" # Calculate it
-        widget.tag_add(tag_name, pos, end_pos) 
-        widget.mark_set("insert", pos) 
+
+        # Math: Find where the word ends by adding the length of the query to the start.
+        end_pos = f"{pos}+{len(query)}c"
+
+        # Highlight: Apply the orange 'next' tag to the specific range we found.
+        widget.tag_add(tag_name, pos, end_pos)
+
+        # State: Move the 'insert' mark (the blinking cursor) to the start of the word.
+        widget.mark_set("insert", pos) # Backwards search: Cursor goes to START
+
+        # Visibility: Automatically scroll the text area so the match is in view.
         widget.see(pos)
+
+        # Reporting: Send the position back to main.py to confirm success.
         return pos
-	
+    
+    # Failure: If no match was found, return None so the UI knows to Wrap Around.
     return None
 
 
