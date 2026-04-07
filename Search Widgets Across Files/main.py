@@ -205,13 +205,8 @@ def on_find_prev_click():
         # Search again from the very end
         pos = search_logic.find_prev(text_area, query, start_from="end", tag_name=target_tag)
         
-        if pos:
-             update_status(f"Match found at {pos}")
-        else:
+        if not pos:
              update_status("No matches found.", "red")
-
-    else:
-        update_status(f"Match found at {pos}")
 
 
 def update_status(message, color="black"):
