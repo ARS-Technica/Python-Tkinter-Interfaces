@@ -148,7 +148,7 @@ def on_find_next_click():
     target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
 
     # We start searching from the current cursor 'insert' position
-    pos = search_logic.find_next(text_area, query, start_from="insert", tag_name=target_tag)
+    pos = search_logic.find_next(text_area, query, start_from="insert", tag_name="next")
     # Use "start_from" not "start_pos"!
 
     if not pos:
@@ -158,7 +158,7 @@ def on_find_next_click():
         text_area.mark_set("insert", "1.0")
 
         # Search again from the very end
-        pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
+        pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name="next")
         
         if pos:
             update_status(f"Match found at {pos}")
