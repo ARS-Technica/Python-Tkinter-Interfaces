@@ -1,5 +1,5 @@
 """
-Search Widgets Across Files 
+Search Widgets Across Files
 Author: Andrew R Sutton
 Created: March 23, 2026
 
@@ -64,6 +64,7 @@ HIGHLIGHTING_CONFIGURATIONS = {
 # Declare variables for UI elements as None
 search_entry = None
 status_label = None
+status_timer_id = None
 text_area = None
 
 
@@ -133,6 +134,22 @@ def define_highlights(text_widget, styles_dict):
     # Ensure the 'next' tag always replaces the 'found' tage
     text_widget.tag_raise("next", "found")
 
+def on_clear_click():
+    """
+    Clears all highlights and empties the search box.
+    Calls clear_tags() from the logic file and uses entry.delete(0, tk.END).
+    """
+    # Clear the UI entry box
+    search_entry.delete(0, tk.END)
+
+    try:
+        # Call the logic function to wipe all tags from the text area 
+        search_logic.clear_tags(text_area)
+        # Provide user feedback
+        status_label.config(text="Highlights successfully cleared.", fg="black")
+    except AttributeError:
+        status_label.config(text="Error: Could not access text area.", fg="red")
+
 
 def on_find_next_click():
     """
@@ -148,7 +165,7 @@ def on_find_next_click():
     target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
 
     # We start searching from the current cursor 'insert' position
-    pos = search_logic.find_next(text_area, query, start_from="insert", tag_name="next")
+    pos = search_logic.find_next(text_area, query, start_from="insert", tag_name=target_tag)
     # Use "start_from" not "start_pos"!
 
     if not pos:
@@ -158,7 +175,7 @@ def on_find_next_click():
         text_area.mark_set("insert", "1.0")
 
         # Search again from the very end
-        pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name="next")
+        pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
         
         if pos:
             update_status(f"Match found at {pos}")
@@ -179,14 +196,14 @@ def on_find_prev_click():
     target_tag = "next" # This will keep using the 'next' style for the active match
 
     # We start searching from the current cursor 'insert' position
-    pos = search_logic.find_prev(text_area, query, start_from="insert", tag_name=target_tag)
+    pos = search_logic.find_prev(text_area, query, start_from="insert", tag_name="next")
     # Use "start_from" not "start_pos"!
 
     if not pos:
         # If no match is found from the current cursor to the beginning...
         # Reset the cursor to the end and try one more time (Wrap Around)
         update_status("Reached top. Wrapping to bottom...", "blue")
-        text_area.mark_set("insert", tk.END)
+        text_area.mark_set("insert", "end-1c") # 'end-1c' not tk.END is vital for backward search
         
         # Search again from the very end
         pos = search_logic.find_prev(text_area, query, start_from="end", tag_name=target_tag)
@@ -195,26 +212,9 @@ def on_find_prev_click():
              update_status(f"Match found at {pos}")
         else:
              update_status("No matches found.", "red")
-             
+
     else:
         update_status(f"Match found at {pos}")
-
-
-def on_clear_click():
-    """
-    Clears all highlights and empties the search box.
-    Calls clear_tags() from the logic file and uses entry.delete(0, tk.END).
-    """
-    # Clear the UI entry box
-    search_entry.delete(0, tk.END)
-
-    try:
-        # Call the logic function to wipe all tags from the text area 
-        search_logic.clear_tags(text_area)
-        # Provide user feedback
-        status_label.config(text="Highlights successfully cleared.", fg="black")
-    except AttributeError:
-        status_label.config(text="Error: Could not access text area.", fg="red")
 
 
 def update_status(message, color="black"):
@@ -222,7 +222,18 @@ def update_status(message, color="black"):
     Updates the status bar label with the number of search instances in the document
     "Found 3 matches" or "No results"
     """
+    global status_label, status_timer_id
+
+    # If a timer is already running, cancel it
+    if status_timer_id:
+        status_label.after_cancel(status_timer_id)
+
+    # Apply the new message and color
     status_label.config(text=message, fg=color)
+
+    # Schedule the 'clear' action
+    # .after(ms, function) runs the function without blocking the UI
+    status_label.after(5000, lambda: status_label.config(text=""))
 
 
 # USER INTERFACE  ------------------------------------------------------------------------
@@ -239,20 +250,25 @@ def build_user_interface(root):
     # root = tk.Tk() # Moved to the if __name__ == "__main__": block at the bottom
     root.title("Modular Tkinter Search")
 
+
+    # TOP ROW ---------------------------------------------------------------------------
     # Search Control Panel (Header)
     header = tk.Frame(root)
     header.pack(pady=10, padx=10, fill='x')
 
     # Search Form
-    search_entry = tk.Entry(header)
+    search_entry = tk.Entry(header, width=30) # Set a fixed width to keep it neat
     search_entry.pack(side=tk.LEFT, expand=True, fill='x', padx=5)
     search_entry.bind("<Return>", lambda e: on_search_click())    # Bind 'Enter' key
 
     tk.Button(header, text="Find All", command=on_search_click).pack(side=tk.LEFT, padx=2)
-    tk.Button(header, text="Clear", command=on_clear_click).pack(side=tk.LEFT, padx=2)
-    tk.Button(header, text="Find Next", command=on_find_next_click).pack(side=tk.LEFT, padx=2)
 
+
+    # MIDDLE ROW --------------------------------------------------------------------------
     # Text Area (Body)
+    #body = tk.Frame(root)
+    #body.pack(pady=10, fill='x') # Packing without 'fill=x' centers frame
+    
     text_area = tk.Text(root, wrap='word', height=15)
     text_area.pack(padx=10, pady=5, fill='both', expand=True)
 
@@ -262,10 +278,23 @@ def build_user_interface(root):
     # Define the styles immediately after the text_area widget is created. 
     define_highlights(text_area, HIGHLIGHTING_CONFIGURATIONS)
 
-    # Status Bar (Footer)    
+
+    # BOTTOM ROW -------------------------------------------------------------------------
+    footer_controls = tk.Frame(root)
+    footer_controls.pack(pady=10) # Packing without 'fill=x' centers frame
+
+    btn_prev = tk.Button(footer_controls, text="Find Prev", command=on_find_prev_click)
+    btn_prev.pack(side=tk.LEFT,padx=5)
+
+    btn_clear = tk.Button(footer_controls, text="Clear", command=on_clear_click)
+    btn_clear.pack(side=tk.LEFT, padx=5)
+
+    btn_next = tk.Button(footer_controls, text="Find Next", command=on_find_next_click)
+    btn_next.pack(side=tk.LEFT, padx=5)
+
+    # Status Bar (Footer)
     status_label = tk.Label(root, text="Ready", bd=1, anchor=tk.W)
     status_label.pack(side=tk.BOTTOM, fill='x', padx=(10, 0))
-
 
 # KEY BINDINGS ---------------------------------------------------------------------------
 
