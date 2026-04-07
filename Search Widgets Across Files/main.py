@@ -191,30 +191,38 @@ def on_find_prev_click():
     Highlights previous instance of query.  Wraps it in a 'next' tag.
     Uses the widget's internal 'insert' mark to track progress.
     Wraps to the bottom if the top of the document is reached.
-    """
+    """ 
+    # Grab the current text from the search box.
     query = search_entry.get()
-
+    # Guard Clause: If the user didn't type anything, stop immediately.
     if not query:
         update_status("Error: Enter text to find.", "red")
         return
 
-    target_tag = "next" # This will keep using the 'next' style for the active match
+    # Define which visual style ("next" is Orange).
+    target_tag = "next"
 
-    # We start searching from the current cursor 'insert' position
-    pos = search_logic.find_prev(text_area, query, start_from="insert", tag_name="next")
-    # Use "start_from" not "start_pos"!
+    # Try to find the previous match (searching up)
+    pos = search_logic.find_prev(text_area, query, start_from="insert", tag_name=target_tag)
 
+    # If nothing is found, attempt the wrap to the bottom of the document.
     if not pos:
-        # If no match is found from the current cursor to the beginning...
-        # Reset the cursor to the end and try one more time (Wrap Around)
-        update_status("Reached top. Wrapping to bottom...", "blue")
-        text_area.mark_set("insert", "end-1c") # 'end-1c' not tk.END is vital for backward search
+        # Teleport: Move the cursor to the very bottom of the document.
+        # "end-1c" bypasses the invisible newline at the absolute end of the widget.
+        text_area.mark_set("insert", "end-1c")
+
+        # Jump to the last character of the document 
+        # Ask the logic to search again from the new bottom position.
+        # "end-1c" avoids the ghost newline at the absolute end
+        new_pos = search_logic.find_prev(text_area, query, start_from="end-1c", tag_name=target_tag)
         
-        # Search again from the very end
-        pos = search_logic.find_prev(text_area, query, start_from="end", tag_name=target_tag)
-        
-        if not pos:
-             update_status("No matches found.", "red")
+        # Feedback: Only show the "Wrapping" message if the second attempt actually worked.
+        if new_pos:
+            update_status("Reached top. Wrapping to bottom...", "blue")
+        else:
+            # If even the second attempt failed and there are NO matches in the file.
+            update_status("No matches found in document.", "red")
+
 
 
 def update_status(message, color="black"):
