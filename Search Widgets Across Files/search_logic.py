@@ -140,7 +140,7 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     Default 'start_from' is 'insert' (the current cursor position).
     """
     if not query:
-        update_status("Error: Enter text to find next.", "red")
+        # update_status("Error: Enter text to find next.", "red")
         return None
 
     # query = search_entry.get() # Removed because the 'query' is passed in as an argument!
@@ -159,7 +159,9 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     # If starting from the cursor, move 1 character forward to avoid re-finding current match.
     # This prevents having to click "Find Next" or "Find Prev" twice to reverse direction
     if start_from == "insert":
-        start_from = f"{start_from}+1c"   
+        # If we are starting from 'insert', we move forward 1 character.
+        start_from = widget.index(f"{start_from}+1c") # Look ahead before wrapping
+        # start_from = f"{start_from}+1c"   
 
     # Perform a single search from the current cursor position to the end
     pos = widget.search(query, start_from, stopindex=tk.END, **search_settings)
