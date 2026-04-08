@@ -88,6 +88,7 @@ def on_search_click():
     # Pull the string currently typed in the Entry widget.
     query = search_entry.get()
     
+    # Define which visual style ("found" is Yellow).
     # Variable for the tag name to avoid hardcoding strings in the logic call
     target_tag = "found"     
 
@@ -106,7 +107,7 @@ def on_search_click():
         # Step 4: Conditional UI Update
         # Update the status bar with the integer returned from the logic file.
         if match_count and match_count > 0:
-            update_status(f"Success: Found {match_count} matches.")        
+            update_status(f"Search complete: {match_count} matches found.")        
 
             # Step 5: UX Enhancement
             # Scroll the first occurrence of the 'found' tag into the user's view.
@@ -156,12 +157,15 @@ def on_find_next_click():
     Highlights next instance of query.  Wraps it in a 'next' tag.
     Uses the widget's internal 'insert' mark to track progress.
     """
+    # Grab the current text from the search box.
     query = search_entry.get()
 
+    # Guard Clause: If the user didn't type anything, stop immediately.
     if not query:
         update_status("Error: Enter text to find next.", "red")
         return # Stop right here; don't even talk to search_logic
     
+    # Define which visual style ("next" is Orange).  
     target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
 
     # We start searching from the current cursor 'insert' position
@@ -171,7 +175,7 @@ def on_find_next_click():
     if not pos:
         # If no match is found from the current cursor to the end...
         # Reset the cursor to the beginning and try one more time (Wrap Around)
-        update_status("Reached end. Wrapping to top...", "blue")
+        update_status("Reached end. Wrapping to top...", "black")
         text_area.mark_set("insert", "1.0")
 
         # Search again from the very end
@@ -181,7 +185,7 @@ def on_find_next_click():
         new_pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
 
         if new_pos:
-            update_status("Reached end. Wrapping to top...", "blue")
+            update_status("Reached end. Wrapping to top...", "black")
         else:
             update_status("No matches found in document.", "red")
 
@@ -197,19 +201,21 @@ def on_find_prev_click():
     # Guard Clause: If the user didn't type anything, stop immediately.
     if not query:
         update_status("Error: Enter text to find.", "red")
-        return
+        return # Stop right here; don't even talk to search_logic
 
     # Define which visual style ("next" is Orange).
-    target_tag = "next"
+    target_tag = "next" # This will keep using the 'next' style for the active match
 
-    # Try to find the previous match (searching up)
+    # Start searching from the current cursor 'insert' position (searching up)
     pos = search_logic.find_prev(text_area, query, start_from="insert", tag_name=target_tag)
+    # Use "start_from" not "start_pos"!
 
     # If nothing is found, attempt the wrap to the bottom of the document.
     if not pos:
-        # Teleport: Move the cursor to the very bottom of the document.
+        # If no match is found from the current cursor to the beginning...
+        # Reset the cursor to the end and try one more time (Wrap Around)
         # "end-1c" bypasses the invisible newline at the absolute end of the widget.
-        text_area.mark_set("insert", "end-1c")
+        text_area.mark_set("insert", "end-1c")  # 'end-1c' not tk.END is vital for backward search
 
         # Jump to the last character of the document 
         # Ask the logic to search again from the new bottom position.
@@ -222,7 +228,6 @@ def on_find_prev_click():
         else:
             # If even the second attempt failed and there are NO matches in the file.
             update_status("No matches found in document.", "red")
-
 
 
 def update_status(message, color="black"):
@@ -241,7 +246,7 @@ def update_status(message, color="black"):
 
     # Schedule the 'clear' action
     # .after(ms, function) runs the function without blocking the UI
-    status_label.after(5000, lambda: status_label.config(text=""))
+    status_label.after(3000, lambda: status_label.config(text=""))
 
 
 # USER INTERFACE  ------------------------------------------------------------------------
@@ -315,7 +320,7 @@ def on_key_release(event):
     """
     Example: Updates 'Matches Found' label in status bar.
     """
-
+    # Grab the current text from the search box.
     query = search_entry.get()
     
     # We call the dry-run count function
