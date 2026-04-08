@@ -146,6 +146,11 @@ def on_clear_click():
     try:
         # Call the logic function to wipe all tags from the text area 
         search_logic.clear_tags(text_area)
+
+        # Return cursor to top of the text widget
+        text_area.mark_set("insert", "1.0") 
+        text_area.see("1.0")
+
         # Provide user feedback
         status_label.config(text="Highlights successfully cleared.", fg="black")
     except AttributeError:
