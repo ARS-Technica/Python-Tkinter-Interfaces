@@ -58,7 +58,7 @@ def clear_tags(widget):
     for tag in widget.tag_names():
         # We usually skip the 'sel' tag as that's the user's mouse selection
         if tag != "sel":
-            widget.tag_remove(tag, "1.0", tk.END)
+            widget.tag_remove(tag, "1.0", "end")
 
 
 def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found", **flags):
@@ -164,14 +164,14 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     if start_from == "insert":
         # If we are starting from 'insert', we move forward 1 character.
         start_from = widget.index(f"{start_from}+1c") # Look ahead before wrapping
-        # start_from = f"{start_from}+1c"   
+        # {start_from}+1c is much safer than string concatenation alone because it tells Tkinter to compute the math before the search starts, preventing the search from getting "stuck" on a word it just found.
 
     # Perform a single search from the current cursor position to the end
-    pos = widget.search(query, start_from, stopindex=tk.END, **search_settings)
+    pos = widget.search(query, start_from, stopindex="end", **search_settings)
 
     if pos:
         # Clear only the 'next' highlight (Keep 'found' highlights visible)
-        widget.tag_remove(tag_name, "1.0", tk.END)  # tag_name is specified in parameters
+        widget.tag_remove(tag_name, "1.0", "end")  # tag_name is specified in parameters
         
         # Calculate end value and apply the "next" tag
         end_pos = f"{pos}+{len(query)}c"
@@ -238,7 +238,7 @@ def find_prev(widget, query, start_from="insert", tag_name="next", **flags):
 
         # Reporting: Send the position back to main.py to confirm success.
         return pos
-    
+
     # Failure: If no match was found, return None so the UI knows to Wrap Around.
     return None
 
@@ -288,5 +288,4 @@ def get_match_count(widget, query, startindex="1.0", stopindex="end", **flags):
         current_pos = f"{pos}+{len(query)}c"
             
     return count
-
 
