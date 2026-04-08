@@ -81,6 +81,7 @@ def find_all(widget, query, startindex="1.0", stopindex="end", tag_name="found",
     # Reset previous search state
     clear_tags(widget)
 
+    # Guard Clause: If the user didn't type anything, stop immediately.
     # Ensure that the query is not empty to avoid unnecessary processing
     if not query:
         # Todo: Add error message to status bar
@@ -139,10 +140,12 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
     Finds the next occurrence of the query starting from a specific index.
     Default 'start_from' is 'insert' (the current cursor position).
     """
+    # Guard Clause: If the user didn't type anything, stop immediately.
     if not query:
         # update_status("Error: Enter text to find next.", "red")
         return None
 
+    # Grab the current text from the search box.
     # query = search_entry.get() # Removed because the 'query' is passed in as an argument!
 		
     target_tag = "next" # This will use the "next" style from HIGHLIGHTING_CONFIGURATIONS
@@ -186,6 +189,11 @@ def find_next(widget, query, start_from="insert", tag_name="next", **flags):
 
 
 def find_prev(widget, query, start_from="insert", tag_name="next", **flags):
+    """
+    Finds the previous instance of the query starting from a specific index.  
+    Wraps it in a 'next' tag. 
+    Default 'start_from' is 'insert' (the current cursor position).
+    """
     # Guard Clause: If the user didn't type anything, stop immediately.
     if not query: 
         # Update Status Bar with error message from main.py   
@@ -252,7 +260,7 @@ def get_match_count(widget, query, startindex="1.0", stopindex="end", **flags):
         int: The total number of occurrences found.
     """
 
-    # Check if there's a query
+    # Guard Clause: If the user didn't type anything, stop immediately.
     if not query:
         return 0
 
@@ -280,4 +288,5 @@ def get_match_count(widget, query, startindex="1.0", stopindex="end", **flags):
         current_pos = f"{pos}+{len(query)}c"
             
     return count
+
 
