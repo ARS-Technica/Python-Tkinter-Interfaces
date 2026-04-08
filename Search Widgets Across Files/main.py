@@ -35,9 +35,9 @@ Import the search function and pass your local Text widget instance to it when a
 """
 
 from logging import root
+import search_logic
 import tkinter as tk
 from tkinter import messagebox
-import search_logic
 
 # Table of Contents
     # Constants
@@ -135,6 +135,7 @@ def define_highlights(text_widget, styles_dict):
     # Ensure the 'next' tag always replaces the 'found' tage
     text_widget.tag_raise("next", "found")
 
+
 def on_clear_click():
     """
     Clears all highlights and empties the search box.
@@ -184,7 +185,7 @@ def on_find_next_click():
         text_area.mark_set("insert", "1.0")
 
         # Search again from the very end
-        #pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
+        # pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
 
         # Try searching from the very top
         new_pos = search_logic.find_next(text_area, query, start_from="1.0", tag_name=target_tag)
