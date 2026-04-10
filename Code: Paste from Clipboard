@@ -1,0 +1,15 @@
+"""
+Code: Paste from Clipboard
+Created April 9, 2026
+
+The following code demonstrates the most direct way is to call root.clipboard_get() inside
+the lambda. Because this method can raise a TclError if the clipboard is empty or contains 
+non-text data, it works best when wrapped in a helper function.
+
+This version simply displays text from the clipboard to the commandline.
+"""
+
+import tkinter as tk
+ 
+
+root.mainloop()
