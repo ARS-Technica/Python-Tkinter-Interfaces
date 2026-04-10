@@ -10,7 +10,14 @@ This version simply displays text from the clipboard to the commandline.
 """
 
 import tkinter as tk
- 
+
+
+def paste_clipboard():
+    # Retrieves text content from the system clipboard
+    text = root.clipboard_get()
+    print(f"Clipboard contains: {text}")
+
+
 root = tk.Tk()
 root.title("Clipboard Grabber")
 root.geometry("250x150")
