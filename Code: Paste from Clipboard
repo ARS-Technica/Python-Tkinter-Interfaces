@@ -25,7 +25,7 @@ def paste_clipboard():
 
 
 root = tk.Tk()
-root.title("Clipboard Grabber")
+root.title("Code: Clipboard Grabber")
 root.geometry("250x150")
 
 
