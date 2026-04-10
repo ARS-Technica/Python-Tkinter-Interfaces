@@ -11,5 +11,12 @@ This version simply displays text from the clipboard to the commandline.
 
 import tkinter as tk
  
+root = tk.Tk()
+root.title("Clipboard Grabber")
+root.geometry("250x150")
+
+btn = tk.Button(root, text="Grab Clipboard", command=lambda: paste_clipboard())
+btn.pack(pady=25)
 
 root.mainloop()
+
