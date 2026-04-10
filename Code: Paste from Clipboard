@@ -2,9 +2,7 @@
 Code: Paste from Clipboard
 Created April 9, 2026
 
-The following code demonstrates the most direct way is to call root.clipboard_get() inside
-the lambda. Because this method can raise a TclError if the clipboard is empty or contains 
-non-text data, it works best when wrapped in a helper function.
+The following code demonstrates the most direct way is to call root.clipboard_get() inside the lambda. Because this method can raise a TclError if the clipboard is empty or contains non-text data, it works best when wrapped in a helper function.
 
 This version simply displays text from the clipboard to the commandline.
 """
@@ -13,6 +11,10 @@ import tkinter as tk
 
 
 def paste_clipboard():
+    """
+    Retrieves strings stored in the system clipboard.
+    Raises tk.TclError if the clipboard is empty or contains non-text data.
+    """
     try:
         # Retrieves text content from the system clipboard
         text = root.clipboard_get()
@@ -26,9 +28,9 @@ root = tk.Tk()
 root.title("Clipboard Grabber")
 root.geometry("250x150")
 
+
 # btn = tk.Button(root, text="Grab Clipboard", command=lambda: paste_clipboard())
-# When you use command=lambda: paste_clipboard(), lambda creates a new, anonymous function
-# that lives in memory just to call the first one.  It's cleaner to simply call paste_clipboard
+# When you use command=lambda: paste_clipboard(), lambda creates a new, anonymous function that lives in memory just to call the first one.  It's cleaner to simply call paste_clipboard
 
 btn = tk.Button(root, text="Grab Clipboard", command=paste_clipboard)  
 # Do not use command=paste_clipboard().  It will paste clipboard to console on program launch
