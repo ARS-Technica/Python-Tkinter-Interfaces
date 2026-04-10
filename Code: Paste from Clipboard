@@ -26,7 +26,12 @@ root = tk.Tk()
 root.title("Clipboard Grabber")
 root.geometry("250x150")
 
-btn = tk.Button(root, text="Grab Clipboard", command=lambda: paste_clipboard())
+# btn = tk.Button(root, text="Grab Clipboard", command=lambda: paste_clipboard())
+# When you use command=lambda: paste_clipboard(), lambda creates a new, anonymous function
+# that lives in memory just to call the first one.  It's cleaner to simply call paste_clipboard
+
+btn = tk.Button(root, text="Grab Clipboard", command=paste_clipboard)  
+# Do not use command=paste_clipboard().  It will paste clipboard to console on program launch
 btn.pack(pady=25)
 
 root.mainloop()
