@@ -13,9 +13,13 @@ import tkinter as tk
 
 
 def paste_clipboard():
-    # Retrieves text content from the system clipboard
-    text = root.clipboard_get()
-    print(f"Clipboard contains: {text}")
+    try:
+        # Retrieves text content from the system clipboard
+        text = root.clipboard_get()
+        print(f"Clipboard contains: {text}")
+    except tk.TclError:
+        # Handles cases where the clipboard is empty or lacks text
+        print("Clipboard is empty or does not contain text.")
 
 
 root = tk.Tk()
