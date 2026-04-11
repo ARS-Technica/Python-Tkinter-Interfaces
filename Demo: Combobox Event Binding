@@ -1,0 +1,16 @@
+"""
+Demo: Combobox Event Binding
+Created: April 10, 2026
+
+Description: Demonstrates triggering a function immediately upon the selection
+of an option in a combobox (without the addition of using a button as a trigger).
+"""
+
+import tkinter as tk
+from tkinter import ttk  # Required for Combobox
+
+
+
+
+root.mainloop()
+
