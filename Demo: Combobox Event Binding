@@ -9,8 +9,15 @@ of an option in a combobox (without the addition of using a button as a trigger)
 import tkinter as tk
 from tkinter import ttk  # Required for Combobox
 
+def on_selection(event): 
+    # Get the current value from the widget 
+ 
+# 1. Define the options for the dropdown 
 
+# 2. Create the Combobox 
 
+# 3. Bind the selection event to our function
+# The first argument is the event pattern, the second is the function name 
 
 root.mainloop()
 
