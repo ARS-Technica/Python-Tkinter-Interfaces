@@ -17,10 +17,16 @@ root = tk.Tk()
 root.title("Demo: Combobox Event Binding")
 root.geometry("300x150")
 
-# 1. Create the Combobox 
-combo = ttk.Combobox(root, values=options, state="readonly")
 
-# 2. Bind the selection event to our function
+# 1. Define the options for the dropdown 
+options = ["Python", "JavaScript", "C++", "Rust"]
+
+# 2. Create the Combobox 
+combo = ttk.Combobox(root, values=options, state="readonly")
+combo.set("Pick a language")  # Set the placeholder text
+combo.pack(pady=40)
+
+# 3. Bind the selection event to our function
 # The first argument is the event pattern, the second is the function name 
 
 root.mainloop()
