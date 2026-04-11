@@ -10,13 +10,18 @@ import tkinter as tk
 from tkinter import ttk  # Required for Combobox
 
 def on_selection(event): 
-    # Get the current value from the widget 
+    """
+    Triggered by the <<ComboboxSelected>> event.
+    The 'event' argument is automatically passed by Tkinter.
+    """
+    # Get the current value from the widget
+    selected_item = combo.get()
+    print(f"User selected: {selected_item}")   
 
 
 root = tk.Tk()
 root.title("Demo: Combobox Event Binding")
 root.geometry("300x150")
-
 
 # 1. Define the options for the dropdown 
 options = ["C++", "JavaScript", "Python", "Rust"]
