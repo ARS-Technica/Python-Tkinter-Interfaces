@@ -16,24 +16,30 @@ def on_selection(event):
     """
     # Get the current value from the widget
     selected_item = combo.get()
-    print(f"User selected: {selected_item}")   
+    print(f"User selected: {selected_item}")    
 
 
 root = tk.Tk()
 root.title("Demo: Combobox Event Binding")
 root.geometry("300x150")
 
-# 1. Define the options for the dropdown 
+# Define the options for the dropdown 
 options = ["C++", "JavaScript", "Python", "Rust"]
 
-# 2. Create the Combobox 
-combo = ttk.Combobox(root, values=options, state="readonly")
+# Select a Dynamic Width for the Combobox
+# Calculate the length of the longest string in the list
+longest_option = max(options, key=len)
+# Set a variable for the longest Combobox option
+dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
+
+# Create the Combobox 
+combo = ttk.Combobox(root, values=options, width=dynamic_width, state="readonly")
 combo.set("Pick a programming language")  # Set default placeholder text
 combo.pack(pady=40)
 
-# 3. Bind the selection event to our function
-# The first argument is the event pattern, the second is the function name 
+# Bind the selection event to our function
 combo.bind("<<ComboboxSelected>>", on_selection)
+# The first argument is the event pattern, the second is the function name 
 
 root.mainloop()
 
