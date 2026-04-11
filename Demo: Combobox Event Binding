@@ -25,17 +25,18 @@ root.geometry("300x150")
 
 # Define the options for the dropdown 
 options = ["C++", "JavaScript", "Python", "Rust"]
+placeholder = "Pick a programming language"
 
 # Select a Dynamic Width for the Combobox
 # Calculate the length of the longest string in the list
-longest_option = max(options, key=len)
+longest_option = max(options + [placeholder], key=len)
 # Set a variable for the longest Combobox option
 dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
 
 # Create the Combobox 
 combo = ttk.Combobox(root, values=options, width=dynamic_width, state="readonly")
-combo.set("Pick a programming language")  # Set default placeholder text
-combo.pack(pady=40)
+combo.set(placeholder)  # Set default placeholder text
+combo.pack(pady=20, padx=20)
 
 # Bind the selection event to our function
 combo.bind("<<ComboboxSelected>>", on_selection)
