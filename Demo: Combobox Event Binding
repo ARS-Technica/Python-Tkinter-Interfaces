@@ -13,10 +13,12 @@ def on_selection(event):
     """
     Triggered by the <<ComboboxSelected>> event.
     The 'event' argument is automatically passed by Tkinter.
+    Updates the display_label with the chosen value.
     """
     # Get the current value from the widget
     selected_item = combo.get()
-    print(f"User selected: {selected_item}")    
+    # print(f"User selected: {selected_item}")  # Print to console   
+    display_label.config(text=f"You've selected: {selected_item}", fg="black")
 
 
 root = tk.Tk()
@@ -24,7 +26,7 @@ root.title("Demo: Combobox Event Binding")
 root.geometry("300x150")
 
 # Define the options for the dropdown 
-options = ["C++", "JavaScript", "Python", "Rust"]
+options = ["C++", "C#", "Java", "JavaScript", "Python", "R", "Ruby", "Rust"]
 placeholder = "Pick a programming language"
 
 # Select a Dynamic Width for the Combobox
@@ -41,6 +43,10 @@ combo.pack(pady=20, padx=20)
 # Bind the selection event to our function
 combo.bind("<<ComboboxSelected>>", on_selection)
 # The first argument is the event pattern, the second is the function name 
+
+# Label Setup
+display_label = tk.Label(root, text="What is your favorite programming language?", font=("Arial", 10, "italic"))
+display_label.pack(pady=10)
 
 root.mainloop()
 
