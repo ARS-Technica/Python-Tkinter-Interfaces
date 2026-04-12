@@ -45,9 +45,20 @@ combo.pack(pady=20, padx=20)
 combo.bind("<<ComboboxSelected>>", on_selection)
 # The first argument is the event pattern, the second is the function name 
 
+
 # Label Setup
+# Frame Container
+# This frame keeps both labels on the same horizontal line
+label_frame = tk.Frame(root)
+label_frame.pack(pady=10)
+
+
 display_label = tk.Label(root, text="What is your favorite programming language?", font=("Arial", 10, "italic"))
 display_label.pack(pady=10)
+
+dynamic_bold_label = tk.Label(label_frame, text=selected_item, font=("Arial", 10, "bold"))
+dynamic_bold_label.pack(side="left")
+
 
 root.mainloop()
 
