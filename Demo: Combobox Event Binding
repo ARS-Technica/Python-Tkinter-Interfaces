@@ -18,7 +18,16 @@ def on_selection(event):
     # Get the current value from the widget
     selected_item = combo.get()
     # print(f"User selected: {selected_item}")  # Print to console   
-    display_label.config(text=f"You've selected: {selected_item}", fg="black")
+    display_label.config(text=f"You've selected: ", fg="black")
+    
+    # Configure the bold portion of the text label
+    display_text = tk.Text(root, height=1, width=30, bd=0, bg=root.cget("bg"))
+    display_text.tag_configure("bold_tag", font=("Arial", 10, "bold"))
+
+    # Insert the variable with the 'bold' tag
+    display_text.insert("end", selected_item, "bold_tag")
+    # Make it read-only again
+    display_text.config(state="disabled") 
 
 
 root = tk.Tk()
