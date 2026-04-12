@@ -11,54 +11,47 @@ from tkinter import ttk  # Required for Combobox
 
 def on_selection(event): 
     """
-    Triggered by the <<ComboboxSelected>> event.
-    The 'event' argument is automatically passed by Tkinter.
-    Updates the display_label with the chosen value.
+    Updates the UI state from 'Question' to 'Selection'
+    while bolding only the result.
     """
-    # Get the current value from the widget
-    static_label.selected_item = combo.get()
-    # print(f"User selected: {selected_item}")  # Print to console   
-    display_label.config(text="You've selected: ")
+    selected_item = combo.get()
+    
+    # Update the static label text and remove italics
+    static_label.config(text="You've selected: ", font=("Arial", 10, "normal"))
+    
+    # Update the dynamic label with the bolded result
     dynamic_bold_label.config(text=selected_item)
-
 
 root = tk.Tk()
 root.title("Demo: Combobox Event Binding")
-root.geometry("300x150")
+root.geometry("350x200")
 
-# Define the options for the dropdown 
 options = ["C++", "C#", "Java", "JavaScript", "Python", "R", "Ruby", "Rust"]
 placeholder = "Pick a programming language"
 
-# Select a Dynamic Width for the Combobox
-# Calculate the length of the longest string in the list
-longest_option = max(options + [placeholder], key=len)
-# Set a variable for the longest Combobox option
-dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
+# Pythonic Dynamic Width
+dynamic_width = len(max(options + [placeholder], key=len)) + 2
 
-# Create the Combobox 
+# Combobox Setup 
 combo = ttk.Combobox(root, values=options, width=dynamic_width, state="readonly")
-combo.set(placeholder)  # Set default placeholder text
-combo.pack(pady=20, padx=20)
-
-# Bind the selection event to our function
+combo.set(placeholder)
+combo.pack(pady=20)
 combo.bind("<<ComboboxSelected>>", on_selection)
-# The first argument is the event pattern, the second is the function name 
 
-
-# Label Setup
-# Frame Container
-# This frame keeps both labels on the same horizontal line
+# Label Setup 
+# A Frame container allows us to switch from one full-width sentence 
+# to two labels side-by-side seamlessly.
 label_frame = tk.Frame(root)
 label_frame.pack(pady=10)
 
+# Part 1: Starts as the full question
+static_label = tk.Label(label_frame, text="What is your favorite programming language?", font=("Arial", 10, "italic"))
+static_label.pack(side="left")
 
-display_label = tk.Label(root, text="What is your favorite programming language?", font=("Arial", 10, "italic"))
-display_label.pack(pady=10)
-
-dynamic_bold_label = tk.Label(label_frame, text=selected_item, font=("Arial", 10, "bold"))
+# Part 2: Hidden/Empty until selection
+dynamic_bold_label = tk.Label(label_frame, text="", font=("Arial", 10, "bold"))
 dynamic_bold_label.pack(side="left")
 
-
 root.mainloop()
+
 
