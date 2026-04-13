@@ -21,12 +21,29 @@ def on_selection(event):
     # Get the current value from the widget
     selected_item = combo.get()
 
-
-
+    # Clear the text widget to update it
+    display_info.config(state="normal") # Enable editing
+    display_info.delete("1.0", tk.END)  # Clear current text
+    
+    # Insert the normal text
+    display_info.insert(tk.END, "You've selected: ")
+    
+    # Insert the bold text using the 'bold_font' tag
+    display_info.insert(tk.END, selected_item, "bold_font")
 
     # Center the text and disable editing
     display_info.tag_add("center", "1.0", "end")
     display_info.config(state="disabled") # Make it read-only
+
+    # Update the Combobox List
+    # Get the current tuple of options
+    current_options = list(combo['values'])
+
+    # Remove the selected item if it exists in the list
+
+    # Re-assign the shortened list back to the combobox
+
+    # Optional: Reset the combobox to the placeholder if no options are left
 
 
 '''
