@@ -6,8 +6,16 @@ Description: Demonstrates triggering a function immediately upon the selection
 of an option in a combobox (without the addition of using a button as a trigger).
 """
 
+Demo: Combobox Event Binding
+Created: April 9, 2026
+
+Description: Demonstrates triggering a function immediately upon the selection
+of an option in a combobox (without the addition of using a button as a trigger).
+"""
+
 import tkinter as tk
 from tkinter import ttk  # Required for Combobox
+
 
 def on_selection(event):
     """
@@ -36,26 +44,22 @@ def on_selection(event):
 
 root = tk.Tk()
 root.title("Demo: Combobox Event Binding")
-root.geometry("300x200")
+root.geometry("300x150")
 
 # Define the options for the dropdown 
 options = ["C++", "C#", "Java", "JavaScript", "Python", "R", "Ruby", "Rust"]
-placeholder = "Pick your favorite programming language"
+title = "Pick your favorite programming language"
 
-"""
 # Select a Dynamic Width for the Combobox
-# Calculate the length of the longest string in the list
-longest_option = max(options + [placeholder], key=len)
+# Calculate the length of the longest string in the list or title
+longest_option = max(options + [title], key=len)
 # Set a variable for the longest Combobox option
 dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
-"""
-
-# Set a variable for the longest Combobox option
-dynamic_width = len(max(options + [placeholder], key=len)) + 2
+# UI will automatically adjust itself without having to manually count pixels.
 
 # Create the Combobox 
 combo = ttk.Combobox(root, values=options, width=dynamic_width, state="readonly")
-combo.set(placeholder)  # Set default placeholder text
+combo.set(title)  # Set default title text
 combo.pack(pady=20, padx=20)
 
 # Bind the selection event to our function
@@ -79,6 +83,4 @@ display_info.config(state="disabled")
 display_info.pack(fill="x", pady=10)
 
 root.mainloop()
-
-
 
