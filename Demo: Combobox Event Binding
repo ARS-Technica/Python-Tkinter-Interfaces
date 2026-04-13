@@ -1,16 +1,12 @@
 """
 Demo: Combobox Event Binding
-Created: April 10, 2026
-
-Description: Demonstrates triggering a function immediately upon the selection
-of an option in a combobox (without the addition of using a button as a trigger).
-"""
-
-Demo: Combobox Event Binding
 Created: April 9, 2026
 
 Description: Demonstrates triggering a function immediately upon the selection
 of an option in a combobox (without the addition of using a button as a trigger).
+
+The next version of this program, "Demo Combobox without Current Selection", will "shrink 
+the list" of combobox options so that the (current) active option is not not an available choice.
 """
 
 import tkinter as tk
@@ -23,9 +19,9 @@ def on_selection(event):
     The 'event' argument is automatically passed by Tkinter.
     Updates the display_label with the chosen value.
     """
-     # Get the current value from the widget   
+    # Get the current value from the widget
     selected_item = combo.get()
-    # print(f"User selected: {selected_item}")  # Print to console   
+    # print(f"User selected: {selected_item}")  # Print to console
 
     # Clear the text widget to update it
     display_info.config(state="normal") # Enable editing
@@ -46,7 +42,7 @@ root = tk.Tk()
 root.title("Demo: Combobox Event Binding")
 root.geometry("300x150")
 
-# Define the options for the dropdown 
+# Define the options for the dropdown
 options = ["C++", "C#", "Java", "JavaScript", "Python", "R", "Ruby", "Rust"]
 title = "Pick your favorite programming language"
 
