@@ -15,6 +15,23 @@ from tkinter import ttk  # Required for Combobox
 
 def on_selection(event):
     """
+    This version removes each combobox option selected until
+    there are no more options remaining.
+    """
+    # Get the current value from the widget
+    selected_item = combo.get()
+
+
+
+
+    # Center the text and disable editing
+    display_info.tag_add("center", "1.0", "end")
+    display_info.config(state="disabled") # Make it read-only
+
+
+'''
+def on_selection(event):
+    """
     Triggered by the <<ComboboxSelected>> event.
     The 'event' argument is automatically passed by Tkinter.
     Updates the display_label with the chosen value.
@@ -36,6 +53,7 @@ def on_selection(event):
     # Center the text and disable editing
     display_info.tag_add("center", "1.0", "end")
     display_info.config(state="disabled") # Make it read-only
+'''
 
 
 root = tk.Tk()
