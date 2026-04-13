@@ -9,12 +9,16 @@ This version also emonstrates Dynamic Attribute Modification, the ability to cha
 the list" of combobox options so that the (current) active option is not not an available choice.
 """
 
+import tkinter as tk
+from tkinter import ttk  # Required for Combobox
 
 
 
 
+root = tk.Tk()
+root.title("Demo: Combobox Event Binding")
+root.geometry("300x150")
 
 
-
-
+root.mainloop()
 
