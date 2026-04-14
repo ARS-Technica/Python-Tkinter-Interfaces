@@ -40,14 +40,12 @@ def on_selection(event):
     display_info.config(state="disabled") # Make it read-only
 
     # Update the Combobox List
-    # Get the current tuple of options
-    current_options = list(combo['values'])
-
-    # Remove the selected item if it exists in the list
-
-    # Re-assign the shortened list back to the combobox
-
-    # Optional: Reset the combobox to the placeholder if no options are left
+    # Create a new list containing everything EXCEPT the one currently selected
+    # This uses a list comprehension: a Pythonic way to filter lists
+    updated_options = [opt for opt in options if opt != selected_item]
+    
+    # Apply the filtered list back to the combobox
+    combo['values'] = updated_options
 
 
 '''
