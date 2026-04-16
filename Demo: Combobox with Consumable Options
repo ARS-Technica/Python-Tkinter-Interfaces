@@ -16,6 +16,7 @@ import tkinter as tk
 from tkinter import ttk  # Required for Combobox
 
 
+# Combobox Functions ---------------------------------------------------------
 def on_selection(event):
     """
     Triggered by the <<ComboboxSelected>> event.
