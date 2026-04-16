@@ -131,12 +131,10 @@ combo.bind("<<ComboboxSelected>>", on_selection)
 display_info = tk.Text(root, height=1, font=("Arial", 10), 
                        bg=root.cget("bg"), bd=0, highlightthickness=0)
 
-
 # Create the Bold Style Tag
 display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
 # Create a Centering Tag
 display_info.tag_configure("center", justify='center')
-
 
 # Initial Text
 display_info.insert(tk.END, "Choose which potion do you want to consume?")
