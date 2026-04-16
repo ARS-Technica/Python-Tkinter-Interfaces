@@ -52,20 +52,20 @@ def on_selection(event):
     # Update the Combobox List
     # Get the current tuple of options
     current_options = list(combo['values'])
-    
+
     # Remove the selected item if it exists in the list
     if selected_item in current_options:
         current_options.remove(selected_item)
-        
+
         # Apply the filtered list back to the combobox
         combo['values'] = current_options
-        
-        # Optional: Reset the combobox to the placeholder if no options are left
+
+        # Reset the combobox to the placeholder if no options are left
         if not current_options:
             combo.set("No options remaining")
             # combo.event_generate('<Escape>') 
             # No. '<Escape>' this only simulates a keypress to close the list if it's already open.
-            
+
             combo.config(state="disabled") # Disable the widget entirely
 
             # Clear the text widget to update it
@@ -73,14 +73,17 @@ def on_selection(event):
             display_info.delete("1.0", tk.END)  # Clear current text
 
             # Insert the normal text
-            display_info.insert(tk.END, "You have consumed all of your potions")
+            display_info.insert(tk.END, "You have consumed all of your potions!")
 
             # Center the text and disable editing
             display_info.tag_add("center", "1.0", "end")
             display_info.config(state="disabled") # Make it read-only
 
             # Reset combo box options
-            reset_button = tk.Button(root, text="Reset List", command=reset_demo)
+            # reset_button = tk.Button(root, text="Reset List", command=reset_demo)
+            # reset_button.pack(pady=5)
+
+            # Reveal the reset button rather than creating a new button
             reset_button.pack(pady=5)
         else:
             combo.set(title)
@@ -88,13 +91,12 @@ def on_selection(event):
 
 def reset_demo():
     # Restore the original list of options
-    original_options = ["Health", "Mana", "Resurrection", "Super Strength"]
-    combo['values'] = original_options
-    
+    combo['values'] = INVENTORY 
+
     # Re-enable the combobox and reset the title
     combo.config(state="readonly")
     combo.set(title)
-    
+
     # Reset the Text Widget to its initial message
     display_info.config(state="normal")
     display_info.delete("1.0", tk.END)
@@ -102,27 +104,30 @@ def reset_demo():
     display_info.tag_add("center", "1.0", "end")
     display_info.config(state="disabled")
 
+    # Hide the reset button again
+    reset_button.pack_forget()
+
 
 # Main Application Window ---------------------------------------------------------
 root = tk.Tk()
-root.title("Demo: Combobox Event Binding")
-root.geometry("300x150")
+root.title("Demo: Combobox with Consumable Options")
+root.geometry("300x200") # Made slightly taller for the button
 
 
 # Create the Combobox -------------------------------------------------------------
 # Define the options for the dropdown 
-options = ["Health", "Mana", "Resurrection", "Super Strength"]
-title = "Choose which potion you want to consume."
+INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
+title = "Choose which potion to consume..."
 
 # Select a Dynamic Width for the Combobox
 # Calculate the length of the longest string in the list or title
-longest_option = max(options + [title], key=len)
+longest_option = max(INVENTORY + [title], key=len)
 # Set a variable for the longest Combobox option
 dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
 # UI will automatically adjust itself without having to manually count pixels.
 
 # Create the Combobox 
-combo = ttk.Combobox(root, values=options, width=dynamic_width, state="readonly")
+combo = ttk.Combobox(root, values=INVENTORY, width=dynamic_width, state="readonly")
 combo.set(title)  # Set default title text
 combo.pack(pady=20, padx=20)
 
@@ -147,6 +152,9 @@ display_info.tag_add("center", "1.0", "end")
 display_info.config(state="disabled")
 display_info.pack(fill="x", pady=10)
 
+
+# PRE-CREATE THE RESET BUTTON.  Don't .pack() it yet.
+reset_button = tk.Button(root, text="Refill Inventory", command=reset_demo)
 
 root.mainloop()
 
