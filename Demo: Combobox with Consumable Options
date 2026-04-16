@@ -56,6 +56,14 @@ def on_selection(event):
             combo.set(title)
 
 
+def reset_demo():
+    # Restore the original list of options
+    
+    # Re-enable the combobox and reset the title
+    
+    # Reset the Text Widget to its initial message
+
+
 # Main Application Window ---------------------------------------------------------
 root = tk.Tk()
 root.title("Demo: Combobox Event Binding")
