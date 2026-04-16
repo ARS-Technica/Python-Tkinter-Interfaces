@@ -17,15 +17,36 @@ from tkinter import ttk  # Required for Combobox
 
 
 def on_selection(event):
-    selected_item = combo.get()
+    """
+    Triggered by the <<ComboboxSelected>> event.
+    The 'event' argument is automatically passed by Tkinter.
+    Updates the display_label with the chosen value.
 
-    # Update the Text Widget with Combobox choice
-    display_info.config(state="normal")
-    display_info.delete("1.0", tk.END)
+    Each time an option is selected, it is removed from the 
+    combobox until there are no options remaining.
+
+    Added "Reset" button mostly for debugging purposes.
+    """    
+
+    # Get the current value from the widget
+    selected_item = combo.get()
+    # print(f"User selected: {selected_item}")  # Print to console
+
+    # Clear the text widget to update it
+    display_info.config(state="normal") # Enable editing
+    display_info.delete("1.0", tk.END)  # Clear current text
+
+    # Insert the normal text
     display_info.insert(tk.END, "You've selected: ")
+
+    # Insert the bold text using the 'bold_font' tag
     display_info.insert(tk.END, selected_item, "bold_font")
+
+    # Center the text and disable editing
     display_info.tag_add("center", "1.0", "end")
-    display_info.config(state="disabled")
+
+    display_info.config(state="disabled") # Make it read-only
+
 
     # Update the Combobox List
     # Get the current tuple of options
@@ -35,7 +56,7 @@ def on_selection(event):
     if selected_item in current_options:
         current_options.remove(selected_item)
         
-        # Re-assign the shortened list back to the combobox
+        # Apply the filtered list back to the combobox
         combo['values'] = current_options
         
         # Optional: Reset the combobox to the placeholder if no options are left
