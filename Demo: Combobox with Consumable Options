@@ -17,19 +17,43 @@ from tkinter import ttk  # Required for Combobox
 
 
 def on_selection(event): 
+    selected_item = combo.get()
 
     # Update the Text Widget with Combobox choice
+    display_info.config(state="normal")
+    display_info.delete("1.0", tk.END)
+    display_info.insert(tk.END, "You've selected: ")
+    display_info.insert(tk.END, selected_item, "bold_font")
+    display_info.tag_add("center", "1.0", "end")
+    display_info.config(state="disabled")
 
     # Update the Combobox List
     # Get the current tuple of options
+    current_options = list(combo['values'])
     
     # Remove the selected item if it exists in the list
+    if selected_item in current_options:
+        current_options.remove(selected_item)
         
         # Re-assign the shortened list back to the combobox
+        combo['values'] = current_options
         
         # Optional: Reset the combobox to the placeholder if no options are left
+        if not current_options:
+            combo.set("No options remaining")
+            # combo.event_generate('<Escape>') 
+            # No. '<Escape>' this only simulates a keypress to close the list if it's already open.
             
+            combo.config(state="disabled") # Disable the widget entirely
+
             # Update the Text Widget with Combobox choice
+            display_info.config(state="normal")
+            display_info.delete("1.0", tk.END)
+            display_info.insert(tk.END, "You have used up all of your potions")
+            display_info.tag_add("center", "1.0", "end")
+            display_info.config(state="disabled")
+        else:
+            combo.set(title)
 
 
 root = tk.Tk()
