@@ -56,11 +56,13 @@ def on_selection(event):
             combo.set(title)
 
 
+# Main Application Window ---------------------------------------------------------
 root = tk.Tk()
 root.title("Demo: Combobox Event Binding")
 root.geometry("300x150")
 
 
+# Create the Combobox -------------------------------------------------------------
 # Define the options for the dropdown 
 options = ["Health", "Mana", "Resurrection", "Super Strength"]
 title = "Choose which potion you want to consume."
@@ -82,7 +84,7 @@ combo.bind("<<ComboboxSelected>>", on_selection)
 # The first argument is the event pattern, the second is the function name 
 
 
-# The Advanced Display Widget
+# The Advanced Text Widget -----------------------------------------------------------
 # We use tk.Text because it supports multiple styles (tags) in one line
 
 
