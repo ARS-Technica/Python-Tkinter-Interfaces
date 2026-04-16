@@ -60,20 +60,26 @@ root = tk.Tk()
 root.title("Demo: Combobox Event Binding")
 root.geometry("300x150")
 
-# Define the options for the dropdown 
 
+# Define the options for the dropdown 
+options = ["Health", "Mana", "Resurrection", "Super Strength"]
+title = "Choose which potion you want to consume."
 
 # Select a Dynamic Width for the Combobox
 # Calculate the length of the longest string in the list or title
-
+longest_option = max(options + [title], key=len)
 # Set a variable for the longest Combobox option
-
+dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
 # UI will automatically adjust itself without having to manually count pixels.
 
 # Create the Combobox 
-
+combo = ttk.Combobox(root, values=options, width=dynamic_width, state="readonly")
+combo.set(title)  # Set default title text
+combo.pack(pady=20, padx=20)
 
 # Bind the selection event to our function
+combo.bind("<<ComboboxSelected>>", on_selection)
+# The first argument is the event pattern, the second is the function name 
 
 
 # The Advanced Display Widget
