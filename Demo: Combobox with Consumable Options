@@ -12,4 +12,56 @@ I thought that this would work well in a PyGame platformer in which you could on
 use each collected player buff once.  Otherwise, not terribly useful.
 """
 
+import tkinter as tk
+from tkinter import ttk  # Required for Combobox
 
+
+def on_selection(event): 
+
+    # Update the Text Widget with Combobox choice
+
+    # Update the Combobox List
+    # Get the current tuple of options
+    
+    # Remove the selected item if it exists in the list
+        
+        # Re-assign the shortened list back to the combobox
+        
+        # Optional: Reset the combobox to the placeholder if no options are left
+            
+            # Update the Text Widget with Combobox choice
+
+
+root = tk.Tk()
+root.title("Demo: Combobox Event Binding")
+root.geometry("300x150")
+
+# Define the options for the dropdown 
+
+
+# Select a Dynamic Width for the Combobox
+# Calculate the length of the longest string in the list or title
+
+# Set a variable for the longest Combobox option
+
+# UI will automatically adjust itself without having to manually count pixels.
+
+# Create the Combobox 
+
+
+# Bind the selection event to our function
+
+
+# The Advanced Display Widget
+# We use tk.Text because it supports multiple styles (tags) in one line
+
+
+# Create the Bold Style Tag
+
+# Create a Centering Tag
+
+
+# Initial Text
+
+
+root.mainloop()
