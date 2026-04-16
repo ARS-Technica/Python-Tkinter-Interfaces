@@ -67,12 +67,16 @@ def on_selection(event):
             
             combo.config(state="disabled") # Disable the widget entirely
 
-            # Update the Text Widget with notice
-            display_info.config(state="normal")
-            display_info.delete("1.0", tk.END)
-            display_info.insert(tk.END, "You have used up all of your potions")
+            # Clear the text widget to update it
+            display_info.config(state="normal") # Enable editing
+            display_info.delete("1.0", tk.END)  # Clear current text
+
+            # Insert the normal text
+            display_info.insert(tk.END, "You have consumed all of your potions")
+
+            # Center the text and disable editing
             display_info.tag_add("center", "1.0", "end")
-            display_info.config(state="disabled")
+            display_info.config(state="disabled") # Make it read-only
 
             # Reset combo box options
             reset_button = tk.Button(root, text="Reset List", command=reset_demo)
@@ -127,7 +131,7 @@ combo.bind("<<ComboboxSelected>>", on_selection)
 
 
 # The Advanced Text Widget -----------------------------------------------------------
-# Use tk.Text because it supports multiple styles (tags) in one line
+# We use tk.Text because it supports multiple styles (tags) in one line
 display_info = tk.Text(root, height=1, font=("Arial", 10), 
                        bg=root.cget("bg"), bd=0, highlightthickness=0)
 
