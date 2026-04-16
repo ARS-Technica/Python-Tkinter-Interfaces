@@ -85,15 +85,23 @@ combo.bind("<<ComboboxSelected>>", on_selection)
 
 
 # The Advanced Text Widget -----------------------------------------------------------
-# We use tk.Text because it supports multiple styles (tags) in one line
+# Use tk.Text because it supports multiple styles (tags) in one line
+display_info = tk.Text(root, height=1, font=("Arial", 10), 
+                       bg=root.cget("bg"), bd=0, highlightthickness=0)
 
 
 # Create the Bold Style Tag
-
+display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
 # Create a Centering Tag
+display_info.tag_configure("center", justify='center')
 
 
 # Initial Text
+display_info.insert(tk.END, "What is your favorite language?")
+display_info.tag_add("center", "1.0", "end")
+display_info.config(state="disabled")
+display_info.pack(fill="x", pady=10)
 
 
 root.mainloop()
+
