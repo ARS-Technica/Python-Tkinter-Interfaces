@@ -64,11 +64,11 @@ def reset_demo():
     # Restore the original list of options
     original_options = ["Health", "Mana", "Resurrection", "Super Strength"]
     combo['values'] = original_options
-
+    
     # Re-enable the combobox and reset the title
     combo.config(state="readonly")
     combo.set(title)
-
+    
     # Reset the Text Widget to its initial message
     display_info.config(state="normal")
     display_info.delete("1.0", tk.END)
@@ -118,7 +118,7 @@ display_info.tag_configure("center", justify='center')
 
 
 # Initial Text
-display_info.insert(tk.END, "What is your favorite language?")
+display_info.insert(tk.END, "Choose which potion do you want to consume?")
 display_info.tag_add("center", "1.0", "end")
 display_info.config(state="disabled")
 display_info.pack(fill="x", pady=10)
