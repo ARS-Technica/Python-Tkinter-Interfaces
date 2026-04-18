@@ -52,20 +52,20 @@ def on_selection(event):
     # Update the Combobox List
     # Get the current tuple of options
     current_options = list(combo['values'])
-
+    
     # Remove the selected item if it exists in the list
     if selected_item in current_options:
         current_options.remove(selected_item)
-
+        
         # Apply the filtered list back to the combobox
         combo['values'] = current_options
-
+        
         # Reset the combobox to the placeholder if no options are left
         if not current_options:
             combo.set("No options remaining")
             # combo.event_generate('<Escape>') 
             # No. '<Escape>' this only simulates a keypress to close the list if it's already open.
-
+            
             combo.config(state="disabled") # Disable the widget entirely
 
             # Clear the text widget to update it
@@ -73,7 +73,8 @@ def on_selection(event):
             display_info.delete("1.0", tk.END)  # Clear current text
 
             # Insert the normal text
-            display_info.insert(tk.END, "You have consumed all of your potions!")
+            display_info.insert(tk.END, "DANGER!\n", "bold_font")            
+            display_info.insert(tk.END, "You have consumed all of your potions!\n")
 
             # Center the text and disable editing
             display_info.tag_add("center", "1.0", "end")
@@ -92,11 +93,11 @@ def on_selection(event):
 def reset_demo():
     # Restore the original list of options
     combo['values'] = INVENTORY 
-
+    
     # Re-enable the combobox and reset the title
     combo.config(state="readonly")
     combo.set(title)
-
+    
     # Reset the Text Widget to its initial message
     display_info.config(state="normal")
     display_info.delete("1.0", tk.END)
@@ -138,8 +139,9 @@ combo.bind("<<ComboboxSelected>>", on_selection)
 
 # The Advanced Text Widget -----------------------------------------------------------
 # We use tk.Text because it supports multiple styles (tags) in one line
-display_info = tk.Text(root, height=1, font=("Arial", 10), 
+display_info = tk.Text(root, height=2, font=("Arial", 10), 
                        bg=root.cget("bg"), bd=0, highlightthickness=0)
+# Note: height must equal 2 in order for "DANGER!\n" ... "You have consumed all of your potions!" to appear without truncating second line.
 
 # Create the Bold Style Tag
 display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
@@ -147,14 +149,14 @@ display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
 display_info.tag_configure("center", justify='center')
 
 # Initial Text
-display_info.insert(tk.END, "Choose which potion do you want to consume?")
+display_info.insert(tk.END, "Which potion do you want to consume?")
 display_info.tag_add("center", "1.0", "end")
 display_info.config(state="disabled")
 display_info.pack(fill="x", pady=10)
 
 
 # PRE-CREATE THE RESET BUTTON.  Don't .pack() it yet.
-reset_button = tk.Button(root, text="Refill Inventory", command=reset_demo)
+reset_button = tk.Button(root, text="Restock Inventory", command=reset_demo)
 
 root.mainloop()
 
