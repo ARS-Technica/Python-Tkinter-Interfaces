@@ -136,39 +136,44 @@ longest_option = max(INVENTORY + [title], key=len)
 dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
 # UI will automatically adjust itself without having to manually count pixels.
 
-# Create the Combobox 
-combo = ttk.Combobox(root, values=INVENTORY, width=dynamic_width, state="readonly")
-combo.set(title)  # Set default title text
-combo.pack(pady=20, padx=20)
-
-# Bind the selection event to our function
-combo.bind("<<ComboboxSelected>>", on_selection)
-# The first argument is the event pattern, the second is the function name 
-
 
 # The Advanced Text Widget -----------------------------------------------------------
-# We use tk.Text because it supports multiple styles (tags) in one line
-display_info = tk.Text(root, height=2, font=("Arial", 10), 
-                       bg=root.cget("bg"), bd=0, highlightthickness=0)
-# Note: height must equal 2 in order for "DANGER!\n" ... "You have consumed all of your potions!" to appear without truncating second line.
 
+def create_widgets():
+    """
+    Initializes and packs all UI components for the application.
+    """    
 
-# Create a red color tag near your other tag_configure lines
-display_info.tag_configure("alert", foreground="red", font=("Arial", 10, "bold"))
-# Create the Bold Style Tag
-display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
-# Create a Centering Tag
-display_info.tag_configure("center", justify='center')
+    # Create and configure Combobox
+    combo = ttk.Combobox(root, values=INVENTORY, width=dynamic_width, state="readonly")
+    combo.set(title)  # Set default title text
+    combo.pack(pady=20, padx=20)
 
-# Initial Text
-display_info.insert(tk.END, "Which potion do you want to consume?")
-display_info.tag_add("center", "1.0", "end")
-display_info.config(state="disabled")
-display_info.pack(fill="x", pady=10)
+    # Bind the selection event to our function
+    combo.bind("<<ComboboxSelected>>", on_selection)
+    # The first argument is the event pattern, the second is the function name 
 
+    # We use tk.Text because it supports multiple styles (tags) in one line
+    display_info = tk.Text(root, height=2, font=("Arial", 10), 
+                        bg=root.cget("bg"), bd=0, highlightthickness=0)
+    # Note: height must equal 2 in order for "DANGER!\n" ... "You have consumed all of your potions!" to appear without truncating second line.
 
-# PRE-CREATE THE RESET BUTTON.  Don't .pack() it yet.
-reset_button = tk.Button(root, text="Restock Inventory", command=reset_combobox_selections)
+    # Configure Text Tags
+    # Create a red color tag near your other tag_configure lines
+    display_info.tag_configure("alert", foreground="red", font=("Arial", 10, "bold"))
+    # Create the Bold Style Tag
+    display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
+    # Create a Centering Tag
+    display_info.tag_configure("center", justify='center')
+
+    # Set Initial Text
+    display_info.insert(tk.END, "Which potion do you want to consume?")
+    display_info.tag_add("center", "1.0", "end")
+    display_info.config(state="disabled")
+    display_info.pack(fill="x", pady=10)
+
+    # PRE-CREATE THE RESET BUTTON.  Don't .pack() it yet.
+    reset_button = tk.Button(root, text="Restock Inventory", command=reset_combobox_selections)
 
 root.mainloop()
 
