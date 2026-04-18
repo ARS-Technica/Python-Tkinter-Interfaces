@@ -14,7 +14,7 @@ use each collected player buff once.  Otherwise, not terribly useful.
 
 import tkinter as tk
 from tkinter import ttk  # Required for Combobox
-
+ 
 
 # Combobox Functions ---------------------------------------------------------
 def on_selection(event):
@@ -72,9 +72,9 @@ def on_selection(event):
             display_info.config(state="normal") # Enable editing
             display_info.delete("1.0", tk.END)  # Clear current text
 
-            # Insert the normal text
-            display_info.insert(tk.END, "DANGER!\n", "bold_font")            
-            display_info.insert(tk.END, "You have consumed all of your potions!\n")
+            # Insert the text into a label
+            display_info.insert(tk.END, "DANGER!\n", "alert")            
+            display_info.insert(tk.END, "You have consumed all of your potions!", "bold_font") 
 
             # Center the text and disable editing
             display_info.tag_add("center", "1.0", "end")
@@ -106,13 +106,13 @@ def reset_demo():
     display_info.config(state="disabled")
 
     # Hide the reset button again
-    reset_button.pack_forget()
+    reset_button.pack_forget() # Creates "Ghost button"
 
 
 # Main Application Window ---------------------------------------------------------
 root = tk.Tk()
 root.title("Demo: Combobox with Consumable Options")
-root.geometry("300x200") # Made slightly taller for the button
+root.geometry("300x175") # Made slightly taller for the button
 
 
 # Create the Combobox -------------------------------------------------------------
@@ -143,6 +143,9 @@ display_info = tk.Text(root, height=2, font=("Arial", 10),
                        bg=root.cget("bg"), bd=0, highlightthickness=0)
 # Note: height must equal 2 in order for "DANGER!\n" ... "You have consumed all of your potions!" to appear without truncating second line.
 
+
+# Create a red color tag near your other tag_configure lines
+display_info.tag_configure("alert", foreground="red", font=("Arial", 10, "bold"))
 # Create the Bold Style Tag
 display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
 # Create a Centering Tag
