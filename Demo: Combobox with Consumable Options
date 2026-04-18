@@ -105,7 +105,7 @@ def reset_combobox_selections():
 
     # Re-enable the combobox and reset the title
     combo.config(state="readonly")
-    combo.set(title)
+    combo.set(directions)
 
     # Reset the Text Widget to its initial message
     display_info.config(state="normal")
@@ -118,43 +118,51 @@ def reset_combobox_selections():
     reset_button.pack_forget() # Creates "Ghost button"
 
 
-# Main Application Window ---------------------------------------------------------
-root = tk.Tk()
-root.title("Demo: Combobox with Consumable Options")
-root.geometry("300x175") # Made slightly taller for the button
-
-
-# Create the Combobox -------------------------------------------------------------
-# Define the options for the dropdown 
-INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
-title = "Choose which potion to consume..."
-
-# Select a Dynamic Width for the Combobox
-# Calculate the length of the longest string in the list or title
-longest_option = max(INVENTORY + [title], key=len)
-# Set a variable for the longest Combobox option
-dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
-# UI will automatically adjust itself without having to manually count pixels.
-
-
-# The Advanced Text Widget -----------------------------------------------------------
-
-def create_widgets():
+def create_combobox():    
     """
-    Initializes and packs all UI components for the application.
+    Defines inventory data, calculates dimensions, and initializes the combobox.
+    Returns the combobox, the initial list of items, and the title string.
     """
+    global directions, INVENTORY # Shared with reset function
 
-    global combo, display_info, reset_button  # Allows functions to access these
+    # Define the options for the dropdown 
+    INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
+    title = "Choose which potion to consume..."
 
-    # Create and configure Combobox
+    # Calculate the Dynamic Width for the Combobox
+    # Calculate the length of the longest string in the list or title
+    longest_option = max(INVENTORY + [directions], key=len)
+    # Set a variable for the longest Combobox option
+    dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
+    # UI will automatically adjust itself without having to manually count pixels.
+
+    # Create and configure the Combobox Widget
     combo = ttk.Combobox(root, values=INVENTORY, width=dynamic_width, state="readonly")
-    combo.set(title)  # Set default title text
+    combo.set(directions)  # Set default title text
     combo.pack(pady=20, padx=20)
 
     # Bind the selection event to our function
     combo.bind("<<ComboboxSelected>>", on_selection)
-    # The first argument is the event pattern, the second is the function name 
+    # The first argument is the event pattern, the second is the function name
 
+    return combo 
+
+
+def create_user_interface():
+    """
+    Initializes and packs all UI components for the application.
+    """
+    global combo, display_info, reset_button, root  # Allows functions to access these
+
+    # Main Application Window ---------------------------------------------------------
+    root = tk.Tk()
+    root.title("Demo: Combobox with Consumable Options")
+    root.geometry("300x175") # Made slightly taller for the button
+ 
+    #  Create the Combobox 
+    combo = create_combobox(root)
+
+    # Create the Text Widget
     # We use tk.Text because it supports multiple styles (tags) in one line
     display_info = tk.Text(root, height=2, font=("Arial", 10), 
                         bg=root.cget("bg"), bd=0, highlightthickness=0)
@@ -180,25 +188,8 @@ def create_widgets():
 
 # Main Application Window ---------------------------------------------------------
 if __name__ == "__main__":
-    root = tk.Tk()
-    root.title("Demo: Combobox with Consumable Options")
-    root.geometry("300x175") # Made slightly taller for the button
-
-    # Create the Combobox -------------------------------------------------------------
-    # Define the options for the dropdown 
-    INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
-    title = "Choose which potion to consume..."
-
-    # Select a Dynamic Width for the Combobox
-    # Calculate the length of the longest string in the list or title
-    longest_option = max(INVENTORY + [title], key=len)
-    # Set a variable for the longest Combobox option
-    dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
-    # UI will automatically adjust itself without having to manually count pixels.
-
     # Initialize UI
-    create_widgets()
-
+    create_user_interface()
     root.mainloop()
 
  
