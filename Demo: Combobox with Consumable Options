@@ -142,7 +142,9 @@ dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow but
 def create_widgets():
     """
     Initializes and packs all UI components for the application.
-    """    
+    """
+
+    global combo, display_info, reset_button  # Allows functions to access these
 
     # Create and configure Combobox
     combo = ttk.Combobox(root, values=INVENTORY, width=dynamic_width, state="readonly")
@@ -172,8 +174,31 @@ def create_widgets():
     display_info.config(state="disabled")
     display_info.pack(fill="x", pady=10)
 
-    # PRE-CREATE THE RESET BUTTON.  Don't .pack() it yet.
+    # Pre-create Reset Button.  Don't .pack() it yet.
     reset_button = tk.Button(root, text="Restock Inventory", command=reset_combobox_selections)
 
-root.mainloop()
 
+# Main Application Window ---------------------------------------------------------
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Demo: Combobox with Consumable Options")
+    root.geometry("300x175") # Made slightly taller for the button
+
+    # Create the Combobox -------------------------------------------------------------
+    # Define the options for the dropdown 
+    INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
+    title = "Choose which potion to consume..."
+
+    # Select a Dynamic Width for the Combobox
+    # Calculate the length of the longest string in the list or title
+    longest_option = max(INVENTORY + [title], key=len)
+    # Set a variable for the longest Combobox option
+    dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
+    # UI will automatically adjust itself without having to manually count pixels.
+
+    # Initialize UI
+    create_widgets()
+
+    root.mainloop()
+
+ 
