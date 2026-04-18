@@ -1,3 +1,4 @@
+
 """
 Demo: Combobox with Consumable Options
 Created: April 14, 2026
@@ -87,7 +88,7 @@ def on_selection(event):
             # Reveal the reset button rather than creating a new button
             reset_button.pack(pady=5)
         else:
-            combo.set(title)
+            combo.set(directions)
 
 
 def reset_combobox_selections():
@@ -118,12 +119,13 @@ def reset_combobox_selections():
     reset_button.pack_forget() # Creates "Ghost button"
 
 
+# Create User Interface Functions ---------------------------------------------------------
 def create_combobox(parent):    
     """
     Defines inventory data, calculates dimensions, and initializes the combobox.
     Returns the combobox, the initial list of items, and the title string.
     """
-    global directions, INVENTORY # Shared with reset function
+    global combo, directions, INVENTORY # Shared with reset function
 
     # Define the options for the dropdown 
     INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
@@ -137,7 +139,7 @@ def create_combobox(parent):
     # UI will automatically adjust itself without having to manually count pixels.
 
     # Create and configure the Combobox Widget
-    combo = ttk.Combobox(root, values=INVENTORY, width=dynamic_width, state="readonly")
+    combo = ttk.Combobox(parent, values=INVENTORY, width=dynamic_width, state="readonly")
     combo.set(directions)  # Set default title text
     combo.pack(pady=20, padx=20)
 
@@ -192,4 +194,3 @@ if __name__ == "__main__":
     create_user_interface()
     root.mainloop()
 
- 
