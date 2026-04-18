@@ -118,7 +118,7 @@ def reset_combobox_selections():
     reset_button.pack_forget() # Creates "Ghost button"
 
 
-def create_combobox():    
+def create_combobox(parent):    
     """
     Defines inventory data, calculates dimensions, and initializes the combobox.
     Returns the combobox, the initial list of items, and the title string.
@@ -127,7 +127,7 @@ def create_combobox():
 
     # Define the options for the dropdown 
     INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
-    title = "Choose which potion to consume..."
+    directions = "Choose which potion to consume..."
 
     # Calculate the Dynamic Width for the Combobox
     # Calculate the length of the longest string in the list or title
