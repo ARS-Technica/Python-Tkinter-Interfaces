@@ -14,7 +14,7 @@ use each collected player buff once.  Otherwise, not terribly useful.
 
 import tkinter as tk
 from tkinter import ttk  # Required for Combobox
- 
+
 
 # Combobox Functions ---------------------------------------------------------
 def on_selection(event):
@@ -52,20 +52,20 @@ def on_selection(event):
     # Update the Combobox List
     # Get the current tuple of options
     current_options = list(combo['values'])
-    
+
     # Remove the selected item if it exists in the list
     if selected_item in current_options:
         current_options.remove(selected_item)
-        
+
         # Apply the filtered list back to the combobox
         combo['values'] = current_options
-        
+
         # Reset the combobox to the placeholder if no options are left
         if not current_options:
             combo.set("No options remaining")
             # combo.event_generate('<Escape>') 
             # No. '<Escape>' this only simulates a keypress to close the list if it's already open.
-            
+
             combo.config(state="disabled") # Disable the widget entirely
 
             # Clear the text widget to update it
@@ -81,7 +81,7 @@ def on_selection(event):
             display_info.config(state="disabled") # Make it read-only
 
             # Reset combo box options
-            # reset_button = tk.Button(root, text="Reset List", command=reset_demo)
+            # reset_button = tk.Button(root, text="Reset List", command=reset_combobox_selections)
             # reset_button.pack(pady=5)
 
             # Reveal the reset button rather than creating a new button
@@ -90,18 +90,27 @@ def on_selection(event):
             combo.set(title)
 
 
-def reset_demo():
+def reset_combobox_selections():
+    """
+    Restores the application to its initial state.
+
+    - Repopulates combobox values from the INVENTORY constant.
+    - Sets combobox state back to readonly.
+    - Clears and updates 'display_info' with the starting prompt.
+    - Removes the 'reset_button' from the layout using pack_forget.
+    """
+    
     # Restore the original list of options
     combo['values'] = INVENTORY 
-    
+
     # Re-enable the combobox and reset the title
     combo.config(state="readonly")
     combo.set(title)
-    
+
     # Reset the Text Widget to its initial message
     display_info.config(state="normal")
     display_info.delete("1.0", tk.END)
-    display_info.insert(tk.END, "Choose which potion do you want to consume.")
+    display_info.insert(tk.END, "Which potion you want to consume?")
     display_info.tag_add("center", "1.0", "end")
     display_info.config(state="disabled")
 
@@ -159,7 +168,7 @@ display_info.pack(fill="x", pady=10)
 
 
 # PRE-CREATE THE RESET BUTTON.  Don't .pack() it yet.
-reset_button = tk.Button(root, text="Restock Inventory", command=reset_demo)
+reset_button = tk.Button(root, text="Restock Inventory", command=reset_combobox_selections)
 
 root.mainloop()
 
