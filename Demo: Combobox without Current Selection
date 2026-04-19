@@ -49,7 +49,6 @@ def on_selection(event):
     combo['values'] = updated_options
 
 
-
 # Create User Interface Functions ---------------------------------------------------------
 def create_combobox(parent):    
     """
@@ -57,56 +56,58 @@ def create_combobox(parent):
     Returns the combobox, the initial list of items, and the title string.
     """
 
-    pass
+    # Define the options for the dropdown 
+    OPTIONS = ["C++", "C#", "Java", "JavaScript", "Python", "R", "Ruby", "Rust"]
+    directions = "Pick your favorite programming language"
+
+    # Select a Dynamic Width for the Combobox
+    # Calculate the length of the longest string in the list or title
+    longest_option = max(OPTIONS + [directions], key=len)
+    # Set a variable for the longest Combobox option
+    dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
+    # UI will automatically adjust itself without having to manually count pixels.
+
+    # Create the Combobox 
+    combo = ttk.Combobox(root, values=OPTIONS, width=dynamic_width, state="readonly")
+    combo.set(directions)  # Set default directions text
+    combo.pack(pady=20, padx=20)
+
+    # Bind the selection event to our function
+    combo.bind("<<ComboboxSelected>>", on_selection)
+    # The first argument is the event pattern, the second is the function name 
+
+    return combo
 
 
 def create_user_interface():
     """
     Initializes and packs all UI components for the application.
     """
+    global combo, display_info, reset_button, root 
+  
+    # Main Application Window ---------------------------------------------------------
+    root = tk.Tk()
+    root.title("Demo: Combobox Event Binding")
+    root.geometry("300x150")
 
-    pass
+    #  Create the Combobox 
+    combo = create_combobox(root)
 
+    # The Advanced Display Widget
+    # We use tk.Text because it supports multiple styles (tags) in one line
+    display_info = tk.Text(root, height=1, font=("Arial", 10), 
+                        bg=root.cget("bg"), bd=0, highlightthickness=0)
 
-root = tk.Tk()
-root.title("Demo: Combobox Event Binding")
-root.geometry("300x150")
+    # Create the Bold Style Tag
+    display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
+    # Create a Centering Tag
+    display_info.tag_configure("center", justify='center')
 
-# Define the options for the dropdown 
-options = ["C++", "C#", "Java", "JavaScript", "Python", "R", "Ruby", "Rust"]
-title = "Pick your favorite programming language"
-
-# Select a Dynamic Width for the Combobox
-# Calculate the length of the longest string in the list or title
-longest_option = max(options + [title], key=len)
-# Set a variable for the longest Combobox option
-dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
-# UI will automatically adjust itself without having to manually count pixels.
-
-# Create the Combobox 
-combo = ttk.Combobox(root, values=options, width=dynamic_width, state="readonly")
-combo.set(title)  # Set default title text
-combo.pack(pady=20, padx=20)
-
-# Bind the selection event to our function
-combo.bind("<<ComboboxSelected>>", on_selection)
-# The first argument is the event pattern, the second is the function name 
-
-# The Advanced Display Widget
-# We use tk.Text because it supports multiple styles (tags) in one line
-display_info = tk.Text(root, height=1, font=("Arial", 10), 
-                       bg=root.cget("bg"), bd=0, highlightthickness=0)
-
-# Create the Bold Style Tag
-display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
-# Create a Centering Tag
-display_info.tag_configure("center", justify='center')
-
-# Initial Text
-display_info.insert(tk.END, "What is your favorite language?")
-display_info.tag_add("center", "1.0", "end")
-display_info.config(state="disabled")
-display_info.pack(fill="x", pady=10)
+    # Initial Text
+    display_info.insert(tk.END, "What is your favorite language?")
+    display_info.tag_add("center", "1.0", "end")
+    display_info.config(state="disabled")
+    display_info.pack(fill="x", pady=10)
 
 
 # Main Application Window ---------------------------------------------------------
