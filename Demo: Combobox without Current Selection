@@ -5,17 +5,15 @@ Created: April 11, 2026
 Description: Demonstrates triggering a function immediately upon the selection
 of an option in a combobox (without the addition of using a button as a trigger).
 
-This version also demonstrates Dynamic Attribute Modification, the ability to change 
-a widget's data while the program is still running.  Specifically, this version "shrinks 
+This version also emonstrates Dynamic Attribute Modification, the ability to change a widget's data while the program is still running.  Specifically, this version "shrinks 
 the list" of combobox options so that the (current) active option is not not an available choice.
-
-Note that this is a variation on the previous "Demo: Combobox Event Binding" repo.
 """
 
 import tkinter as tk
 from tkinter import ttk  # Required for Combobox
 
 
+# Combobox Functions ---------------------------------------------------------
 def on_selection(event):
     """
     Triggered by the <<ComboboxSelected>> event.
@@ -51,11 +49,30 @@ def on_selection(event):
     combo['values'] = updated_options
 
 
+
+# Create User Interface Functions ---------------------------------------------------------
+def create_combobox(parent):    
+    """
+    Defines inventory data, calculates dimensions, and initializes the combobox.
+    Returns the combobox, the initial list of items, and the title string.
+    """
+
+    pass
+
+
+def create_user_interface():
+    """
+    Initializes and packs all UI components for the application.
+    """
+
+    pass
+
+
 root = tk.Tk()
 root.title("Demo: Combobox Event Binding")
 root.geometry("300x150")
 
-# Define the options for the dropdown
+# Define the options for the dropdown 
 options = ["C++", "C#", "Java", "JavaScript", "Python", "R", "Ruby", "Rust"]
 title = "Pick your favorite programming language"
 
@@ -91,5 +108,9 @@ display_info.tag_add("center", "1.0", "end")
 display_info.config(state="disabled")
 display_info.pack(fill="x", pady=10)
 
-root.mainloop()
+
+# Main Application Window ---------------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface() # Initialize UI
+    root.mainloop()
 
