@@ -21,7 +21,7 @@ def on_selection(event):
     Updates the display_label with the chosen value.
     """
     # Get the current value from the widget
-    selected_item = combo.get()
+    selected_item = combobox_menu.get()
     # print(f"User selected: {selected_item}")  # Print to console
 
     # Clear the text widget to update it
@@ -45,8 +45,7 @@ def create_combobox(parent):
     Defines inventory data, calculates dimensions, and initializes the combobox.
     Returns the combobox, the initial list of items, and the title string.
     """
-
-    global combo, directions, OPTIONS # Shared with reset function
+    global combobox_menu, directions, OPTIONS # Shared with reset function
 
     # Define the options for the dropdown
     OPTIONS = ["C++", "C#", "Java", "JavaScript", "Python", "R", "Ruby", "Rust"]
@@ -59,31 +58,31 @@ def create_combobox(parent):
     dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
     # UI will automatically adjust itself without having to manually count pixels.
 
-    # Create the Combobox 
-    combo = ttk.Combobox(root, values=OPTIONS, width=dynamic_width, state="readonly")
-    combo.set(directions)  # Set default directions text
-    combo.pack(pady=20, padx=20)
+    # Create the Combobox Menu
+    combobox_menu = ttk.Combobox(root, values=OPTIONS, width=dynamic_width, state="readonly")
+    combobox_menu.set(directions)  # Set default directions text
+    combobox_menu.pack(pady=20, padx=20)
 
     # Bind the selection event to our function
-    combo.bind("<<ComboboxSelected>>", on_selection)
+    combobox_menu.bind("<<ComboboxSelected>>", on_selection)
     # The first argument is the event pattern, the second is the function name 
 
-    return combo
+    return combobox_menu
 
 
 def create_user_interface():
     """
     Initializes and packs all UI components for the application.
     """
-    global combo, display_info, reset_button, root 
+    global combobox_menu, display_info, reset_button, root 
 
     # Main Application Window ---------------------------------------------------------
     root = tk.Tk()
     root.title("Demo: Combobox Event Binding")
     root.geometry("300x150")
 
-    #  Create the Combobox 
-    combo = create_combobox(root)
+    # Create the Combobox Menu
+    combobox_menu = create_combobox(root)
 
     # Create the Text Widget
     # We use tk.Text because it supports multiple styles (tags) in one line
