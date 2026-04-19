@@ -38,6 +38,37 @@ def on_selection(event):
     display_info.config(state="disabled") # Make it read-only
 
 
+# Create User Interface Functions ---------------------------------------------------------
+def create_combobox(parent):    
+    """
+    Defines inventory data, calculates dimensions, and initializes the combobox.
+    Returns the combobox, the initial list of items, and the title string.
+    """
+    global combo, directions, INVENTORY # Shared with reset function
+
+    # Define the options for the dropdown 
+    INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
+    directions = "Choose which potion to consume..."
+
+    # Calculate the Dynamic Width for the Combobox
+    # Calculate the length of the longest string in the list or title
+    longest_option = max(INVENTORY + [directions], key=len)
+    # Set a variable for the longest Combobox option
+    dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
+    # UI will automatically adjust itself without having to manually count pixels.
+
+    # Create and configure the Combobox Widget
+    combo = ttk.Combobox(parent, values=INVENTORY, width=dynamic_width, state="readonly")
+    combo.set(directions)  # Set default title text
+    combo.pack(pady=20, padx=20)
+
+    # Bind the selection event to our function
+    combo.bind("<<ComboboxSelected>>", on_selection)
+    # The first argument is the event pattern, the second is the function name
+
+    return combo 
+
+
 def create_user_interface():
     """
     Initializes and packs all UI components for the application.
