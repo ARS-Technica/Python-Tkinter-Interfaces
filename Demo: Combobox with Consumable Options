@@ -1,180 +1,195 @@
+"""
+Demo: Combobox with Consumable Options
+Created: April 14, 2026
+
+Description: Demonstrates triggering a function immediately upon the selection
+of an option in a combobox (without the addition of using a button as a trigger).
+
+This version also emonstrates Dynamic Attribute Modification, the ability to change a widget's data while the program is still running.  Specifically, this version removes
+each option from the combobox once its been chosen until no further options are available.
+
+I thought that this would work well in a PyGame platformer in which you could only
+use each collected player buff once.  Otherwise, not terribly useful.
+"""
+
 import tkinter as tk
-from tkinter import ttk  # Required for Combobox
+from tkinter import ttk  # Required for Combobox
 
 
 # Combobox Functions ---------------------------------------------------------
 def on_selection(event):
-    """
-    Triggered by the <<ComboboxSelected>> event.
-    The 'event' argument is automatically passed by Tkinter.
-    Updates the display_label with the chosen value.
+    """
+    Triggered by the <<ComboboxSelected>> event.
+    The 'event' argument is automatically passed by Tkinter.
+    Updates the display_label with the chosen value.
 
-    Each time an option is selected, it is removed from the 
-    combobox until there are no options remaining.
+    Each time an option is selected, it is removed from the 
+    combobox until there are no options remaining.
 
-    Added "Reset" button mostly for debugging purposes.
-    """    
+    Added "Reset" button mostly for debugging purposes.
+    """    
 
-    # Get the current value from the widget
-    selected_item = combobox_menu.get()
-    # print(f"User selected: {selected_item}")  # Print to console
+    # Get the current value from the widget
+    selected_item = combobox_menu.get()
+    # print(f"User selected: {selected_item}")  # Print to console
 
-    # Clear the text widget to update it
-    display_info.config(state="normal") # Enable editing
-    display_info.delete("1.0", tk.END)  # Clear current text
+    # Clear the text widget to update it
+    display_info.config(state="normal") # Enable editing
+    display_info.delete("1.0", tk.END)  # Clear current text
 
-    # Insert the normal text
-    display_info.insert(tk.END, "You've selected: ")
+    # Insert the normal text
+    display_info.insert(tk.END, "You've selected: ")
 
-    # Insert the bold text using the 'bold_font' tag
-    display_info.insert(tk.END, selected_item, "bold_font")
+    # Insert the bold text using the 'bold_font' tag
+    display_info.insert(tk.END, selected_item, "bold_font")
 
-    # Center the text and disable editing
-    display_info.tag_add("center", "1.0", "end")
+    # Center the text and disable editing
+    display_info.tag_add("center", "1.0", "end")
 
-    display_info.config(state="disabled") # Make it read-only
+    display_info.config(state="disabled") # Make it read-only
 
 
-    # Update the Combobox List
-    # Get the current tuple of options
-    current_options = list(combobox_menu['values'])
+    # Update the Combobox List
+    # Get the current tuple of options
+    current_options = list(combobox_menu['values'])
 
-    # Remove the selected item if it exists in the list
-    if selected_item in current_options:
-        current_options.remove(selected_item)
+    # Remove the selected item if it exists in the list
+    if selected_item in current_options:
+        current_options.remove(selected_item)
 
-        # Apply the filtered list back to the combobox
-        combobox_menu['values'] = current_options
+        # Apply the filtered list back to the combobox
+        combobox_menu['values'] = current_options
 
-        # Reset the combobox to the placeholder if no options are left
-        if not current_options:
-            combobox_menu.set("No options remaining")
-            # combobox_menu.event_generate('<Escape>') 
-            # No. '<Escape>' this only simulates a keypress to close the list if it's already open.
+        # Reset the combobox to the placeholder if no options are left
+        if not current_options:
+            combobox_menu.set("No options remaining")
+            # combobox_menu.event_generate('<Escape>') 
+            # No. '<Escape>' this only simulates a keypress to close the list if it's already open.
 
-            combobox_menu.config(state="disabled") # Disable the widget entirely
+            combobox_menu.config(state="disabled") # Disable the widget entirely
 
-            # Clear the text widget to update it
-            display_info.config(state="normal") # Enable editing
-            display_info.delete("1.0", tk.END)  # Clear current text
+            # Clear the text widget to update it
+            display_info.config(state="normal") # Enable editing
+            display_info.delete("1.0", tk.END)  # Clear current text
 
-            # Insert the text into a label
-            display_info.insert(tk.END, "DANGER!\n", "alert")            
-            display_info.insert(tk.END, "You have consumed all of your potions!", "bold_font") 
+            # Insert the text into a label
+            display_info.insert(tk.END, "DANGER!\n", "alert")            
+            display_info.insert(tk.END, "You have consumed all of your potions!", "bold_font") 
 
-            # Center the text and disable editing
-            display_info.tag_add("center", "1.0", "end")
-            display_info.config(state="disabled") # Make it read-only
+            # Center the text and disable editing
+            display_info.tag_add("center", "1.0", "end")
+            display_info.config(state="disabled") # Make it read-only
 
-            # Reset combobox options
-            # reset_button = tk.Button(root, text="Reset List", command=reset_combobox_selections)
-            # reset_button.pack(pady=5)
+            # Reset combobox options
+            # reset_button = tk.Button(root, text="Reset List", command=reset_combobox_selections)
+            # reset_button.pack(pady=5)
 
-            # Reveal the reset button rather than creating a new button
-            reset_button.pack(pady=5)
-        else:
-            combobox_menu.set(directions)
+            # Reveal the reset button rather than creating a new button
+            reset_button.pack(pady=5)
+        else:
+            combobox_menu.set(directions)
 
 
 def reset_combobox_selections():
-    """
-    Restores the application to its initial state.
+    """
+    Restores the application to its initial state.
 
-    - Repopulates combobox values from the INVENTORY constant.
-    - Sets combobox state back to readonly.
-    - Clears and updates 'display_info' with the starting prompt.
-    - Removes the 'reset_button' from the layout using pack_forget.
-    """
-    
-    # Restore the original list of options
-    combobox_menu['values'] = INVENTORY 
+    - Repopulates combobox values from the INVENTORY constant.
+    - Sets combobox state back to readonly.
+    - Clears and updates 'display_info' with the starting prompt.
+    - Removes the 'reset_button' from the layout using pack_forget.
+    """
+    
+    # Restore the original list of options
+    combobox_menu['values'] = INVENTORY 
 
-    # Re-enable the combobox and reset the title
-    combobox_menu.config(state="readonly")
-    combobox_menu.set(directions)
+    # Re-enable the combobox and reset the title
+    combobox_menu.config(state="readonly")
+    combobox_menu.set(directions)
 
-    # Reset the Text Widget to its initial message
-    display_info.config(state="normal")
-    display_info.delete("1.0", tk.END)
-    display_info.insert(tk.END, "Which potion you want to consume?")
-    display_info.tag_add("center", "1.0", "end")
-    display_info.config(state="disabled")
+    # Reset the Text Widget to its initial message
+    display_info.config(state="normal")
+    display_info.delete("1.0", tk.END)
+    display_info.insert(tk.END, "Which potion you want to consume?")
+    display_info.tag_add("center", "1.0", "end")
+    display_info.config(state="disabled")
 
-    # Hide the reset button again
-    reset_button.pack_forget() # Creates "Ghost button"
+    # Hide the reset button again
+    reset_button.pack_forget() # Creates "Ghost button"
 
 
 # Create User Interface Functions --------------------------------------------------------
-def create_combobox(parent):    
-    """
-    Defines inventory data, calculates dimensions, and initializes the combobox.
-    Returns the combobox, the initial list of items, and the title string.
-    """
-    global combobox_menu, directions, INVENTORY # Shared with reset function
+def create_combobox(parent):    
+    """
+    Defines inventory data, calculates dimensions, and initializes the combobox.
+    Returns the combobox, the initial list of items, and the title string.
+    """
+    global combobox_menu, directions, INVENTORY # Shared with reset function
 
-    # Define the options for the dropdown 
-    INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
-    directions = "Choose which potion to consume..."
+    # Define the options for the dropdown 
+    INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
+    directions = "Choose which potion to consume..."
 
-    # Calculate the Dynamic Width for the Combobox
-    # Calculate the length of the longest string in the list or title
-    longest_option = max(INVENTORY + [directions], key=len)
-    # Set a variable for the longest Combobox option
-    dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
-    # UI will automatically adjust itself without having to manually count pixels.
+    # Calculate the Dynamic Width for the Combobox
+    # Calculate the length of the longest string in the list or title
+    longest_option = max(INVENTORY + [directions], key=len)
+    # Set a variable for the longest Combobox option
+    dynamic_width = len(longest_option) + 2 # Add a little padding for the arrow button
+    # UI will automatically adjust itself without having to manually count pixels.
 
-    # Create and configure the Combobox Widget
-    combobox_menu = ttk.Combobox(parent, values=INVENTORY, width=dynamic_width, state="readonly")
-    combobox_menu.set(directions)  # Set default title text
-    combobox_menu.pack(pady=20, padx=20)
+    # Create and configure the Combobox Widget
+    combobox_menu = ttk.Combobox(parent, values=INVENTORY, width=dynamic_width, state="readonly")
+    combobox_menu.set(directions)  # Set default title text
+    combobox_menu.pack(pady=20, padx=20)
 
-    # Bind the selection event to our function
-    combobox_menu.bind("<<ComboboxSelected>>", on_selection)
-    # The first argument is the event pattern, the second is the function name
+    # Bind the selection event to our function
+    combobox_menu.bind("<<ComboboxSelected>>", on_selection)
+    # The first argument is the event pattern, the second is the function name
 
-    return combobox_menu, directions, INVENTORY
+    return combobox_menu #, directions, INVENTORY
 
 
 def create_user_interface():
-    """
-    Initializes and packs all UI components for the application.
-    """
-    global combobox_menu, directions, display_info, INVENTORY, reset_button # Allows functions to access these
-    
-    # Main Application Window ---------------------------------------------------------
-    root = tk.Tk()
-    root.title("Demo: Combobox with Consumable Options")
-    root.geometry("300x175") # Made slightly taller for the button
+    """
+    Initializes and packs all UI components for the application.
+    """
+    global combobox_menu, directions, display_info, INVENTORY, reset_button, root # Allows functions to access these
+    
+    # Main Application Window ---------------------------------------------------------
+    root = tk.Tk()
+    root.title("Demo: Combobox with Consumable Options")
+    root.geometry("300x175") # Made slightly taller for the button
 
-    #  Create the Combobox 
-    combobox_menu = create_combobox(root)
+    # Create the Combobox 
+    combobox_menu = create_combobox(root)
 
-    # Create the Text Widget
-    # We use tk.Text because it supports multiple styles (tags) in one line
-    display_info = tk.Text(root, height=2, font=("Arial", 10), 
-                        bg=root.cget("bg"), bd=0, highlightthickness=0)
-    # Note: height must equal 2 in order for "DANGER!\n" ... "You have consumed all of your potions!" to appear without truncating second line.
-                                                                                                                                       
+    # Create the Text Widget
+    # We use tk.Text because it supports multiple styles (tags) in one line
+    display_info = tk.Text(root, height=2, font=("Arial", 10), 
+                        bg=root.cget("bg"), bd=0, highlightthickness=0)
+    # Note: height must equal 2 in order for "DANGER!\n" ... "You have consumed all of your potions!" to appear without truncating second line.
 
-    # Configure Text Tags
-    # Create a red color tag near your other tag_configure lines
-    display_info.tag_configure("alert", foreground="red", font=("Arial", 10, "bold"))                                                                        
-    # Create the Bold Style Tag
-    display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
-    # Create a Centering Tag
-    display_info.tag_configure("center", justify='center')
 
-    # Set Initial Text
-    display_info.insert(tk.END, "Which potion do you want to consume?")
-    display_info.tag_add("center", "1.0", "end")
-    display_info.config(state="disabled")
-    display_info.pack(fill="x", pady=10)
+    # Configure Text Tags
+	# Create a red color tag near your other tag_configure lines
+    display_info.tag_configure("alert", foreground="red", font=("Arial", 10, "bold"))
+    # Create the Bold Style Tag
+    display_info.tag_configure("bold_font", font=("Arial", 10, "bold"))
+    # Create a Centering Tag
+    display_info.tag_configure("center", justify='center')
 
-    # Pre-create Reset Button.  Don't .pack() it yet.
-    reset_button = tk.Button(root, text="Restock Inventory", command=reset_combobox_selections)
+    # Set Initial Text
+    display_info.insert(tk.END, "Which potion do you want to consume?")
+    display_info.tag_add("center", "1.0", "end")
+    display_info.config(state="disabled")
+    display_info.pack(fill="x", pady=10)
+
+    # Pre-create Reset Button.  Don't .pack() it yet.
+    reset_button = tk.Button(root, text="Restock Inventory", command=reset_combobox_selections)
+
 
 # Main Application Window ---------------------------------------------------------
 if __name__ == "__main__":
-    create_user_interface() # Initialize UI
-    root.mainloop()
+    create_user_interface() # Initialize UI
+    root.mainloop()
 
