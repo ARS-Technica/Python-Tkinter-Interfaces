@@ -43,7 +43,7 @@ def on_selection(event):
     # Update the Combobox List
     # Create a new list containing everything EXCEPT the one currently selected
     # This uses a list comprehension: a Pythonic way to filter lists
-    updated_options = [opt for opt in options if opt != selected_item]
+    updated_options = [opt for opt in OPTIONS if opt != selected_item]
     
     # Apply the filtered list back to the combobox
     combo['values'] = updated_options
@@ -55,6 +55,8 @@ def create_combobox(parent):
     Defines inventory data, calculates dimensions, and initializes the combobox.
     Returns the combobox, the initial list of items, and the title string.
     """
+
+    global combo, directions, OPTIONS # Shared with reset function    
 
     # Define the options for the dropdown 
     OPTIONS = ["C++", "C#", "Java", "JavaScript", "Python", "R", "Ruby", "Rust"]
@@ -87,13 +89,13 @@ def create_user_interface():
   
     # Main Application Window ---------------------------------------------------------
     root = tk.Tk()
-    root.title("Demo: Combobox Event Binding")
+    root.title("Demo: Combobox without Current Selection")
     root.geometry("300x150")
 
-    #  Create the Combobox 
+    # Create the Combobox 
     combo = create_combobox(root)
 
-    # The Advanced Display Widget
+    # Create the Text Widget
     # We use tk.Text because it supports multiple styles (tags) in one line
     display_info = tk.Text(root, height=1, font=("Arial", 10), 
                         bg=root.cget("bg"), bd=0, highlightthickness=0)
