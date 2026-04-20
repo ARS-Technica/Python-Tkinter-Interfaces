@@ -98,6 +98,17 @@ def on_selection(event):
             combobox_menu.set(directions)
 
 
+def remove_used_item(item_to_remove):
+    """
+    Removes the selected option from possible combobox values.
+    If empty, disables the menu and reveals the Reset button.
+    """
+
+    # Move code from on_selection
+
+    pass
+
+
 def reset_combobox_selections():
     """
     Restores the application to its initial state.
@@ -127,6 +138,15 @@ def reset_combobox_selections():
 
 
 # Stat Counter Functions ----------------------------------------------------------------
+def apply_potion_effect(potion_name):
+    """
+    Updates the stats dictionary based on the combobox selection, 
+    respecting the MAX_STATS caps.
+    """
+
+    pass
+
+
 def on_selection(event):
     """
     Core logic of the program.  Handles interaction between combobox and stat counters.
