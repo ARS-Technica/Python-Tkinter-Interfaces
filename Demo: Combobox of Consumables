@@ -167,6 +167,26 @@ def create_combobox(parent):
     return combobox_menu #, directions, INVENTORY
 
 
+def create_stat_frame(parent):
+    """
+    Creates a frame and the labels for Health, Magic, and Strength.
+    Returns the frame, the initial stats, and a title label
+    """
+    global health_label, magic_label, strength_label
+
+    # Create a container frame to hold the labels side-by-side
+
+    # Health Label
+
+    # Magic Label
+
+    # Strength Label
+
+    # Initialize the labels with their starting values
+
+    return stat_frame
+
+
 def create_user_interface():
     """
     Initializes and packs all UI components for the application.
