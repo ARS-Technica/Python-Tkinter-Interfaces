@@ -17,10 +17,15 @@ from tkinter import ttk  # Required for Combobox
 
 
 # Stat Counter Functions ---------------------------------------------------------
-# 1. Global Game State (Stat Counters)
-stat_counters ={}
+# Global Game State (Stat Counters)
+health_count = 5
+magic_count = 1
+strength_count = 3
 
-# 2. Define Potion Effects
+# Maximum Stat Values  # This is getting complex, but this stops stats from overpowering
+MAX_STATS = {"Health": 10, "Magic": 10, "Strength": 50}
+
+# Define Potion Effects ???
 # Format: {Potion Name: (Stat to change, Amount, Is Set?)}
 POTION_EFFECTS = {}
 
