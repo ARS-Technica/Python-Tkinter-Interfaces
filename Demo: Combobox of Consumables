@@ -18,16 +18,10 @@ from tkinter import ttk  # Required for Combobox
 
 # Stat Counter Functions ---------------------------------------------------------
 # Global Game State (Stat Counters)
-health_count = 5
-magic_count = 1
-strength_count = 3
+stats = {"Health": 5, "Magic": 0, "Strength": 0}
 
 # Maximum Stat Values  # This is getting complex, but this stops stats from overpowering
 MAX_STATS = {"Health": 10, "Magic": 10, "Strength": 50}
-
-# Define Potion Effects ???
-# Format: {Potion Name: (Stat to change, Amount, Is Set?)}
-POTION_EFFECTS = {}
 
 
 # Combobox Functions ---------------------------------------------------------
@@ -130,6 +124,24 @@ def reset_combobox_selections():
 
     # Hide the reset button again
     reset_button.pack_forget() # Creates "Ghost button"
+
+
+# Stat Counter Functions ----------------------------------------------------------------
+def on_selection(event):
+    """
+    Core logic of the program.  Handles interaction between combobox and stat counters.
+
+    Determines which potion was picked and updates the stats dictionary using the min() function to respect the MAX_STATS caps.
+    """
+
+    pass
+
+def update_hud_display():
+    """
+    Synchronizes the text on the UI labels with the current values in the stats dictionary.
+    """
+
+    pass
 
 
 # Create User Interface Functions --------------------------------------------------------
