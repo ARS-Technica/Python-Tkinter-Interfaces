@@ -1,0 +1,27 @@
+"""
+Demo: Combobox of Consumables
+Created: April 20, 2026
+
+Description: Demonstrates triggering a function immediately upon the selection
+of an option in a combobox (without the addition of using a button as a trigger).
+
+This version also emonstrates Dynamic Attribute Modification, the ability to change 
+a widget's data while the program is still running.  Specifically, this version 
+removes each option from the combobox once its been chosen until no further options
+are available.
+
+This is a slightly more complex version of "Demo: Combobox with Consumable Options"
+
+In this version, the combobox contains options that act upon three counters.  Each
+time the user selects an option from the combobox, that option is removed from the
+combobox (or "consumed"), leaving one less option.
+
+The idea is to one day use a similar mechanism in a PyGame platformer in which you can 
+only use each collected player buff once.
+"""
+
+
+
+
+
+
