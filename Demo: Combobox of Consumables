@@ -51,6 +51,14 @@ def apply_combobox_selection(selection):
 
 def on_selection(event):
     """
+    Core logic of the program.  Handles interaction between combobox and stat 
+    counters.
+
+    Determines which option was selected and updates the stats dictionary using 
+    the min() function to respect the MAX_STATS caps.
+
+    ! This functions has been divided into a series of smaller functions
+
     Triggered by the <<ComboboxSelected>> event.
     The 'event' argument is automatically passed by Tkinter.
     Updates the display_label with the chosen value.
@@ -65,7 +73,12 @@ def on_selection(event):
     selected_item = combobox_menu.get()
     # print(f"User selected: {selected_item}")  # Print to console
 
+    apply_combobox_selection(selected_item)
+
     update_stats_display()
+
+    '''
+    # Redistributed into update_stats_display Function
 
     # Clear the text widget to update it
     display_info.config(state="normal") # Enable editing
@@ -81,7 +94,7 @@ def on_selection(event):
     display_info.tag_add("center", "1.0", "end")
 
     display_info.config(state="disabled") # Make it read-only
-
+    '''
 
     # Update the Combobox List
     # Get the current tuple of options
@@ -133,7 +146,7 @@ def remove_used_item(item_to_remove):
     # Moved code from on_selection
 
     current_options = list(combobox_menu['values'])
-    
+
     if item_to_remove in current_options:
         current_options.remove(item_to_remove)
         combobox_menu['values'] = current_options
@@ -174,16 +187,6 @@ def reset_combobox_selections():
 
 
 # Stat Counter Functions ----------------------------------------------------------------
-def on_selection(event):
-    """
-    Core logic of the program.  Handles interaction between combobox and stat counters.
-
-    Determines which potion was picked and updates the stats dictionary using the min() function to respect the MAX_STATS caps.
-    """
-
-    pass
-
-
 def update_stats_display():
     """
     Synchronizes the text on the UI labels with the current values in the stats dictionary.
@@ -192,6 +195,24 @@ def update_stats_display():
     health_label.config(text=f"Health: {stats['Health']}/{MAX_STATS['Health']}")
     magic_label.config(text=f"Magic: {stats['Magic']}/{MAX_STATS['Magic']}")
     strength_label.config(text=f"Strength: {stats['Strength']}/{MAX_STATS['Strength']}")
+
+
+    # Redistributed into update_stats_display Function:
+
+    # Clear the text widget to update it
+    display_info.config(state="normal") # Enable editing
+    display_info.delete("1.0", tk.END)  # Clear current text
+
+    # Insert the normal text
+    display_info.insert(tk.END, "You've selected: ")
+
+    # Insert the bold text using the 'bold_font' tag
+    display_info.insert(tk.END, selected_item, "bold_font")
+
+    # Center the text and disable editing
+    display_info.tag_add("center", "1.0", "end")
+
+    display_info.config(state="disabled") # Make it read-only
 
 
 # Loading Functions ---------------------------------------------------------
