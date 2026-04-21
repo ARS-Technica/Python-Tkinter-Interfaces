@@ -75,6 +75,7 @@ def on_selection(event):
 
     apply_combobox_selection(selected_item)
 
+    # Update the Stat Counters (labels)
     update_stats_display()
 
     '''
@@ -95,6 +96,12 @@ def on_selection(event):
 
     display_info.config(state="disabled") # Make it read-only
     '''
+
+    # Update the Combobox List
+    remove_used_item(selected_item)
+
+    '''
+    # Redistributed into remove_used_item Function
 
     # Update the Combobox List
     # Get the current tuple of options
@@ -135,6 +142,7 @@ def on_selection(event):
             reset_button.pack(pady=5)
         else:
             combobox_menu.set(directions)
+    '''
 
 
 def remove_used_item(item_to_remove):
@@ -156,6 +164,52 @@ def remove_used_item(item_to_remove):
         reset_button.pack(pady=5)
     else:
         combobox_menu.set(directions)
+
+
+    '''
+    # Redistributed into remove_used_item Function
+
+    # Update the Combobox List
+    # Get the current tuple of options
+    current_options = list(combobox_menu['values'])
+
+    # Remove the selected item if it exists in the list
+    if selected_item in current_options:
+        current_options.remove(selected_item)
+
+        # Apply the filtered list back to the combobox
+        combobox_menu['values'] = current_options
+
+        # Reset the combobox to the placeholder if no options are left
+        if not current_options:
+            combobox_menu.set("No options remaining")
+            # combobox_menu.event_generate('<Escape>') 
+            # No. '<Escape>' this only simulates a keypress to close the list if it's already open.
+
+            combobox_menu.config(state="disabled") # Disable the widget entirely
+
+            # Clear the text widget to update it
+            display_info.config(state="normal") # Enable editing
+            display_info.delete("1.0", tk.END)  # Clear current text
+
+            # Insert the text into a label
+            display_info.insert(tk.END, "DANGER!\n", "alert")            
+            display_info.insert(tk.END, "You have consumed all of your potions!", "bold_font") 
+
+            # Center the text and disable editing
+            display_info.tag_add("center", "1.0", "end")
+            display_info.config(state="disabled") # Make it read-only
+
+            # Reset combobox options
+            # reset_button = tk.Button(root, text="Reset List", command=reset_combobox_selections)
+            # reset_button.pack(pady=5)
+
+            # Reveal the reset button rather than creating a new button
+            reset_button.pack(pady=5)
+        else:
+            combobox_menu.set(directions)
+    '''
+
 
 
 def reset_combobox_selections():
