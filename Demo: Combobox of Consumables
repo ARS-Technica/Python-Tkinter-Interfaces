@@ -17,6 +17,11 @@ from tkinter import ttk  # Required for Combobox
 
 
 # Stat Counter Functions ---------------------------------------------------------
+"""
+This entire section of code would normally be a CLASS, but my intent is to 
+demonstrate Tkinter widgets, not building a fully functional program.
+"""
+
 # Global Game State (Stat Counters)
 stats = {"Health": 5, "Magic": 0, "Strength": 0}
 
@@ -140,13 +145,21 @@ def reset_combobox_selections():
 
 
 # Stat Counter Functions ----------------------------------------------------------------
-def apply_potion_effect(potion_name):
+def apply_combobox_selection(selection):
     """
     Updates the stats dictionary based on the combobox selection, 
     respecting the MAX_STATS caps.
     """
+    combobox_selection = selected_item
 
-    pass
+    if combobox_selection == "Health":
+        stats["Health"] = min(stats["Health"] + 1, MAX_STATS["Health"])
+    elif combobox_selection == "Mana":
+        stats["Magic"] = min(stats["Magic"] + 1, MAX_STATS["Magic"])
+    elif combobox_selection == "Resurrection":
+        stats["Health"] = MAX_STATS["Health"]
+    elif combobox_selection == "Super Strength":
+        stats["Strength"] = min(stats["Strength"] + 10, MAX_STATS["Strength"])
 
 
 def on_selection(event):
