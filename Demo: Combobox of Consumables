@@ -244,32 +244,34 @@ def reset_combobox_selections():
 
 
 # Stat Counter Functions ----------------------------------------------------------------
-def update_stats_display():
+def update_stats_display(selected_item=None):
     """
     Synchronizes the text on the UI labels with the current values in the stats dictionary.
     """
-
+    # Update the HUD labels
     health_label.config(text=f"Health: {stats['Health']}/{MAX_STATS['Health']}")
     magic_label.config(text=f"Magic: {stats['Magic']}/{MAX_STATS['Magic']}")
     strength_label.config(text=f"Strength: {stats['Strength']}/{MAX_STATS['Strength']}")
 
 
-    # Redistributed into update_stats_display Function:
+    # Redistributed into on_selection Function:
 
-    # Clear the text widget to update it
-    display_info.config(state="normal") # Enable editing
-    display_info.delete("1.0", tk.END)  # Clear current text
+    # Update the Text Widget Feedback
+    if selected_item:
+        # Clear the text widget to update it
+        display_info.config(state="normal") # Enable editing
+        display_info.delete("1.0", tk.END)  # Clear current text
 
-    # Insert the normal text
-    display_info.insert(tk.END, "You've selected: ")
+        # Insert the normal text
+        display_info.insert(tk.END, "You've selected: ")
 
-    # Insert the bold text using the 'bold_font' tag
-    display_info.insert(tk.END, selected_item, "bold_font")
+        # Insert the bold text using the 'bold_font' tag
+        display_info.insert(tk.END, selected_item, "bold_font")
 
-    # Center the text and disable editing
-    display_info.tag_add("center", "1.0", "end")
+        # Center the text and disable editing
+        display_info.tag_add("center", "1.0", "end")
 
-    display_info.config(state="disabled") # Make it read-only
+        display_info.config(state="disabled") # Make it read-only
 
 
 # Loading Functions ---------------------------------------------------------
