@@ -156,12 +156,14 @@ def on_selection(event):
 
     pass
 
-def update_hud_display():
+def update_stats_display():
     """
     Synchronizes the text on the UI labels with the current values in the stats dictionary.
     """
 
-    pass
+    health_label.config(text=f"Health: {stats['Health']}/{MAX_STATS['Health']}")
+    magic_label.config(text=f"Magic: {stats['Magic']}/{MAX_STATS['Magic']}")
+    strength_label.config(text=f"Strength: {stats['Strength']}/{MAX_STATS['Strength']}")
 
 
 # Create User Interface Functions --------------------------------------------------------
