@@ -31,7 +31,7 @@ MAX_STATS = {"Health": 10, "Magic": 10, "Strength": 50}
 
 # Combobox Functions ---------------------------------------------------------
 
-# Breaking the over-sized on_selection Function up
+# Breaking up the over-sized on_selection Function
 def apply_combobox_selection(selection):
     """
     Updates the stats dictionary based on the combobox selection, 
@@ -130,9 +130,19 @@ def remove_used_item(item_to_remove):
     If empty, disables the menu and reveals the Reset button.
     """
 
-    # Move code from on_selection
+    # Moved code from on_selection
 
-    pass
+    current_options = list(combobox_menu['values'])
+    
+    if item_to_remove in current_options:
+        current_options.remove(item_to_remove)
+        combobox_menu['values'] = current_options
+
+    if not current_options:
+        combobox_menu.config(state="disabled")
+        reset_button.pack(pady=5)
+    else:
+        combobox_menu.set(directions)
 
 
 def reset_combobox_selections():
