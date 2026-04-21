@@ -41,6 +41,8 @@ def on_selection(event):
     selected_item = combobox_menu.get()
     # print(f"User selected: {selected_item}")  # Print to console
 
+    update_stats_display()
+
     # Clear the text widget to update it
     display_info.config(state="normal") # Enable editing
     display_info.delete("1.0", tk.END)  # Clear current text
@@ -118,7 +120,7 @@ def reset_combobox_selections():
     - Clears and updates 'display_info' with the starting prompt.
     - Removes the 'reset_button' from the layout using pack_forget.
     """
-    
+
     # Restore the original list of options
     combobox_menu['values'] = INVENTORY 
 
@@ -147,6 +149,27 @@ def apply_potion_effect(potion_name):
     pass
 
 
+def on_selection(event):
+    """
+    Core logic of the program.  Handles interaction between combobox and stat counters.
+
+    Determines which potion was picked and updates the stats dictionary using the min() function to respect the MAX_STATS caps.
+    """
+
+    pass
+
+
+def update_stats_display():
+    """
+    Synchronizes the text on the UI labels with the current values in the stats dictionary.
+    """
+
+    health_label.config(text=f"Health: {stats['Health']}/{MAX_STATS['Health']}")
+    magic_label.config(text=f"Magic: {stats['Magic']}/{MAX_STATS['Magic']}")
+    strength_label.config(text=f"Strength: {stats['Strength']}/{MAX_STATS['Strength']}")
+
+
+# Loading Functions ---------------------------------------------------------
 def load_stats():
     """
     Initializes the numerical constants and dictionaries for the game state.
@@ -161,23 +184,12 @@ def load_stats():
     pass
 
 
-def on_selection(event):
+def reset_game_state():
     """
-    Core logic of the program.  Handles interaction between combobox and stat counters.
-
-    Determines which potion was picked and updates the stats dictionary using the min() function to respect the MAX_STATS caps.
+    Restores the inventory, resets numerical stats to defaults, and hides the Reset button.
     """
 
     pass
-
-def update_stats_display():
-    """
-    Synchronizes the text on the UI labels with the current values in the stats dictionary.
-    """
-
-    health_label.config(text=f"Health: {stats['Health']}/{MAX_STATS['Health']}")
-    magic_label.config(text=f"Magic: {stats['Magic']}/{MAX_STATS['Magic']}")
-    strength_label.config(text=f"Strength: {stats['Strength']}/{MAX_STATS['Strength']}")
 
 
 # Create User Interface Functions --------------------------------------------------------
@@ -244,7 +256,7 @@ def create_user_interface():
     Initializes and packs all UI components for the application.
     """
     global combobox_menu, directions, display_info, INVENTORY, reset_button, root # Allows functions to access these
-    
+
     # Main Application Window ---------------------------------------------------------
     root = tk.Tk()
     root.title("Demo: Combobox of Consumables")
