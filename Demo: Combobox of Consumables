@@ -147,6 +147,20 @@ def apply_potion_effect(potion_name):
     pass
 
 
+def load_stats():
+    """
+    Initializes the numerical constants and dictionaries for the game state.
+    """
+    
+    # Defines your INVENTORY list and directions string.
+
+    # Define your two main dictionaries: stats (current values) and MAX_STATS (the caps for each attribute).
+
+    # Returns these values so they can be assigned to global variables or passed to other functions.
+
+    pass
+
+
 def on_selection(event):
     """
     Core logic of the program.  Handles interaction between combobox and stat counters.
