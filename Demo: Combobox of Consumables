@@ -203,19 +203,19 @@ def create_stat_frame(parent):
     global health_label, magic_label, strength_label
 
     # Create a container frame to hold the labels side-by-side
-    hud_frame = tk.Frame(parent)
-    hud_frame.pack(pady=10)
+    stat_frame = tk.Frame(parent)
+    stat_frame.pack(pady=10)
 
     # Health Label
-    health_label = tk.Label(hud_frame, text="", fg="red", font=("Arial", 10, "bold"))
+    health_label = tk.Label(stat_frame, text="", fg="red", font=("Arial", 10, "bold"))
     health_label.grid(row=0, column=0, padx=15)
 
     # Magic Label
-    magic_label = tk.Label(hud_frame, text="", fg="blue", font=("Arial", 10, "bold"))
+    magic_label = tk.Label(stat_frame, text="", fg="blue", font=("Arial", 10, "bold"))
     magic_label.grid(row=0, column=1, padx=15)
 
     # Strength Label
-    strength_label = tk.Label(hud_frame, text="", fg="green", font=("Arial", 10, "bold"))
+    strength_label = tk.Label(stat_frame, text="", fg="green", font=("Arial", 10, "bold"))
     strength_label.grid(row=0, column=2, padx=15)
 
     # Initialize the labels with their starting values
