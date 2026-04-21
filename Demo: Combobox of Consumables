@@ -16,7 +16,7 @@ import tkinter as tk
 from tkinter import ttk  # Required for Combobox
 
 
-# Stat Counter Functions ---------------------------------------------------------
+# Global Values --------------------------------------------------------------
 """
 This entire section of code would normally be a CLASS, but my intent is to 
 demonstrate Tkinter widgets, not building a fully functional program.
@@ -27,6 +27,9 @@ stats = {"Health": 5, "Magic": 0, "Strength": 0}
 
 # Maximum Stat Values  # This is getting complex, but this stops stats from overpowering
 MAX_STATS = {"Health": 10, "Magic": 10, "Strength": 50}
+INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
+
+directions = "Choose which potion to consume..."
 
 
 # Combobox Functions ---------------------------------------------------------
