@@ -224,6 +224,9 @@ def reset_combobox_selections():
     - Clears and updates 'display_info' with the starting prompt.
     - Removes the 'reset_button' from the layout using pack_forget.
     """
+    # Establish default values to restore
+    global stats 
+    stats = {"Health": 5, "Magic": 0, "Strength": 0} 
 
     # Restore the original list of options
     combobox_menu['values'] = INVENTORY 
