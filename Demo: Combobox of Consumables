@@ -153,11 +153,16 @@ def update_stats_display(selected_item=None):
     """
     Synchronizes the text on the UI labels with the current values in the stats dictionary.
     """
-    # Update the HUD labels
-    health_label.config(text=f"Health: {stats['Health']}/{MAX_STATS['Health']}")
-    magic_label.config(text=f"Magic: {stats['Magic']}/{MAX_STATS['Magic']}")
-    strength_label.config(text=f"Strength: {stats['Strength']}/{MAX_STATS['Strength']}")
+    # Update the Stat Labels
+    h_curr, h_max = stats['Health'], MAX_STATS['Health']
+    m_curr, m_max = stats['Magic'], MAX_STATS['Magic']
+    s_curr, s_max = stats['Strength'], MAX_STATS['Strength']
 
+    # Using :02 for 2-digit padding and :02 for the max values as well
+    # Format: 05/10, 00/10, 00/50
+    health_label.config(text=f"Health: {h_curr:02}/{h_max:02}")
+    magic_label.config(text=f"Magic: {m_curr:02}/{m_max:02}")
+    strength_label.config(text=f"Strength: {s_curr:02}/{s_max:02}")
 
     # Redistributed into on_selection Function:
 
