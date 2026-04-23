@@ -105,6 +105,9 @@ def on_selection(event):
 
         # Keep the potion in the combobox so they can pick something else
         combobox_menu.set(directions)
+
+        #Return the display_info text (label) to the default prompt.
+        root.after(3000, restore_default_message)  # 3000 ms = 3 seconds      
     else:
         # Update the Stat Counters (labels)
         update_stats_display(selected_item)
