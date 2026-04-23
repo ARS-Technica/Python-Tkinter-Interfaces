@@ -87,7 +87,8 @@ def on_selection(event):
     # Update the stats dictionary based on the combobox selection 
     under_maximum_value = apply_combobox_selection(selected_item)
 
-    if not selected_item:
+    # Check the RESULT of the function, not the string itself!!!
+    if under_maximum_value == False:  # Or simply: if not under_maximum_value
         # if a combobox selection pushes a value above the MAX_STATS value:
 
         # Clear the text widget to update it
