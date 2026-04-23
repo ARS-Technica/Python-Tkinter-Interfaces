@@ -16,7 +16,7 @@ import tkinter as tk
 from tkinter import ttk  # Required for Combobox
 
 
-# Global Values ---- ---------------------------------------------------------
+# Global Values ---- ----------------------------------------------------------
 """
 This entire section of code would normally be a CLASS, but my intent is to 
 demonstrate Tkinter widgets, not building a fully functional program.
@@ -32,7 +32,7 @@ INVENTORY = ["Health", "Mana", "Resurrection", "Super Strength"]
 directions = "Choose which potion to consume..."
 
 
-# Combobox Functions ---------------------------------------------------------
+# Combobox Functions ----------------------------------------------------------
 def apply_combobox_selection(combobox_selection):
     """
     Updates the stats dictionary based on the combobox selection, 
@@ -201,7 +201,7 @@ def reset_combobox_selections():
     reset_button.pack_forget() # Creates "Ghost button"
 
 
-# Stat Counter Functions ----------------------------------------------------------------
+# Stat Counter Functions ------------------------------------------------------
 def update_stats_display(selected_item=None):
     """
     Synchronizes the text on the UI labels with the current values in the stats dictionary.
@@ -237,7 +237,7 @@ def update_stats_display(selected_item=None):
         display_info.config(state="disabled") # Make it read-only
 
 
-# Create User Interface Functions --------------------------------------------------------
+# Create User Interface Functions ---------------------------------------------
 def create_combobox(parent):    
     """
     Defines inventory data, calculates dimensions, and initializes the combobox.
@@ -300,7 +300,7 @@ def create_user_interface():
     """
     global combobox_menu, directions, display_info, INVENTORY, reset_button, root # Allows functions to access these
 
-    # Main Application Window ---------------------------------------------------------
+    # Main Application Window -------------------------------------------------
     root = tk.Tk()
     root.title("Demo: Combobox of Consumables")
     root.geometry("350x250") # Made taller for Stats (stat_frame)
