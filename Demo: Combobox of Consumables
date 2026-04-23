@@ -33,25 +33,40 @@ directions = "Choose which potion to consume..."
 
 
 # Combobox Functions ---------------------------------------------------------
-
-# Breaking up the over-sized on_selection Function
 def apply_combobox_selection(combobox_selection):
     """
     Updates the stats dictionary based on the combobox selection, 
     respecting the MAX_STATS caps.
+
+    Returns True if successful or False if the stat is already at maximum.
     """
     # Get the current value from the widget
     selected_item = combobox_menu.get()
     # print(f"User selected: {selected_item}")  # Print to console
 
-    if combobox_selection == "Health":
+    # Returns false if value with combobox selection exceeds maximum value
+    # False triggers a text warning from inside the on_selection Function
+    if selected_item == "Health":
+        if stats["Health"] >= MAX_STATS["Health"]:
+            return False
         stats["Health"] = min(stats["Health"] + 1, MAX_STATS["Health"])
-    elif combobox_selection == "Mana":
+    
+    elif selected_item == "Mana":
+        if stats["Magic"] >= MAX_STATS["Magic"]:
+            return False
         stats["Magic"] = min(stats["Magic"] + 1, MAX_STATS["Magic"])
-    elif combobox_selection == "Resurrection":
+    
+    elif selected_item == "Resurrection":
+        if stats["Health"] >= MAX_STATS["Health"]:
+            return False
         stats["Health"] = MAX_STATS["Health"]
-    elif combobox_selection == "Super Strength":
+    
+    elif selected_item == "Super Strength":
+        if stats["Strength"] >= MAX_STATS["Strength"]:
+            return False
         stats["Strength"] = min(stats["Strength"] + 10, MAX_STATS["Strength"])
+    
+    return True # Potion successfully consumed
 
 
 def on_selection(event):
