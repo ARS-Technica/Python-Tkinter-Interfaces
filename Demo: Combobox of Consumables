@@ -227,15 +227,15 @@ def create_stat_frame(parent):
     stat_frame.pack(pady=10)
 
     # Health Label
-    health_label = tk.Label(stat_frame, text="", fg="red", font=("Arial", 10, "bold"))
+    health_label = tk.Label(stat_frame, text="", fg="red", font=("Arial", 10, "bold"), justify="center")
     health_label.grid(row=0, column=0, padx=15)
 
     # Magic Label
-    magic_label = tk.Label(stat_frame, text="", fg="blue", font=("Arial", 10, "bold"))
+    magic_label = tk.Label(stat_frame, text="", fg="blue", font=("Arial", 10, "bold"), justify="center")
     magic_label.grid(row=0, column=1, padx=15)
 
     # Strength Label
-    strength_label = tk.Label(stat_frame, text="", fg="green", font=("Arial", 10, "bold"))
+    strength_label = tk.Label(stat_frame, text="", fg="green", font=("Arial", 10, "bold"), justify="center")
     strength_label.grid(row=0, column=2, padx=15)
 
     return stat_frame
