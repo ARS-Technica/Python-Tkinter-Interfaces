@@ -85,10 +85,14 @@ def on_selection(event):
     # print(f"User selected: {selected_item}")  # Print to console
 
     # Update the stats dictionary based on the combobox selection 
-    apply_combobox_selection(selected_item)
+    under_maximum_value = apply_combobox_selection(selected_item)
 
-    # Update the Stat Counters (labels)
-    update_stats_display()
+    if not selected_item:
+        # if a combobox selection pushes a value above the MAX_STATS value
+        pass
+    else:
+        # Update the Stat Counters (labels)
+        update_stats_display(selected_item)
 
     # Update the Combobox List
     remove_used_item(selected_item)
