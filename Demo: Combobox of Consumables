@@ -69,6 +69,22 @@ def apply_combobox_selection(combobox_selection):
     return True # Potion successfully consumed
 
 
+def display_default_message():
+    """
+    Returns the display_info text (label) to the default prompt.
+    """
+    # Clear the text widget to update it
+    display_info.config(state="normal") # Enable editing
+    display_info.delete("1.0", tk.END)  # Clear current text
+
+    # Insert the default message
+    display_info.insert(tk.END, "Which potion do you want to consume?")
+
+    # Center the text and disable editing    
+    display_info.tag_add("center", "1.0", "end")
+    display_info.config(state="disabled")
+
+
 def on_selection(event):
     """
     Core logic of the program.  Handles interaction between combobox and stat 
@@ -107,7 +123,7 @@ def on_selection(event):
         combobox_menu.set(directions)
 
         #Return the display_info text (label) to the default prompt.
-        root.after(3000, restore_default_message)  # 3000 ms = 3 seconds      
+        root.after(3000, display_default_message)  # 3000 ms = 3 seconds      
     else:
         # Update the Stat Counters (labels)
         update_stats_display(selected_item)
@@ -183,17 +199,6 @@ def reset_combobox_selections():
 
     # Hide the reset button again
     reset_button.pack_forget() # Creates "Ghost button"
-
-
-def reset_default_message():
-    """
-    Returns the display_info text (label) to the default prompt.
-    """
-    display_info.config(state="normal")
-    display_info.delete("1.0", tk.END)
-    display_info.insert(tk.END, "Which potion do you want to consume?")
-    display_info.tag_add("center", "1.0", "end")
-    display_info.config(state="disabled")
 
 
 # Stat Counter Functions ----------------------------------------------------------------
@@ -301,7 +306,7 @@ def create_user_interface():
     root.geometry("350x250") # Made taller for Stats (stat_frame)
 
     # Create the Stat Frame
-    stat_frame = create_stat_frame(root)
+    create_stat_frame(root)
 
     # Create the Combobox 
     combobox_menu = create_combobox(root)
@@ -312,6 +317,8 @@ def create_user_interface():
                         bg=root.cget("bg"), bd=0, highlightthickness=0)
     # Note: height must equal 2 in order for "DANGER!\n" ... "You have consumed all of your potions!" to appear without truncating second line.
 
+    # Pack it BEFORE calling the default message so the geometry is set
+    display_info.pack(fill="x", pady=10)
 
     # Configure Text Tags
 	# Create a red color tag near your other tag_configure lines
@@ -321,17 +328,14 @@ def create_user_interface():
     # Create a Centering Tag
     display_info.tag_configure("center", justify='center')
 
-    # Set Initial Text
-    display_info.insert(tk.END, "Which potion do you want to consume?")
-    display_info.tag_add("center", "1.0", "end")
-    display_info.config(state="disabled")
-    display_info.pack(fill="x", pady=10)
-
-    # Pre-create Reset Button.  Don't .pack() it yet.
-    reset_button = tk.Button(root, text="Restock Inventory", command=reset_combobox_selections)
+    # Displays the default message in display_info
+    display_default_message()
 
     # Initialize labels
     update_stats_display()
+
+    # Pre-create Reset Button.  Don't .pack() it yet.
+    reset_button = tk.Button(root, text="Restock Inventory", command=reset_combobox_selections)
 
 
 # Main Application Window ---------------------------------------------------------
