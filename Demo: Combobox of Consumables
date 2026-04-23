@@ -160,9 +160,9 @@ def update_stats_display(selected_item=None):
 
     # Using :02 for 2-digit padding and :02 for the max values as well
     # Format: 05/10, 00/10, 00/50
-    health_label.config(text=f"Health: {h_curr:02}/{h_max:02}")
-    magic_label.config(text=f"Magic: {m_curr:02}/{m_max:02}")
-    strength_label.config(text=f"Strength: {s_curr:02}/{s_max:02}")
+    health_label.config(text=f"Health:\n{h_curr:02}/{h_max:02}")
+    magic_label.config(text=f"Magic:\n{m_curr:02}/{m_max:02}")
+    strength_label.config(text=f"Strength:\n{s_curr:02}/{s_max:02}")
 
     # Redistributed into on_selection Function:
 
