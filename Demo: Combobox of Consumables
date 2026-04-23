@@ -16,7 +16,7 @@ import tkinter as tk
 from tkinter import ttk  # Required for Combobox
 
 
-# Global Values --------------------------------------------------------------
+# Global Values ---- ---------------------------------------------------------
 """
 This entire section of code would normally be a CLASS, but my intent is to 
 demonstrate Tkinter widgets, not building a fully functional program.
@@ -35,12 +35,14 @@ directions = "Choose which potion to consume..."
 # Combobox Functions ---------------------------------------------------------
 
 # Breaking up the over-sized on_selection Function
-def apply_combobox_selection(selection):
+def apply_combobox_selection(combobox_selection):
     """
     Updates the stats dictionary based on the combobox selection, 
     respecting the MAX_STATS caps.
     """
-    combobox_selection = selected_item
+    # Get the current value from the widget
+    selected_item = combobox_menu.get()
+    # print(f"User selected: {selected_item}")  # Print to console
 
     if combobox_selection == "Health":
         stats["Health"] = min(stats["Health"] + 1, MAX_STATS["Health"])
@@ -93,6 +95,8 @@ def remove_used_item(item_to_remove):
         combobox_menu['values'] = current_options
 
     if not current_options:
+        combobox_menu.config(state="disabled")
+
         # Clear the text widget to update it
         display_info.config(state="normal") # Enable editing
         display_info.delete("1.0", tk.END)  # Clear current text
@@ -125,11 +129,13 @@ def reset_combobox_selections():
     stats = {"Health": 5, "Magic": 0, "Strength": 0} 
 
     # Restore the original list of options
-    combobox_menu['values'] = INVENTORY 
+    combobox_menu['values'] = INVENTORY
 
     # Re-enable the combobox and reset the title
     combobox_menu.config(state="readonly")
     combobox_menu.set(directions)
+
+    update_stats_display()    
 
     # Reset the Text Widget to its initial message
     display_info.config(state="normal")
@@ -171,29 +177,6 @@ def update_stats_display(selected_item=None):
         display_info.tag_add("center", "1.0", "end")
 
         display_info.config(state="disabled") # Make it read-only
-
-
-# Loading Functions ---------------------------------------------------------
-def load_stats():
-    """
-    Initializes the numerical constants and dictionaries for the game state.
-    """
-    
-    # Defines your INVENTORY list and directions string.
-
-    # Define your two main dictionaries: stats (current values) and MAX_STATS (the caps for each attribute).
-
-    # Returns these values so they can be assigned to global variables or passed to other functions.
-
-    pass
-
-
-def reset_game_state():
-    """
-    Restores the inventory, resets numerical stats to defaults, and hides the Reset button.
-    """
-
-    pass
 
 
 # Create User Interface Functions --------------------------------------------------------
@@ -249,8 +232,6 @@ def create_stat_frame(parent):
     # Strength Label
     strength_label = tk.Label(stat_frame, text="", fg="green", font=("Arial", 10, "bold"))
     strength_label.grid(row=0, column=2, padx=15)
-
-    # Initialize the labels with their starting values
 
     return stat_frame
 
