@@ -368,7 +368,7 @@ def create_user_interface():
     # Main Application Window ---------------------------------------------------------
     root = tk.Tk()
     root.title("Demo: Combobox of Consumables")
-    root.geometry("300x300") # Made taller for Stats (stat_frame)
+    root.geometry("350x250") # Made taller for Stats (stat_frame)
 
     # Create the Stat Frame
     stat_frame = create_stat_frame(root)
@@ -399,6 +399,9 @@ def create_user_interface():
 
     # Pre-create Reset Button.  Don't .pack() it yet.
     reset_button = tk.Button(root, text="Restock Inventory", command=reset_combobox_selections)
+
+    # Initialize labels
+    update_stats_display()
 
 
 # Main Application Window ---------------------------------------------------------
