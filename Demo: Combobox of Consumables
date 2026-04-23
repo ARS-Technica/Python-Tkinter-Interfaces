@@ -182,6 +182,17 @@ def reset_combobox_selections():
     reset_button.pack_forget() # Creates "Ghost button"
 
 
+def reset_default_message():
+    """
+    Returns the display_info text (label) to the default prompt.
+    """
+    display_info.config(state="normal")
+    display_info.delete("1.0", tk.END)
+    display_info.insert(tk.END, "Which potion do you want to consume?")
+    display_info.tag_add("center", "1.0", "end")
+    display_info.config(state="disabled")
+
+
 # Stat Counter Functions ----------------------------------------------------------------
 def update_stats_display(selected_item=None):
     """
