@@ -5,6 +5,9 @@ Created: April 24, 2026
 This script creates a small application featuring a dropdown menu built from 
 dictionary keys. When you select a key, it displays the key and the corresponding 
 value from that dictionary.
+
+This script has been deliberately kept as simple as possible for demonstration 
+purposes.
 """
 
 import tkinter as tk
@@ -12,7 +15,8 @@ from tkinter import ttk
 
 
 # Global Variables ------------------------------------------------------------
-# This acts as a simple database substitute for our dropdown options. 
+# This acts as a simple database substitute for our dropdown options.
+# Typically, a JSON file or a class would be used for larger programs.
 FRUIT_PRICES = {
     "Apples": "$1.20",
     "Bananas": "$0.50",
@@ -34,7 +38,7 @@ def on_fruit_selected(event):
 # Create User Interface Functions ---------------------------------------------
 # Setup standard Tkinter window
 root = tk.Tk()
-root.title("Dict Keys in Combobox")
+root.title("Dictionary Keys in Combobox")
 root.geometry("300x150")
 
 
