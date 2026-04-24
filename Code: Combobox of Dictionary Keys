@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import ttk
 
 
+# Global Variables ---------------------------------------------
 # This acts as a simple database substitute for our dropdown options. 
 FRUIT_PRICES = {
     "Apples": "$1.20",
@@ -22,10 +23,24 @@ FRUIT_PRICES = {
 }
 
 
+# Create User Interface Functions ---------------------------------------------
 # Setup standard Tkinter window
 root = tk.Tk()
 root.title("Dict Keys in Combobox")
 root.geometry("300x150")
+
+
+# Create Comboboxes -----------------------------------------------------------
+# directions to display below the combobox
+directions = "Choose a department from the list"
+
+# Select a Width for the Combobox
+dynamic_width = len(directions ) + 2 # Add a little padding for the arrow button
+
+# Create the Combobox and assign the keys as a list
+combo = ttk.Combobox(root, values=list(FRUIT_PRICES.keys()), width=dynamic_width, state="readonly")
+combo.set(directions)  # Set default directions text
+combo.pack(pady=20, padx=20)
 
 
 root.mainloop()
