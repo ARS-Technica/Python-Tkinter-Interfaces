@@ -7,5 +7,20 @@ dictionary keys. When you select a key, it displays the key and the correspondin
 value from that dictionary.
 """
 
+import tkinter as tk
+from tkinter import ttk
 
+
+# This acts as a simple database substitute for our dropdown options. 
+FRUIT_PRICES = {
+    "Apples": "$1.20",
+    "Bananas": "$0.50",
+    "Cherries": "$2.50",
+    "Dates": "$3.00",
+    "Figs": "$1.50",
+    "Grapes": "$3.25"
+}
+
+
+root.mainloop()
 
