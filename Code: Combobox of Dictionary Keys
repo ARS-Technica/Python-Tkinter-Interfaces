@@ -22,5 +22,11 @@ FRUIT_PRICES = {
 }
 
 
+# Setup standard Tkinter window
+root = tk.Tk()
+root.title("Dict Keys in Combobox")
+root.geometry("300x150")
+
+
 root.mainloop()
 
