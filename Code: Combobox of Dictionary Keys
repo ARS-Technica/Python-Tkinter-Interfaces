@@ -43,5 +43,14 @@ combo.set(directions)  # Set default directions text
 combo.pack(pady=20, padx=20)
 
 
+# Create Text Labels -----------------------------------------------------------
+# Create an empty label to hold the result text
+result_label = ttk.Label(root, text="Select a fruit above", font=("Arial", 10, "bold"), justify="center")
+result_label.pack(pady=15)
+
+# Bind the selection event to trigger the function
+combo.bind("<<ComboboxSelected>>", on_fruit_selected)
+
 root.mainloop()
+
 
