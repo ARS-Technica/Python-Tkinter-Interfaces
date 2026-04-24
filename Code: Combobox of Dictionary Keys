@@ -1,0 +1,11 @@
+"""
+Code: Combobox of Dictionary Keys
+Created: April 24, 2026
+
+This script creates a small application featuring a dropdown menu built from 
+dictionary keys. When you select a key, it displays the key and the corresponding 
+value from that dictionary.
+"""
+
+
+
