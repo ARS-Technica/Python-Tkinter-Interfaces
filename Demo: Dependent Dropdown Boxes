@@ -52,11 +52,15 @@ def provision_workstation():
     '''
     global department_cb, output_log, root, software_cb
 
-    deptartment = department_cb.get()
+    department = department_cb.get()
     software = software_cb.get()
+
+    # Validation: Ensure selections aren't placeholders
+    valid_depts = PROVISIONING_DATA.keys()
+    invalid_software = ["Select Software...", "Waiting for Department...", "N/A"]    
     
     # Validation: Ensure selections were actually made
-    if deptartment in PROVISIONING_DATA and software not in ["Select Software...", "Waiting for Department...", "N/A"]:
+    if department in valid_depts and software not in invalid_software:
         asset_tag = f"ASSET-{random.randint(1000, 9999)}"
         # Ideally, this number would be saved to a JSON, which would be check
         # to prevent duplicates, but this is a demonstation of the widget, not
@@ -65,7 +69,7 @@ def provision_workstation():
         # Creating a detailed multi-line record for the log
         record = (f"PROVISIONING SUCCESSFUL\n\n"
                   f"Asset Tag: {asset_tag}\n"
-                  f"Dept: {deptartment}\n"
+                  f"Dept: {department}\n"
                   f"Software: {software}")
         log_output("success", record)
     else:
