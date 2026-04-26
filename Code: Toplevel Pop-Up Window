@@ -1,0 +1,8 @@
+"""
+Code: Toplevel Pop-Up Window
+Created: April 26, 2026
+
+Description: Demonstrates the Toplevel Tkinter widget, which spawns
+new Tkinter windows or "pop-ups."  Toplevel is a better alternative to spawning extra tkinter windows by using tk().
+"""
+
