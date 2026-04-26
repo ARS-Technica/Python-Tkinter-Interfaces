@@ -38,9 +38,8 @@ def log_output(tag, message):
     output_log.config(state="normal")
     output_log.delete("1.0", tk.END)
 
-    # We apply the tag (success/error) to the message
+    # Insert message with associated tag (success, error, or normal)
     output_log.insert(tk.END, message, tag)
-
     output_log.tag_add("center", "1.0", "end")
     output_log.config(state="disabled")
 
@@ -56,11 +55,11 @@ def provision_workstation():
     software = software_cb.get()
 
     # Validation: Ensure selections aren't placeholders
-    valid_depts = PROVISIONING_DATA.keys()
+    valid_departments = PROVISIONING_DATA.keys()
     invalid_software = ["Select Software...", "Waiting for Department...", "N/A"]    
     
     # Validation: Ensure selections were actually made
-    if department in valid_depts and software not in invalid_software:
+    if department in valid_departments and software not in invalid_software:
         asset_tag = f"ASSET-{random.randint(1000, 9999)}"
         # Ideally, this number would be saved to a JSON, which would be check
         # to prevent duplicates, but this is a demonstation of the widget, not
@@ -69,7 +68,7 @@ def provision_workstation():
         # Creating a detailed multi-line record for the log
         record = (f"PROVISIONING SUCCESSFUL\n\n"
                   f"Asset Tag: {asset_tag}\n"
-                  f"Dept: {department}\n"
+                  f"Department: {department}\n"
                   f"Software: {software}")
         log_output("success", record)
     else:
@@ -89,7 +88,7 @@ def update_software_list(event):
     
     # Lookup the matching list from our dictionary
     new_software_list = PROVISIONING_DATA.get(selected_department, [])
-    
+
     # Update the second combobox's values
     software_cb['values'] = new_software_list
     
@@ -102,7 +101,7 @@ def update_software_list(event):
         software_cb.set("N/A")
 
     # Clear output log for a fresh start
-    log_output("normal", f"Department '{selected_department}' selected. Software list updated.")
+    log_output("normal", f"Department '{selected_department}' selected.\nSoftware list updated.")
 
 
 # Create User Interface Functions ---------------------------------------------
@@ -122,21 +121,23 @@ def create_user_interface():
     tk.Label(root, text="System Provisioning Portal", font=("Arial", 12, "bold")).pack(pady=15)
 
     # Department Selection
-    tk.Label(root, text="Step 1: Select Department").pack()
+    department_combobox_directions = tk.Label(root, text="Step 1: Select Department", font=("Arial", 10, "bold"))
+    department_combobox_directions.pack()
     department_cb = ttk.Combobox(root, values=list(PROVISIONING_DATA.keys()), state="readonly", width=35)
     department_cb.set("Select Department...")
     department_cb.pack(pady=5)
     department_cb.bind("<<ComboboxSelected>>", update_software_list)
 
     # Software Selection
-    tk.Label(root, text="Step 2: Available Software Bundles").pack(pady=(10, 0))
+    software_combobox_directions = tk.Label(root, text="Step 2: Available Software Bundles", font=("Arial", 10, "bold"))
+    software_combobox_directions.pack()
     software_cb = ttk.Combobox(root, values=[], state="disabled", width=35)
     software_cb.set("Waiting for Department...")
     software_cb.pack(pady=5)
 
     # Action Button
-    provision_btn = tk.Button(root, text="Provision Workstation",               command=provision_workstation, 
-                            bg="#2ecc71", fg="white", font=("Arial", 10, "bold"), cursor="hand2")
+    provision_btn = tk.Button(root, text="Provision Workstation",               command=provision_workstation, bg="#2ecc71", fg="white", 
+                              font=("Arial", 10, "bold"), cursor="hand2")
     provision_btn.pack(pady=20)
 
     # Output Log (Using a Text Label)
@@ -146,6 +147,7 @@ def create_user_interface():
     output_log.tag_configure("success", foreground="green", font=("Arial", 10, "bold"))
     output_log.tag_configure("error", foreground="red")
     output_log.tag_configure("center", justify='center')
+    output_log.tag_configure("bold", justify='center', foreground="black", font=("Arial", 10, "bold"))    
     output_log.pack(pady=10)
 
     # Set initial text message
