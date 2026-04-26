@@ -1,0 +1,41 @@
+"""
+Demo: Dependent Dropdown Boxes
+Created: April 25, 2026
+
+Description: Demonstrates how to make a second combobox dependent on a first combobox.
+
+The trick is to use the <<ComboboxSelected>> event of the first box to trigger a function that reconfigures the values of the second box.
+"""
+
+
+import random
+import tkinter as tk
+from tkinter import ttk  # Required for Combobox
+
+
+# Data Structure --------------------------------------------------------------
+"""
+This entire section of code would normally be a CLASS, but my intent is to 
+demonstrate Tkinter widgets, not building a fully functional program.
+"""
+
+# This acts as a simple database substitute for our dropdown options.  The keys 
+# are the options for the first box, and the values are the lists of options for 
+# the second box.
+PROVISIONING_DATA = {
+    "Arts & Design": ["Adobe Creative Cloud", "Maya 3D", "Ableton Live"],
+    "Business": ["Microsoft Office Pro", "Tableau", "QuickBooks", "SAP Client"],
+    "Engineering": ["AutoCAD", "MATLAB", "SolidWorks", "Python Data Stack"],
+    "General Staff": ["Standard Office Suite", "Zoom", "Slack"]
+    # Add other departments here
+}
+
+# Combobox Functions ----------------------------------------------------------
+
+
+# Create User Interface Functions ---------------------------------------------
+
+
+# Main Application Window ---------------------------------------------------------
+ 
+
