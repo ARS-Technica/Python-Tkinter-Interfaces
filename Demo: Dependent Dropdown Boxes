@@ -4,7 +4,8 @@ Created: April 25, 2026
 
 Description: Demonstrates how to make a second combobox dependent on a first combobox.
 
-The trick is to use the <<ComboboxSelected>> event of the first box to trigger a function that reconfigures the values of the second box.
+The trick is to use the <<ComboboxSelected>> event of the first box to trigger a function
+that reconfigures the values of the second box.
 """
 
 import random
