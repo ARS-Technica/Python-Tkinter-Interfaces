@@ -42,7 +42,9 @@ def provision_workstation():
     The final button should collect the data from both boxes and a generate 
     an "Asset Tag" for a mock system record.
     '''
-    deptartment = dept_cb.get()
+    global deptartment, department_cb, output_log, root, software, software_cb
+
+    deptartment = department_cb.get()
     software = software_cb.get()
     
     asset_tag = f"ASSET-{random.randint(1000, 9999)}" # Simulated Asset Tag
@@ -69,6 +71,33 @@ def create_user_interface():
     """
     Initializes and packs all UI components for the application.
     """
+    global root, department_cb, software_cb, output_log # Allows functions to access these
+
+    # Main Application Window -------------------------------------------------
+    # Setup standard Tkinter window
+    root = tk.Tk()
+    root.title("Demo: Dependent Dropdown Comboboxes")
+    root.geometry("450x400")
+
+
+
+    # Department Selection
+    tk.Label(root, text="Step 1: Select Department").pack()
+    department_cb = ttk.Combobox(root, values=list(PROVISIONING_DATA.keys()), state="readonly", width=35)
+    department_cb.set("Select Department...")
+    department_cb.pack(pady=5)
+    department_cb.bind("<<ComboboxSelected>>", update_software_list)
+
+    # Software Selection
+    tk.Label(root, text="Step 2: Available Software Bundles").pack(pady=(10, 0))
+    software_cb = ttk.Combobox(root, values=[], state="disabled", width=35)
+    software_cb.set("Waiting for Department...")
+    software_cb.pack(pady=5)
+
+    # Action Button
+    provision_btn = tk.Button(root, text="Provision Workstation", command=provision_workstation, 
+                            bg="#2ecc71", fg="white", font=("Arial", 10, "bold"), cursor="hand2")
+    provision_btn.pack(pady=20)
 
 
 # Main Application Window ---------------------------------------------------------
