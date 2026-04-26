@@ -57,13 +57,26 @@ def update_software_list(event):
     Triggered when the Category Combobox changes.
     Updates the Model Combobox with relevant items.
     """
-    selected_deptartment = deptartment.get()
+    global department_cb, selected_category
+
+    selected_department = department_cb.get()
     
     # 1Lookup the matching list from our dictionary
-    new_software_list = PROVISIONING_DATA.get(selected_category, [])
+    new_software_list = PROVISIONING_DATA.get(selected_department, [])
     
     # Update the second combobox's values
     software_cb['values'] = new_software_list
+    
+    # Reset the second box so it doesn't show old info
+    if new_software_list:
+        software_cb.config(state="readonly")        
+        software_cb.set("Select Software...")
+    else:
+        software_cb.config(state="disabled")
+        software_cb.set("N/A")
+
+    # Clear output log for a fresh start
+    log_output("normal", f"Department '{selected_department}' selected. Software list updated.")
 
 
 # Create User Interface Functions ---------------------------------------------
