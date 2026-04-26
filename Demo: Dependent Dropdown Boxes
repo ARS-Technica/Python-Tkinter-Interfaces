@@ -31,11 +31,38 @@ PROVISIONING_DATA = {
 }
 
 # Combobox Functions ----------------------------------------------------------
+def log_output(tag, message):
+    """
+    Helper to update the Text widget with formatted logs.
+    """
+
+
+def provision_workstation():
+    '''
+    The final button should collect the data from both boxes and a generate 
+    an "Asset Tag" for a mock system record.
+    '''
+
+
+def update_software_list(event):
+    """
+    Refreshes the Software box based on the Department selection.
+
+    Triggered when the Category Combobox changes.
+    Updates the Model Combobox with relevant items.
+    """
 
 
 # Create User Interface Functions ---------------------------------------------
+def create_user_interface():
+    """
+    Initializes and packs all UI components for the application.
+    """
 
 
 # Main Application Window ---------------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface() # Initialize UI
+    root.mainloop()
  
 
