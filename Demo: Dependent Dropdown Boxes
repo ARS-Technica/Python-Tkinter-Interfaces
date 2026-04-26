@@ -80,6 +80,8 @@ def create_user_interface():
     root.geometry("450x400")
 
 
+    # Title Header
+    tk.Label(root, text="System Provisioning Portal", font=("Arial", 12, "bold")).pack(pady=15)
 
     # Department Selection
     tk.Label(root, text="Step 1: Select Department").pack()
@@ -98,6 +100,13 @@ def create_user_interface():
     provision_btn = tk.Button(root, text="Provision Workstation", command=provision_workstation, 
                             bg="#2ecc71", fg="white", font=("Arial", 10, "bold"), cursor="hand2")
     provision_btn.pack(pady=20)
+
+    # Output Log (Using a Text Label)
+    output_log = tk.Text(root, height=4, width=50, bg=root.cget("bg"), bd=0, font=("Arial", 10))
+
+    # Set initial text message
+    log_output("normal", "System Ready. Please select a department to begin.")
+    
 
 
 # Main Application Window ---------------------------------------------------------
