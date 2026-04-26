@@ -42,6 +42,10 @@ def provision_workstation():
     The final button should collect the data from both boxes and a generate 
     an "Asset Tag" for a mock system record.
     '''
+    deptartment = dept_cb.get()
+    software = software_cb.get()
+    
+    asset_tag = f"ASSET-{random.randint(1000, 9999)}" # Simulated Asset Tag
 
 
 def update_software_list(event):
@@ -51,6 +55,13 @@ def update_software_list(event):
     Triggered when the Category Combobox changes.
     Updates the Model Combobox with relevant items.
     """
+    selected_deptartment = deptartment.get()
+    
+    # 1Lookup the matching list from our dictionary
+    new_software_list = PROVISIONING_DATA.get(selected_category, [])
+    
+    # Update the second combobox's values
+    software_cb['values'] = new_software_list
 
 
 # Create User Interface Functions ---------------------------------------------
