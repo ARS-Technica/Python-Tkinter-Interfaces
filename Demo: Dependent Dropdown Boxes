@@ -35,6 +35,14 @@ def log_output(tag, message):
     """
     Helper to update the Text widget with formatted logs.
     """
+    output_log.config(state="normal")
+    output_log.delete("1.0", tk.END)
+
+    # We apply the tag (success/error) to the message
+    output_log.insert(tk.END, message, tag)
+
+    output_log.tag_add("center", "1.0", "end")
+    output_log.config(state="disabled")
 
 
 def provision_workstation():
