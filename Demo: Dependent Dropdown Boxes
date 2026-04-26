@@ -7,7 +7,6 @@ Description: Demonstrates how to make a second combobox dependent on a first com
 The trick is to use the <<ComboboxSelected>> event of the first box to trigger a function that reconfigures the values of the second box.
 """
 
-
 import random
 import tkinter as tk
 from tkinter import ttk  # Required for Combobox
@@ -29,6 +28,7 @@ PROVISIONING_DATA = {
     "General Staff": ["Standard Office Suite", "Zoom", "Slack"]
     # Add other departments here
 }
+
 
 # Combobox Functions ----------------------------------------------------------
 def log_output(tag, message):
@@ -54,10 +54,9 @@ def provision_workstation():
 
     deptartment = department_cb.get()
     software = software_cb.get()
-
+    
     # Validation: Ensure selections were actually made
-    if deptartment in PROVISIONING_DATA and software not in ["Select Software...", 
-        "Waiting for Department...", "N/A"]:
+    if deptartment in PROVISIONING_DATA and software not in ["Select Software...", "Waiting for Department...", "N/A"]:
         asset_tag = f"ASSET-{random.randint(1000, 9999)}"
         # Ideally, this number would be saved to a JSON, which would be check
         # to prevent duplicates, but this is a demonstation of the widget, not
@@ -84,7 +83,7 @@ def update_software_list(event):
 
     selected_department = department_cb.get()
     
-    # 1Lookup the matching list from our dictionary
+    # Lookup the matching list from our dictionary
     new_software_list = PROVISIONING_DATA.get(selected_department, [])
     
     # Update the second combobox's values
@@ -115,7 +114,6 @@ def create_user_interface():
     root.title("Demo: Dependent Dropdown Comboboxes")
     root.geometry("450x400")
 
-
     # Title Header
     tk.Label(root, text="System Provisioning Portal", font=("Arial", 12, "bold")).pack(pady=15)
 
@@ -133,21 +131,25 @@ def create_user_interface():
     software_cb.pack(pady=5)
 
     # Action Button
-    provision_btn = tk.Button(root, text="Provision Workstation", command=provision_workstation, 
+    provision_btn = tk.Button(root, text="Provision Workstation",               command=provision_workstation, 
                             bg="#2ecc71", fg="white", font=("Arial", 10, "bold"), cursor="hand2")
     provision_btn.pack(pady=20)
 
     # Output Log (Using a Text Label)
     output_log = tk.Text(root, height=4, width=50, bg=root.cget("bg"), bd=0, font=("Arial", 10))
 
+    # Text formatting tags for updates
+    output_log.tag_configure("success", foreground="green", font=("Arial", 10, "bold"))
+    output_log.tag_configure("error", foreground="red")
+    output_log.tag_configure("center", justify='center')
+    output_log.pack(pady=10)
+
     # Set initial text message
     log_output("normal", "System Ready. Please select a department to begin.")
-    
 
 
 # Main Application Window ---------------------------------------------------------
 if __name__ == "__main__":
     create_user_interface() # Initialize UI
     root.mainloop()
- 
 
