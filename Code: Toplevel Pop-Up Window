@@ -6,3 +6,14 @@ Description: Demonstrates the Toplevel Tkinter widget, which spawns
 new Tkinter windows or "pop-ups."  Toplevel is a better alternative to spawning extra tkinter windows by using tk().
 """
 
+import tkinter as tk
+
+
+# Create User Interface
+root = tk.Tk()
+root.title("Demo: Toplevel Pop-Up Window")
+# Width 300, Height 200, positioned at X=100, Y=100 from screen corner
+root.geometry("300x200+100+100")
+
+root.mainloop()
+
