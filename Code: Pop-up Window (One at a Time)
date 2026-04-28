@@ -12,7 +12,14 @@ This version only allows one Toplevel Window to open at a time.
 import tkinter as tk
 
 
-def open_popup():
+def open_settings():
+    """
+    Initializes the settings window or refocuses it if already open.
+    
+    Toggles the main window's 'topmost' attribute to allow the popup 
+    to take focus, ensuring a single-instance overlay.
+    """
+
     # This creates a new window on top of the root
     settings_window = tk.Toplevel(root)
     settings_window.title("Secondary Window")
