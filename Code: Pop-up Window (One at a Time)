@@ -7,6 +7,9 @@ new Tkinter windows or "pop-ups."  Toplevel is a better alternative to spawning
 extra tkinter windows by using tk().
 
 This version only allows one Toplevel Window to open at a time.
+
+Demonstrates the Toplevel Tkinter widget with managed 
+single-instance logic and dynamic z-order (stacking) control.
 """
 
 import tkinter as tk
@@ -21,7 +24,10 @@ def on_popup_close():
     """
     global settings_window
 
-    settings_window.destroy()
+    if settings_window:
+        settings_window.destroy()
+        settings_window = None  # Explicitly reset reference
+
     # Put the main window back on top of everything
     root.attributes("-topmost", True)
 
@@ -29,15 +35,16 @@ def on_popup_close():
 def open_settings():
     """
     Initializes the settings window or refocuses it if already open.
-    
+
     Toggles the main window's 'topmost' attribute to allow the popup 
     to take focus, ensuring a single-instance overlay.
     """
     global settings_window
 
-    # Prevent duplicates
+    # Prevent duplicates: If window exists, bring it to front and exit
     if settings_window is not None and settings_window.winfo_exists():
         settings_window.lift()
+        settings_window.focus_force() # Ensure it grabs keyboard focus
         return
 
     # Turn OFF topmost for the main window so the popup can be seen
@@ -52,8 +59,7 @@ def open_settings():
     # Handle what happens when the user clicks the 'X' button
     settings_window.protocol("WM_DELETE_WINDOW", on_popup_close)
 
-    tk.Label(settings_window, text="Only one of these can exist!\n
-             It can go above the main window!").pack(pady=20)
+    tk.Label(settings_window, text="Only one of these can exist!\nIt can go above the main window!").pack(pady=20)
 
 
 # Create User Interface
@@ -65,8 +71,12 @@ root.geometry("300x200+100+100")
 # Set Main Window to stay on top initially
 root.attributes("-topmost", True)
 
-# Create a button to trigger the child window
-tk.Button(root, text="Open Settings", command=open_settings).pack(pady=50)
+tk.Label(root, text="Main Application", font=("Arial", 10, "bold")).pack(pady=10)
 
-root.mainloop()
+# Create a button to trigger the child window
+tk.Button(root, text="Open Settings", command=open_settings, cursor="hand2").pack(pady=40)
+
+
+if __name__ == "__main__":
+    root.mainloop()
 
