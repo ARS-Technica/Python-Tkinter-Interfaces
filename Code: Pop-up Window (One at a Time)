@@ -24,12 +24,15 @@ def open_popup():
 
 # Create User Interface
 root = tk.Tk()
-root.title("Demo: Toplevel Pop-Up Window")
+root.title("Code: Pop-up Window (One at a Time)")
 # Width 300, Height 200, positioned at X=100, Y=100 from screen corner
 root.geometry("300x200+100+100")
 
+# Set Main Window to stay on top initially
+root.attributes("-topmost", True)
+
 # Create a button to trigger the child window
-tk.Button(root, text="Launch a Pop-up", command=open_popup).pack(pady=50)
+tk.Button(root, text="Open Settings", command=open_settings).pack(pady=50)
 
 root.mainloop()
 
