@@ -19,6 +19,15 @@ def open_settings():
     Toggles the main window's 'topmost' attribute to allow the popup 
     to take focus, ensuring a single-instance overlay.
     """
+    global settings_window
+
+    # Prevent duplicates
+    if settings_window is not None and settings_window.winfo_exists():
+        settings_window.lift()
+        return
+
+    # Turn OFF topmost for the main window so the popup can be seen
+    root.attributes("-topmost", False)
 
     # This creates a new window on top of the root
     settings_window = tk.Toplevel(root)
@@ -31,7 +40,6 @@ def open_settings():
 
     tk.Label(settings_window, text="Only one of these can exist!\n
              It can go above the main window!").pack(pady=20)
-
 
 
 # Create User Interface
