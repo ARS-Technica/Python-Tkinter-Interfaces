@@ -12,6 +12,15 @@ This version only allows one Toplevel Window to open at a time.
 import tkinter as tk
 
 
+def on_popup_close():
+    """
+    Restores 'topmost' to the main window when the popup is closed.
+    """
+    settings_window.destroy()
+    # Put the main window back on top of everything
+    root.attributes("-topmost", True)
+
+
 def open_settings():
     """
     Initializes the settings window or refocuses it if already open.
