@@ -10,6 +10,13 @@ windows by using tk().
 import tkinter as tk
 
 
+def open_popup():
+    # This creates a new window on top of the root
+    popup = tk.Toplevel(root)
+    popup.title("Secondary Window")
+    popup.geometry("200x100")
+
+
 # Create User Interface
 root = tk.Tk()
 root.title("Demo: Toplevel Pop-Up Window")
