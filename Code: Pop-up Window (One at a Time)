@@ -44,7 +44,7 @@ def open_settings():
     # Prevent duplicates: If window exists, bring it to front and exit
     if settings_window is not None and settings_window.winfo_exists():
         settings_window.lift()
-        settings_window.focus_force() # Ensure it grabs keyboard focus
+        settings_window.focus_force() # Grabs keyboard focus
         return
 
     # Turn OFF topmost for the main window so the popup can be seen
