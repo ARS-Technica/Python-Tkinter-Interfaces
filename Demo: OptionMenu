@@ -30,6 +30,13 @@ def display_choice(*args):
         output_label.config(text=f"Priority Set to: {current_selection}", fg=text_color, font=("Arial", 10,"bold"))
 
 
+def get_priority_style(choice):
+    """
+    Returns the color and text for a given choice.
+    This function doesn't know 'output_label' exists.
+    """
+
+
 # Create User Interface Functions ---------------------------------------------
 def create_user_interface():
     """
