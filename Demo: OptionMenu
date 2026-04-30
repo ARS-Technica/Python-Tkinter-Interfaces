@@ -26,6 +26,20 @@ def create_user_interface():
     root.title("OptionMenu Demo")
     root.geometry("300x250")
 
+    # Define the Variable (The "Source of Truth")
+    # This variable will always hold the current selection of the menu 
+
+    # Define the Options 
+
+    # Create the OptionMenu
+    # Syntax: OptionMenu(parent, variable, *options_list)
+
+    # Link a callback to the variable
+
+    # Display Label
+
+
+
 
 # Main Application Window ---------------------------------------------------------
 if __name__ == "__main__":
