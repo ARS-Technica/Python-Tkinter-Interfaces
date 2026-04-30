@@ -13,10 +13,19 @@ import tkinter as tk
 def display_choice(*args):
     """
     Triggered whenever the StringVar changes.
+    Updates the UI based on the variable's current state.
     The *args is used because trace_add passes internal details we don't need.
     """
-    choice = selected_value.get()
-    output_label.config(text=f"Selected: {choice}", fg="blue")
+    # global selected_value, output_label
+
+    choice = selected_value.get()   
+    # output_label.config(text=f"Selected: {choice}", fg="blue")
+
+    # Don't treat the placeholder as a real selection
+    if current_selection == "Choose a Priority":
+        output_label.config(text="Waiting for selection...", fg="black")
+    else:
+        output_label.config(text=f"Priority Set to: {current_selection}", fg="#2980b9")
 
 
 # Create User Interface Functions ---------------------------------------------
