@@ -1,0 +1,11 @@
+"""
+Demo: OptionMenu
+Create: April 29, 2026
+
+Description: Demonstrates how to make a OptionMenu, a simple alternative to the
+classic drop-down comboboxes.  In Tkinter, this is a more basic dropdown than 
+the Combobox, but it can be useful for simple selections.
+"""
+
+import tkinter as tk
+
