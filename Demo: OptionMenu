@@ -16,11 +16,8 @@ def display_choice(*args):
     Updates the UI based on the variable's current state.
     The *args is used because trace_add passes internal details we don't need.
     """
-    # global selected_value, output_label
-
     # Define the variable by GETTING it from the StringVar
     current_selection = selected_value.get()
-    # output_label.config(text=f"Selected: {choice}", fg="blue")
 
     # Look up the color based on the optionmenu choice. 
     # Use .get() with a default fallback to prevent crashes if a key is missing.
