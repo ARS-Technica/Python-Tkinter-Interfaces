@@ -10,6 +10,11 @@ the Combobox, but it can be useful for simple selections.
 import tkinter as tk
 
 
+def display_choice( ):
+    """
+    Triggered whenever the StringVar changes.
+    The *args is used because trace_add passes internal details we don't need.
+    """
 
 
 # Create User Interface Functions ---------------------------------------------
