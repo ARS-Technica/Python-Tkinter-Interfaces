@@ -38,15 +38,16 @@ def create_user_interface():
     # Syntax: OptionMenu(parent, variable, *options_list)
     menu = tk.OptionMenu(root, selected_value, *options)
     # The '*' unpacks the list into individual arguments for the widget
-    
+
     menu.config(width=20)
     menu.pack(pady=30)
 
     # Link a callback to the variable
-
+    selected_value.trace_add("write", display_choice) # listens for 'write' events 
+    
     # Display Label
-
-
+    output_label = tk.Label(root, text="Waiting for selection...", font=("Arial", 10))
+    output_label.pack(pady=10)
 
 
 # Main Application Window ---------------------------------------------------------
