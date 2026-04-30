@@ -18,7 +18,8 @@ def display_choice(*args):
     """
     # global selected_value, output_label
 
-    choice = selected_value.get()   
+    # Define the variable by GETTING it from the StringVar
+    current_selection = selected_value.get()
     # output_label.config(text=f"Selected: {choice}", fg="blue")
 
     # Don't treat the placeholder as a real selection
