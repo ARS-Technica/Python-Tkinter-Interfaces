@@ -28,11 +28,19 @@ def create_user_interface():
 
     # Define the Variable (The "Source of Truth")
     # This variable will always hold the current selection of the menu 
+    selected_value = tk.StringVar(root)
+    selected_value.set("Choose a Priority") # Set the initial placeholder
 
     # Define the Options 
+    options = ["High Priority", "Medium Priority", "Low Priority", "Informational"]
 
     # Create the OptionMenu
     # Syntax: OptionMenu(parent, variable, *options_list)
+    menu = tk.OptionMenu(root, selected_value, *options)
+    # The '*' unpacks the list into individual arguments for the widget
+    
+    menu.config(width=20)
+    menu.pack(pady=30)
 
     # Link a callback to the variable
 
@@ -45,5 +53,4 @@ def create_user_interface():
 if __name__ == "__main__":
     create_user_interface() # Initialize UI
     root.mainloop()
-
 
