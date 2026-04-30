@@ -35,20 +35,19 @@ def display_choice(*args):
     current_selection = selected_value.get()
 
     # Call the get_priority_style function to get widget text color and text
-    text_to_display, color_to_use = get_priority_style(current_selection)
+    text_to_display, color_to_use, weight = get_priority_style(current_selection)
 
-    # If priority is canelled, return the font weight to normal.
-    if current_selection in ["Choose a Priority", "Cancelled"]:
-        weight = "normal"
-    else:
-        weight = "bold" # All other priorities should be bold for emphasis
-
-    # Update the widget text formatting with the color and text returned above
+    # Update the label immediately
     output_label.config(
         text=text_to_display, 
         fg=color_to_use, 
-        font=("Arial", 10, weight)
-    )
+        font=("Arial", 10, weight))
+
+    # If 'Cancelled' was picked, schedule the reset
+    if current_selection == "Cancelled":
+        # After 3000ms (3s), run the reset_display function
+        root.after(3000, reset_display)
+
 
 
 def get_priority_style(choice):
