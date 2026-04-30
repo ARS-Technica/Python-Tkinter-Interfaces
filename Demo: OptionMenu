@@ -19,6 +19,17 @@ def display_choice(*args):
     # Define the variable by GETTING it from the StringVar
     current_selection = selected_value.get()
 
+    # Call the get_priority_style function to get the 'processed' data
+    text_to_display, color_to_use = get_priority_style(current_selection)
+
+    # Update the widget text formatting with the color and text returned above
+    output_label.config(
+        text=text_to_display, 
+        fg=color_to_use, 
+        font=("Arial", 10, "bold")
+    )   
+
+    """
     # Look up the color based on the optionmenu choice. 
     # Use .get() with a default fallback to prevent crashes if a key is missing.
     text_color = COLOR_MAP.get(current_selection, "black")
@@ -28,6 +39,7 @@ def display_choice(*args):
         output_label.config(text="Waiting for selection...", fg=text_color, font=("Arial", 10,"bold"))
     else:
         output_label.config(text=f"Priority Set to: {current_selection}", fg=text_color, font=("Arial", 10,"bold"))
+    """
 
 
 def get_priority_style(choice):
