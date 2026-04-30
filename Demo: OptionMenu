@@ -64,6 +64,19 @@ def get_priority_style(choice):
     return f"Priority Set to: {choice}", color
 
 
+def reset_display(text):
+    """
+    Callback for root.after.
+    Returns the label to its original state after a delay.
+    """
+
+    output_label.config(
+        text="Please select a priority...", 
+        fg="black", 
+        font=("Arial", 10, "normal")
+    )
+
+
 # Create User Interface Functions ---------------------------------------------
 def create_user_interface():
     """
