@@ -7,9 +7,24 @@ classic drop-down comboboxes.  In Tkinter, this is a more basic dropdown than
 the Combobox, but it can be useful for simple selections.
 """
 
+from random import choice
 import tkinter as tk
 
 
+# Data Mapping ----------------------------------------------------------------
+# A dictionary to separate data (colors) from logic (the display function)
+
+COLOR_MAP = {
+    "High Priority": "#e74c3c",      # Red
+    "Medium Priority": "#f39c12",    # Orange
+    "Low Priority": "#27ae60",       # Green
+    "Deferred": "#3498db",           # Blue
+    "Choose a Priority": "black",      # Default Black
+    "Cancelled": "black"               # Default Black
+}
+
+
+# Logic Functions -------------------------------------------------------------
 def display_choice(*args):
     """
     Triggered whenever the StringVar changes.
@@ -19,27 +34,21 @@ def display_choice(*args):
     # Define the variable by GETTING it from the StringVar
     current_selection = selected_value.get()
 
-    # Call the get_priority_style function to get the 'processed' data
+    # Call the get_priority_style function to get widget text color and text
     text_to_display, color_to_use = get_priority_style(current_selection)
+
+    # If priority is canelled, return the font weight to normal.
+    if current_selection in ["Choose a Priority", "Cancelled"]:
+        weight = "normal"
+    else:
+        weight = "bold" # All other priorities should be bold for emphasis
 
     # Update the widget text formatting with the color and text returned above
     output_label.config(
         text=text_to_display, 
         fg=color_to_use, 
-        font=("Arial", 10, "bold")
-    )   
-
-    """
-    # Look up the color based on the optionmenu choice. 
-    # Use .get() with a default fallback to prevent crashes if a key is missing.
-    text_color = COLOR_MAP.get(current_selection, "black")
-
-    # Don't treat the placeholder as a real selection
-    if current_selection == "Choose a Priority":
-        output_label.config(text="Waiting for selection...", fg=text_color, font=("Arial", 10,"bold"))
-    else:
-        output_label.config(text=f"Priority Set to: {current_selection}", fg=text_color, font=("Arial", 10,"bold"))
-    """
+        font=("Arial", 10, weight)
+    )
 
 
 def get_priority_style(choice):
@@ -50,7 +59,7 @@ def get_priority_style(choice):
     color = COLOR_MAP.get(choice, "black")
 
     if choice == "Choose a Priority":
-        return "Waiting for selection...", color
+        return "Please select a priority...", color
 
     return f"Priority Set to: {choice}", color
 
@@ -60,14 +69,24 @@ def create_user_interface():
     """
     Initializes and packs all UI components for the application.
     """
-    global root, department_cb, software_cb, output_log # Allows functions to access these
+    global root, selected_value, output_label # Allows functions to access these
 
     # Main Application Window -------------------------------------------------
     # Setup standard Tkinter window
 
     root = tk.Tk()
-    root.title("OptionMenu Demo")
-    root.geometry("300x250")
+    root.title("Demo: OptionMenu Demo")
+    root.geometry("300x200")
+
+
+    # Text Label Setup --------------------------------------------------------
+
+    # Text Label to show the current selection and change color based on choice
+    output_label = tk.Label(root, text="Waiting for selection...", font=("Arial", 10))
+    output_label.pack(pady=(30, 10))
+
+
+    # Option Menu Setup -------------------------------------------------------
 
     # Define the Variable (The "Source of Truth")
     # This variable will always hold the current selection of the menu 
@@ -75,22 +94,18 @@ def create_user_interface():
     selected_value.set("Choose a Priority") # Set the initial placeholder
 
     # Define the Options 
-    options = ["High Priority", "Medium Priority", "Low Priority", "Informational"]
+    options = ["High Priority", "Medium Priority", "Low Priority", "Deferred", "Cancelled"]
 
     # Create the OptionMenu
     # Syntax: OptionMenu(parent, variable, *options_list)
     menu = tk.OptionMenu(root, selected_value, *options)
-    # The '*' unpacks the list into individual arguments for the widget
+    # The '*options' unpacks the list into individual arguments for the widget
 
-    menu.config(width=20)
-    menu.pack(pady=30)
+    menu.config(width=20, cursor="hand2")
+    menu.pack(pady=20)
 
     # Link a callback to the variable
     selected_value.trace_add("write", display_choice) # listens for 'write' events 
-    
-    # Display Label
-    output_label = tk.Label(root, text="Waiting for selection...", font=("Arial", 10))
-    output_label.pack(pady=10)
 
 
 # Main Application Window ---------------------------------------------------------
