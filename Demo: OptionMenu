@@ -22,11 +22,15 @@ def display_choice(*args):
     current_selection = selected_value.get()
     # output_label.config(text=f"Selected: {choice}", fg="blue")
 
+    # Look up the color based on the optionmenu choice. 
+    # Use .get() with a default fallback to prevent crashes if a key is missing.
+    text_color = COLOR_MAP.get(current_selection, "black")
+
     # Don't treat the placeholder as a real selection
     if current_selection == "Choose a Priority":
-        output_label.config(text="Waiting for selection...", fg="black")
+        output_label.config(text="Waiting for selection...", fg=text_color, font=("Arial", 10,"bold"))
     else:
-        output_label.config(text=f"Priority Set to: {current_selection}", fg="#2980b9")
+        output_label.config(text=f"Priority Set to: {current_selection}", fg=text_color, font=("Arial", 10,"bold"))
 
 
 # Create User Interface Functions ---------------------------------------------
