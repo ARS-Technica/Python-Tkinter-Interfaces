@@ -57,11 +57,16 @@ def get_priority_style(choice):
     This function doesn't know 'output_label' exists.
     """
     color = COLOR_MAP.get(choice, "black")
-
+ 
     if choice == "Choose a Priority":
-        return "Please select a priority...", color
+        return "Please select a priority...", color, "normal"
+    
+    if choice == "Cancelled":
+        # Return the immediate message; the 'delay' happens in the UI function
+        return "Selection Cancelled.", color, "normal"
+        # Change the else statement to a different message in 3 seconds.
 
-    return f"Priority Set to: {choice}", color
+    return f"Selected: {choice}", color, "bold"
 
 
 def reset_display(text):
