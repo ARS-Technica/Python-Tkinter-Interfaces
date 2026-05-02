@@ -46,8 +46,7 @@ def display_choice(*args):
     # If 'Cancelled' was picked, schedule the reset
     if current_selection == "Cancelled":
         # After 3000ms (3s), run the reset_display function
-        root.after(3000, reset_display)
-
+        root.after(3000, reset_display, "Please select a priority...")
 
 
 def get_priority_style(choice):
