@@ -78,6 +78,8 @@ def reset_display(text):
         fg="black", 
         font=("Arial", 10, "normal")
     )
+    # Reset the dropdown menu visually too
+    selected_value.set("Choose a Priority")
 
 
 # Create User Interface Functions ---------------------------------------------
