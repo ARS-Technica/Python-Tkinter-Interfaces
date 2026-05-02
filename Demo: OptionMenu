@@ -19,12 +19,12 @@ COLOR_MAP = {
     "Medium Priority": "#f39c12",    # Orange
     "Low Priority": "#27ae60",       # Green
     "Deferred": "#3498db",           # Blue
-    "Choose a Priority": "black",      # Default Black
-    "Cancelled": "black"               # Default Black
+    "Choose a Priority": "black",    # Default Black
+    "Cancelled": "black"             # Default Black
 }
 
 
-# Logic Functions -------------------------------------------------------------
+# OptionMenu Functions --------------------------------------------------------
 def display_choice(*args):
     """
     Triggered whenever the StringVar changes.
