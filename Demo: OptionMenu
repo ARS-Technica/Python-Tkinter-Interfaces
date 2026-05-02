@@ -19,8 +19,8 @@ COLOR_MAP = {
     "Medium Priority": "#f39c12",    # Orange
     "Low Priority": "#27ae60",       # Green
     "Deferred": "#3498db",           # Blue
-    "Choose a Priority": "black",    # Default Black
-    "Cancelled": "black"             # Default Black
+    "Choose a Priority": "black",      # Default Black
+    "Cancelled": "black"               # Default Black
 }
 
 
@@ -100,7 +100,7 @@ def create_user_interface():
     # Text Label Setup --------------------------------------------------------
 
     # Text Label to show the current selection and change color based on choice
-    output_label = tk.Label(root, text="Waiting for selection...", font=("Arial", 10))
+    output_label = tk.Label(root, text="Please select a priority...", font=("Arial", 10))
     output_label.pack(pady=(30, 10))
 
 
