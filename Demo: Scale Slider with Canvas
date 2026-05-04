@@ -9,7 +9,70 @@ coordinates on a Canvas widget in real-time.
 import tkinter as tk
 
 
+# Slider Functions ---------------------------------------------
+def update_font_size(value):
+    """
+    Triggered automatically when the slider moves.
+    'value' is passed as a string by the Scale widget.
+    """
+    # Convert string to integer for font sizing
+    new_size = int(value)
+    
+    # Update the label's font dynamically
+    output_label.config(font=("Arial", new_size, "bold"))
+    
+    # Update the feedback text
+    status_label.config(text=f"Current Font Size: {new_size}px")
 
+
+# User Interface Functions ---------------------------------------------
+def create_user_interface():
+    global output_label, root, status_label
+
+    root = tk.Tk()
+    root.title("Demo: Scale Slider with Text")
+    root.geometry("400x300")
+
+
+    # The label for the text to be altered
+    output_label = tk.Label(
+        root, 
+        text="Resize Me!", 
+        font=("Arial", 12, "bold")
+    )
+    output_label.pack(expand=True)
+
+
+    # The label for the directions
+    directions = tk.Label(root, text="Adjust Font Size")
+    '''
+    In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
+    to align to the top-left corner of the widget's area. So, there needs to be 
+    a separate label or widget to center the directions.
+    '''
+
+    # Scale Widget Setup
+    font_slider = tk.Scale(
+        root, 
+        from_=10,  # Starting value
+        to=72,  # Ending value
+        orient="horizontal",  # Either horizontal or vertical
+        length=300,
+        highlightthickness=0,  # Removes the focus border gap
+        command=update_font_size  # Function to call on change
+    )
+
+    # Set a default starting value
+    font_slider.set(12)
+
+    # pack() will center these widgets relative to each other by default
+    directions.pack(pady=(20,0))  # Space above the label, but 0 below
+    font_slider.pack(pady=(0,20)) # 0 space above the slider, space below
+
+
+    # Status display
+    status_label = tk.Label(root, text="Current Font Size: 12px", fg="gray")
+    status_label.pack(pady=10)
 
 
 # Main Application Window -----------------------------------------------------
