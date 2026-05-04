@@ -14,7 +14,18 @@ def update_font_size(value):
 
 
 def create_user_interface():
-    # The Label to be controlled
+    root = tk.Tk()
+    root.title("Demo: Scale Slider with Text")
+    root.geometry("400x300")
+
+
+    # The label for the text to be controlled
+    output_label = tk.Label(
+        root, 
+        text="Resize Me!", 
+        font=("Arial", 12, "bold")
+    )
+    output_label.pack(expand=True)
 
     # Scale Widget Setup
 
