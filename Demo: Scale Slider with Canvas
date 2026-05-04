@@ -17,19 +17,16 @@ FILL_COLOR = "#3498db"    # Blue
 
 
 # Slider Functions ---------------------------------------------
-def update_font_size(value):
+def resize_shape(value):
     """
-    Triggered automatically when the slider moves.
-    'value' is passed as a string by the Scale widget.
+    Updates coordinates and applies a contrasting border.
     """
-    # Convert string to integer for font sizing
-    new_size = int(value)
-    
-    # Update the label's font dynamically
-    output_label.config(font=("Arial", new_size, "bold"))
-    
-    # Update the feedback text
-    status_label.config(text=f"Current Font Size: {new_size}px")
+
+    # Calculate bounding box
+
+    # Update the coordinates
+
+    # Update styling with a contrasting outline
 
 
 # User Interface Functions ---------------------------------------------
