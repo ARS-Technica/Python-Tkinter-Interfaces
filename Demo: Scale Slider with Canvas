@@ -1,12 +1,19 @@
 """
-Demo: Scale Slider with Canvas
-Create: May 4, 2026
+Demo: Scale Widget with Canvas
+Created: May 2, 2026
 
 Description: Demonstrates using a Scale to manipulate geometric 
 coordinates on a Canvas widget in real-time.
 """
 
 import tkinter as tk
+
+
+# Global Variables ------------------------------------------------------------
+
+# Define our color palette
+BORDER_COLOR = "#2c3e50"  # Dark Navy/Slate
+FILL_COLOR = "#3498db"    # Blue
 
 
 # Slider Functions ---------------------------------------------
