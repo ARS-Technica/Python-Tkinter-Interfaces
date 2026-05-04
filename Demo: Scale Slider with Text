@@ -9,13 +9,19 @@ numerical ranges. This demo maps slider values to font sizes.
 import tkinter as tk
 
 
+# Slider Functions ---------------------------------------------
 def update_font_size(value):
+    """
+    Triggered automatically when the slider moves.
+    'value' is passed as a string by the Scale widget.
+    """
+
     pass
 
 
-# Create User Interface Functions ---------------------------------------------
+# User Interface Functions ---------------------------------------------
 def create_user_interface():
-    global output_label, root,
+    global output_label, root, status_label
 
     root = tk.Tk()
     root.title("Demo: Scale Slider with Text")
