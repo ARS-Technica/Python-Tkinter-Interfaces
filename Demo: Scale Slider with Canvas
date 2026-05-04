@@ -31,20 +31,25 @@ def resize_shape(value):
 
 # User Interface Functions ---------------------------------------------
 def create_user_interface():
-    global output_label, root, status_label
+    global root, drawing_area
 
     root = tk.Tk()
-    root.title("Demo: Scale Slider with Text")
-    root.geometry("400x300")
+    root.title("Demo: Scale Slider with Canvas")
+    root.geometry("350x450")
 
 
-    # The label for the text to be altered
-    output_label = tk.Label(
+    # The canvas widget containing a shape to be altered
+    drawing_area = tk.Canvas(
         root, 
-        text="Resize Me!", 
-        font=("Arial", 12, "bold")
+        width=300, 
+        height=300, 
+        bg="#ecf0f1", 
+        highlightthickness=0
     )
-    output_label.pack(expand=True)
+    drawing_area.pack(pady=20)
+
+    # Initial shape creation
+
 
 
     # The label for the directions
