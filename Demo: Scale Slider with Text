@@ -1,0 +1,16 @@
+"""
+Demo: Scale Slider with Text
+Create: May 1, 2026
+
+Description: Demonstrates the tk.Scale widget used to control 
+numerical ranges. This demo maps slider values to font sizes.
+"""
+
+import tkinter as tk
+
+
+
+# Main Application Window ---------------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface()  # Initialize UI
+    root.mainloop()
