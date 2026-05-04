@@ -88,11 +88,6 @@ def create_user_interface():
     size_slider.pack(pady=(10,10)) # Space above the slider, space below
 
 
-    # Status display
-    status_label = tk.Label(root, text="Current Font Size: 12px", fg="gray")
-    status_label.pack(pady=10)
-
-
 # Main Application Window -----------------------------------------------------
 if __name__ == "__main__":
     create_user_interface()  # Initialize UI
