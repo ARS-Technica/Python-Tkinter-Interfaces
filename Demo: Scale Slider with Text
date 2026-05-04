@@ -9,6 +9,17 @@ numerical ranges. This demo maps slider values to font sizes.
 import tkinter as tk
 
 
+def update_font_size(value):
+    pass
+
+
+def create_user_interface():
+    # The Label to be controlled
+
+    # Scale Widget Setup
+
+    # Status display
+
 
 # Main Application Window ---------------------------------------------------------
 if __name__ == "__main__":
