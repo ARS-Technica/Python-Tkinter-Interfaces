@@ -16,7 +16,11 @@ def update_font_size(value):
     'value' is passed as a string by the Scale widget.
     """
 
-    pass
+    # Convert string to integer for font sizing 
+    
+    # Update the label's font dynamically 
+    
+    # Update the feedback text
 
 
 # User Interface Functions ---------------------------------------------
