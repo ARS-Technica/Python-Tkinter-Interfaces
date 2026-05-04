@@ -15,12 +15,14 @@ def update_font_size(value):
     Triggered automatically when the slider moves.
     'value' is passed as a string by the Scale widget.
     """
-
-    # Convert string to integer for font sizing 
+    # Convert string to integer for font sizing
+    new_size = int(value)
     
-    # Update the label's font dynamically 
+    # Update the label's font dynamically
+    output_label.config(font=("Arial", new_size, "bold"))
     
     # Update the feedback text
+    status_label.config(text=f"Current Font Size: {new_size}px")
 
 
 # User Interface Functions ---------------------------------------------
@@ -32,7 +34,7 @@ def create_user_interface():
     root.geometry("400x300")
 
 
-    # The label for the text to be controlled
+    # The label for the text to be altered
     output_label = tk.Label(
         root, 
         text="Resize Me!", 
@@ -41,20 +43,31 @@ def create_user_interface():
     output_label.pack(expand=True)
 
 
+    # The label for the directions
+    directions = tk.Label(root, text="Adjust Font Size")
+    '''
+    In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
+    to align to the top-left corner of the widget's area. So, there needs to be 
+    a separate label or widget to center the directions.
+    '''
+
     # Scale Widget Setup
     font_slider = tk.Scale(
         root, 
-        from_=8,  # Starting value
+        from_=10,  # Starting value
         to=72,  # Ending value
         orient="horizontal",  # Either horizontal or vertical
         length=300,
-        label="Adjust Font Size",
+        highlightthickness=0,  # Removes the focus border gap
         command=update_font_size  # Function to call on change
     )
 
     # Set a default starting value
     font_slider.set(12)
-    font_slider.pack(pady=20)
+
+    # pack() will center these widgets relative to each other by default
+    directions.pack(pady=(20,0))  # Space above the label, but 0 below
+    font_slider.pack(pady=(0,20)) # 0 space above the slider, space below
 
 
     # Status display
@@ -62,7 +75,8 @@ def create_user_interface():
     status_label.pack(pady=10)
 
 
-# Main Application Window ---------------------------------------------------------
+# Main Application Window -----------------------------------------------------
 if __name__ == "__main__":
     create_user_interface()  # Initialize UI
     root.mainloop()
+
