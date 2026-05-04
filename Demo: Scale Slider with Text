@@ -13,7 +13,10 @@ def update_font_size(value):
     pass
 
 
+# Create User Interface Functions ---------------------------------------------
 def create_user_interface():
+    global output_label, root,
+
     root = tk.Tk()
     root.title("Demo: Scale Slider with Text")
     root.geometry("400x300")
@@ -27,9 +30,26 @@ def create_user_interface():
     )
     output_label.pack(expand=True)
 
+
     # Scale Widget Setup
+    font_slider = tk.Scale(
+        root, 
+        from_=8,  # Starting value
+        to=72,  # Ending value
+        orient="horizontal",  # Either horizontal or vertical
+        length=300,
+        label="Adjust Font Size",
+        command=update_font_size  # Function to call on change
+    )
+
+    # Set a default starting value
+    font_slider.set(12)
+    font_slider.pack(pady=20)
+
 
     # Status display
+    status_label = tk.Label(root, text="Current Font Size: 12px", fg="gray")
+    status_label.pack(pady=10)
 
 
 # Main Application Window ---------------------------------------------------------
