@@ -38,6 +38,7 @@ def create_user_interface():
     root.geometry("350x450")
 
 
+    # Create Canvas Widget-----------------------------------------------------
     # The canvas widget containing a shape to be altered
     drawing_area = tk.Canvas(
         root, 
@@ -49,11 +50,18 @@ def create_user_interface():
     drawing_area.pack(pady=20)
 
     # Initial shape creation
+    drawing_area.create_oval(
+        130, 130, 170, 170, 
+        fill=FILL_COLOR, 
+        outline=BORDER_COLOR, 
+        width=4, 
+        tags="my_circle"
+    )
 
 
-
+    # Create Scale Slider Widget-----------------------------------------------------
     # The label for the directions
-    directions = tk.Label(root, text="Adjust Font Size")
+    directions = tk.Label(root, text="Adjust Shape Size")
     '''
     In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
     to align to the top-left corner of the widget's area. So, there needs to be 
@@ -61,14 +69,15 @@ def create_user_interface():
     '''
 
     # Scale Widget Setup
-    font_slider = tk.Scale(
+    size_slider = tk.Scale(
         root, 
         from_=10,  # Starting value
-        to=72,  # Ending value
+        to=140,  # Ending value
         orient="horizontal",  # Either horizontal or vertical
-        length=300,
+        length=250,
+        fg=BORDER_COLOR, # Matches the slider text to the border color
         highlightthickness=0,  # Removes the focus border gap
-        command=update_font_size  # Function to call on change
+        command=resize_shape  # Function to call on change
     )
 
     # Set a default starting value
