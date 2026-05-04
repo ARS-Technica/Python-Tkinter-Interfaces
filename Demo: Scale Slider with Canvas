@@ -1,0 +1,19 @@
+"""
+Demo: Scale Slider with Canvas
+Create: May 4, 2026
+
+Description: Demonstrates using a Scale to manipulate geometric 
+coordinates on a Canvas widget in real-time.
+"""
+
+import tkinter as tk
+
+
+
+
+
+# Main Application Window -----------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface()  # Initialize UI
+    root.mainloop()
+
