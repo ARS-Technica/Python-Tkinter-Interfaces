@@ -81,11 +81,11 @@ def create_user_interface():
     )
 
     # Set a default starting value
-    font_slider.set(12)
+    size_slider.set(60)
 
     # pack() will center these widgets relative to each other by default
     directions.pack(pady=(20,0))  # Space above the label, but 0 below
-    font_slider.pack(pady=(0,20)) # 0 space above the slider, space below
+    size_slider.pack(pady=(10,10)) # Space above the slider, space below
 
 
     # Status display
