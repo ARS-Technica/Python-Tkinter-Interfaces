@@ -16,6 +16,8 @@ Tkinter's standard Canvas widget doesn't support anti-aliasing (the technique us
 """
 
 import tkinter as tk
+from PIL import Image, ImageDraw, ImageTk
+# To get smoother, anti-aliased edges in Tkinter, we need to use Pillow (PIL).
 
 
 # Global Variables ------------------------------------------------------------
