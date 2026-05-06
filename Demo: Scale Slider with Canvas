@@ -19,7 +19,6 @@ import tkinter as tk
 from PIL import Image, ImageDraw, ImageTk
 # To get smoother, anti-aliased edges in Tkinter, we need to use Pillow (PIL).
 
-
 # Global Variables ------------------------------------------------------------
 
 # Define our color palette
@@ -27,21 +26,23 @@ BORDER_COLOR = "#2c3e50"  # Dark Navy/Slate
 FILL_COLOR = "#3498db"    # Blue
 
 
-# Slider Functions ---------------------------------------------
+# Slider Functions ------------------------------------------------------------
 def resize_shape(value):
     """
     Updates coordinates and applies a contrasting border.
+
+    Renders a smoothed circle and border using Pillow's anti-aliasing.
     """
     radius = int(value)
     center_x, center_y = 150, 150
-
+    
     # Calculate bounding box
     x1, y1 = center_x - radius, center_y - radius
     x2, y2 = center_x + radius, center_y + radius
-
+    
     # Update the coordinates
     drawing_area.coords("my_circle", x1, y1, x2, y2)
-
+    
     # Update styling with a contrasting outline
     drawing_area.itemconfig(
         "my_circle", 
@@ -51,7 +52,7 @@ def resize_shape(value):
     )
 
 
-# User Interface Functions ---------------------------------------------
+# User Interface Functions ----------------------------------------------------
 def create_user_interface():
     global drawing_area, root
 
