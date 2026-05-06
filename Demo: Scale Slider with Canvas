@@ -21,17 +21,28 @@ def resize_shape(value):
     """
     Updates coordinates and applies a contrasting border.
     """
+    radius = int(value)
+    center_x, center_y = 150, 150
 
     # Calculate bounding box
+    x1, y1 = center_x - radius, center_y - radius
+    x2, y2 = center_x + radius, center_y + radius
 
     # Update the coordinates
+    drawing_area.coords("my_circle", x1, y1, x2, y2)
 
     # Update styling with a contrasting outline
+    drawing_area.itemconfig(
+        "my_circle", 
+        fill=FILL_COLOR, 
+        outline=BORDER_COLOR, 
+        width=2  # A width of 4-6 gives a nice 'sticker' or 'button' look
+    )
 
 
 # User Interface Functions ---------------------------------------------
 def create_user_interface():
-    global root, drawing_area
+    global drawing_area, root
 
     root = tk.Tk()
     root.title("Demo: Scale Slider with Canvas")
