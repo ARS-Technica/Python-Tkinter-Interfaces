@@ -1,9 +1,18 @@
 """
 Demo: Scale Widget with Canvas
-Created: May 2, 2026
+Created: May 4, 2026
 
 Description: Demonstrates using a Scale to manipulate geometric 
 coordinates on a Canvas widget in real-time.
+
+Scaling a shape on a Canvas is where you truly start to see the power of Tkinter
+for graphics, data visualization, and interactive tools.
+
+Tkinter's standard Canvas widget doesn't support anti-aliasing (the technique used to blur the pixels at the edge of a shape to make them look smooth). Because Tkinter is built on a library from the 90s, its circles can look a bit "pixelated" or "stair-stepped," especially as they get larger.  However, you can soften the look by:
+
+    Setting the outline to the same color as the fill.
+
+    Setting the width of the outline to 2 or 3 pixels.
 """
 
 import tkinter as tk
