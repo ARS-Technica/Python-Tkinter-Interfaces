@@ -21,9 +21,13 @@ from PIL import Image, ImageDraw, ImageTk
 
 # Global Variables ------------------------------------------------------------
 
-# Define our color palette
-BORDER_COLOR = "#2c3e50"  # Dark Navy/Slate
-FILL_COLOR = "#3498db"    # Blue
+# Styling color palette
+BG_COLOR = (236, 240, 241)     # Light Gray (RGB)
+BORDER_COLOR = (44, 62, 80)    # Dark Navy (RGB)
+FILL_COLOR = (52, 152, 219)    # Blue (RGB)
+
+#BORDER_COLOR = "#2c3e50"  # Dark Navy/Slate
+#FILL_COLOR = "#3498db"    # Blue
 
 
 # Slider Functions ------------------------------------------------------------
@@ -34,22 +38,35 @@ def resize_shape(value):
     Renders a smoothed circle and border using Pillow's anti-aliasing.
     """
     radius = int(value)
-    center_x, center_y = 150, 150
-    
+    canvas_size = 300
+    center = canvas_size // 2
+
+    # Create a base image with a solid background color
+    img = Image.new("RGB", (canvas_size, canvas_size), BG_COLOR)
+    # Use RGB to match the canvas background
+    draw = ImageDraw.Draw(img)
+
     # Calculate bounding box
-    x1, y1 = center_x - radius, center_y - radius
-    x2, y2 = center_x + radius, center_y + radius
+    x1, y1 = center - radius, center - radius
+    x2, y2 = center + radius, center + radius
     
-    # Update the coordinates
-    drawing_area.coords("my_circle", x1, y1, x2, y2)
+    # Draw the smoothed circle with a border
+    draw.ellipse( # Pillow's 'ellipse' method handles anti-aliasing automatically.
+        [x1, y1, x2, y2], 
+        fill=FILL_COLOR, 
+        outline=BORDER_COLOR, 
+        width=BORDER_WIDTH
+    )
     
     # Update styling with a contrasting outline
+    '''
     drawing_area.itemconfig(
         "my_circle", 
         fill=FILL_COLOR, 
         outline=BORDER_COLOR, 
         width=2  # A width of 4-6 gives a nice 'sticker' or 'button' look
     )
+    '''
 
 
 # User Interface Functions ----------------------------------------------------
