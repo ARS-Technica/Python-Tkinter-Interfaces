@@ -26,8 +26,10 @@ BG_COLOR = (236, 240, 241)     # Light Gray (RGB)
 BORDER_COLOR = (44, 62, 80)    # Dark Navy (RGB)
 FILL_COLOR = (52, 152, 219)    # Blue (RGB)
 
-#BORDER_COLOR = "#2c3e50"  # Dark Navy/Slate
-#FILL_COLOR = "#3498db"    # Blue
+#BORDER_COLOR = "#2c3e50"       # Dark Navy/Slate
+#FILL_COLOR = "#3498db"         # Blue
+
+BORDER_WIDTH = 6                # Thickness of the smoothed border
 
 
 # Slider Functions ------------------------------------------------------------
@@ -87,24 +89,18 @@ def create_user_interface():
 
 
     # Create Canvas Widget-----------------------------------------------------
+    # Match the canvas background to our constant for a seamless look
+    hex_background = "#ecf0f1"
+
     # The canvas widget containing a shape to be altered
     drawing_area = tk.Canvas(
         root, 
         width=300, 
         height=300, 
-        bg="#ecf0f1", 
+        bg=hex_background,
         highlightthickness=0
     )
     drawing_area.pack(pady=20)
-
-    # Initial shape creation
-    drawing_area.create_oval(
-        130, 130, 170, 170, 
-        fill=FILL_COLOR, 
-        outline=BORDER_COLOR, 
-        width=4, 
-        tags="my_circle"
-    )
 
 
     # Create Scale Slider Widget-----------------------------------------------------
@@ -122,14 +118,15 @@ def create_user_interface():
         from_=10,  # Starting value
         to=140,  # Ending value
         orient="horizontal",  # Either horizontal or vertical
+        label="Anti-Aliased Border & Fill",
         length=250,
-        fg=BORDER_COLOR, # Matches the slider text to the border color
-        highlightthickness=0,  # Removes the focus border gap
+        # fg=BORDER_COLOR, # Matches the slider text to the border color
+        # highlightthickness=0,  # Removes the focus border gap
         command=resize_shape  # Function to call on change
     )
 
     # Set a default starting value
-    size_slider.set(60)
+    size_slider.set(70)
 
     # pack() will center these widgets relative to each other by default
     directions.pack(pady=(20,0))  # Space above the label, but 0 below
