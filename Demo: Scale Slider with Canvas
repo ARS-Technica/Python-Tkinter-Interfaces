@@ -37,6 +37,8 @@ def resize_shape(value):
 
     Renders a smoothed circle and border using Pillow's anti-aliasing.
     """
+    global image_container,tkinter_image
+    
     radius = int(value)
     canvas_size = 300
     center = canvas_size // 2
@@ -68,10 +70,16 @@ def resize_shape(value):
     )
     '''
 
+    # Convert Pillow image to Tkinter Format
+    tkinter_image = ImageTk.PhotoImage(img)
+
+    # Update the Canvas
+    drawing_area.itemconfig(image_container, image=tkinter_image)    
+
 
 # User Interface Functions ----------------------------------------------------
 def create_user_interface():
-    global drawing_area, root
+    global drawing_area, image_container, root
 
     root = tk.Tk()
     root.title("Demo: Scale Slider with Canvas")
