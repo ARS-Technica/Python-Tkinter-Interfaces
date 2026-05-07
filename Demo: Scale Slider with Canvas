@@ -33,6 +33,22 @@ BORDER_WIDTH = 6                # Thickness of the smoothed border
 
 
 # Slider Functions ------------------------------------------------------------
+def calculate_geometry(value, canvas_size):
+    """
+    Calculates the bounding box coordinates.
+    """
+
+    pass
+
+
+def render_circle_frame(coords, size, fill, border, border_width):
+    """
+    Creates the anti-aliased Image object using Pillow.
+    """
+
+    pass
+
+
 def resize_shape(value):
     """
     Updates coordinates and applies a contrasting border.
