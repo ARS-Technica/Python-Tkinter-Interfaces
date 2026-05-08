@@ -14,6 +14,60 @@ import tkinter as tk
 
 
 # User Interface Functions ---------------------------------------------
+def create_user_interface():
+    global drawing_area, image_container, root
+
+    root = tk.Tk()
+    root.title("Demo: Scale Slider with Canvas")
+    root.geometry("350x450")
+
+
+    # Create Canvas Widget-----------------------------------------------------
+    # Match the canvas background to our constant for a seamless look
+    hex_background = "#ecf0f1"
+
+    # The canvas widget containing a shape to be altered
+    drawing_area = tk.Canvas(
+        root, 
+        width=300, 
+        height=300, 
+        bg=hex_background,
+        highlightthickness=0
+    )
+    drawing_area.pack(pady=20)
+
+
+    # Create Scale Slider Widget-----------------------------------------------------
+    # The label for the directions
+    directions = tk.Label(root, text="Adjust Shape Size", font=("Helvetica", 11, "bold"))
+    '''
+    In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
+    to align to the top-left corner of the widget's area. So, there needs to be 
+    a separate label or widget to center the directions.
+    '''
+
+    # Creates a object on the canvas to act as a placeholder for rendered frames
+    image_container = drawing_area.create_image(150, 150, anchor="center")
+
+    # Scale Widget Setup
+    size_slider = tk.Scale(
+        root, 
+        from_=10,  # Starting value
+        to=140,  # Ending value
+        orient="horizontal",  # Either horizontal or vertical
+        # label="Adjust Shape Size, # Un-center-able due to Tkinter's limitations
+        length=250,
+        # fg=BORDER_COLOR, # Matches the slider text to the border color
+        # highlightthickness=0,  # Removes the focus border gap
+        command=resize_shape  # Function to call on change
+    )
+
+    # Set a default starting value
+    size_slider.set(70)
+
+    # pack() will center these widgets relative to each other by default
+    directions.pack(pady=(5,0))  # Space above the label, but 0 below
+    size_slider.pack(pady=(5,15)) # Space above the slider, space below
 
 
 # Main Application Window -----------------------------------------------------
