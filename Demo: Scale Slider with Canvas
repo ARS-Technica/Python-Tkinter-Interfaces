@@ -16,7 +16,6 @@ Tkinter's standard Canvas widget doesn't support anti-aliasing (the technique us
 """
 
 import tkinter as tk
-# from turtle import fill
 from PIL import Image, ImageDraw, ImageTk
 # To get smoother, anti-aliased edges in Tkinter, we need to use Pillow (PIL).
 
@@ -28,18 +27,16 @@ BG_COLOR = (236, 240, 241)     # Light Gray (RGB)
 BORDER_COLOR = (44, 62, 80)    # Dark Navy (RGB)
 FILL_COLOR = (52, 152, 219)    # Blue (RGB)
 
-#BORDER_COLOR = "#2c3e50"       # Dark Navy/Slate
-#FILL_COLOR = "#3498db"         # Blue
-
 BORDER_WIDTH = 6                # Thickness of the smoothed border
+CANVAS_SIZE = 300
 
 
 # Slider Functions ------------------------------------------------------------
-def calculate_geometry(radius, canvas_size):
+def calculate_geometry(radius):
     """
     Calculates the bounding box coordinates based on the center of the canvas.  Handles only the math.
     """
-    center = canvas_size // 2
+    center = CANVAS_SIZE // 2
 
     # Calculate bounding box
     x1, y1 = center - radius, center - radius
@@ -69,16 +66,15 @@ def resize_shape(value):
     Updates coordinates and applies a contrasting border.
     Renders a smoothed circle and border using Pillow's anti-aliasing.
     """
-    global tkinter_image
+    global CANVAS_SIZE, tkinter_image
 
     radius = int(value) # 'int' conversion 
-    canvas_size = 300
     
     # Get Geometry
-    coords = calculate_geometry(radius, canvas_size)
+    coords = calculate_geometry(radius)
     
     # Get Rendered Frame
-    tkinter_image = render_circle_frame(coords, 300, FILL_COLOR, BORDER_COLOR, BORDER_WIDTH)
+    tkinter_image = render_circle_frame(coords, CANVAS_SIZE, FILL_COLOR, BORDER_COLOR, BORDER_WIDTH)
     
     # Update UI
     drawing_area.itemconfig(image_container, image=tkinter_image)
