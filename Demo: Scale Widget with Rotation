@@ -7,4 +7,17 @@ numerical ranges. This demo maps slider values to the rotation
 of a shape on a canvas widget.
 """
 
+import tkinter as tk
+
+
+# Slider Functions ---------------------------------------------
+
+
+# User Interface Functions ---------------------------------------------
+
+
+# Main Application Window -----------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface()  # Initialize UI
+    root.mainloop()
 
