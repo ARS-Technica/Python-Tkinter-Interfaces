@@ -1,0 +1,10 @@
+"""
+Demo: Scale Widget with Rotation
+Create: May 8, 2026
+
+Description: Demonstrates the tk.Scale widget used to control 
+numerical ranges. This demo maps slider values to the rotation
+of a shape on a canvas widget.
+"""
+
+
