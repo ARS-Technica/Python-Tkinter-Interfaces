@@ -16,6 +16,7 @@ Tkinter's standard Canvas widget doesn't support anti-aliasing (the technique us
 """
 
 import tkinter as tk
+# from turtle import fill
 from PIL import Image, ImageDraw, ImageTk
 # To get smoother, anti-aliased edges in Tkinter, we need to use Pillow (PIL).
 
@@ -33,42 +34,45 @@ BORDER_WIDTH = 6                # Thickness of the smoothed border
 
 
 # Slider Functions ------------------------------------------------------------
-def calculate_geometry(value, canvas_size):
+def calculate_geometry(radius, canvas_size):
     """
-    Calculates the bounding box coordinates.
+    Calculates the bounding box coordinates based on the center of the canvas.  Handles only the math.
     """
+    center = canvas_size // 2
 
-    pass
+    # Calculate bounding box
+    x1, y1 = center - radius, center - radius
+    x2, y2 = center + radius, center + radius
+
+    return [x1, y1, x2, y2]
 
 
 def render_circle_frame(coords, size, fill, border, border_width):
     """
     Creates the anti-aliased Image object using Pillow.
+    Handles only the graphics.
     """
+    # Create a base image with a solid background color
+    img = Image.new("RGB", (size, size), BG_COLOR)
+    # Use RGB to match the canvas background
+    draw = ImageDraw.Draw(img)
 
-    pass
+    draw.ellipse(coords, fill=fill, outline=border, width=border_width)
 
+    return ImageTk.PhotoImage(img)
 
+'''
 def resize_shape(value):
     """
     Updates coordinates and applies a contrasting border.
 
     Renders a smoothed circle and border using Pillow's anti-aliasing.
     """
-    global image_container,tkinter_image
+    global image_container, tkinter_image
     
     radius = int(value)
     canvas_size = 300
-    center = canvas_size // 2
 
-    # Create a base image with a solid background color
-    img = Image.new("RGB", (canvas_size, canvas_size), BG_COLOR)
-    # Use RGB to match the canvas background
-    draw = ImageDraw.Draw(img)
-
-    # Calculate bounding box
-    x1, y1 = center - radius, center - radius
-    x2, y2 = center + radius, center + radius
     
     # Draw the smoothed circle with a border
     draw.ellipse( # Pillow's 'ellipse' method handles anti-aliasing automatically.
@@ -83,6 +87,27 @@ def resize_shape(value):
 
     # Update the Canvas
     drawing_area.itemconfig(image_container, image=tkinter_image)    
+'''
+
+def resize_shape(value):
+    """
+    Orchestrates the calculation and rendering process:
+    Updates coordinates and applies a contrasting border.
+    Renders a smoothed circle and border using Pillow's anti-aliasing.
+    """
+    global tkinter_image
+
+    radius = int(value) # 'int' conversion 
+    canvas_size = 300
+    
+    # Get Geometry
+    coords = calculate_geometry(radius, canvas_size)
+    
+    # Get Rendered Frame
+    tkinter_image = render_circle_frame(coords, 300, FILL_COLOR, BORDER_COLOR, BORDER_WIDTH)
+    
+    # Update UI
+    drawing_area.itemconfig(image_container, image=tkinter_image)
 
 
 # User Interface Functions ----------------------------------------------------
