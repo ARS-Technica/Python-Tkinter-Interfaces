@@ -42,7 +42,15 @@ def handle_rotation(value):
     Triggered by the slider to update the UI.
     """
 
-    pass
+    global tkinter_image
+
+    angle = int(value)
+
+    # Render the new frame
+    tkinter_image = render_rotated_square(angle)
+
+    # Update the Canvas container
+    drawing_area.itemconfig(image_container, image=tkinter_image)
 
 
 # User Interface Functions ----------------------------------------------------
