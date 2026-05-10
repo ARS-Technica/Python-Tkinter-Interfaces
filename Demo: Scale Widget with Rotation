@@ -80,21 +80,21 @@ def create_user_interface():
     # Creates a object on the canvas to act as a placeholder for rendered frames
     image_container = drawing_area.create_image(150, 150, anchor="center")
 
-    # Scale Widget Setup
-    size_slider = tk.Scale(
-        root, 
-        from_=10,  # Starting value
-        to=140,  # Ending value
-        orient="horizontal",  # Either horizontal or vertical
-        # label="Adjust Shape Size, # Un-center-able due to Tkinter's limitations
-        length=250,
-        # fg=BORDER_COLOR, # Matches the slider text to the border color
-        # highlightthickness=0,  # Removes the focus border gap
-        command=resize_shape  # Function to call on change
-    )
 
+    # Scale Widget Setup
+    rotation_slider = tk.Scale(
+        root, 
+        from_=0, 
+        to=360, 
+        orient="horizontal", 
+        length=300,
+        highlightthickness=0,
+        command=handle_rotation
+    )
     # Set a default starting value
-    size_slider.set(70)
+    rotation_slider.set(180)
+    rotation_slider.pack(pady=10)
+
 
     # pack() will center these widgets relative to each other by default
     directions.pack(pady=(5,0))  # Space above the label, but 0 below
