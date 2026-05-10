@@ -80,7 +80,6 @@ def create_user_interface():
     # Creates a object on the canvas to act as a placeholder for rendered frames
     image_container = drawing_area.create_image(150, 150, anchor="center")
 
-
     # Scale Widget Setup
     rotation_slider = tk.Scale(
         root, 
@@ -91,14 +90,13 @@ def create_user_interface():
         highlightthickness=0,
         command=handle_rotation
     )
+
     # Set a default starting value
     rotation_slider.set(180)
-    rotation_slider.pack(pady=10)
-
 
     # pack() will center these widgets relative to each other by default
     directions.pack(pady=(5,0))  # Space above the label, but 0 below
-    size_slider.pack(pady=(5,15)) # Space above the slider, space below
+    rotation_slider.pack(pady=(5,15)) # Space above the slider, space below
 
 
 # Main Application Window -----------------------------------------------------
