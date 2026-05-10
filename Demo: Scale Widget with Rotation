@@ -60,7 +60,6 @@ def handle_rotation(value):
     
     Triggered by the slider to update the UI.
     """
-
     global tkinter_image
 
     angle = int(value)
