@@ -29,7 +29,16 @@ def render_rotated_square(angle):
     and rotates it using Pillow.
     """
 
-    pass
+    # Create an RGBA image for the shape
+    shape_img = Image.new("RGBA", (buffer_size, buffer_size), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(shape_img)
+
+    # Draw a static square in the center of the buffer
+    draw.rectangle([50, 50, 150, 150], fill=FILL_COLOR, outline=BORDER_COLOR, width=5)  # [x1, y1, x2, y2]
+
+    # Rotate the buffer
+    rotated = shape_img.rotate(-angle, resample=Image.BICUBIC)
+    # Pillow rotates counter-clockwise by default, so use -angle for clockwise rotation
 
 
 def handle_rotation(value):
