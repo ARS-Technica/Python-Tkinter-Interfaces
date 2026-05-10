@@ -45,25 +45,24 @@ def handle_rotation(value):
     pass
 
 
-# User Interface Functions ---------------------------------------------
+# User Interface Functions ----------------------------------------------------
 def create_user_interface():
     global drawing_area, image_container, root
 
     root = tk.Tk()
-    root.title("Demo: Scale Slider with Canvas")
-    root.geometry("350x450")
+    root.title("Demo: Scale Slider with Rotation")
+    root.geometry("400x450")
 
 
     # Create Canvas Widget-----------------------------------------------------
-    # Match the canvas background to our constant for a seamless look
+    # Match the canvas background to constant for a seamless look
     hex_background = "#ecf0f1"
 
-    # The canvas widget containing a shape to be altered
     drawing_area = tk.Canvas(
         root, 
-        width=300, 
-        height=300, 
-        bg=hex_background,
+        width=CANVAS_SIZE, 
+        height=CANVAS_SIZE, 
+        bg=hex_background, 
         highlightthickness=0
     )
     drawing_area.pack(pady=20)
@@ -71,7 +70,7 @@ def create_user_interface():
 
     # Create Scale Slider Widget-----------------------------------------------------
     # The label for the directions
-    directions = tk.Label(root, text="Adjust Shape Size", font=("Helvetica", 11, "bold"))
+    directions = tk.Label(root, text="Rotate Shape 360 Degrees", font=("Helvetica", 11, "bold"))
     '''
     In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
     to align to the top-left corner of the widget's area. So, there needs to be 
