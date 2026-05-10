@@ -86,7 +86,7 @@ def create_user_interface():
     global drawing_area, image_container, root
 
     root = tk.Tk()
-    root.title("Demo: Scale Slider with Rotation")
+    root.title("Demo: Scale Slider Widget with Canvas")
     root.geometry("350x450")
 
 
