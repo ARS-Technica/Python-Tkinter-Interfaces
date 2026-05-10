@@ -110,8 +110,18 @@ def create_user_interface():
         # highlightthickness=0,  # Removes the focus border gap
         command=handle_rotation  # Function to call on change
     )
-    rotation_slider.pack(pady=10)
-    rotation_slider.set(180)
+
+    # pack() will center these widgets relative to each other by default
+    directions.pack(pady=(5,0))  # Space above the label, but 0 below
+    rotation_slider.pack(pady=10)  # Space above the slider, space below
+
+    # Set a default starting value
+    size_slider.set(70)
+    '''
+    If you pack() the slider after you .set() it, the UI might not
+    trigger the command properly on the very first frame. It's usually
+    safer to pack() the widget first, and then .set() the value.
+    '''
 
 
 # Main Application Window -----------------------------------------------------
