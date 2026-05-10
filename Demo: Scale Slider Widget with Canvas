@@ -1,64 +1,83 @@
-"""
-Demo: Scale Widget with Rotation
-Created: May 8, 2026
+# Made CANVAS_SIZE global constant
 
-Description: Demonstrates the tk.Scale widget used to control 
-numerical ranges. This demo maps slider values to the rotation
-of a shape on a canvas widget using Pillow.
+"""
+Demo: Scale Widget with Canvas
+Created: May 4, 2026
+
+Description: Demonstrates using a Scale to manipulate geometric 
+coordinates on a Canvas widget in real-time.
+
+Scaling a shape on a Canvas is where you truly start to see the power of Tkinter
+for graphics, data visualization, and interactive tools.
+
+Tkinter's standard Canvas widget doesn't support anti-aliasing (the technique used to blur the pixels at the edge of a shape to make them look smooth). Because Tkinter is built on a library from the 90s, its circles can look a bit "pixelated" or "stair-stepped," especially as they get larger.  However, you can soften the look by:
+
+    Setting the outline to the same color as the fill.
+
+    Setting the width of the outline to 2 or 3 pixels.
 """
 
 import tkinter as tk
 from PIL import Image, ImageDraw, ImageTk
-
+# To get smoother, anti-aliased edges in Tkinter, we need to use Pillow (PIL).
 
 # Global Variables ------------------------------------------------------------
-# Global Styling Constants
-BG_COLOR = (236, 240, 241)
-FILL_COLOR = (52, 152, 219)
-BORDER_COLOR = (44, 62, 80)
+
+# Styling color palette
+BG_COLOR = (236, 240, 241)     # Light Gray (RGB)
+BORDER_COLOR = (44, 62, 80)    # Dark Navy (RGB)
+FILL_COLOR = (52, 152, 219)    # Blue (RGB)
+
+BORDER_WIDTH = 6                # Thickness of the smoothed border
 CANVAS_SIZE = 300
 
 
 # Slider Functions ------------------------------------------------------------
-def render_rotated_square(angle):
+def calculate_geometry(radius):
     """
-    Creates the anti-aliased square in a transparent buffer 
-    and rotates it using Pillow.
+    Calculates the bounding box coordinates based on the center of the canvas.  Handles only the math.
     """
-    # Create a larger buffer to prevent corner clipping during rotation
-    buffer_size = 250
+    center = CANVAS_SIZE // 2
 
-    # Create an RGBA image for the shape itself
-    shape_image = Image.new("RGBA", (buffer_size, buffer_size), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(shape_image)
+    # Calculate bounding box
+    x1, y1 = center - radius, center - radius
+    x2, y2 = center + radius, center + radius
 
-    # Draw a static square in the center of the buffer
-    draw.rectangle([75, 75, 175, 175], fill=FILL_COLOR, outline=BORDER_COLOR, width=5)  # [x1, y1, x2, y2]
-
-    # Rotate the buffer
-    rotated = shape_image.rotate(-angle, resample=Image.BICUBIC)
-    # Pillow rotates counter-clockwise by default, so use -angle for clockwise rotation
-
-    return ImageTk.PhotoImage(rotated)
+    return [x1, y1, x2, y2]
 
 
-def handle_rotation(value):
+def render_circle_frame(coords, size, fill, border, border_width):
+    """
+    Creates the anti-aliased Image object using Pillow.
+    Handles only the graphics.
+    """
+    # Create a base image with a solid background color
+    img = Image.new("RGB", (size, size), BG_COLOR)
+    # Use RGB to match the canvas background
+    draw = ImageDraw.Draw(img)
+
+    draw.ellipse(coords, fill=fill, outline=border, width=border_width)
+
+    return ImageTk.PhotoImage(img)
+
+
+def resize_shape(value):
     """
     Orchestrates the calculation and rendering process:
     Updates coordinates and applies a contrasting border.
-    Renders a smoothed square and border using Pillow's 
-    anti-aliasing and rotates it using Pillow.
-    
-    Triggered by the slider to update the UI.
+    Renders a smoothed circle and border using Pillow's anti-aliasing.
     """
-    global tkinter_image
+    global CANVAS_SIZE, tkinter_image
 
-    angle = int(value)
-
-    # Render the new frame
-    tkinter_image = render_rotated_square(angle)
-
-    # Update the Canvas container
+    radius = int(value) # 'int' conversion 
+    
+    # Get Geometry
+    coords = calculate_geometry(radius)
+    
+    # Get Rendered Frame
+    tkinter_image = render_circle_frame(coords, CANVAS_SIZE, FILL_COLOR, BORDER_COLOR, BORDER_WIDTH)
+    
+    # Update UI
     drawing_area.itemconfig(image_container, image=tkinter_image)
 
 
@@ -68,7 +87,7 @@ def create_user_interface():
 
     root = tk.Tk()
     root.title("Demo: Scale Slider with Rotation")
-    root.geometry("400x450")
+    root.geometry("350x450")
 
 
     # Create Canvas Widget-----------------------------------------------------
@@ -87,7 +106,7 @@ def create_user_interface():
 
     # Create Scale Slider Widget-----------------------------------------------------
     # The label for the directions
-    directions = tk.Label(root, text="Rotate Shape 360 Degrees", font=("Helvetica", 11, "bold"))
+    directions = tk.Label(root, text="Adjust Shape Size", font=("Helvetica", 11, "bold"))
     '''
     In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
     to align to the top-left corner of the widget's area. So, there needs to be 
@@ -97,19 +116,25 @@ def create_user_interface():
     # Creates a object on the canvas to act as a placeholder for rendered frames
     image_container = drawing_area.create_image(150, 150, anchor="center")
 
-
     # Scale Widget Setup
-    rotation_slider = tk.Scale(
+    size_slider = tk.Scale(
         root, 
-        from_=0, 
-        to=360, 
-        orient="horizontal", 
-        length=300,
-        highlightthickness=0,
-        command=handle_rotation
+        from_=10,  # Starting value
+        to=140,  # Ending value
+        orient="horizontal",  # Either horizontal or vertical
+        # label="Adjust Shape Size, # Un-center-able due to Tkinter's limitations
+        length=250,
+        # fg=BORDER_COLOR, # Matches the slider text to the border color
+        # highlightthickness=0,  # Removes the focus border gap
+        command=resize_shape  # Function to call on change
     )
-    rotation_slider.pack(pady=10)
-    rotation_slider.set(180)
+
+    # pack() will center these widgets relative to each other by default
+    directions.pack(pady=(5,0))  # Space above the label, but 0 below
+    size_slider.pack(pady=(5,15)) # Space above the slider, space below
+
+    # Set a default starting value
+    size_slider.set(70)
 
 
 # Main Application Window -----------------------------------------------------
