@@ -29,7 +29,10 @@ def render_rotated_square(angle):
     and rotates it using Pillow.
     """
 
-    # Create an RGBA image for the shape
+    # Create a larger buffer to prevent corner clipping during rotation
+    buffer_size = 200
+
+    # Create an RGBA image for the shape itself
     shape_img = Image.new("RGBA", (buffer_size, buffer_size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(shape_img)
 
@@ -39,6 +42,13 @@ def render_rotated_square(angle):
     # Rotate the buffer
     rotated = shape_img.rotate(-angle, resample=Image.BICUBIC)
     # Pillow rotates counter-clockwise by default, so use -angle for clockwise rotation
+
+    # Create the final background frame
+    final_frame = Image.new("RGB", (CANVAS_SIZE, CANVAS_SIZE), BG_COLOR)
+    # Paste the rotated shape onto the center of the final frame
+    final_frame.paste(rotated, (50, 50), rotated)
+
+    return ImageTk.PhotoImage(final_frame)
 
 
 def handle_rotation(value):
