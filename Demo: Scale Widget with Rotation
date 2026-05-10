@@ -115,8 +115,8 @@ def create_user_interface():
     directions.pack(pady=(5,0))  # Space above the label, but 0 below
     rotation_slider.pack(pady=10)  # Space above the slider, space below
 
-    # Set a default starting value
-    size_slider.set(70)
+    # Set a default starting value    
+    rotation_slider.set(180)
     '''
     If you pack() the slider after you .set() it, the UI might not
     trigger the command properly on the very first frame. It's usually
