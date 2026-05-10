@@ -8,6 +8,18 @@ of a shape on a canvas widget.
 """
 
 import tkinter as tk
+from PIL import Image, ImageDraw, ImageTk
+
+
+# Global Variables ------------------------------------------------------------
+
+# Styling color palette
+BG_COLOR = (236, 240, 241)     # Light Gray (RGB)
+BORDER_COLOR = (44, 62, 80)    # Dark Navy (RGB)
+FILL_COLOR = (52, 152, 219)    # Blue (RGB)
+
+BORDER_WIDTH = 6                # Thickness of the smoothed border
+CANVAS_SIZE = 300
 
 
 # Slider Functions ---------------------------------------------
