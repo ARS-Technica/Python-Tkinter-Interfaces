@@ -23,6 +23,26 @@ CANVAS_SIZE = 300
 
 
 # Slider Functions ---------------------------------------------
+def render_rotated_square(angle):
+    """
+    Creates the anti-aliased square in a transparent buffer 
+    and rotates it using Pillow.
+    """
+
+    pass
+
+
+def handle_rotation(value):
+    """
+    Orchestrates the calculation and rendering process:
+    Updates coordinates and applies a contrasting border.
+    Renders a smoothed square and border using Pillow's 
+    anti-aliasing and rotates it using Pillow.
+    
+    Triggered by the slider to update the UI.
+    """
+
+    pass
 
 
 # User Interface Functions ---------------------------------------------
