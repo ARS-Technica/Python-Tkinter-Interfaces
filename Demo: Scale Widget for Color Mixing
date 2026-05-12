@@ -82,6 +82,9 @@ def create_user_interface():
 
 
 
+
+
+
     '''
     rotation_slider = tk.Scale(
         root, 
@@ -107,6 +110,7 @@ def create_user_interface():
     trigger the command properly on the very first frame. It's usually
     safer to pack() the widget first, and then .set() the value.
     '''
+
 
 
 
