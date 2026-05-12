@@ -19,23 +19,11 @@ BORDER_COLOR = (44, 62, 80)
 CANVAS_SIZE = 300
 
 
-# Slider Functions ------------------------------------------------------------
-def update_color(idle_value=None):
-    """
-    Collects values from all three sliders and updates the UI.
-    """
-    # 1. Get current values from the global slider objects
-
-    # 2. Convert RGB to Hex String (%02x ensures 2 digits, e.g., '0a' instead of 'a')
-
-    # 3. Update the Canvas Shape
-
-    # 4. Update the Label for feedback
-
-
+# User Interface Functions ----------------------------------------------------
 def create_user_interface():
     global drawing_area, color_box, status_label, root
     global red_slider, green_slider, blue_slider
+    global red_value_label, green_value_label, blue_value_label
 
     root = tk.Tk()
     root.title("Demo: Scale Slider with Rotation")
@@ -59,7 +47,8 @@ def create_user_interface():
 
     # Create Scale Slider Widgets ---------------------------------------------
     # The label for the directions
-    directions = tk.Label(root, text="Rotate Shape 360 Degrees", font=("Helvetica", 11, "bold"))
+    directions = tk.Label(root, text="Adjust the sliders to change the color", 
+                          font=("Helvetica", 11, "bold"))
     '''
     In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
     to align to the top-left corner of the widget's area. So, there needs to be 
@@ -86,7 +75,7 @@ def create_user_interface():
         text="R", 
         font=("Arial", 12, "bold"), 
         fg="#e74c3c"
-    ).pack(padx=(15, 0)) # Left padding to align label with the slider
+    ).pack(padx=(0, 0)) # Left padding to align label with the slider
 
     # Slider is packed second (Below)
     red_slider = tk.Scale(
@@ -114,7 +103,7 @@ def create_user_interface():
         text="G", 
         font=("Arial", 12, "bold"), 
         fg="#27ae60"
-    ).pack(padx=(15, 0)) # Left padding to align label with the slider
+    ).pack(padx=(0, 0)) # Left padding to align label with the slider
 
     # Slider is packed second (Below)
     green_slider = tk.Scale(
@@ -124,6 +113,11 @@ def create_user_interface():
         showvalue=False  # Hide the number values on the side of the slider
     )
     green_slider.pack()
+
+    # The New Bottom Value Label
+    green_value_label = tk.Label(green_group, text="127", font=("Arial", 10))
+    green_value_label.pack(pady=5)
+
     green_slider.set(127)
 
     # Blue Scale Widgets Setup ------------------------------------------------
@@ -137,7 +131,7 @@ def create_user_interface():
         text="B", 
         font=("Arial", 12, "bold"), 
         fg="#2980b9"
-    ).pack(padx=(15, 0)) # Left padding to align label with the slider
+    ).pack(padx=(0, 0)) # Left padding to align label with the slider
     
     # Slider is packed second (Below)
     blue_slider = tk.Scale(
@@ -147,6 +141,11 @@ def create_user_interface():
         showvalue=False  # Hide the number values on the side of the slider
     )
     blue_slider.pack()
+
+    # The New Bottom Value Label
+    blue_value_label = tk.Label(blue_group, text="127", font=("Arial", 10))
+    blue_value_label.pack(pady=5)
+
     blue_slider.set(127)
 
     
