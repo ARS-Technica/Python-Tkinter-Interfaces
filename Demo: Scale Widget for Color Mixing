@@ -70,6 +70,7 @@ def create_user_interface():
     # Creates a object on the canvas to act as a placeholder for rendered frames
     #image_container = drawing_area.create_image(150, 150, anchor="center")
 
+
     # Container Frame for Sliders ---------------------------------------------
     # This frame groups the sliders together and centers them
     slider_frame = tk.Frame(root)
@@ -81,14 +82,19 @@ def create_user_interface():
     red_group.pack(side="left", padx=20)
     
     # Label is packed first (Top)
-    tk.Label(red_group, text="R", font=("Arial", 12, "bold"), fg="#e74c3c").pack()
+    tk.Label(
+        red_group, 
+        text="R", 
+        font=("Arial", 12, "bold"), 
+        fg="#e74c3c"
+    ).pack(padx=(15, 0)) # Left padding to align label with the slider
 
     # Slider is packed second (Below)
     red_slider = tk.Scale(
         red_group, from_=255, to=0, orient="vertical",
         length=200, 
-        command=update_color, # Removes the numbers on the side
-        showvalue=False  # Removes the numbers on the side
+        command=update_color, 
+        showvalue=True  # Displays number values on the side of the slider
     )
     red_slider.pack()
     red_slider.set(127)
@@ -99,14 +105,19 @@ def create_user_interface():
     green_group.pack(side="left", padx=20)
     
     # Label is packed first (Top)
-    tk.Label(green_group, text="G", font=("Arial", 12, "bold"), fg="#27ae60").pack()
+    tk.Label(
+        green_group, 
+        text="G", 
+        font=("Arial", 12, "bold"), 
+        fg="#27ae60"
+    ).pack(padx=(15, 0)) # Left padding to align label with the slider
 
     # Slider is packed second (Below)
     green_slider = tk.Scale(
         green_group, from_=255, to=0, orient="vertical", 
         length=200, 
         command=update_color, # Removes the numbers on the side
-        showvalue=False  # Removes the numbers on the side
+        showvalue=True  # Displays number values on the side of the slider
     )
     green_slider.pack()
     green_slider.set(127)
@@ -117,18 +128,22 @@ def create_user_interface():
     blue_group.pack(side="left", padx=20)
     
     # Label is packed first (Top)
-    tk.Label(blue_group, text="B", font=("Arial", 12, "bold"), fg="#2980b9").pack()
+    tk.Label(
+        blue_group, 
+        text="B", 
+        font=("Arial", 12, "bold"), 
+        fg="#2980b9"
+    ).pack(padx=(15, 0)) # Left padding to align label with the slider
     
     # Slider is packed second (Below)
     blue_slider = tk.Scale(
         blue_group, from_=255, to=0, orient="vertical", 
         length=200, 
         command=update_color, # Removes the numbers on the side
-        showvalue=False  # Removes the numbers on the side
+        showvalue=True  # Displays number values on the side of the slider
     )
     blue_slider.pack()
     blue_slider.set(127)
-
 
     
     # pack() will center these widgets relative to each other by default
