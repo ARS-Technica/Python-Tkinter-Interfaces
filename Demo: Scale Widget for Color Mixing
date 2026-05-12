@@ -33,14 +33,13 @@ def update_color(idle_value=None):
     # 4. Update the Label for feedback
 
 
-# User Interface Functions ----------------------------------------------------
 def create_user_interface():
     global drawing_area, color_box, status_label, root
     global red_slider, green_slider, blue_slider
 
     root = tk.Tk()
     root.title("Demo: Scale Slider with Rotation")
-    root.geometry("500x550")  # Widened to fit side-by-side sliders
+    root.geometry("600x650")  # Widened to fit side-by-side sliders
 
 
     # Create Canvas Widget-----------------------------------------------------
@@ -94,9 +93,14 @@ def create_user_interface():
         red_group, from_=255, to=0, orient="vertical",
         length=200, 
         command=update_color, 
-        showvalue=True  # Displays number values on the side of the slider
+        showvalue=False  # Hide the number values on the side of the slider
     )
     red_slider.pack()
+
+    # The New Bottom Value Label
+    red_value_label = tk.Label(red_group, text="127", font=("Arial", 10))
+    red_value_label.pack(pady=5)
+
     red_slider.set(127)
 
     # Green Scale Widgets Setup -----------------------------------------------
@@ -117,7 +121,7 @@ def create_user_interface():
         green_group, from_=255, to=0, orient="vertical", 
         length=200, 
         command=update_color, # Removes the numbers on the side
-        showvalue=True  # Displays number values on the side of the slider
+        showvalue=False  # Hide the number values on the side of the slider
     )
     green_slider.pack()
     green_slider.set(127)
@@ -140,7 +144,7 @@ def create_user_interface():
         blue_group, from_=255, to=0, orient="vertical", 
         length=200, 
         command=update_color, # Removes the numbers on the side
-        showvalue=True  # Displays number values on the side of the slider
+        showvalue=False  # Hide the number values on the side of the slider
     )
     blue_slider.pack()
     blue_slider.set(127)
