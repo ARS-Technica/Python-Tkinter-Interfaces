@@ -76,37 +76,55 @@ def create_user_interface():
     slider_frame.pack(pady=10)
 
     # Red Scale Widgets Setup -------------------------------------------------
+    # This frame acts as a vertical column
     red_group = tk.Frame(slider_frame) # Sub-frame for label + slider
     red_group.pack(side="left", padx=20)
     
+    # Label is packed first (Top)
     tk.Label(red_group, text="R", font=("Arial", 12, "bold"), fg="#e74c3c").pack()
+
+    # Slider is packed second (Below)
     red_slider = tk.Scale(
-        red_group, from_=255, to=0, orient="vertical", # Swapped from/to for "Up = More"
-        length=200, command=update_color
+        red_group, from_=255, to=0, orient="vertical",
+        length=200, 
+        command=update_color, # Removes the numbers on the side
+        showvalue=False  # Removes the numbers on the side
     )
     red_slider.pack()
     red_slider.set(127)
 
-    # Green Scale Widgets Setup -------------------------------------------------    
+    # Green Scale Widgets Setup -----------------------------------------------
+    # This frame acts as a vertical column
     green_group = tk.Frame(slider_frame)
     green_group.pack(side="left", padx=20)
     
+    # Label is packed first (Top)
     tk.Label(green_group, text="G", font=("Arial", 12, "bold"), fg="#27ae60").pack()
+
+    # Slider is packed second (Below)
     green_slider = tk.Scale(
         green_group, from_=255, to=0, orient="vertical", 
-        length=200, command=update_color
+        length=200, 
+        command=update_color, # Removes the numbers on the side
+        showvalue=False  # Removes the numbers on the side
     )
     green_slider.pack()
     green_slider.set(127)
 
-    # Blue Scale Widgets Setup -------------------------------------------------   
+    # Blue Scale Widgets Setup ------------------------------------------------
+    # This frame acts as a vertical column
     blue_group = tk.Frame(slider_frame)
     blue_group.pack(side="left", padx=20)
     
+    # Label is packed first (Top)
     tk.Label(blue_group, text="B", font=("Arial", 12, "bold"), fg="#2980b9").pack()
+    
+    # Slider is packed second (Below)
     blue_slider = tk.Scale(
         blue_group, from_=255, to=0, orient="vertical", 
-        length=200, command=update_color
+        length=200, 
+        command=update_color, # Removes the numbers on the side
+        showvalue=False  # Removes the numbers on the side
     )
     blue_slider.pack()
     blue_slider.set(127)
