@@ -86,7 +86,7 @@ def create_user_interface():
     )
     red_slider.pack()
 
-    # The New Bottom Value Label
+    # Initialize the label and assign it to the global variable
     red_value_label = tk.Label(red_group, text="127", font=("Arial", 10))
     red_value_label.pack(pady=5)
 
@@ -114,7 +114,7 @@ def create_user_interface():
     )
     green_slider.pack()
 
-    # The New Bottom Value Label
+    # Initialize the label and assign it to the global variable
     green_value_label = tk.Label(green_group, text="127", font=("Arial", 10))
     green_value_label.pack(pady=5)
 
@@ -142,7 +142,7 @@ def create_user_interface():
     )
     blue_slider.pack()
 
-    # The New Bottom Value Label
+    # Initialize the label and assign it to the global variable
     blue_value_label = tk.Label(blue_group, text="127", font=("Arial", 10))
     blue_value_label.pack(pady=5)
 
