@@ -35,11 +35,12 @@ def update_color(idle_value=None):
 
 # User Interface Functions ----------------------------------------------------
 def create_user_interface():
-    global drawing_area, image_container, root
+    global drawing_area, color_box, status_label, root
+    global red_slider, green_slider, blue_slider
 
     root = tk.Tk()
     root.title("Demo: Scale Slider with Rotation")
-    root.geometry("400x450")
+    root.geometry("500x550")  # Widened to fit side-by-side sliders
 
 
     # Create Canvas Widget-----------------------------------------------------
@@ -56,6 +57,18 @@ def create_user_interface():
     drawing_area.pack(pady=20)
 
     color_box = drawing_area.create_rectangle(20, 20, 180, 180, fill="#7f7f7f")
+
+    # Create Scale Slider Widgets ---------------------------------------------
+    # The label for the directions
+    directions = tk.Label(root, text="Rotate Shape 360 Degrees", font=("Helvetica", 11, "bold"))
+    '''
+    In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
+    to align to the top-left corner of the widget's area. So, there needs to be 
+    a separate label or widget to center the directions.
+    '''
+
+    # Creates a object on the canvas to act as a placeholder for rendered frames
+    #image_container = drawing_area.create_image(150, 150, anchor="center")
 
     # Container Frame for Sliders ---------------------------------------------
     # This frame groups the sliders together and centers them
@@ -99,26 +112,14 @@ def create_user_interface():
     blue_slider.set(127)
 
 
-    '''
-    rotation_slider = tk.Scale(
-        root, 
-        from_=0,  # Starting value 
-        to=360,  # Ending value 
-        orient="horizontal",  # Either horizontal or vertical
-        # label="Adjust Shape Size, # Un-center-able due to Tkinter's limitations        
-        length=300,
-        # fg=BORDER_COLOR, # Matches the slider text to the border color
-        # highlightthickness=0,  # Removes the focus border gap
-        command=handle_rotation  # Function to call on change
-    )
-
+    
     # pack() will center these widgets relative to each other by default
-    #directions.pack(pady=(5,0))  # Space above the label, but 0 below
-    rotation_slider.pack(pady=10)  # Space above the slider, space below
+    directions.pack(pady=(5,0))  # Space above the label, but 0 below
+    #rotation_slider.pack(pady=10)  # Space above the slider, space below
 
     # Set a default starting value    
-    rotation_slider.set(180)
-    '''
+    #rotation_slider.set(180)
+
     '''
     If you pack() the slider after you .set() it, the UI might not
     trigger the command properly on the very first frame. It's usually
