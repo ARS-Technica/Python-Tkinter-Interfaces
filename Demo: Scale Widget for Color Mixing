@@ -1,0 +1,28 @@
+"""
+Demo: Scale Widget for Color Mixing
+Created: May 11, 2026
+
+Description: Demonstrates the tk.Scale widget used to control 
+numerical ranges. This demo maps multiple slider values to
+manipulate a single object's properties.
+"""
+
+
+
+
+
+
+# User Interface Functions ----------------------------------------------------
+def create_user_interface():
+    global drawing_area, image_container, root
+
+    root = tk.Tk()
+    root.title("Demo: Scale Widget for Color Mixing")
+    root.geometry("400x550")
+
+
+# Main Application Window -----------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface()  # Initialize UI
+    root.mainloop()
+
