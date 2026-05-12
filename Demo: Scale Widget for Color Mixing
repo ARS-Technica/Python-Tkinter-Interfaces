@@ -57,43 +57,45 @@ def create_user_interface():
 
     color_box = drawing_area.create_rectangle(20, 20, 180, 180, fill="#7f7f7f")
 
-    # Create Scale Slider Widgets ---------------------------------------------
-    # The label for the directions
-    #directions = tk.Label(root, text="Rotate Shape 360 Degrees", font=("Helvetica", 11, "bold"))
-    '''
-    In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
-    to align to the top-left corner of the widget's area. So, there needs to be 
-    a separate label or widget to center the directions.
-    '''
-
-    # Creates a object on the canvas to act as a placeholder for rendered frames
-    #image_container = drawing_area.create_image(150, 150, anchor="center")
+    # Container Frame for Sliders ---------------------------------------------
+    # This frame groups the sliders together and centers them
+    slider_frame = tk.Frame(root)
+    slider_frame.pack(pady=10)
 
     # Red Scale Widgets Setup -------------------------------------------------
-    tk.Label(root, text="RED", font=("Arial", 10, "bold"), fg="#e74c3c").pack()
+    red_group = tk.Frame(slider_frame) # Sub-frame for label + slider
+    red_group.pack(side="left", padx=20)
+    
+    tk.Label(red_group, text="R", font=("Arial", 12, "bold"), fg="#e74c3c").pack()
     red_slider = tk.Scale(
-        root, from_=0, to=255, orient="horizontal", 
-        length=300, command=update_color
+        red_group, from_=255, to=0, orient="vertical", # Swapped from/to for "Up = More"
+        length=200, command=update_color
     )
-    red_slider.pack(pady=(0, 10))
+    red_slider.pack()
     red_slider.set(127)
 
     # Green Scale Widgets Setup -------------------------------------------------    
-    tk.Label(root, text="GREEN", font=("Arial", 10, "bold"), fg="#27ae60").pack()
+    green_group = tk.Frame(slider_frame)
+    green_group.pack(side="left", padx=20)
+    
+    tk.Label(green_group, text="G", font=("Arial", 12, "bold"), fg="#27ae60").pack()
     green_slider = tk.Scale(
-        root, from_=0, to=255, orient="horizontal", 
-        length=300, command=update_color
+        green_group, from_=255, to=0, orient="vertical", 
+        length=200, command=update_color
     )
-    green_slider.pack(pady=(0, 10))
+    green_slider.pack()
     green_slider.set(127)
 
     # Blue Scale Widgets Setup -------------------------------------------------   
-    tk.Label(root, text="BLUE", font=("Arial", 10, "bold"), fg="#2980b9").pack()
+    blue_group = tk.Frame(slider_frame)
+    blue_group.pack(side="left", padx=20)
+    
+    tk.Label(blue_group, text="B", font=("Arial", 12, "bold"), fg="#2980b9").pack()
     blue_slider = tk.Scale(
-        root, from_=0, to=255, orient="horizontal", 
-        length=300, command=update_color
+        blue_group, from_=255, to=0, orient="vertical", 
+        length=200, command=update_color
     )
-    blue_slider.pack(pady=(0, 10))
+    blue_slider.pack()
     blue_slider.set(127)
 
 
