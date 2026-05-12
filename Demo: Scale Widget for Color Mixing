@@ -90,7 +90,6 @@ def create_user_interface():
     red_value_label = tk.Label(red_group, text="127", font=("Arial", 10))
     red_value_label.pack(pady=5)
 
-    red_slider.set(127)
 
     # Green Scale Widgets Setup -----------------------------------------------
     # This frame acts as a vertical column
@@ -118,7 +117,6 @@ def create_user_interface():
     green_value_label = tk.Label(green_group, text="127", font=("Arial", 10))
     green_value_label.pack(pady=5)
 
-    green_slider.set(127)
 
     # Blue Scale Widgets Setup ------------------------------------------------
     # This frame acts as a vertical column
@@ -146,16 +144,14 @@ def create_user_interface():
     blue_value_label = tk.Label(blue_group, text="127", font=("Arial", 10))
     blue_value_label.pack(pady=5)
 
-    blue_slider.set(127)
 
-    
     # pack() will center these widgets relative to each other by default
     directions.pack(pady=(5,0))  # Space above the label, but 0 below
-    #rotation_slider.pack(pady=10)  # Space above the slider, space below
 
-    # Set a default starting value    
-    #rotation_slider.set(180)
-
+    # Set a default starting value of each value
+    red_slider.set(127)
+    green_slider.set(127)
+    blue_slider.set(127)
     '''
     If you pack() the slider after you .set() it, the UI might not
     trigger the command properly on the very first frame. It's usually
