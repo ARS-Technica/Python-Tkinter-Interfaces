@@ -78,11 +78,23 @@ def create_user_interface():
     red_slider.pack(pady=(0, 10))
     red_slider.set(127)
 
+    # Green Scale Widgets Setup -------------------------------------------------    
+    tk.Label(root, text="GREEN", font=("Arial", 10, "bold"), fg="#27ae60").pack()
+    green_slider = tk.Scale(
+        root, from_=0, to=255, orient="horizontal", 
+        length=300, command=update_color
+    )
+    green_slider.pack(pady=(0, 10))
+    green_slider.set(127)
 
-
-
-
-
+    # Blue Scale Widgets Setup -------------------------------------------------   
+    tk.Label(root, text="BLUE", font=("Arial", 10, "bold"), fg="#2980b9").pack()
+    blue_slider = tk.Scale(
+        root, from_=0, to=255, orient="horizontal", 
+        length=300, command=update_color
+    )
+    blue_slider.pack(pady=(0, 10))
+    blue_slider.set(127)
 
 
     '''
@@ -110,8 +122,6 @@ def create_user_interface():
     trigger the command properly on the very first frame. It's usually
     safer to pack() the widget first, and then .set() the value.
     '''
-
-
 
 
 # Main Application Window -----------------------------------------------------
