@@ -11,6 +11,12 @@ import tkinter as tk
 
 
 # Global Variables ------------------------------------------------------------
+# Global Styling Constants
+BG_COLOR = (236, 240, 241)
+FILL_COLOR = (52, 152, 219)
+
+BORDER_COLOR = (44, 62, 80)
+CANVAS_SIZE = 300
 
 
 # Slider Functions ------------------------------------------------------------
