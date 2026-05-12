@@ -43,11 +43,61 @@ def create_user_interface():
 
 
     # Create Canvas Widget-----------------------------------------------------
-    # The label for the directions
- 
-    # Scale Widget Setup
+    # Match the canvas background to constant for a seamless look
+    hex_background = "#ecf0f1"
 
-    # Set a default starting value
+    # Create the shape that will change color
+    color_box = drawing_area.create_rectangle(20, 20, 180, 180, fill="#7f7f7f", outline="#2c3e50", width=2)
+
+    '''
+    drawing_area = tk.Canvas(
+        root, 
+        width=CANVAS_SIZE, 
+        height=CANVAS_SIZE, 
+        bg=hex_background, 
+        highlightthickness=0
+    )
+    drawing_area.pack(pady=20)
+    '''
+
+
+    # Create Scale Slider Widget-----------------------------------------------
+    # The label for the directions
+    directions = tk.Label(root, text="Rotate Shape 360 Degrees", font=("Helvetica", 11, "bold"))
+    '''
+    In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
+    to align to the top-left corner of the widget's area. So, there needs to be 
+    a separate label or widget to center the directions.
+    '''
+
+    # Creates a object on the canvas to act as a placeholder for rendered frames
+    # image_container = drawing_area.create_image(150, 150, anchor="center")
+
+
+    # Scale Widget Setup
+    rotation_slider = tk.Scale(
+        root, 
+        from_=0,  # Starting value 
+        to=360,  # Ending value 
+        orient="horizontal",  # Either horizontal or vertical
+        # label="Adjust Shape Size, # Un-center-able due to Tkinter's limitations        
+        length=300,
+        # fg=BORDER_COLOR, # Matches the slider text to the border color
+        # highlightthickness=0,  # Removes the focus border gap
+        command=handle_rotation  # Function to call on change
+    )
+
+    # pack() will center these widgets relative to each other by default
+    directions.pack(pady=(5,0))  # Space above the label, but 0 below
+    rotation_slider.pack(pady=10)  # Space above the slider, space below
+
+    # Set a default starting value    
+    rotation_slider.set(180)
+    '''
+    If you pack() the slider after you .set() it, the UI might not
+    trigger the command properly on the very first frame. It's usually
+    safer to pack() the widget first, and then .set() the value.
+    '''
 
 
 # Main Application Window -----------------------------------------------------
