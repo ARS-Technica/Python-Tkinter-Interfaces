@@ -38,18 +38,14 @@ def create_user_interface():
     global drawing_area, image_container, root
 
     root = tk.Tk()
-    root.title("Demo: Scale Widget for Color Mixing")
-    root.geometry("400x550")
+    root.title("Demo: Scale Slider with Rotation")
+    root.geometry("400x450")
 
 
     # Create Canvas Widget-----------------------------------------------------
     # Match the canvas background to constant for a seamless look
     hex_background = "#ecf0f1"
 
-    # Create the shape that will change color
-    color_box = drawing_area.create_rectangle(20, 20, 180, 180, fill="#7f7f7f", outline="#2c3e50", width=2)
-
-    '''
     drawing_area = tk.Canvas(
         root, 
         width=CANVAS_SIZE, 
@@ -58,12 +54,12 @@ def create_user_interface():
         highlightthickness=0
     )
     drawing_area.pack(pady=20)
-    '''
 
+    color_box = drawing_area.create_rectangle(20, 20, 180, 180, fill="#7f7f7f")
 
-    # Create Scale Slider Widget-----------------------------------------------
+    # Create Scale Slider Widgets ---------------------------------------------
     # The label for the directions
-    directions = tk.Label(root, text="Rotate Shape 360 Degrees", font=("Helvetica", 11, "bold"))
+    #directions = tk.Label(root, text="Rotate Shape 360 Degrees", font=("Helvetica", 11, "bold"))
     '''
     In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
     to align to the top-left corner of the widget's area. So, there needs to be 
@@ -71,10 +67,22 @@ def create_user_interface():
     '''
 
     # Creates a object on the canvas to act as a placeholder for rendered frames
-    # image_container = drawing_area.create_image(150, 150, anchor="center")
+    #image_container = drawing_area.create_image(150, 150, anchor="center")
+
+    # Red Scale Widgets Setup -------------------------------------------------
+    tk.Label(root, text="RED", font=("Arial", 10, "bold"), fg="#e74c3c").pack()
+    red_slider = tk.Scale(
+        root, from_=0, to=255, orient="horizontal", 
+        length=300, command=update_color
+    )
+    red_slider.pack(pady=(0, 10))
+    red_slider.set(127)
 
 
-    # Scale Widget Setup
+
+
+
+    '''
     rotation_slider = tk.Scale(
         root, 
         from_=0,  # Starting value 
@@ -88,16 +96,18 @@ def create_user_interface():
     )
 
     # pack() will center these widgets relative to each other by default
-    directions.pack(pady=(5,0))  # Space above the label, but 0 below
+    #directions.pack(pady=(5,0))  # Space above the label, but 0 below
     rotation_slider.pack(pady=10)  # Space above the slider, space below
 
     # Set a default starting value    
     rotation_slider.set(180)
     '''
+    '''
     If you pack() the slider after you .set() it, the UI might not
     trigger the command properly on the very first frame. It's usually
     safer to pack() the widget first, and then .set() the value.
     '''
+
 
 
 # Main Application Window -----------------------------------------------------
