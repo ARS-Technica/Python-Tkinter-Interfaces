@@ -7,9 +7,13 @@ numerical ranges. This demo maps multiple slider values to
 manipulate a single object's properties.
 """
 
+import tkinter as tk
 
 
+# Global Variables ------------------------------------------------------------
 
+
+# Slider Functions ------------------------------------------------------------
 
 
 # User Interface Functions ----------------------------------------------------
@@ -19,6 +23,14 @@ def create_user_interface():
     root = tk.Tk()
     root.title("Demo: Scale Widget for Color Mixing")
     root.geometry("400x550")
+
+
+    # Create Canvas Widget-----------------------------------------------------
+    # The label for the directions
+ 
+    # Scale Widget Setup
+
+    # Set a default starting value
 
 
 # Main Application Window -----------------------------------------------------
