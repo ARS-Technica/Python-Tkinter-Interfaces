@@ -14,6 +14,17 @@ import tkinter as tk
 
 
 # Slider Functions ------------------------------------------------------------
+def update_color(idle_value=None):
+    """
+    Collects values from all three sliders and updates the UI.
+    """
+    # 1. Get current values from the global slider objects
+
+    # 2. Convert RGB to Hex String (%02x ensures 2 digits, e.g., '0a' instead of 'a')
+
+    # 3. Update the Canvas Shape
+
+    # 4. Update the Label for feedback
 
 
 # User Interface Functions ----------------------------------------------------
