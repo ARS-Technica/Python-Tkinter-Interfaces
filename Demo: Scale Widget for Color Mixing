@@ -27,8 +27,9 @@ def update_color(idle_value=None):
     Note: We ignore the 'value' passed by the slider and pull directly 
     from the slider objects to ensure we have all three coordinates.
     """
-    global red_slider, green_slider, blue_slider
+    global color_box, drawing_area, root, status_label
     global red_value_label, green_value_label, blue_value_label
+    global drawing_area, color_box, status_label
 
     # Get current values directly from the global slider objects
     r = red_slider.get()
@@ -42,9 +43,9 @@ def update_color(idle_value=None):
     drawing_area.itemconfig(color_box, fill=hex_color)
 
     # 4. Update the Label for feedback
-    status_label.config(text=f"Hex Code: {hex_code.upper()}")
+    status_label.config(text=f"Hex Code: {hex_color.upper()}")
 
-    # 5. Update the individual value labels below each slider
+    # 5. Update the dynamic value labels below each slider
     red_value_label.config(text=str(r))
     green_value_label.config(text=str(g))   
     blue_value_label.config(text=str(b))
@@ -52,13 +53,13 @@ def update_color(idle_value=None):
 
 # User Interface Functions ----------------------------------------------------
 def create_user_interface():
-    global drawing_area, color_box, status_label, root
+    global color_box, drawing_area, root, status_label
     global red_slider, green_slider, blue_slider
     global red_value_label, green_value_label, blue_value_label
 
     root = tk.Tk()
     root.title("Demo: Scale Slider with Rotation")
-    root.geometry("600x675")  # Widened to fit side-by-side sliders
+    root.geometry("600x650")  # Widened to fit side-by-side sliders
 
 
     # Create Canvas Widget-----------------------------------------------------
@@ -72,9 +73,15 @@ def create_user_interface():
         bg=hex_background, 
         highlightthickness=0
     )
-    drawing_area.pack(pady=20)
+    drawing_area.pack(pady=(10, 0))  # Extra space above the canvas
 
     color_box = drawing_area.create_rectangle(20, 20, 180, 180, fill="#7f7f7f")
+
+
+    # Status Label for Hex Code Display --------------------------------------
+    status_label = tk.Label(root, text="Hex Code: #7F7F7F", font=("Helvetica", 11, "bold"))
+    status_label.pack(pady=(10, 10))  # Space above and below the label
+
 
     # Create Scale Slider Widgets ---------------------------------------------
     # The label for the directions
@@ -93,7 +100,7 @@ def create_user_interface():
     # Container Frame for Sliders ---------------------------------------------
     # This frame groups the sliders together and centers them
     slider_frame = tk.Frame(root)
-    slider_frame.pack(pady=10)
+    slider_frame.pack(pady=(0, 10))
 
     # Red Scale Widgets Setup -------------------------------------------------
     # This frame acts as a vertical column
@@ -177,7 +184,7 @@ def create_user_interface():
 
 
     # pack() will center these widgets relative to each other by default
-    directions.pack(pady=(5,0))  # Space above the label, but 0 below
+    directions.pack(pady=(0,0))  # Space above the label, but 0 below
 
     # Set a default starting value of each slider
     red_slider.set(127)
