@@ -23,14 +23,21 @@ CANVAS_SIZE = 300
 def update_color(idle_value=None):
     """
     Collects values from all three sliders and updates the UI.
+
+    Note: We ignore the 'value' passed by the slider and pull directly 
+    from the slider objects to ensure we have all three coordinates.
     """
     global red_slider, green_slider, blue_slider
     global red_value_label, green_value_label, blue_value_label
 
-    # 1. Get current values from the global slider objects
+    # Get current values directly from the global slider objects
+    r = red_slider.get()
+    g = green_slider.get()
+    b = blue_slider.get()
 
     # 2. Convert RGB to Hex String (%02x ensures 2 digits, e.g., '0a' instead of 'a')
-
+    hex_color = f'#{r:02x}{g:02x}{b:02x}'
+    
     # 3. Update the Canvas Shape
 
     # 4. Update the Label for feedback
