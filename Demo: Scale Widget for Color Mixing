@@ -27,7 +27,7 @@ def create_user_interface():
 
     root = tk.Tk()
     root.title("Demo: Scale Slider with Rotation")
-    root.geometry("600x650")  # Widened to fit side-by-side sliders
+    root.geometry("600x675")  # Widened to fit side-by-side sliders
 
 
     # Create Canvas Widget-----------------------------------------------------
