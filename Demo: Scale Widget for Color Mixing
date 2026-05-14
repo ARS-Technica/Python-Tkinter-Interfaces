@@ -37,10 +37,17 @@ def update_color(idle_value=None):
 
     # 2. Convert RGB to Hex String (%02x ensures 2 digits, e.g., '0a' instead of 'a')
     hex_color = f'#{r:02x}{g:02x}{b:02x}'
-    
+
     # 3. Update the Canvas Shape
+    drawing_area.itemconfig(color_box, fill=hex_color)
 
     # 4. Update the Label for feedback
+    status_label.config(text=f"RGB: ({r}, {g}, {b}) | Hex: {hex_color.upper()}")
+
+    # 5. Update the individual value labels below each slider
+    red_value_label.config(text=str(r))
+    green_value_label.config(text=str(g))   
+    blue_value_label.config(text=str(b))
 
 
 # User Interface Functions ----------------------------------------------------
