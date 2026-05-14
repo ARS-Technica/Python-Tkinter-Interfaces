@@ -65,7 +65,7 @@ def create_user_interface():
     # Container Frame for Canvas ----------------------------------------------
     # This frame groups the sliders together and centers them
     canvas_frame = tk.Frame(root)
-    canvas_frame.pack(pady=(0, 0))
+    canvas_frame.pack(pady=(20, 0))
 
     # Create Canvas Widget-----------------------------------------------------
     # Match the canvas background to constant for a seamless look
@@ -78,15 +78,19 @@ def create_user_interface():
         bg=hex_background, 
         highlightthickness=0
     )
-    drawing_area.pack(pady=(10, 0))  # Extra space above the canvas
+    drawing_area.pack(pady=(0, 0))  # Space above and below the label
 
     color_box = drawing_area.create_rectangle(20, 20, 180, 180, fill="#7f7f7f", width=2)
 
 
+    # Container Frame for Canvas ----------------------------------------------
+    status_frame = tk.Frame(root)
+    status_frame.pack(pady=10)
+
     # Status Label for Hex Code Display ---------------------------------------
     # Status label isolated so it doesn't affect the slider spacing
-    status_label = tk.Label(root, text="Hex Code: #7F7F7F", font=("Helvetica", 11, "bold"))
-    status_label.pack(pady=(10, 10))  # Space above and below the label
+    status_label = tk.Label(status_frame, text="Hex Code: #7F7F7F", font=("Helvetica", 11, "bold"))
+    status_label.pack(pady=(0, 0))  # Space above and below the label
 
 
     # Create Scale Slider Widgets ---------------------------------------------
