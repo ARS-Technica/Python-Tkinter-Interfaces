@@ -46,9 +46,10 @@ def update_color(idle_value=None):
     status_label.config(text=f"Hex Code: {hex_color.upper()}")
 
     # 5. Update the dynamic value labels below each slider
-    red_value_label.config(text=str(r))
-    green_value_label.config(text=str(g))   
-    blue_value_label.config(text=str(b))
+    #:03 means keeps numeric values 3 digits in length, pads with '0' if shorter
+    red_value_label.config(text=f"{r:03}")
+    green_value_label.config(text=f"{g:03}")
+    blue_value_label.config(text=f"{b:03}")
 
 
 # User Interface Functions ----------------------------------------------------
