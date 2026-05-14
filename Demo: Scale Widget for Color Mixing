@@ -46,7 +46,7 @@ def update_color(idle_value=None):
     status_label.config(text=f"Hex Code: {hex_color.upper()}")
 
     # 5. Update the dynamic value labels below each slider
-    #:03 means keeps numeric values 3 digits in length, pads with '0' if shorter
+    #:03 means keeps numeric values 3 digits long, pads with '0' if shorter
     red_value_label.config(text=f"{r:03}")
     green_value_label.config(text=f"{g:03}")
     blue_value_label.config(text=f"{b:03}")
@@ -66,7 +66,7 @@ def create_user_interface():
     # Container Frame for Canvas ----------------------------------------------
     # This frame groups the sliders together and centers them
     canvas_frame = tk.Frame(root)
-    canvas_frame.pack(pady=(20, 0))
+    canvas_frame.pack(pady=(15, 15))  # Space above and below the label
 
     # Create Canvas Widget-----------------------------------------------------
     # Match the canvas background to constant for a seamless look
@@ -86,18 +86,18 @@ def create_user_interface():
 
     # Container Frame for Canvas ----------------------------------------------
     status_frame = tk.Frame(root, height=50)  # Fixed height so it doesn't movesliders down
-    status_frame.pack(pady=10)
+    status_frame.pack(pady=(5,15))  # Space above and below the label
 
     # Status Label for Hex Code Display ---------------------------------------
     # Status label isolated so it doesn't affect the slider spacing
-    status_label = tk.Label(status_frame, text="Hex Code: #7F7F7F", font=("Helvetica", 11, "bold"))
+    status_label = tk.Label(status_frame, text="Hex Code: #7F7F7F", font=("Consolas", 14, "bold"))
     status_label.pack(pady=(0, 0))  # Space above and below the label
 
 
     # Container Frame for Sliders ---------------------------------------------
     # This frame groups the sliders together and centers them
     slider_frame = tk.Frame(root)
-    slider_frame.pack(pady=(0, 10))
+    slider_frame.pack(pady=(0, 0))  # Space above and below the label
 
     # Create Scale Slider Widgets ---------------------------------------------
 
@@ -124,8 +124,8 @@ def create_user_interface():
     red_slider.pack()
 
     # Initialize the label and assign it to the global variable
-    red_value_label = tk.Label(red_group, text="127", font=("Arial", 10))
-    red_value_label.pack(pady=5)
+    red_value_label = tk.Label(red_group, text="127", font=("Arial", 10, "bold"))
+    red_value_label.pack(pady=(5,0))  # Space above the label, but 0 below to keep it close to the slider
 
 
     # Green Scale Widgets Setup -----------------------------------------------
@@ -151,8 +151,8 @@ def create_user_interface():
     green_slider.pack()
 
     # Initialize the label and assign it to the global variable
-    green_value_label = tk.Label(green_group, text="127", font=("Arial", 10))
-    green_value_label.pack(pady=5)
+    green_value_label = tk.Label(green_group, text="127", font=("Arial", 10, "bold"))
+    green_value_label.pack(pady=(5,0))  # Space above the label, but 0 below to keep it close to the slider
 
 
     # Blue Scale Widgets Setup ------------------------------------------------
@@ -178,18 +178,18 @@ def create_user_interface():
     blue_slider.pack()
 
     # Initialize the label and assign it to the global variable
-    blue_value_label = tk.Label(blue_group, text="127", font=("Arial", 10))
-    blue_value_label.pack(pady=5)
+    blue_value_label = tk.Label(blue_group, text="127", font=("Arial", 10, "bold"))
+    blue_value_label.pack(pady=(5,0))  # Space above the label, but 0 below to keep it close to the slider
 
 
     # Container Frame for Footer ----------------------------------------------
     #Directions label is isolated so it doesn't affect the slider spacing
     footer_frame = tk.Frame(root)
-    footer_frame.pack(pady=(0,10))  # Space below the label, but 0 above to keep it close to the sliders
+    footer_frame.pack(pady=(5, 5))  # Space below the label, but 0 above to keep it close to the sliders
 
     # The label for the directions
     directions = tk.Label(root, text="Adjust the sliders to change the color", 
-                          font=("Helvetica", 11, "bold"))
+                          font=("Arial", 14, "bold"))
     '''
     In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
     to align to the top-left corner of the widget's area. So, there needs to be 
