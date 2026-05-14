@@ -80,10 +80,11 @@ def create_user_interface():
     )
     drawing_area.pack(pady=(10, 0))  # Extra space above the canvas
 
-    color_box = drawing_area.create_rectangle(20, 20, 180, 180, fill="#7f7f7f")
+    color_box = drawing_area.create_rectangle(20, 20, 180, 180, fill="#7f7f7f", width=2)
 
 
-    # Status Label for Hex Code Display --------------------------------------
+    # Status Label for Hex Code Display ---------------------------------------
+    # Status label isolated so it doesn't affect the slider spacing
     status_label = tk.Label(root, text="Hex Code: #7F7F7F", font=("Helvetica", 11, "bold"))
     status_label.pack(pady=(10, 10))  # Space above and below the label
 
@@ -187,6 +188,11 @@ def create_user_interface():
     blue_value_label = tk.Label(blue_group, text="127", font=("Arial", 10))
     blue_value_label.pack(pady=5)
 
+
+    # Container Frame for Footer ----------------------------------------------
+    #Directions label is isolated so it doesn't affect the slider spacing
+    footer_frame = tk.Frame(root)
+    footer_frame.pack(pady=20)    
 
     # pack() will center these widgets relative to each other by default
     directions.pack(pady=(0,0))  # Space above the label, but 0 below
