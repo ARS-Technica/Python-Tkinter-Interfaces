@@ -55,7 +55,7 @@ def create_user_interface():
     a separate label or widget to center the directions.
     '''
 
-    # Creates a object on the canvas to act as a placeholder for rendered frames
+    # Creates an object on the canvas to act as a placeholder for rendered frames
     #image_container = drawing_area.create_image(150, 150, anchor="center")
 
 
@@ -148,7 +148,7 @@ def create_user_interface():
     # pack() will center these widgets relative to each other by default
     directions.pack(pady=(5,0))  # Space above the label, but 0 below
 
-    # Set a default starting value of each value
+    # Set a default starting value of each slider
     red_slider.set(127)
     green_slider.set(127)
     blue_slider.set(127)
