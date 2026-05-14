@@ -29,7 +29,6 @@ def update_color(idle_value=None):
     """
     global color_box, drawing_area, root, status_label
     global red_value_label, green_value_label, blue_value_label
-    global drawing_area, color_box, status_label
 
     # Get current values directly from the global slider objects
     r = red_slider.get()
@@ -73,7 +72,7 @@ def create_user_interface():
     hex_background = "#ecf0f1"
 
     drawing_area = tk.Canvas(
-        root, 
+        canvas_frame, 
         width=CANVAS_SIZE, 
         height=CANVAS_SIZE, 
         bg=hex_background, 
@@ -116,10 +115,15 @@ def create_user_interface():
 
     # Slider is packed second (Below)
     red_slider = tk.Scale(
-        red_group, from_=255, to=0, orient="vertical",
+        red_group, 
+        from_=255, 
+        to=0, 
+        orient="vertical",
         length=200, 
+        width=15,
         command=update_color, 
-        showvalue=False  # Hide the number values on the side of the slider
+        showvalue=False,  # Hide the number values on the side of the slider
+        cursor="hand2"  # Changes the mouse pointer to a hand
     )
     red_slider.pack()
 
@@ -143,10 +147,15 @@ def create_user_interface():
 
     # Slider is packed second (Below)
     green_slider = tk.Scale(
-        green_group, from_=255, to=0, orient="vertical", 
+        green_group,
+        from_=255, 
+        to=0, 
+        orient="vertical",
         length=200, 
-        command=update_color, # Removes the numbers on the side
-        showvalue=False  # Hide the number values on the side of the slider
+        width=15,
+        command=update_color, 
+        showvalue=False,  # Hide the number values on the side of the slider
+        cursor="hand2"  # Changes the mouse pointer to a hand
     )
     green_slider.pack()
 
@@ -170,10 +179,15 @@ def create_user_interface():
     
     # Slider is packed second (Below)
     blue_slider = tk.Scale(
-        blue_group, from_=255, to=0, orient="vertical", 
+        blue_group,
+        from_=255, 
+        to=0, 
+        orient="vertical",
         length=200, 
-        command=update_color, # Removes the numbers on the side
-        showvalue=False  # Hide the number values on the side of the slider
+        width=15,
+        command=update_color, 
+        showvalue=False,  # Hide the number values on the side of the slider
+        cursor="hand2"  # Changes the mouse pointer to a hand
     )
     blue_slider.pack()
 
