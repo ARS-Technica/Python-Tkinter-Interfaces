@@ -84,7 +84,7 @@ def create_user_interface():
 
 
     # Container Frame for Canvas ----------------------------------------------
-    status_frame = tk.Frame(root)
+    status_frame = tk.Frame(root, height=50)  # Fixed height so it doesn't movesliders down
     status_frame.pack(pady=10)
 
     # Status Label for Hex Code Display ---------------------------------------
@@ -93,24 +93,12 @@ def create_user_interface():
     status_label.pack(pady=(0, 0))  # Space above and below the label
 
 
-    # Create Scale Slider Widgets ---------------------------------------------
-    # The label for the directions
-    directions = tk.Label(root, text="Adjust the sliders to change the color", 
-                          font=("Helvetica", 11, "bold"))
-    '''
-    In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
-    to align to the top-left corner of the widget's area. So, there needs to be 
-    a separate label or widget to center the directions.
-    '''
-
-    # Creates an object on the canvas to act as a placeholder for rendered frames
-    #image_container = drawing_area.create_image(150, 150, anchor="center")
-
-
     # Container Frame for Sliders ---------------------------------------------
     # This frame groups the sliders together and centers them
     slider_frame = tk.Frame(root)
     slider_frame.pack(pady=(0, 10))
+
+    # Create Scale Slider Widgets ---------------------------------------------
 
     # Red Scale Widgets Setup -------------------------------------------------
     # This frame acts as a vertical column
@@ -196,8 +184,16 @@ def create_user_interface():
     # Container Frame for Footer ----------------------------------------------
     #Directions label is isolated so it doesn't affect the slider spacing
     footer_frame = tk.Frame(root)
-    footer_frame.pack(pady=20)    
+    footer_frame.pack(pady=(0,10))  # Space below the label, but 0 above to keep it close to the sliders
 
+    # The label for the directions
+    directions = tk.Label(root, text="Adjust the sliders to change the color", 
+                          font=("Helvetica", 11, "bold"))
+    '''
+    In Tkinter, the built-in label option for a horizontal Scale is hardcoded 
+    to align to the top-left corner of the widget's area. So, there needs to be 
+    a separate label or widget to center the directions.
+    '''
     # pack() will center these widgets relative to each other by default
     directions.pack(pady=(0,0))  # Space above the label, but 0 below
 
