@@ -16,7 +16,7 @@ BG_COLOR = (236, 240, 241)
 FILL_COLOR = (52, 152, 219)
 
 BORDER_COLOR = (44, 62, 80)
-CANVAS_SIZE = 300
+CANVAS_SIZE = 200
 
 
 # Slider Functions ------------------------------------------------------------
@@ -59,8 +59,13 @@ def create_user_interface():
 
     root = tk.Tk()
     root.title("Demo: Scale Slider with Rotation")
-    root.geometry("600x650")  # Widened to fit side-by-side sliders
+    root.geometry("500x600")  # Widened to fit side-by-side sliders
 
+
+    # Container Frame for Canvas ----------------------------------------------
+    # This frame groups the sliders together and centers them
+    canvas_frame = tk.Frame(root)
+    canvas_frame.pack(pady=(0, 0))
 
     # Create Canvas Widget-----------------------------------------------------
     # Match the canvas background to constant for a seamless look
