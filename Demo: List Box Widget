@@ -19,13 +19,20 @@ def build_listbox(parent):
     Creates a Listbox widget, populates it with color names, and returns it.
     '''
     # 1. Create the Listbox widget
-
+    # "width" represents characters, 'height' represents rows visible at once
+    my_listbox = tk.Listbox(root, width=25, height=6)
+    my_listbox.pack(pady=20)
 
     # 2. Populate the Listbox using .insert()
     # Syntax: widget.insert(index, string)
-
+    my_listbox.insert(0, "Red")
+    my_listbox.insert(1, "Orange")
+    my_listbox.insert(2, "Yellow")
     
     # 3. Insert items into the Listbox
+    # "tk.END" is a shortcut for "add to the bottom"
+    my_listbox.insert(tk.END, "Green") 
+    my_listbox.insert(tk.END, "Blue") 
 
     return my_listbox
 
