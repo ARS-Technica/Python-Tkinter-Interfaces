@@ -1,0 +1,15 @@
+"""
+Demo: List Box Widget
+Created: May 15, 2026
+
+Description: Demonstrates the Tkinter List Box widget used to interact with 
+data in real-time numerical ranges. A Listbox is the standard tool for managing 
+collections oftext data—like a playlist, a file explorer, or a task manager.
+
+Future List Box demonstrations will expand this code to include multiple 
+Listboxes that interact with each other and Scrollbars, but this project 
+focuses on a single Listbox and its basic functionality.
+"""
+
+import tkinter as tk
+
