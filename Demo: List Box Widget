@@ -22,8 +22,7 @@ def build_listbox(parent):
 
     # 1. Create the Listbox widget
     # "width" represents characters, 'height' represents rows visible at once
-    my_listbox = tk.Listbox(root, width=25, height=6)
-    my_listbox.pack(pady=20)
+    my_listbox = tk.Listbox(parent, width=25, height=6)
 
     # 2. Populate the Listbox using .insert()
     # Syntax: widget.insert(index, string)
