@@ -13,6 +13,22 @@ focuses on a single Listbox and its basic functionality.
 import tkinter as tk
 
 
+# Widget Functions ------------------------------------------------------------
+def display_selection():
+    '''
+    Retrieves the currently highlighted item in the Listbox and displays it.
+    '''
+    global my_listbox
+    
+    # Return a tuple of selected index numbers
+
+    
+    # Check that the user made a selection before displaying the result
+    if selected_indices:
+
+    else:
+
+
 # Widget Creation -------------------------------------------------------------
 def build_listbox(parent):
     '''
