@@ -10,49 +10,40 @@ Listboxes that interact with each other and Scrollbars, but this project
 focuses on a single Listbox and its basic functionality.
 """
 
-
 import tkinter as tk
 
 
-# Global Variables ------------------------------------------------------------
-
-
-
-# Slider Functions ------------------------------------------------------------
+# User Interface --------------------------------------------------------------
 def create_simple_listbox():
-    """
+    '''
+    Creates a simple Listbox widget and populates it with a list of colors.
+    '''
 
-    """
-    global root
+    root = tk.Tk()
+    root.title("Simple Listbox Demo")
+    root.geometry("300x250")
+
 
     # 1. Create the Listbox widget
-
-
+    # "width" represents characters, 'height' represents rows visible at once
+    my_listbox = tk.Listbox(root, width=25, height=6)
+    my_listbox.pack(pady=20)
 
     # 2. Populate the Listbox using .insert()
     # Syntax: widget.insert(index, string)
-
+    my_listbox.insert(0, "Red")
+    my_listbox.insert(1, "Orange")
+    my_listbox.insert(2, "Yellow")
     
     # 3. Insert items into the Listbox
+    # "tk.END" is a shortcut for "add to the bottom"
+    my_listbox.insert(tk.END, "Green") 
+    my_listbox.insert(tk.END, "Blue") 
 
-
-# User Interface --------------------------------------------------------------
-def create_user_interface():
-    global 
-
-
-    root = tk.Tk()
-    root.title("Demo: List Box Widget")
-    root.geometry("300x250")  # 
-
-    # Container Frame for Canvas ----------------------------------------------
-
-
-
+    root.mainloop()
 
 
 # Main Application Window -----------------------------------------------------
 if __name__ == "__main__":
-    create_user_interface()  # Initialize UI
-    root.mainloop()
+    create_simple_listbox()
 
