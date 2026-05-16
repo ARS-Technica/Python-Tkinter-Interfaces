@@ -18,6 +18,8 @@ def build_listbox(parent):
     '''
     Creates a Listbox widget, populates it with color names, and returns it.
     '''
+    global root
+
     # 1. Create the Listbox widget
     # "width" represents characters, 'height' represents rows visible at once
     my_listbox = tk.Listbox(root, width=25, height=6)
@@ -28,7 +30,7 @@ def build_listbox(parent):
     my_listbox.insert(0, "Red")
     my_listbox.insert(1, "Orange")
     my_listbox.insert(2, "Yellow")
-    
+
     # 3. Insert items into the Listbox
     # "tk.END" is a shortcut for "add to the bottom"
     my_listbox.insert(tk.END, "Green") 
@@ -38,10 +40,11 @@ def build_listbox(parent):
 
 
 # User Interface --------------------------------------------------------------
-def create_simple_listbox():
+def create_user_interface():
     '''
     Creates the main application window and calls the function to build widgets.
     '''
+    global root
 
     root = tk.Tk()
     root.title("Simple Listbox Demo")
@@ -56,5 +59,5 @@ def create_simple_listbox():
 
 # Main Application Window -----------------------------------------------------
 if __name__ == "__main__":
-    create_simple_listbox()
+    create_user_interface()
 
