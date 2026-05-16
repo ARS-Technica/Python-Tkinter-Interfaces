@@ -19,45 +19,36 @@ import tkinter as tk
 
 
 # Slider Functions ------------------------------------------------------------
-def update_list_box(idle_value=None):
+def create_simple_listbox():
     """
 
     """
-    global 
+    global root
+
+    # 1. Create the Listbox widget
 
 
 
-# User Interface Functions ----------------------------------------------------
+    # 2. Populate the Listbox using .insert()
+    # Syntax: widget.insert(index, string)
+
+    
+    # 3. Insert items into the Listbox
+
+
+# User Interface --------------------------------------------------------------
 def create_user_interface():
     global 
 
 
     root = tk.Tk()
     root.title("Demo: List Box Widget")
-    root.geometry("500x600")  # 
-
-
-    # Container Frame for Canvas ----------------------------------------------
-    # This frame groups the sliders together and centers them
-
-
-    # Create Canvas Widget-----------------------------------------------------
-    # Match the canvas background to constant for a seamless look
-
+    root.geometry("300x250")  # 
 
     # Container Frame for Canvas ----------------------------------------------
 
 
-    # Status Label for Hex Code Display ---------------------------------------
-    # Status label isolated so it doesn't affect the slider spacing
 
-
-
-    # Container Frame for Sliders ---------------------------------------------
-    # This frame groups the sliders together and centers them
-
-
-    # Create Scale Slider Widgets ---------------------------------------------
 
 
 # Main Application Window -----------------------------------------------------
