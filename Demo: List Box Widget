@@ -13,6 +13,23 @@ focuses on a single Listbox and its basic functionality.
 import tkinter as tk
 
 
+# Widget Creation -------------------------------------------------------------
+def build_listbox(parent):
+    '''
+    Creates a Listbox widget, populates it with color names, and returns it.
+    '''
+    # 1. Create the Listbox widget
+
+
+    # 2. Populate the Listbox using .insert()
+    # Syntax: widget.insert(index, string)
+
+    
+    # 3. Insert items into the Listbox
+
+    return my_listbox
+
+
 # User Interface --------------------------------------------------------------
 def create_simple_listbox():
     '''
@@ -24,7 +41,7 @@ def create_simple_listbox():
     root.geometry("300x250")
 
     # Build the Listbox and pack it into the main window
-    my_listbox = build_color_listbox(root)
+    my_listbox = build_listbox(root)
     my_listbox.pack(pady=20)
 
     root.mainloop()
