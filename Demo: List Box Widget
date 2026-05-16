@@ -21,12 +21,15 @@ def display_selection():
     global my_listbox
     
     # Return a tuple of selected index numbers
-
+    selected_indices = my_listbox.curselection()
     
     # Check that the user made a selection before displaying the result
     if selected_indices:
-
+        index = selected_indices[0] # Grab the first index from the tuple
+        chosen_color = my_listbox.get(index) # Convert index to the text string
+        print(f"Selected Color: {chosen_color}")
     else:
+        print("Please select a color first!")
 
 
 # Widget Creation -------------------------------------------------------------
