@@ -16,29 +16,16 @@ import tkinter as tk
 # User Interface --------------------------------------------------------------
 def create_simple_listbox():
     '''
-    Creates a simple Listbox widget and populates it with a list of colors.
+    Creates the main application window and calls the function to build widgets.
     '''
 
     root = tk.Tk()
     root.title("Simple Listbox Demo")
     root.geometry("300x250")
 
-
-    # 1. Create the Listbox widget
-    # "width" represents characters, 'height' represents rows visible at once
-    my_listbox = tk.Listbox(root, width=25, height=6)
+    # Build the Listbox and pack it into the main window
+    my_listbox = build_color_listbox(root)
     my_listbox.pack(pady=20)
-
-    # 2. Populate the Listbox using .insert()
-    # Syntax: widget.insert(index, string)
-    my_listbox.insert(0, "Red")
-    my_listbox.insert(1, "Orange")
-    my_listbox.insert(2, "Yellow")
-    
-    # 3. Insert items into the Listbox
-    # "tk.END" is a shortcut for "add to the bottom"
-    my_listbox.insert(tk.END, "Green") 
-    my_listbox.insert(tk.END, "Blue") 
 
     root.mainloop()
 
