@@ -20,6 +20,19 @@ import tkinter as tk
 
 
 # Widget Functions ------------------------------------------------------------
+def clear_selection(event=None):
+    '''
+    Clears the currently highlighted item from display label
+    '''
+    global status_display_top, status_display_bottom
+
+    # 1. Ensure the list box exists before manipulating it
+        # Clear the visual highlight from index 0 all the way to the END
+        # Clear keyboard focus underline from "active" to non-existent index
+
+    # 2. Reset the display text labels to their default state
+
+
 def display_selection(event=None):
     '''
     Retrieves the currently highlighted item in the Listbox and displays it.
@@ -66,6 +79,7 @@ def build_listbox(parent):
     my_listbox.insert(tk.END, "Green") 
     my_listbox.insert(tk.END, "Blue") 
 
+    # 4. Bind the Listbox selection event to the display_selection function
     return my_listbox
 
 
