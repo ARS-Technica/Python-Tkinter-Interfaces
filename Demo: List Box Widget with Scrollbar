@@ -11,3 +11,159 @@ Future List Box demonstrations will expand this code to include multiple
 Listboxes that interact with each other, but this project focuses on a single 
 Listbox and its basic functionality.
 """
+
+import tkinter as tk
+
+
+# Global Variables ------------------------------------------------------------
+my_listbox = None
+new_item_entry = None
+status_display_bottom = None
+status_display_top = None
+
+
+# Widget Functions ------------------------------------------------------------
+def add_custom_item():
+    '''
+    Retrieves text from the entry widget, validates it, and appends it to the listbox.
+    '''
+    global my_listbox, new_item_entry, status_display_bottom, status_display_top
+
+    # Ensures widgets are not None to resolve code editor errors. 
+    # In practice, these will always be defined before this function is called.
+    if new_item_entry is None or my_listbox is None or status_display_top is None or status_display_bottom is None:
+        return
+
+    # 1. Grab the text from the input entry box and strip whitespace
+    user_text = new_item_entry.get().strip()
+
+    # 2. Defensive Programming: Ensure the input isn't blank
+    if user_text != "":
+        my_listbox.insert(tk.END, user_text)  # Append to bottom of list
+        new_item_entry.delete(0, tk.END)      # Clear out the input box automatically
+        
+        # Give feedback to the user
+        status_display_top.config(text="Added to list:")
+        status_display_bottom.config(text=f"{user_text}")
+    else:
+        status_display_top.config(text="Cannot add an empty item!")
+        status_display_bottom.config(text="")
+
+
+def clear_selection(event=None):
+    '''
+    Clears the currently highlighted item from display label
+    '''
+    global status_display_bottom, status_display_top
+
+    # 1. Ensure the list box exists before manipulating it
+    if my_listbox is not None:
+        # Clear the visual highlight from index 0 all the way to the END
+        my_listbox.selection_clear(0, tk.END)
+
+        # Clear keyboard focus underline from "active" to non-existent index
+        # my_listbox.activate(-1)
+
+    # 2. Reset the display text labels to their default state
+    status_display_top.config(text=f"Select an Item!")
+    status_display_bottom.config(text=f"")
+
+
+def display_selection(event=None):
+    '''
+    Retrieves the currently highlighted item in the Listbox and displays it.
+    '''
+    global my_listbox, status_display_bottom, status_display_top
+
+    # If either widget is still None, abort early to prevent a crash
+    if my_listbox is None or status_display_top is None or status_display_bottom is None:
+        return
+
+    # Return a tuple of selected index numbers
+    selected_indices = my_listbox.curselection()
+
+    # Check that the user made a selection before displaying the result
+    if selected_indices:
+        index = selected_indices[0] # Grab the first index from the tuple
+        chosen_item = my_listbox.get(index) # Convert index to the text string
+        # Update the Label for feedback
+        status_display_top.config(text=f"Selected Item:")
+        status_display_bottom.config(text=f"{chosen_item}")
+    else:
+        status_display_top.config(text=f"Please select an item first!")
+
+
+# Widget Creation -------------------------------------------------------------
+def build_listbox(parent):
+    '''
+    Creates a Listbox widget, populates it with selections, and returns it.
+    '''
+    global my_listbox
+
+    # 1. Create the Listbox widget
+    # "width" represents characters, 'height' represents rows visible at once
+    my_listbox = tk.Listbox(parent, width=25, height=10, activestyle="none")
+
+    # 2. Populate the Listbox using .insert()
+    # Syntax: widget.insert(index, string)
+    my_listbox.insert(0, "Red")
+    my_listbox.insert(1, "Orange")
+    my_listbox.insert(2, "Yellow")
+
+    # 3. Insert items into the Listbox
+    # "tk.END" is a shortcut for "add to the bottom"
+    my_listbox.insert(tk.END, "Green") 
+    my_listbox.insert(tk.END, "Blue") 
+
+    # 4. Bind the Listbox selection event to the display_selection function
+    return my_listbox
+
+
+# User Interface --------------------------------------------------------------
+def create_user_interface():
+    '''
+    Creates the main application window and calls the function to build widgets.
+    '''
+    global my_listbox, root, new_item_entry, status_display_bottom, status_display_top
+
+    root = tk.Tk()
+    root.title("Demo: List Box Widget")
+    root.geometry("300x350")
+
+    # Build the Listbox and pack it into the main window
+    my_listbox = build_listbox(root)
+    my_listbox.pack(pady=20)
+
+    # Bind the Listbox selection event to the display_selection function
+    # This triggers the function automatically the instant a row is highlighted
+    my_listbox.bind("<<ListboxSelect>>", display_selection)
+
+    # Create Status Labels to Display Text
+    status_display_top = tk.Label(root, text="Select an Item!", font=("Consolas", 11, "bold"))
+    status_display_top.pack(pady=(5, 0))
+    status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"))
+    status_display_bottom.pack(pady=(0, 5))
+
+    # Create an Entry widget for adding new items to the Listbox
+    new_item_entry = tk.Entry(root, width=25, font=("Arial", 10))
+    new_item_entry.pack(pady=5)
+
+    # Container Frame for Buttons ---------------------------------------------
+    button_frame = tk.Frame(root)
+    button_frame.pack(pady=10)    
+
+    # Build and place the Add Selection Button
+    add_button = tk.Button(button_frame, text="Add Selection", command=add_custom_item)
+    add_button.pack(side="left", padx=5)
+
+    # Build and place the Clear Selection Button
+    clear_button = tk.Button(button_frame, text="Clear Selection", command=clear_selection)
+    clear_button.pack(side="left", padx=5)
+
+    root.mainloop()
+
+
+# Main Application Window -----------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface()
+
