@@ -101,13 +101,10 @@ def create_user_interface():
     my_listbox = build_listbox(root)
     my_listbox.pack(pady=20)
 
-    # Bind the Listbox selection event to the display_selection function
-    # This triggers the function automatically the instant a row is highlighted
-    my_listbox.bind("<<ListboxSelect>>", display_selection)
-
     # Create Status Labels to Display Text
     status_display_top = tk.Label(root, text="Select an Item!", font=("Consolas", 11, "bold"))
     status_display_top.pack(pady=(5, 0))
+
     status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"))
     status_display_bottom.pack(pady=(0, 5))
 
@@ -115,16 +112,31 @@ def create_user_interface():
     new_item_entry = tk.Entry(root, width=25, font=("Arial", 10))
     new_item_entry.pack(pady=5)
 
+    # Bind the Listbox selection event using a Lambda shortcut
+    # This triggers the function automatically the instant a row is highlighted
+    my_listbox.bind(
+        "<<ListboxSelect>>", 
+        lambda event: display_selection(my_listbox, status_display_top, status_display_bottom)
+    )
+
     # Container Frame for Buttons ---------------------------------------------
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)    
 
     # Build and place the Add Selection Button
-    add_button = tk.Button(button_frame, text="Add Selection", command=add_custom_item)
+    add_button = tk.Button(
+        button_frame, 
+        text="Add Selection", 
+        command=lambda: add_custom_item(my_listbox, new_item_entry, status_display_bottom, status_display_top)
+    )
     add_button.pack(side="left", padx=5)
 
     # Build and place the Clear Selection Button
-    clear_button = tk.Button(button_frame, text="Clear Selection", command=clear_selection)
+    clear_button = tk.Button(
+        button_frame, 
+        text="Clear Selection", 
+        command=lambda: clear_selection(my_listbox, status_display_bottom, status_display_top)
+    )
     clear_button.pack(side="left", padx=5)
 
     root.mainloop()
