@@ -76,18 +76,15 @@ def build_listbox(parent):
     # "width" represents characters, 'height' represents rows visible at once
     my_listbox = tk.Listbox(parent, width=25, height=10, activestyle="none")
 
-    # 2. Populate the Listbox using .insert()
-    # Syntax: widget.insert(index, string)
-    my_listbox.insert(0, "Red")
-    my_listbox.insert(1, "Orange")
-    my_listbox.insert(2, "Yellow")
+    # 2. Populate the Listbox using .insert(), a clean array list using a loop
+    # Syntax: widget.insert(tk.END, string)
+    starting_colors = ["Red", "Orange", "Yellow", "Green", "Blue"]
 
-    # 3. Insert items into the Listbox
-    # "tk.END" is a shortcut for "add to the bottom"
-    my_listbox.insert(tk.END, "Green") 
-    my_listbox.insert(tk.END, "Blue") 
+    for color in starting_colors:
+        # "tk.END" is a shortcut for "add to the bottom"
+        listbox_widget.insert(tk.END, color)
 
-    # 4. Bind the Listbox selection event to the display_selection function
+    # Bind the Listbox selection event to the display_selection function
     return my_listbox
 
 
