@@ -25,9 +25,21 @@ def add_custom_item():
     Retrieves text from the entry widget, validates it, and appends it to the listbox.
     '''
     global my_listbox, new_item_entry, status_display_top, status_display_bottom
+
     # 1. Grab the text from the input entry box and strip whitespace
+    user_text = new_item_entry.get().strip()
 
     # 2. Defensive Programming: Ensure the input isn't blank
+    if user_text != "":
+        my_listbox.insert(tk.END, user_text)  # Append to bottom of list
+        new_item_entry.delete(0, tk.END)      # Clear out the input box automatically
+        
+        # Give user feedback
+        status_display_top.config(text="Added to list:")
+        status_display_bottom.config(text=f"{user_text}")
+    else:
+        status_display_top.config(text="Cannot add an empty item!")
+        status_display_bottom.config(text="")
 
 
 def clear_selection(event=None):
