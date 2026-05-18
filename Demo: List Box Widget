@@ -13,12 +13,22 @@ focuses on a single Listbox and its basic functionality.
 import tkinter as tk
 
 
+# Global Variables ------------------------------------------------------------
+# my_listbox = None
+# status_display_top = None
+# status_display_bottom = None
+
+
 # Widget Functions ------------------------------------------------------------
-def display_selection():
+def display_selection(event=None):
     '''
     Retrieves the currently highlighted item in the Listbox and displays it.
     '''
-    global my_listbox
+    global my_listbox, status_display_bottom, status_display_top
+
+    # If either widget is still None, abort early to prevent a crash
+    if my_listbox is None or status_display_top is None or status_display_bottom is None:
+        return
     
     # Return a tuple of selected index numbers
     selected_indices = my_listbox.curselection()
@@ -27,9 +37,11 @@ def display_selection():
     if selected_indices:
         index = selected_indices[0] # Grab the first index from the tuple
         chosen_color = my_listbox.get(index) # Convert index to the text string
-        print(f"Selected Color: {chosen_color}")
+        # Update the Label for feedback
+        status_display_top.config(text=f"Selected color:")
+        status_display_bottom.config(text=f"{chosen_color}")
     else:
-        print("Please select a color first!")
+        status_display_top.config(text=f"Please select a color first!")
 
 
 # Widget Creation -------------------------------------------------------------
