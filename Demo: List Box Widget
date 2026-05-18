@@ -19,6 +19,7 @@ import tkinter as tk
 # status_display_bottom = None
 
 
+# Widget Functions ------------------------------------------------------------
 def clear_selection(event=None):
     '''
     Clears the currently highlighted item from display label
@@ -47,10 +48,10 @@ def display_selection(event=None):
     # If either widget is still None, abort early to prevent a crash
     if my_listbox is None or status_display_top is None or status_display_bottom is None:
         return
-    
+
     # Return a tuple of selected index numbers
     selected_indices = my_listbox.curselection()
-    
+
     # Check that the user made a selection before displaying the result
     if selected_indices:
         index = selected_indices[0] # Grab the first index from the tuple
@@ -67,11 +68,11 @@ def build_listbox(parent):
     '''
     Creates a Listbox widget, populates it with color names, and returns it.
     '''
-    global root
+    global my_listbox
 
     # 1. Create the Listbox widget
     # "width" represents characters, 'height' represents rows visible at once
-    my_listbox = tk.Listbox(parent, width=25, height=6)
+    my_listbox = tk.Listbox(parent, width=25, height=6, activestyle="none")
 
     # 2. Populate the Listbox using .insert()
     # Syntax: widget.insert(index, string)
