@@ -19,14 +19,8 @@ import tkinter as tk
 def add_custom_item(entry_widget, label_bottom, label_top, listbox_widget):
     '''
     Retrieves text from the entry widget, validates it, and appends it to the listbox.
+    All dependent widgets are passed in directly, eliminating global requirements.
     '''
-    #global my_listbox, new_item_entry, status_display_bottom, status_display_top
-
-    # Ensures widgets are not None to resolve code editor errors. 
-    # In practice, these will always be defined before this function is called.
-    if new_item_entry is None or my_listbox is None or status_display_top is None or status_display_bottom is None:
-        return
-
     # 1. Grab the text from the input entry box and strip whitespace
     user_text = new_item_entry.get().strip()
 
@@ -47,20 +41,15 @@ def clear_selection(label_bottom, label_top, listbox_widget):
     '''
     Clears the currently highlighted item from display label
     '''
-    # 1. Ensure the list box exists before manipulating it
-    if my_listbox is not None:
-        # Clear the visual highlight from index 0 all the way to the END
-        my_listbox.selection_clear(0, tk.END)
-
-        # Clear keyboard focus underline from "active" to non-existent index
-        # my_listbox.activate(-1)
+    # 1. Clear the visual highlight from index 0 all the way to the END
+    my_listbox.selection_clear(0, tk.END)
 
     # 2. Reset the display text labels to their default state
-    status_display_top.config(text=f"Select an Item!")
-    status_display_bottom.config(text=f"")
+    status_display_top.config(text="Select an Item!")
+    status_display_bottom.config(text="")
 
 
-def display_selection(event=None):
+def display_selection(listbox_widget, label_top, label_bottom):
     '''
     Retrieves the currently highlighted item in the Listbox and displays it.
     '''
