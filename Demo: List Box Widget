@@ -114,9 +114,21 @@ def create_user_interface():
     status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"))
     status_display_bottom.pack(pady=(0, 5))
 
+    # Create an Entry widget for adding new items to the Listbox
+    new_item_entry = tk.Entry(root, width=25, font=("Arial", 10))
+    new_item_entry.pack(pady=5)
+
+    # Container Frame for Buttons ---------------------------------------------
+    button_frame = tk.Frame(root)
+    button_frame.pack(pady=10)    
+
+    # Build and place the Add Selection Button
+    add_button = tk.Button(button_frame, text="Add Item", command=add_custom_item)
+    add_button.pack(side="left", padx=5)
+
     # Build and place the Clear Selection Button
     select_button = tk.Button(root, text="Clear Selection", command=clear_selection)
-    select_button.pack(pady=5)   
+    select_button.pack(pady=5)
 
     root.mainloop()
 
