@@ -25,7 +25,12 @@ def add_custom_item():
     '''
     Retrieves text from the entry widget, validates it, and appends it to the listbox.
     '''
-    global my_listbox, new_item_entry, status_display_top, status_display_bottom
+    global my_listbox, new_item_entry, status_display_bottom, status_display_top
+
+    # Ensures widgets are not None to resolve code editor errors. 
+    # In practice, these will always be defined before this function is called.
+    if new_item_entry is None or my_listbox is None or status_display_top is None or status_display_bottom is None:
+        return
 
     # 1. Grab the text from the input entry box and strip whitespace
     user_text = new_item_entry.get().strip()
@@ -47,7 +52,7 @@ def clear_selection(event=None):
     '''
     Clears the currently highlighted item from display label
     '''
-    global status_display_top, status_display_bottom
+    global status_display_bottom, status_display_top
 
     # 1. Ensure the list box exists before manipulating it
     if my_listbox is not None:
@@ -58,7 +63,7 @@ def clear_selection(event=None):
         # my_listbox.activate(-1)
 
     # 2. Reset the display text labels to their default state
-    status_display_top.config(text=f"Select a color!")
+    status_display_top.config(text=f"Select an Item!")
     status_display_bottom.config(text=f"")
 
 
@@ -78,18 +83,18 @@ def display_selection(event=None):
     # Check that the user made a selection before displaying the result
     if selected_indices:
         index = selected_indices[0] # Grab the first index from the tuple
-        chosen_color = my_listbox.get(index) # Convert index to the text string
+        chosen_item = my_listbox.get(index) # Convert index to the text string
         # Update the Label for feedback
-        status_display_top.config(text=f"Selected color:")
-        status_display_bottom.config(text=f"{chosen_color}")
+        status_display_top.config(text=f"Selected Item:")
+        status_display_bottom.config(text=f"{chosen_item}")
     else:
-        status_display_top.config(text=f"Please select a color first!")
+        status_display_top.config(text=f"Please select an item first!")
 
 
 # Widget Creation -------------------------------------------------------------
 def build_listbox(parent):
     '''
-    Creates a Listbox widget, populates it with color names, and returns it.
+    Creates a Listbox widget, populates it with selections, and returns it.
     '''
     global my_listbox
 
@@ -132,7 +137,7 @@ def create_user_interface():
     my_listbox.bind("<<ListboxSelect>>", display_selection)
 
     # Create Status Labels to Display Text
-    status_display_top = tk.Label(root, text="Select a color!", font=("Consolas", 11, "bold"))
+    status_display_top = tk.Label(root, text="Select an Item!", font=("Consolas", 11, "bold"))
     status_display_top.pack(pady=(5, 0))
     status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"))
     status_display_bottom.pack(pady=(0, 5))
