@@ -15,13 +15,6 @@ Listbox and its basic functionality.
 import tkinter as tk
 
 
-# Global Variables ------------------------------------------------------------
-my_listbox = None
-new_item_entry = None
-status_display_bottom = None
-status_display_top = None
-
-
 # Widget Functions ------------------------------------------------------------
 def add_custom_item():
     '''
