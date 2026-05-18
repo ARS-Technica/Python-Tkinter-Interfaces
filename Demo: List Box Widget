@@ -74,7 +74,7 @@ def create_user_interface():
     '''
     Creates the main application window and calls the function to build widgets.
     '''
-    global root
+    global my_listbox, root, status_display_bottom, status_display_top
 
     root = tk.Tk()
     root.title("Simple Listbox Demo")
@@ -83,6 +83,20 @@ def create_user_interface():
     # Build the Listbox and pack it into the main window
     my_listbox = build_listbox(root)
     my_listbox.pack(pady=20)
+
+    # Bind the Listbox selection event to the display_selection function
+    # This triggers the function automatically the instant a row is highlighted
+    my_listbox.bind("<<ListboxSelect>>", display_selection)
+
+    # Create Status Labels to Display Text
+    status_display_top = tk.Label(root, text="Select a color!", font=("Consolas", 11, "bold"))
+    status_display_top.pack(pady=(5, 0))
+    status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"))
+    status_display_bottom.pack(pady=(0, 5))
+
+    # Build and place the Clear Selection Button
+    select_button = tk.Button(root, text="Clear Selection", command=clear_selection)
+    select_button.pack(pady=5)   
 
     root.mainloop()
 
