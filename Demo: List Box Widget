@@ -20,6 +20,16 @@ import tkinter as tk
 
 
 # Widget Functions ------------------------------------------------------------
+def add_custom_item():
+    '''
+    Retrieves text from the entry widget, validates it, and appends it to the listbox.
+    '''
+    global my_listbox, new_item_entry, status_display_top, status_display_bottom
+    # 1. Grab the text from the input entry box and strip whitespace
+
+    # 2. Defensive Programming: Ensure the input isn't blank
+
+
 def clear_selection(event=None):
     '''
     Clears the currently highlighted item from display label
