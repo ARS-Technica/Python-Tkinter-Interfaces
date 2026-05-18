@@ -1,5 +1,5 @@
 """
-Demo: List Box Widget
+Demo: List Box Widget with Scrollbar
 Created: May 15, 2026
 
 Description: Demonstrates the Tkinter List Box widget used to manage 
@@ -125,7 +125,7 @@ def create_user_interface():
     global my_listbox, root, new_item_entry, status_display_bottom, status_display_top
 
     root = tk.Tk()
-    root.title("Simple Listbox Demo")
+    root.title("Demo: List Box Widget")
     root.geometry("300x350")
 
     # Build the Listbox and pack it into the main window
