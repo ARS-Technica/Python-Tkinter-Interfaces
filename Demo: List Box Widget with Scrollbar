@@ -98,16 +98,21 @@ def build_listbox_system(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
     # 1. Container frame to keep the listbox and scrollbar locked together side-by-side
     list_container = tk.Frame(parent)
 
-    # 2. Create the Listbox widget
+    # 2. Create the scrollbar inside the container
+    scrollbar = tk.Scrollbar(list_container, orient="vertical")
+
+    # 3. Create the Listbox widget
     # "width" represents characters, 'height' represents rows visible at once
     listbox_widget = tk.Listbox(list_container, width=25, height=10, activestyle="none")
     listbox_widget.pack(side="left", fill="both", expand=True)
 
+    # 4. Intercept the yscroll command using a lambda to link the listbox and scrollbar together    
+    listbox_widget.config(
+        yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last)
+    )
+    scrollbar.config(command=listbox_widget.yview)
 
-
-
-
-    # 3. Populate the Listbox using .insert(), a clean array list using a loop
+    # 5. Populate the Listbox using .insert(), a clean array list using a loop
     # Syntax: widget.insert(tk.END, string)    
     starting_colors = ["Red", "Orange", "Yellow", "Green", "Blue"]
 
