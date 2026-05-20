@@ -1,15 +1,13 @@
 """
-Demo: List Box Widget with Scrollbar
-Created: May 18, 2026
+Demo: List Box Widget
+Created: May 15, 2026
 
 Description: Demonstrates the Tkinter List Box widget used to manage 
 collections of text data such as playlists, file explorers, or task managers.
-This iteration includes a Scrollbar widget that is linked to the Listbox for 
-better navigation when the list exceeds the length of the Listbox.
 
 Future List Box demonstrations will expand this code to include multiple 
-Listboxes that interact with each other, but this project focuses on a single 
-Listbox and its basic functionality.
+Listboxes that interact with each other and Scrollbars, but this project 
+focuses on a single Listbox and its basic functionality.
 """
 
 import tkinter as tk
