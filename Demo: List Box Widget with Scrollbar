@@ -111,7 +111,7 @@ def build_listbox(parent):
 
 
 # User Interface --------------------------------------------------------------
-def create_user_interface():
+def create_user_interface() -> None:
     '''
     Creates the main application window and calls the function to build widgets.
     '''
@@ -119,9 +119,10 @@ def create_user_interface():
     root.title("Demo: List Box Widget")
     root.geometry("300x350")
 
-    # Build the Listbox and pack it into the main window
-    listbox_widget = build_listbox(root)
-    listbox_widget.pack(pady=15)
+    # Catch both the layout frame and the widget tracking item natively
+    listbox_frame, listbox_widget = build_listbox_system(root)
+    # Pack the outer layout frame into your main window canvas
+    listbox_frame.pack(pady=15)
 
     # Create Status Labels to Display Text
     status_display_top = tk.Label(root, text="Select an Item!", font=("Consolas", 11, "bold"))
@@ -135,18 +136,22 @@ def create_user_interface():
     new_item_entry.pack(pady=5)
 
     # Bind the Listbox selection event using a Lambda shortcut
-    # Arguments passed match parameters alphabetically: label_bottom, label_top, listbox_widget
     listbox_widget.bind(
         "<<ListboxSelect>>", 
         lambda event: display_selection(status_display_bottom, status_display_top, listbox_widget)
     )
+    
+    # Bind Enter/Return key to add items
+    new_item_entry.bind(
+        "<Return>",
+        lambda event: add_custom_item(new_item_entry, status_display_bottom, status_display_top, listbox_widget)
+    )
 
     # Container Frame for Buttons ---------------------------------------------
     button_frame = tk.Frame(root)
-    button_frame.pack(pady=10)    
+    button_frame.pack(pady=10)  
 
     # Build and place the Add Selection Button
-    # Arguments passed match parameters alphabetically: new_item_entry, status_display_bottom, status_display_top, listbox_widget
     add_button = tk.Button(
         button_frame, 
         text="Add Selection", 
@@ -155,7 +160,6 @@ def create_user_interface():
     add_button.pack(side="left", padx=5)
 
     # Build and place the Clear Selection Button
-    # Arguments passed match parameters alphabetically: status_display_bottom, status_display_top, listbox_widget
     clear_button = tk.Button(
         button_frame, 
         text="Clear Selection", 
