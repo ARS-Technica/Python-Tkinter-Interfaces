@@ -90,9 +90,10 @@ def display_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widge
 
 
 # Widget Creation -------------------------------------------------------------
-def build_listbox(parent):
+def build_listbox_system(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
     '''
-    Creates a Listbox widget, populates it with selections, and returns it.
+    Creates a frame containing a Listbox widgetand and an auto-hiding vertical Scrollbar.
+    Populates the list box with selections, and returns it inside a frame.
     '''
     # 1. Create the Listbox widget
     # "width" represents characters, 'height' represents rows visible at once																 
