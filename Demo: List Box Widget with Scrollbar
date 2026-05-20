@@ -26,7 +26,7 @@ def add_custom_item(entry_widget, label_bottom, label_top, listbox_widget):
 
     # 2. Defensive Programming: Ensure the input isn't blank
     if user_text != "":
-        my_listbox.insert(tk.END, user_text)  # Append to bottom of list
+        listbox_widget.insert(tk.END, user_text)  # Append to bottom of list
         new_item_entry.delete(0, tk.END)      # Clear out the input box automatically
         
         # Give feedback to the user
@@ -42,7 +42,7 @@ def clear_selection(label_bottom, label_top, listbox_widget):
     Clears the currently highlighted item from display label
     '''
     # 1. Clear the visual highlight from index 0 all the way to the END
-    my_listbox.selection_clear(0, tk.END)
+    listbox_widget.selection_clear(0, tk.END)
 
     # 2. Reset the display text labels to their default state
     status_display_top.config(text="Select an Item!")
@@ -54,12 +54,12 @@ def display_selection(listbox_widget, label_top, label_bottom):
     Retrieves the currently highlighted item in the Listbox and displays it.
     '''
     # Return a tuple of selected index numbers
-    selected_indices = my_listbox.curselection()
+    selected_indices = listbox_widget.curselection()
 
     # Check that the user made a selection before displaying the result
     if selected_indices:
         index = selected_indices[0] # Grab the first index from the tuple
-        chosen_item = my_listbox.get(index) # Convert index to the text string
+        chosen_item = listbox_widget.get(index) # Convert index to the text string
         # Update the Label for feedback
         status_display_top.config(text=f"Selected Item:")
         status_display_bottom.config(text=f"{chosen_item}")
@@ -74,7 +74,7 @@ def build_listbox(parent):
     '''
     # 1. Create the Listbox widget
     # "width" represents characters, 'height' represents rows visible at once
-    my_listbox = tk.Listbox(parent, width=25, height=10, activestyle="none")
+    listbox_widget = tk.Listbox(parent, width=25, height=10, activestyle="none")
 
     # 2. Populate the Listbox using .insert(), a clean array list using a loop
     # Syntax: widget.insert(tk.END, string)
@@ -85,7 +85,7 @@ def build_listbox(parent):
         listbox_widget.insert(tk.END, color)
 
     # Bind the Listbox selection event to the display_selection function
-    return my_listbox
+    return listbox_widget
 
 
 # User Interface --------------------------------------------------------------
@@ -98,8 +98,8 @@ def create_user_interface():
     root.geometry("300x350")
 
     # Build the Listbox and pack it into the main window
-    my_listbox = build_listbox(root)
-    my_listbox.pack(pady=20)
+    listbox_widget = build_listbox(root)
+    listbox_widget.pack(pady=20)
 
     # Create Status Labels to Display Text
     status_display_top = tk.Label(root, text="Select an Item!", font=("Consolas", 11, "bold"))
@@ -114,9 +114,9 @@ def create_user_interface():
 
     # Bind the Listbox selection event using a Lambda shortcut
     # This triggers the function automatically the instant a row is highlighted
-    my_listbox.bind(
+    listbox_widget.bind(
         "<<ListboxSelect>>", 
-        lambda event: display_selection(my_listbox, status_display_top, status_display_bottom)
+        lambda event: display_selection(listbox_widget, status_display_top, status_display_bottom)
     )
 
     # Container Frame for Buttons ---------------------------------------------
@@ -127,7 +127,7 @@ def create_user_interface():
     add_button = tk.Button(
         button_frame, 
         text="Add Selection", 
-        command=lambda: add_custom_item(my_listbox, new_item_entry, status_display_bottom, status_display_top)
+        command=lambda: add_custom_item(listbox_widget, new_item_entry, status_display_bottom, status_display_top)
     )
     add_button.pack(side="left", padx=5)
 
@@ -135,7 +135,7 @@ def create_user_interface():
     clear_button = tk.Button(
         button_frame, 
         text="Clear Selection", 
-        command=lambda: clear_selection(my_listbox, status_display_bottom, status_display_top)
+        command=lambda: clear_selection(listbox_widget, status_display_bottom, status_display_top)
     )
     clear_button.pack(side="left", padx=5)
 
