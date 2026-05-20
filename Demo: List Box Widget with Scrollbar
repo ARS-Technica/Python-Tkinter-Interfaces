@@ -33,7 +33,12 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) 
     scrollbar.set(first, last)
 
 
-def add_custom_item(entry_widget, label_bottom, label_top, listbox_widget):
+def add_custom_item(
+    entry_widget: tk.Entry, 
+    label_bottom: tk.Label, 
+    label_top: tk.Label, 
+    listbox_widget: tk.Listbox
+) -> None:
     '''
     Retrieves text from the entry widget, validates it, and appends it to the listbox.
     All dependent widgets are passed in directly, eliminating global requirements.
@@ -41,27 +46,26 @@ def add_custom_item(entry_widget, label_bottom, label_top, listbox_widget):
     # 1. Grab the text from the input entry box and strip whitespace
     user_text = entry_widget.get().strip()
 
-															
     if user_text != "":
-        listbox_widget.insert(tk.END, user_text)  # Append to bottom of list
-        entry_widget.delete(0, tk.END)            # Clear out the input box automatically
+        listbox_widget.insert(tk.END, user_text)  # Append to bottom of list  
+        entry_widget.delete(0, tk.END)            # Clear out the input box automatically            
         
-        # Give feedback to the user
+        # Give feedback to the user about the successful addition
         label_top.config(text="Added to list:")
-        label_bottom.config(text=f"{user_text}")
+        label_bottom.config(text=user_text)
     else:
         label_top.config(text="Cannot add an empty item!")
         label_bottom.config(text="")
 
 
-def clear_selection(label_bottom, label_top, listbox_widget):
+def clear_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widget: tk.Listbox) -> None:
     '''
     Clears the currently highlighted item from display label
     '''
-	# 1. Clear the visual highlight from index 0 all the way to the END
+    # 1. Clear the visual highlight from index 0 all the way to the END
     listbox_widget.selection_clear(0, tk.END)
 
-    # 2. Reset the display text labels to their default state
+    # 2. Reset the display text labels to their default state    
     label_top.config(text="Select an Item!")
     label_bottom.config(text="")
 
