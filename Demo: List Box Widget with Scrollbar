@@ -70,21 +70,21 @@ def clear_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widget:
     label_bottom.config(text="")
 
 
-def display_selection(label_bottom, label_top, listbox_widget):
+def display_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widget: tk.Listbox) -> None:
     '''
-    Retrieves the currently highlighted item in the Listbox and displays it.
+    Retrieves the highlighted item from the listbox and outputs it to the labels.
     '''
-	# Return a tuple of selected index numbers										  
+    # Return a tuple of selected index numbers	
     selected_indices = listbox_widget.curselection()
 
-	# Check that the user made a selection before displaying the result																   
+    # Check that the user made a selection before displaying the result
     if selected_indices:
-        index = selected_indices[0]  # Grab the first index from the tuple
+        index = selected_indices[0]  # Grab the first index from the tuple 
         chosen_item = listbox_widget.get(index)  # Convert index to the text string
         
         # Update the Label for feedback
         label_top.config(text="Selected Item:")
-        label_bottom.config(text=f"{chosen_item}")
+        label_bottom.config(text=chosen_item)
     else:
         label_top.config(text="Please select an item first!")
 
