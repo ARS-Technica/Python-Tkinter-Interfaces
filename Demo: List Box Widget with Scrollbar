@@ -89,6 +89,17 @@ def display_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widge
         label_top.config(text="Please select an item first!")
 
 
+def remove_selected_item(label_bottom: tk.Label, label_top: tk.Label, listbox_widget: tk.Listbox) -> None:
+    '''
+    Removes the currently highlighted item from the listbox.
+    '''
+    # Return a tuple of selected index numbers	
+       
+    # Remove item from the listbox using its position index
+
+    # Provide real-time confirmation to the user
+
+
 # Widget Creation -------------------------------------------------------------
 def build_listbox_system(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
     '''
