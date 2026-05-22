@@ -188,6 +188,11 @@ def create_user_interface() -> None:
     button_frame = tk.Frame(root)
     button_frame.pack(pady=10)  
 
+
+    # Create a sub-frame to keep the buttons grouped together in a row
+    top_button_row = tk.Frame(button_frame)
+    top_button_row.pack(pady=(0, 5))
+
     # Build and place the Add Selection Button
     add_button = tk.Button(
         button_frame, 
@@ -195,6 +200,10 @@ def create_user_interface() -> None:
         command=lambda: add_custom_item(new_item_entry, status_display_bottom, status_display_top, listbox_widget)
     )
     add_button.pack(side="left", padx=5)
+
+
+    bottom_row_frame = tk.Frame(button_frame)
+    bottom_row_frame.pack(pady=(6, 0))
 
     # Build and place the Clear Selection Button
     clear_button = tk.Button(
