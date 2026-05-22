@@ -204,6 +204,14 @@ def create_user_interface() -> None:
     )
     clear_button.pack(side="left", padx=5)
 
+    # Build and place the Remove Selection Button
+    remove_button = tk.Button(
+        button_frame,
+        text="Remove Selection",
+        command=lambda: remove_selection(status_display_bottom, status_display_top, listbox_widget)
+    )
+    remove_button.pack(side="left", padx=5)
+
     root.mainloop()
 
 
