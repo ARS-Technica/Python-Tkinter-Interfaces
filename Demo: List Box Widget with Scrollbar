@@ -96,17 +96,20 @@ def remove_selected_item(label_bottom: tk.Label, label_top: tk.Label, listbox_wi
     # Return a tuple of selected index numbers	
     selected_indices = listbox_widget.curselection()
 
-
-    index = selected_indices[0]  # Get the first selected index
-    deleted_item = listbox_widget.get(index)  # Remove the item at that index
-
-    # Remove item from the listbox using its position index
-    listbox_widget.delete(index)
-
-    # Provide real-time confirmation to the user
-    label_top.config(text="Removed from list:")
-    label_bottom.config(text=deleted_item)
-
+    if selected_indices:
+        index = selected_indices[0]  # Get the first selected index
+        deleted_item = listbox_widget.get(index)  # Remove the item at that index
+    
+        # Remove item from the listbox using its position index
+        listbox_widget.delete(index)
+    
+        # Provide real-time confirmation to the user
+        label_top.config(text="Removed from list:")
+        label_bottom.config(text=deleted_item)
+    else:
+        # Prevent failure if user clicks button without selecting anything
+        label_top.config(text="Select an item to remove!")
+        label_bottom.config(text="")
 
 
 # Widget Creation -------------------------------------------------------------
