@@ -195,9 +195,10 @@ def create_user_interface() -> None:
 
     # Build and place the Add Selection Button
     add_button = tk.Button(
-        button_frame, 
+        top_button_row,
         text="Add Selection", 
-        command=lambda: add_custom_item(new_item_entry, status_display_bottom, status_display_top, listbox_widget)
+        command=lambda: add_custom_item(new_item_entry, status_display_bottom, status_display_top, listbox_widget),
+        width=10
     )
     add_button.pack(side="left", padx=5)
 
@@ -207,9 +208,10 @@ def create_user_interface() -> None:
 
     # Build and place the Clear Selection Button
     clear_button = tk.Button(
-        button_frame, 
+        bottom_row_frame,
         text="Clear Selection", 
-        command=lambda: clear_selection(status_display_bottom, status_display_top, listbox_widget)
+        command=lambda: clear_selection(status_display_bottom, status_display_top, listbox_widget),
+        width=10
     )
     clear_button.pack(side="left", padx=5)
 
@@ -217,7 +219,8 @@ def create_user_interface() -> None:
     remove_button = tk.Button(
         button_frame,
         text="Remove Selection",
-        command=lambda: remove_selected_item(status_display_bottom, status_display_top, listbox_widget)
+        command=lambda: remove_selected_item(status_display_bottom, status_display_top, listbox_widget),
+        width=10
     )
     remove_button.pack(side="left", padx=5)
 
