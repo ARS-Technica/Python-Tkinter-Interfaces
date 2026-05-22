@@ -52,10 +52,15 @@ def add_custom_item(
         entry_widget.delete(0, tk.END)            # Clear out the input box automatically            
 
         # 2. Append the new item to the bottom of the list
+        listbox_widget.insert(tk.END, user_text)
+        entry_widget.delete(0, tk.END)
 
         # 3. Calculate the index of the item we just added
+        new_item_index = listbox_widget.size() - 1
 
         # 4. Apply the visual selection highlight and force the listbox to scroll to it
+        listbox_widget.selection_set(new_item_index)
+        listbox_widget.see(new_item_index)
 
         # Give feedback to the user about the successful addition
         label_top.config(text="Added to list:")
