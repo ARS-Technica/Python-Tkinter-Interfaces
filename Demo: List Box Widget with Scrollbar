@@ -99,10 +99,10 @@ def remove_selected_item(label_bottom: tk.Label, label_top: tk.Label, listbox_wi
     if selected_indices:
         index = selected_indices[0]  # Get the first selected index
         deleted_item = listbox_widget.get(index)  # Remove the item at that index
-    
+        
         # Remove item from the listbox using its position index
         listbox_widget.delete(index)
-    
+        
         # Provide real-time confirmation to the user
         label_top.config(text="Removed from list:")
         label_bottom.config(text=deleted_item)
@@ -154,7 +154,7 @@ def create_user_interface() -> None:
     '''
     root = tk.Tk()
     root.title("Demo: List Box Widget")
-    root.geometry("300x350")
+    root.geometry("300x375")
 
     # Catch both the layout frame and the widget tracking item natively
     listbox_frame, listbox_widget = build_listbox_system(root)
@@ -172,6 +172,7 @@ def create_user_interface() -> None:
     new_item_entry = tk.Entry(root, width=25, font=("Arial", 10))
     new_item_entry.pack(pady=5)
 
+
     # Bind the Listbox selection event using a Lambda shortcut
     listbox_widget.bind(
         "<<ListboxSelect>>", 
@@ -183,6 +184,7 @@ def create_user_interface() -> None:
         "<Return>",
         lambda event: add_custom_item(new_item_entry, status_display_bottom, status_display_top, listbox_widget)
     )
+
 
     # Container Frame for Buttons ---------------------------------------------
     button_frame = tk.Frame(root)
