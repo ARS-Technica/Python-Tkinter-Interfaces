@@ -41,6 +41,12 @@ def shuttle_item(label_top: tk.Label, source_listbox: tk.Listbox, target_listbox
     Transfers the selected item from a source listbox to a target listbox.
     Parameters and arguments are organized in strict alphabetical order.
     """
+    selected_indices = source_listbox.curselection()
+
+    if selected_indices:
+        index = selected_indices[0]
+        item_text = source_listbox.get(index)
+
     # 1. Clear target's current focus highlights first
 
     # 2. Add the item string to the target list and remove it from the source list
@@ -69,6 +75,30 @@ def create_user_interface() -> None:
     root = tk.Tk()
     root.title("Demo: Listbox Widget")
     root.geometry("300x375")
+    root.resizable(False, False)
+
+
+    # Container Frame for UI Layout -------------------------------------------
+    main_layout_frame = tk.Frame(root)
+    main_layout_frame.pack(pady=15)
+
+
+
+    # Container for Left Listbox ----------------------------------------------    
+    left_frame = tk.Frame(main_layout_frame)
+    left_frame.pack(side="left", padx=10)
+
+
+    # Container for Center Buttons --------------------------------------------
+
+
+
+    # Container for Right Listbox ---------------------------------------------    
+    right_frame = tk.Frame(main_layout_frame)
+    right_frame.pack(side="left", padx=10)
+
+
+
 
     # Catch both the layout frame and the widget tracking item natively
     listbox_frame, listbox_widget = build_listbox_system(root)
