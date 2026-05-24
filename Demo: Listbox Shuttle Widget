@@ -37,6 +37,12 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) 
 
 
 # Widget Creation -------------------------------------------------------------
+def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
+    """
+    Constructs an isolated frame containing a single Listbox and an 
+    independent auto-hiding scrollbar.
+    """
+    pass
 
 
 # User Interface --------------------------------------------------------------
