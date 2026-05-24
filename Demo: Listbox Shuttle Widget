@@ -15,5 +15,19 @@ project, which used a single Listbox in order to demonstrate its basic
 functionality.
 """
 
+import tkinter as tk
 
+
+# Widget Functions ------------------------------------------------------------
+
+
+# Widget Creation -------------------------------------------------------------
+
+
+# User Interface --------------------------------------------------------------
+
+
+# Main Application Window -----------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface()
 
