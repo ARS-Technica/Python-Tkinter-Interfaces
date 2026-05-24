@@ -19,6 +19,21 @@ import tkinter as tk
 
 
 # Widget Functions ------------------------------------------------------------
+def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) -> None:
+    """
+    Dynamically shows or hides the scrollbar depending on content size.
+    'first' and 'last' are string percentages (0.0 to 1.0) sent by the listbox.
+    Accepts str or float to satisfy modern strict IDE type engines.
+    """
+    if float(first) <= 0.0 and float(last) >= 1.0:
+        # The entire list is visible; remove the scrollbar from view
+        scrollbar.pack_forget()
+    else:
+        # Content overflows; show the scrollbar snapped to the right edge
+        scrollbar.pack(side="right", fill="y")
+
+    # Update the scrollbar handle position and size based on the listbox's view        
+    scrollbar.set(first, last)
 
 
 # Widget Creation -------------------------------------------------------------
