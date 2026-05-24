@@ -47,15 +47,22 @@ def shuttle_item(label_top: tk.Label, source_listbox: tk.Listbox, target_listbox
         index = selected_indices[0]
         item_text = source_listbox.get(index)
 
-    # 1. Clear target's current focus highlights first
+        # 1. Clear target's current focus highlights first
+        target_listbox.selection_clear(0, tk.END)
 
-    # 2. Add the item string to the target list and remove it from the source list
+        # 2. Add the item string to the target list and remove it from the source list
+        target_listbox.insert(tk.END, item_text)
+        source_listbox.delete(index)
 
-    # 3. Highlight the newly transferred item and scroll it into view
+        # 3. Highlight the newly transferred item and scroll it into view
 
-    # 4. Clear selections remaining on the source listbox
+        # 4. Clear selections remaining on the source listbox
+        source_listbox.selection_clear(0, tk.END)
 
-    # 5. Provide real-time UI feedback
+        # 5. Provide real-time UI feedback
+        label_top.config(text=f"Moved: {item_text}")
+    else:
+        label_top.config(text="Please highlight an item to move first!")
 
 
 # Widget Creation -------------------------------------------------------------
