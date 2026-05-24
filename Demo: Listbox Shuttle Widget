@@ -36,6 +36,22 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) 
     scrollbar.set(first, last)
 
 
+def shuttle_item(label_top: tk.Label, source_listbox: tk.Listbox, target_listbox: tk.Listbox) -> None:
+    """
+    Transfers the selected item from a source listbox to a target listbox.
+    Parameters and arguments are organized in strict alphabetical order.
+    """
+    # 1. Clear target's current focus highlights first
+
+    # 2. Add the item string to the target list and remove it from the source list
+
+    # 3. Highlight the newly transferred item and scroll it into view
+
+    # 4. Clear selections remaining on the source listbox
+
+    # 5. Provide real-time UI feedback
+
+
 # Widget Creation -------------------------------------------------------------
 def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
     """
