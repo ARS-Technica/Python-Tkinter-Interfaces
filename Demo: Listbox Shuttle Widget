@@ -55,6 +55,10 @@ def shuttle_item(label_top: tk.Label, source_listbox: tk.Listbox, target_listbox
         source_listbox.delete(index)
 
         # 3. Highlight the newly transferred item and scroll it into view
+        new_index = target_listbox.size() - 1
+
+        target_listbox.selection_set(new_index)
+        target_listbox.see(new_index)
 
         # 4. Clear selections remaining on the source listbox
         source_listbox.selection_clear(0, tk.END)
