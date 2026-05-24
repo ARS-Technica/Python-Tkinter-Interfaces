@@ -48,12 +48,11 @@ def add_custom_item(
 
     if user_text != "":
         # 1. Clear any existing selection first so only the new item gets highlighted
-        listbox_widget.insert(tk.END, user_text)  # Append to bottom of list  
-        entry_widget.delete(0, tk.END)            # Clear out the input box automatically            
+        clear_selection(label_bottom, label_top, listbox_widget)
 
         # 2. Append the new item to the bottom of the list
-        listbox_widget.insert(tk.END, user_text)
-        entry_widget.delete(0, tk.END)
+        listbox_widget.insert(tk.END, user_text)  # Append to bottom of list  
+        entry_widget.delete(0, tk.END)            # Clear out the input box automatically
 
         # 3. Calculate the index of the item we just added
         new_item_index = listbox_widget.size() - 1
@@ -62,7 +61,7 @@ def add_custom_item(
         listbox_widget.selection_set(new_item_index)
         listbox_widget.see(new_item_index)
 
-        # Give feedback to the user about the successful addition
+        # 5. Give feedback to the user about the successful addition
         label_top.config(text="Added to list:")
         label_bottom.config(text=user_text)
     else:
@@ -141,7 +140,7 @@ def build_listbox_system(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
     listbox_widget = tk.Listbox(list_container, width=25, height=10, activestyle="none")
     listbox_widget.pack(side="left", fill="both", expand=True)
 
-    # 4. Intercept the yscroll command using a lambda to link the listbox and scrollbar together    
+    # 4. Intercept the yscroll command using a lambda to link the listbox and scrollbar together
     listbox_widget.config(
         yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last)
     )
