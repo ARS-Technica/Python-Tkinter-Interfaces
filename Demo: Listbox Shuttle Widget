@@ -1,0 +1,19 @@
+"""
+Demo: Listbox Shuttle Widget
+Created: May 23, 2026
+
+Description: Demonstrates the use of multiple Tkinter Listbox widgets coordinated
+to manage a collection of text data in what is sometimes referred to as a 
+"shuttle" interface.  In a full application, these widgets could be used for 
+playlists, file explorers, or task managers.  
+
+This iteration includes a Scrollbar widget that is linked to the Listbox for 
+better navigation when the list exceeds the length of the Listbox.
+
+This project is an expansion on my earlier "Demo: Listbox Widget with Scrollbar"
+project, which used a single Listbox in order to demonstrate its basic 
+functionality.
+"""
+
+
+
