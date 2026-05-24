@@ -1,11 +1,11 @@
 """
-Demo: List Box Widget
+Demo: Listbox Widget
 Created: May 15, 2026
 
-Description: Demonstrates the Tkinter List Box widget used to manage 
+Description: Demonstrates the Tkinter Listbox widget used to manage 
 collections of text data such as playlists, file explorers, or task managers.
 
-Future List Box demonstrations will expand this code to include multiple 
+Future Listbox demonstrations will expand this code to include multiple 
 Listboxes that interact with each other and Scrollbars, but this project 
 focuses on a single Listbox and its basic functionality.
 """
@@ -94,7 +94,7 @@ def create_user_interface() -> None:
     Creates the main application window and calls the function to build widgets.
     '''
     root = tk.Tk()
-    root.title("Demo: List Box Widget")
+    root.title("Demo: Listbox Widget")
     root.geometry("300x350")
 
     # Build the Listbox and pack it into the main window
