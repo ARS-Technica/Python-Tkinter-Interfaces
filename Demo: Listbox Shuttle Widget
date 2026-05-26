@@ -14,7 +14,7 @@ This project is an expansion on my earlier "Demo: Listbox Widget with Scrollbar"
 project, which used a single Listbox in order to demonstrate its basic 
 functionality.
 """
- 
+
 import tkinter as tk
 
 
@@ -97,11 +97,15 @@ def create_user_interface() -> None:
     root.geometry("500x375")
     root.resizable(False, False)
 
-    # 1. Master Horizontal System Layout Grid Layout
+
+    # Container Frame for UI Layout -------------------------------------------
     main_layout_frame = tk.Frame(root)
     main_layout_frame.pack(pady=15)
 
-    # --- LEFT SECTION: Available POOL ---
+
+
+
+    # Container for Left Listbox ---------------------------------------------- 
     left_frame = tk.Frame(main_layout_frame)
     left_frame.pack(side="left", padx=10)
     
@@ -109,7 +113,10 @@ def create_user_interface() -> None:
     list_container_left, listbox_left = build_shuttle_list(left_frame)
     list_container_left.pack()
 
-    # --- CENTER SECTION: Command Shuttle Controls ---
+
+
+
+    # Container for Center Buttons --------------------------------------------
     center_button_frame = tk.Frame(main_layout_frame)
     center_button_frame.pack(side="left", padx=10, pady=(20, 0))
 
@@ -136,13 +143,18 @@ def create_user_interface() -> None:
     )
     move_left_button.pack(pady=5)
 
-    # --- RIGHT SECTION: Chosen Selection Pool ---
+
+
+
+    # Container for Right Listbox ---------------------------------------------    
     right_frame = tk.Frame(main_layout_frame)
     right_frame.pack(side="left", padx=10)
 
     tk.Label(right_frame, text="Selected Items", font=("Arial", 10, "bold")).pack(pady=(0, 5))
     list_container_right, listbox_right = build_shuttle_list(right_frame)
     list_container_right.pack()
+
+
 
 
     # Text Display Beneath Listboxes ------------------------------------------    
