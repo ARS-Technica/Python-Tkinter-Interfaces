@@ -116,6 +116,10 @@ def create_user_interface() -> None:
     left_frame = tk.Frame(main_layout_frame)
     left_frame.pack(side="left", padx=10)
 
+    tk.Label(left_frame, text="Available Pool", font=("Arial", 10, "bold")).pack(pady=(0, 5))
+    list_container_left, listbox_left = build_shuttle_list(left_frame)
+    list_container_left.pack()
+
 
     # Container for Center Buttons --------------------------------------------
 
@@ -125,7 +129,9 @@ def create_user_interface() -> None:
     right_frame = tk.Frame(main_layout_frame)
     right_frame.pack(side="left", padx=10)
 
-
+    tk.Label(right_frame, text="Selected Items", font=("Arial", 10, "bold")).pack(pady=(0, 5))
+    list_container_right, listbox_right = build_shuttle_list(right_frame)
+    list_container_right.pack()
 
 
     # Catch both the layout frame and the widget tracking item natively
