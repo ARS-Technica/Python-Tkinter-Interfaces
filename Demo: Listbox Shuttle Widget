@@ -75,7 +75,24 @@ def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
     Constructs an isolated frame containing a single Listbox and an 
     independent auto-hiding scrollbar.
     """
-    pass
+    list_container = tk.Frame(parent)
+    scrollbar = tk.Scrollbar(list_container, orient="vertical")
+
+    listbox_widget = tk.Listbox(
+        list_container, 
+        width=22, 
+        height=10, 
+        activestyle="none"
+    )
+    listbox_widget.pack(side="left", fill="both", expand=True)
+
+    # Attach this scrollbar securely to this listbox wrapper context
+    listbox_widget.config(
+        yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last)
+    )
+    scrollbar.config(command=listbox_widget.yview)
+
+    return list_container, listbox_widget
 
 
 # User Interface --------------------------------------------------------------
