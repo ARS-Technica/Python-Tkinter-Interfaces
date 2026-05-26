@@ -14,30 +14,22 @@ This project is an expansion on my earlier "Demo: Listbox Widget with Scrollbar"
 project, which used a single Listbox in order to demonstrate its basic 
 functionality.
 """
-
+ 
 import tkinter as tk
 
 
 # Widget Functions ------------------------------------------------------------
 def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) -> None:
-    """
-    Dynamically shows or hides the scrollbar depending on content size.
-    'first' and 'last' are string percentages (0.0 to 1.0) sent by the listbox.
-    Accepts str or float to satisfy modern strict IDE type engines.
-    """
+    """Dynamically shows or hides a specific scrollbar depending on content size."""
     if float(first) <= 0.0 and float(last) >= 1.0:
-        # The entire list is visible; remove the scrollbar from view
         scrollbar.pack_forget()
     else:
-        # Content overflows; show the scrollbar snapped to the right edge
         scrollbar.pack(side="right", fill="y")
-
-    # Update the scrollbar handle position and size based on the listbox's view        
+        
     scrollbar.set(first, last)
 
 
-def shuttle_item(status_display_top: tk.Label, status_display_bottom: tk.Label, source_listbox: tk.Listbox, 
-target_listbox: tk.Listbox) -> None:
+def shuttle_item(status_display_bottom: tk.Label, status_display_top: tk.Label, source_listbox: tk.Listbox, target_listbox: tk.Listbox) -> None:
     """
     Transfers the selected item from a source listbox to a target listbox.
     Parameters and arguments are organized in strict alphabetical order.
@@ -57,7 +49,6 @@ target_listbox: tk.Listbox) -> None:
 
         # 3. Highlight the newly transferred item and scroll it into view
         new_index = target_listbox.size() - 1
-
         target_listbox.selection_set(new_index)
         target_listbox.see(new_index)
 
@@ -76,7 +67,7 @@ target_listbox: tk.Listbox) -> None:
 def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
     """
     Constructs an isolated frame containing a single Listbox and an 
-    independent auto-hiding scrollbar.
+    independent auto-hiding scrollbar tracking engine.
     """
     list_container = tk.Frame(parent)
     scrollbar = tk.Scrollbar(list_container, orient="vertical")
@@ -100,64 +91,58 @@ def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
 
 # User Interface --------------------------------------------------------------
 def create_user_interface() -> None:
-    '''
-    Creates the main application window and calls the function to build widgets.
-    '''
+    """Assembles and manages the side-by-side interactive application lifecycle."""
     root = tk.Tk()
     root.title("Demo: Listbox Widget")
-    root.geometry("300x375")
+    root.geometry("500x375")
     root.resizable(False, False)
 
-
-    # Container Frame for UI Layout -------------------------------------------
+    # 1. Master Horizontal System Layout Grid Layout
     main_layout_frame = tk.Frame(root)
     main_layout_frame.pack(pady=15)
 
-
-    # Container for Left Listbox ----------------------------------------------    
+    # --- LEFT SECTION: Available POOL ---
     left_frame = tk.Frame(main_layout_frame)
     left_frame.pack(side="left", padx=10)
-
+    
     tk.Label(left_frame, text="Available Pool", font=("Arial", 10, "bold")).pack(pady=(0, 5))
     list_container_left, listbox_left = build_shuttle_list(left_frame)
     list_container_left.pack()
 
-
-    # Container for Center Buttons --------------------------------------------
+    # --- CENTER SECTION: Command Shuttle Controls ---
     center_button_frame = tk.Frame(main_layout_frame)
     center_button_frame.pack(side="left", padx=10, pady=(20, 0))
 
 
     # Button: Shuttle Right (Move Available -> Selected)
+    # Alphabetical Arguments: status_display_bottom, status_display_top, listbox_left (source), listbox_right (target)
     move_right_button = tk.Button(
         center_button_frame, 
         text="Add >", 
         font=("Arial", 10, "bold"),
         width=10,
-        command=lambda: shuttle_item(status_display_top, status_display_bottom, listbox_left, listbox_right)
+        command=lambda: shuttle_item(status_display_bottom, status_display_top, listbox_left, listbox_right)
     )
     move_right_button.pack(pady=5)
 
     # Button: Shuttle Left (Move Selected -> Available)
+    # Alphabetical Arguments: status_display_bottom, status_display_top, listbox_right (source), listbox_left (target)
     move_left_button = tk.Button(
         center_button_frame, 
         text="< Remove", 
         font=("Arial", 10, "bold"),
         width=10,
-        command=lambda: shuttle_item(status_display_top, status_display_bottom, listbox_right, listbox_left)
+        command=lambda: shuttle_item(status_display_bottom, status_display_top, listbox_right, listbox_left)
     )
     move_left_button.pack(pady=5)
 
-
-    # Container for Right Listbox ---------------------------------------------    
+    # --- RIGHT SECTION: Chosen Selection Pool ---
     right_frame = tk.Frame(main_layout_frame)
     right_frame.pack(side="left", padx=10)
 
     tk.Label(right_frame, text="Selected Items", font=("Arial", 10, "bold")).pack(pady=(0, 5))
     list_container_right, listbox_right = build_shuttle_list(right_frame)
     list_container_right.pack()
-
-
 
 
     # Text Display Beneath Listboxes ------------------------------------------    
@@ -170,14 +155,12 @@ def create_user_interface() -> None:
 
 
 
-    # Test Data for Listboxes ------------------------------------------
+    # Test Data for Listboxes -------------------------------------------------
     starting_features = [
         "White", "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Black"
     ]
     for feature in starting_features:
         listbox_left.insert(tk.END, feature)
-
-
 
 
     root.mainloop()
