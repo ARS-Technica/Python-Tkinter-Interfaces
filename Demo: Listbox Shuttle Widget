@@ -36,7 +36,8 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) 
     scrollbar.set(first, last)
 
 
-def shuttle_item(label_top: tk.Label, source_listbox: tk.Listbox, target_listbox: tk.Listbox) -> None:
+def shuttle_item(status_display_top: tk.Label, status_display_bottom: tk.Label, source_listbox: tk.Listbox, 
+target_listbox: tk.Listbox) -> None:
     """
     Transfers the selected item from a source listbox to a target listbox.
     Parameters and arguments are organized in strict alphabetical order.
@@ -131,7 +132,7 @@ def create_user_interface() -> None:
         text="Add >", 
         font=("Arial", 10, "bold"),
         width=10,
-        command=lambda: shuttle_item(status_display, listbox_left, listbox_right)
+        command=lambda: shuttle_item(status_display_top, status_display_bottom, listbox_left, listbox_right)
     )
     move_right_button.pack(pady=5)
 
@@ -141,7 +142,7 @@ def create_user_interface() -> None:
         text="< Remove", 
         font=("Arial", 10, "bold"),
         width=10,
-        command=lambda: shuttle_item(status_display_top, listbox_right, listbox_left)
+        command=lambda: shuttle_item(status_display_top, status_display_bottom, listbox_right, listbox_left)
     )
     move_left_button.pack(pady=5)
 
@@ -159,8 +160,10 @@ def create_user_interface() -> None:
 
     # Text Display Beneath Listboxes ------------------------------------------    
     # Feedback Text Label
-    status_display = tk.Label(root, text="Select an item to transfer", font=("Consolas", 11, "bold")
-    status_display.pack(side="bottom", pady=20)
+    status_display_top = tk.Label(root, text="Select an item to transfer", font=("Consolas", 11, "bold"))
+    status_display_top.pack(side="bottom", pady=20)
+    status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"))
+    status_display_bottom.pack(side="bottom", pady=20)
 
 
 
@@ -169,7 +172,6 @@ def create_user_interface() -> None:
     starting_features = [
         "White", "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Black"
     ]
-    
     for feature in starting_features:
         listbox_left.insert(tk.END, feature)
 
