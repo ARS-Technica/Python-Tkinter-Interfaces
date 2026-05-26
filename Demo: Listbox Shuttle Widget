@@ -126,22 +126,20 @@ def create_user_interface() -> None:
 
 
     # Button: Shuttle Right (Move Available -> Selected)
-    # Alphabetical Arguments: status_display, listbox_left (source), listbox_right (target)
     move_right_button = tk.Button(
         center_button_frame, 
         text="Add >", 
-        font=CONFIG["FONT_BUTTON"],
+        font=("Arial", 10, "bold"),
         width=10,
         command=lambda: shuttle_item(status_display, listbox_left, listbox_right)
     )
     move_right_button.pack(pady=5)
 
     # Button: Shuttle Left (Move Selected -> Available)
-    # Alphabetical Arguments: status_display_top, listbox_right (source), listbox_left (target)
     move_left_button = tk.Button(
         center_button_frame, 
         text="< Remove", 
-        font=CONFIG["FONT_BUTTON"],
+        font=("Arial", 10, "bold"),
         width=10,
         command=lambda: shuttle_item(status_display_top, listbox_right, listbox_left)
     )
