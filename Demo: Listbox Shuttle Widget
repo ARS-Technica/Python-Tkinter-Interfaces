@@ -148,9 +148,10 @@ def create_user_interface() -> None:
     # Text Display Beneath Listboxes ------------------------------------------    
     # Feedback Text Label
     status_display_top = tk.Label(root, text="Select an item to transfer", font=("Consolas", 11, "bold"))
-    status_display_top.pack(side="bottom", pady=20)
+    status_display_top.pack(side="top", pady=(20, 0)) # Pack top line first
+
     status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"))
-    status_display_bottom.pack(side="bottom", pady=20)
+    status_display_bottom.pack(side="top", pady=(0, 20)) # Stack next line directly below it
 
 
 
