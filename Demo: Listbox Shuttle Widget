@@ -65,9 +65,11 @@ target_listbox: tk.Listbox) -> None:
         source_listbox.selection_clear(0, tk.END)
 
         # 5. Provide real-time UI feedback
-        label_top.config(text=f"Moved: {item_text}")
+        status_display_top.config(text=f"Moved:")
+        status_display_bottom.config(text=f"{item_text}")
     else:
-        label_top.config(text="Please highlight an item to move first!")
+        status_display_top.config(text="Please highlight an item to move first!")
+        status_display_bottom.config(text=" ")
 
 
 # Widget Creation -------------------------------------------------------------
