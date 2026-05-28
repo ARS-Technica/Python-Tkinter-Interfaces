@@ -90,6 +90,8 @@ def sort_listboxes(label_bottom: tk.Label, label_top: tk.Label, listbox_left: tk
     listbox_right.delete(0, tk.END)
 
     # 4. Update interface status logs
+    label_top.config(text="System Update:")
+    label_bottom.config(text="Lists Sorted Alphabetically")
 
 
 # Widget Creation -------------------------------------------------------------
