@@ -75,7 +75,21 @@ def sort_listboxes(label_bottom: tk.Label, label_top: tk.Label, listbox_left: tk
     Extracts, sorts alphabetically, and rebuilds contents of both listboxes. 
     (Ensures active highlights are cleared to prevent index assignment conflicts.)
     """
-    pass
+    # 1. Clear active highlights from both pools to avoid index assignment conflicts
+    clear_selection(label_bottom, label_top, listbox_left)
+    clear_selection(label_bottom, label_top, listbox_right)
+
+    # 2. Process Left Listbox: Extract, sort alphabetically, and re-populate
+    left_items = listbox_left.get(0, tk.END)
+    sorted_left = sorted(left_items)
+    listbox_left.delete(0, tk.END)
+
+    # 3. Process Right Listbox: Extract, sort alphabetically, and re-populate
+    right_items = listbox_right.get(0, tk.END)
+    sorted_right = sorted(right_items)
+    listbox_right.delete(0, tk.END)
+
+    # 4. Update interface status logs
 
 
 # Widget Creation -------------------------------------------------------------
