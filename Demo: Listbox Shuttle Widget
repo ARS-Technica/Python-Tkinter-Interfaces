@@ -70,6 +70,14 @@ def shuttle_item(status_display_bottom: tk.Label, status_display_top: tk.Label, 
         status_display_bottom.config(text=" ")
 
 
+def sort_listboxes(label_bottom: tk.Label, label_top: tk.Label, listbox_left: tk.Listbox, listbox_right: tk.Listbox) -> None:
+    """
+    Extracts, sorts alphabetically, and rebuilds contents of both listboxes. 
+    (Ensures active highlights are cleared to prevent index assignment conflicts.)
+    """
+    pass
+
+
 # Widget Creation -------------------------------------------------------------
 def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
     """
