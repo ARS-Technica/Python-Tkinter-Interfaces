@@ -84,10 +84,18 @@ def sort_listboxes(label_bottom: tk.Label, label_top: tk.Label, listbox_left: tk
     sorted_left = sorted(left_items)
     listbox_left.delete(0, tk.END)
 
+    for item in sorted_left:
+        listbox_left.insert(tk.END, item)
+    listbox_left.see(0)  # Reset view state smoothly to index position 0
+
     # 3. Process Right Listbox: Extract, sort alphabetically, and re-populate
     right_items = listbox_right.get(0, tk.END)
     sorted_right = sorted(right_items)
     listbox_right.delete(0, tk.END)
+
+    for item in sorted_right:
+        listbox_right.insert(tk.END, item)
+    listbox_right.see(0)  # Reset view state smoothly to index position 0
 
     # 4. Update interface status logs
     label_top.config(text="System Update:")
