@@ -127,6 +127,18 @@ def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
 
     return list_container, listbox_widget
 
+def listbox_controls(
+    label_bottom: tk.Label, 
+    label_top: tk.Label, 
+    listbox_left: tk.Listbox, 
+    listbox_right: tk.Listbox, 
+    parent: tk.Misc
+) -> None:
+    """
+    Assembles the three-rows of buttons to control listboxes.
+    """
+    pass
+
 
 # User Interface --------------------------------------------------------------
 def create_user_interface() -> None:
