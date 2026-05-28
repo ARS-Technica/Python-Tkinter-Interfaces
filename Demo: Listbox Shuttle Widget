@@ -133,7 +133,9 @@ def build_shuttle_panels(parent: tk.Misc) -> tuple[tk.Listbox, tk.Listbox]:
     Assembles the side-by-side listbox selection frames.
     Returns the left and right listbox widgets to the main coordinator frame.
     """
-    pass
+    # Frame for Left Listbox ----------------------------------------------
+
+    # Frame for Right Listbox ---------------------------------------------  
 
 
 def listbox_controls(
@@ -146,7 +148,15 @@ def listbox_controls(
     """
     Assembles the three-rows of buttons to control listboxes.
     """
-    pass
+    # Row 1: Transfer Buttons
+
+    # Button: Shuttle Right (Move Available -> Selected)
+
+    # Button: Shuttle Left (Move Selected -> Available)
+
+    # Row 2: Sort Button
+
+    # Button: Sort Alphabetically (Sort both Listboxes)
 
 
 # User Interface --------------------------------------------------------------
