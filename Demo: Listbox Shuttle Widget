@@ -20,7 +20,9 @@ import tkinter as tk
 
 # Widget Functions ------------------------------------------------------------
 def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) -> None:
-    """Dynamically shows or hides a specific scrollbar depending on content size."""
+    """
+    Dynamically shows or hides a specific scrollbar depending on content size.
+    """
     if float(first) <= 0.0 and float(last) >= 1.0:
         scrollbar.pack_forget()
     else:
@@ -61,8 +63,8 @@ def shuttle_item(status_display_bottom: tk.Label, status_display_top: tk.Label, 
             source_listbox.see(0)
 
         # 6. Provide real-time UI feedback
-        status_display_top.config(text=f"Moved:")
-        status_display_bottom.config(text=f"{item_text:^20}")
+        status_display_top.config(text="Item Moved:")
+        status_display_bottom.config(text=item_text)
     else:
         status_display_top.config(text="Please highlight an item to move first!")
         status_display_bottom.config(text=" ")
@@ -96,9 +98,11 @@ def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
 
 # User Interface --------------------------------------------------------------
 def create_user_interface() -> None:
-    """Assembles and manages the side-by-side interactive application lifecycle."""
+    """
+    Creates the main application window and calls the function to build widgets.
+    """
     root = tk.Tk()
-    root.title("Demo: Listbox Widget")
+    root.title("Demo: Listbox Shuttle Widget")
     root.geometry("500x375")
     root.resizable(False, False)
 
@@ -127,7 +131,6 @@ def create_user_interface() -> None:
 
 
     # Button: Shuttle Right (Move Available -> Selected)
-    # Alphabetical Arguments: status_display_bottom, status_display_top, listbox_left (source), listbox_right (target)
     move_right_button = tk.Button(
         center_button_frame, 
         text="Add >", 
@@ -138,7 +141,6 @@ def create_user_interface() -> None:
     move_right_button.pack(pady=5)
 
     # Button: Shuttle Left (Move Selected -> Available)
-    # Alphabetical Arguments: status_display_bottom, status_display_top, listbox_right (source), listbox_left (target)
     move_left_button = tk.Button(
         center_button_frame, 
         text="< Remove", 
@@ -164,10 +166,20 @@ def create_user_interface() -> None:
 
     # Text Display Beneath Listboxes ------------------------------------------    
     # Feedback Text Label
-    status_display_top = tk.Label(root, text="Select an item to transfer", font=("Consolas", 11, "bold"))
+    status_display_top = tk.Label(
+        root, 
+        text="Select an item to transfer", 
+        font=("Consolas", 11, "bold"), 
+        anchor="center"
+    )
     status_display_top.pack(side="top", pady=(20, 0)) # Pack top line first
 
-    status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"))
+    status_display_bottom = tk.Label(
+        root, 
+        text="", 
+        font=("Consolas", 11, "bold"), 
+        anchor="center"
+    )
     status_display_bottom.pack(side="top", pady=(0, 20)) # Stack next line directly below it
 
 
