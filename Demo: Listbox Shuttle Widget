@@ -55,7 +55,12 @@ def shuttle_item(status_display_bottom: tk.Label, status_display_top: tk.Label, 
         # 4. Clear selections remaining on the source listbox
         source_listbox.selection_clear(0, tk.END)
 
-        # 5. Provide real-time UI feedback
+        # 5. Shift focus automatically to the top remaining item after a transfer 
+        if source_listbox.size() > 0: # if any items remain
+            source_listbox.selection_set(0)
+            source_listbox.see(0)
+
+        # 6. Provide real-time UI feedback
         status_display_top.config(text=f"Moved:")
         status_display_bottom.config(text=f"{item_text}")
     else:
