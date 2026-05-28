@@ -62,7 +62,7 @@ def shuttle_item(status_display_bottom: tk.Label, status_display_top: tk.Label, 
 
         # 6. Provide real-time UI feedback
         status_display_top.config(text=f"Moved:")
-        status_display_bottom.config(text=f"{item_text}")
+        status_display_bottom.config(text=f"{item_text:^20}")
     else:
         status_display_top.config(text="Please highlight an item to move first!")
         status_display_bottom.config(text=" ")
