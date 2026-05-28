@@ -150,7 +150,15 @@ def create_user_interface() -> None:
     )
     move_left_button.pack(pady=5)
 
-
+    # Button: Sort Alphabetically (Sort both Listboxes)
+    sort_button = tk.Button(
+        sort_button_row,
+        text="<< Sort >>",
+        font=("Arial", 10, "bold"),
+        width=10,
+        command=lambda: sort_listboxes(status_display_bottom, status_display_top, listbox_left, listbox_right)
+    )
+    sort_button.pack(pady=5)
 
 
     # Container for Right Listbox ---------------------------------------------    
