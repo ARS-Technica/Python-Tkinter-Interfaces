@@ -205,6 +205,14 @@ def listbox_controls(
     sort_button_row.pack(pady=15)
 
     # Button: Sort Alphabetically (Sort both Listboxes)
+    sort_button = tk.Button(
+        sort_button_row,
+        text="Sort Alphabetically",
+        font=("Consolas", 11, "bold"),
+        width=26,
+        command=lambda: sort_listboxes(label_bottom, label_top, listbox_left, listbox_right)
+    )
+    sort_button.pack(side="left")
 
 
 # User Interface --------------------------------------------------------------
