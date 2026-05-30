@@ -133,7 +133,20 @@ def build_shuttle_panels(parent: tk.Misc) -> tuple[tk.Listbox, tk.Listbox]:
     Assembles the side-by-side listbox selection frames.
     Returns the left and right listbox widgets to the main coordinator frame.
     """
+    panels_frame = tk.Frame(parent)
+    panels_frame.pack(pady=15)
+
     # Frame for Left Listbox ----------------------------------------------
+    left_frame = tk.Frame(panels_frame)
+    left_frame.pack(side="left", padx=10)
+    tk.Label(
+        left_frame, 
+        text="Available Pool", 
+        font=("Arial", 10, "bold")
+    ).pack(pady=(0, 5))
+
+    list_frame_left, listbox_left = build_shuttle_list(left_frame)
+    list_frame_left.pack()
 
     # Frame for Right Listbox ---------------------------------------------  
 
