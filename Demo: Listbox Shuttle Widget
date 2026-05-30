@@ -201,6 +201,8 @@ def listbox_controls(
     move_left_button.pack(side="left", padx=5)
 
     # Row 2: Sort Button
+    sort_button_row = tk.Frame(button_frame)
+    sort_button_row.pack(pady=15)
 
     # Button: Sort Alphabetically (Sort both Listboxes)
 
