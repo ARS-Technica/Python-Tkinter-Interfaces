@@ -141,7 +141,7 @@ def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
     return list_container, listbox_widget
 
 
-def build_shuttle_panels(parent: tk.Misc) -> tuple[tk.Listbox, tk.Listbox]:
+def build_shuttle_panels(parent: tk.Misc) -> None:
     """
     Assembles the side-by-side listbox selection frames.
     Returns the left and right listbox widgets to the main coordinator frame.
@@ -238,7 +238,6 @@ def create_user_interface() -> None:
     root.geometry("500x350")
     root.resizable(False, False)
 
-
     # 1. Create the side-by-side Listbox panels
     listbox_left, listbox_right = build_shuttle_panels(root)
  
@@ -250,7 +249,7 @@ def create_user_interface() -> None:
     status_display_bottom.pack(side="top", fill="x", pady=(5, 15))
 
     # 3. Create the control buttons for the listboxes
-    build_control_deck(status_display_bottom, status_display_top, listbox_left, listbox_right, root)
+    build_shuttle_panels(root)
  
     # Test Data for Listboxes -------------------------------------------------
     # 4. Initialize seed data into the left listbox for debugging
