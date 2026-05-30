@@ -15,7 +15,6 @@ project, which used a single Listbox in order to demonstrate its basic
 functionality.
 """
 
-from logging import root
 import tkinter as tk
 
 
@@ -249,7 +248,7 @@ def create_user_interface() -> None:
     status_display_bottom.pack(side="top", fill="x", pady=(5, 15))
 
     # 3. Create the control buttons for the listboxes
-    build_shuttle_panels(root)
+    listbox_controls(status_display_bottom, status_display_top, listbox_left, listbox_right, root)
  
     # Test Data for Listboxes -------------------------------------------------
     # 4. Initialize seed data into the left listbox for debugging
