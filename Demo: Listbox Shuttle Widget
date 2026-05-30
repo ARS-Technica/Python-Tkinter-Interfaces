@@ -222,11 +222,27 @@ def create_user_interface() -> None:
     """
     root = tk.Tk()
     root.title("Demo: Listbox Shuttle Widget")
-    root.geometry("500x375")
+    root.geometry("500x350")
     root.resizable(False, False)
 
+    # 1. Create the side-by-side Listbox panels
+    listbox_left, listbox_right = build_shuttle_panels(root)
+ 
+    # 2. Create the control buttons for the listboxes
+    build_control_deck(status_display_bottom, status_display_top, listbox_left, listbox_right, root)
+ 
+ 
 
  
+
+
+    # Test Data for Listboxes -------------------------------------------------
+    # Initialize seed data into the left listbox for debugging
+    starting_features = [
+        "White", "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Black"
+    ]
+    for feature in starting_features:
+        listbox_left.insert(tk.END, feature)
 
 
     root.mainloop()
