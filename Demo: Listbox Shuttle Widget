@@ -160,7 +160,40 @@ def build_shuttle_panels(parent: tk.Misc) -> None:
     list_frame_left, listbox_left = build_shuttle_list(left_frame)
     list_frame_left.pack()
 
-    # Frame for Right Listbox ---------------------------------------------  
+
+    # Frame for Center Column (Buttons) ---------------------------------------  
+    center_control_frame = tk.Frame(panels_frame)
+    center_control_frame.pack(side="left", padx=10, pady=(20, 0))    
+
+    move_right_button = tk.Button(
+        center_control_frame, 
+        text="Add >", 
+        font=("Arial", 10, "bold"),
+        width=18,  # Sized uniformly so all buttons are symmetric
+        command=lambda: shuttle_item(label_bottom, label_top, listbox_left, listbox_right)
+    )
+    move_right_button.pack(pady=15)
+
+    move_left_button = tk.Button(
+        center_control_frame, 
+        text="< Remove", 
+        font=("Arial", 10, "bold"),
+        width=18,
+        command=lambda: shuttle_item(label_bottom, label_top, listbox_right, listbox_left)
+    )
+    move_left_button.pack(pady=15)
+
+    sort_button = tk.Button(
+        center_control_frame,
+        text="Sort Lists",
+        font=("Arial", 10, "bold"),
+        width=18,
+        command=lambda: sort_listboxes(label_bottom, label_top, listbox_left, listbox_right)
+    )
+    sort_button.pack(pady=(15, 0))  # Extra padding to isolate sorting operation
+
+
+    # Frame for Right Listbox -------------------------------------------------  
     right_frame = tk.Frame(panels_frame)
     right_frame.pack(side="left", padx=10)
     tk.Label(
