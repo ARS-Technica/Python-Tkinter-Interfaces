@@ -149,6 +149,18 @@ def build_shuttle_panels(parent: tk.Misc) -> tuple[tk.Listbox, tk.Listbox]:
     list_frame_left.pack()
 
     # Frame for Right Listbox ---------------------------------------------  
+    right_frame = tk.Frame(panels_frame)
+    right_frame.pack(side="left", padx=10)
+    tk.Label(
+        right_frame, 
+        text="Selected Items", 
+        font=("Arial", 10, "bold")
+    ).pack(pady=(0, 5))
+
+    list_frame_right, listbox_right = build_shuttle_list(right_frame)
+    list_frame_right.pack()
+
+    return listbox_left, listbox_right
 
 
 def listbox_controls(
