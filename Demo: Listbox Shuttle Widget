@@ -173,11 +173,32 @@ def listbox_controls(
     """
     Assembles the three-rows of buttons to control listboxes.
     """
+    button_frame = tk.Frame(parent)
+    button_frame.pack(pady=5)  
+
     # Row 1: Transfer Buttons
+    top_button_row = tk.Frame(button_frame)
+    top_button_row.pack(pady=4)
 
     # Button: Shuttle Right (Move Available -> Selected)
+    move_right_button = tk.Button(
+        top_button_row, 
+        text="Add >", 
+        font=("Arial", 10, "bold"),
+        width=12,
+        command=lambda: shuttle_item(label_bottom, label_top, listbox_left, listbox_right)
+    )
+    move_right_button.pack(side="left", padx=15)
 
     # Button: Shuttle Left (Move Selected -> Available)
+    move_left_button = tk.Button(
+        top_button_row, 
+        text="< Remove", 
+        font=("Arial", 10, "bold"),
+        width=12,
+        command=lambda: shuttle_item(label_bottom, label_top, listbox_right, listbox_left)
+    )
+    move_left_button.pack(side="left", padx=5)
 
     # Row 2: Sort Button
 
