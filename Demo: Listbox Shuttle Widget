@@ -15,6 +15,7 @@ project, which used a single Listbox in order to demonstrate its basic
 functionality.
 """
 
+from logging import root
 import tkinter as tk
 
 
@@ -29,6 +30,18 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) 
         scrollbar.pack(side="right", fill="y")
         
     scrollbar.set(first, last)
+
+
+def clear_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widget: tk.Listbox) -> None:
+    '''
+    Clears the currently highlighted item from display label
+    '''
+    # 1. Clear the visual highlight from index 0 all the way to the END
+    listbox_widget.selection_clear(0, tk.END)
+
+    # 2. Reset the display text labels to their default state    
+    label_top.config(text="Select an Item!")
+    label_bottom.config(text="")
 
 
 def shuttle_item(status_display_bottom: tk.Label, status_display_top: tk.Label, source_listbox: tk.Listbox, target_listbox: tk.Listbox) -> None:
@@ -136,7 +149,7 @@ def build_shuttle_panels(parent: tk.Misc) -> tuple[tk.Listbox, tk.Listbox]:
     panels_frame = tk.Frame(parent)
     panels_frame.pack(pady=15)
 
-    # Frame for Left Listbox ----------------------------------------------
+    # Frame for Left Listbox ---------------------------------------------- 
     left_frame = tk.Frame(panels_frame)
     left_frame.pack(side="left", padx=10)
     tk.Label(
@@ -225,19 +238,22 @@ def create_user_interface() -> None:
     root.geometry("500x350")
     root.resizable(False, False)
 
+
     # 1. Create the side-by-side Listbox panels
     listbox_left, listbox_right = build_shuttle_panels(root)
  
-    # 2. Create the control buttons for the listboxes
+    # 2. Build tracking output text displays down the center layout stack
+    status_display_top = tk.Label(root, text="Select an item to transfer", font=("Consolas", 11, "bold"), anchor="center")
+    status_display_top.pack(side="top", fill="x", pady=(15, 0))
+
+    status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"), anchor="center")
+    status_display_bottom.pack(side="top", fill="x", pady=(5, 15))
+
+    # 3. Create the control buttons for the listboxes
     build_control_deck(status_display_bottom, status_display_top, listbox_left, listbox_right, root)
  
- 
-
- 
-
-
     # Test Data for Listboxes -------------------------------------------------
-    # Initialize seed data into the left listbox for debugging
+    # 4. Initialize seed data into the left listbox for debugging
     starting_features = [
         "White", "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Black"
     ]
