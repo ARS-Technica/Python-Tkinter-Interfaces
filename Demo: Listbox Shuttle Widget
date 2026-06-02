@@ -15,7 +15,6 @@ project, which used a single Listbox in order to demonstrate its basic
 functionality.
 """
 
-from logging import root
 import tkinter as tk
 
 
@@ -33,9 +32,9 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) 
 
 
 def clear_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widget: tk.Listbox) -> None:
-    '''
+    """
     Clears the currently highlighted item from display label
-    '''
+    """
     # 1. Clear the visual highlight from index 0 all the way to the END
     listbox_widget.selection_clear(0, tk.END)
 
@@ -150,9 +149,6 @@ def build_shuttle_system(
     Assembles the side-by-side listbox selection frames.
     Returns the left and right listbox widgets to the main coordinator frame.
     """
-    #panels_frame = tk.Frame(parent)
-    #panels_frame.pack(pady=15)
-
     # Frame for Left Listbox --------------------------------------------------
     # Available Pool Listbox
     left_frame = tk.Frame(parent)
@@ -179,7 +175,8 @@ def build_shuttle_system(
         width=12,  # Sized uniformly so all buttons are symmetric
         command=lambda: shuttle_item(label_bottom, label_top, listbox_left, listbox_right)
     )
-    move_right_button.pack(pady=(20, 5))  # Extra padding to isolate transfer operation
+    move_right_button.pack(pady=(22, 5))  # Extra padding to isolate transfer operation
+    # Leaves top button flush with the top of the listboxes.
 
     # Button: Shuttle Left (Move Selected -> Available)
     move_left_button = tk.Button(
