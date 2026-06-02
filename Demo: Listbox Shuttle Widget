@@ -270,29 +270,23 @@ def create_user_interface() -> None:
     root.geometry("500x350")
     root.resizable(False, False)
 
-    # 1. Create the side-by-side Listbox panels
-    listbox_left, listbox_right = build_shuttle_panels(root)
- 
-    # 2. Build tracking output text displays down the center layout stack
+    # 1. Initialize tracking output text displays first so they can be injected
     status_display_top = tk.Label(root, text="Select an item to transfer", font=("Consolas", 11, "bold"), anchor="center")
     status_display_top.pack(side="top", fill="x", pady=(15, 0))
 
     status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"), anchor="center")
     status_display_bottom.pack(side="top", fill="x", pady=(5, 15))
 
-    # 3. Create the control buttons for the listboxes
-    listbox_controls(status_display_bottom, status_display_top, listbox_left, listbox_right, root)
+    # 2. Create the the listboxes and control buttons in a single function
+    listbox_left, listbox_right = build_shuttle_system(status_display_bottom, status_display_top, root)
  
     # Test Data for Listboxes -------------------------------------------------
-    # 4. Initialize seed data into the left listbox for debugging
+    # 3. Initialize seed data into the left listbox for debugging
     starting_features = [
         "White", "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Black"
     ]
     for feature in starting_features:
         listbox_left.insert(tk.END, feature)
-
-
-    root.mainloop()
 
 
 # Main Application Window -----------------------------------------------------
