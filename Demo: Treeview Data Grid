@@ -1,0 +1,26 @@
+"""
+Demo: Treeview Data Grid
+Created: June 2, 2026
+
+Description: Demonstrates multi-column tabular data management using the 
+Treeview widget. Features programmatic row insertion, column weighting, 
+auto-hiding scrollbars, and event-driven data extraction on row double-clicks.
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+# Widget Functions ------------------------------------------------------------
+
+
+# Layout Components ------------------------------------------------------------
+
+
+# User Interface Coordinator ---------------------------------------------------
+
+
+# Main Application Entry ------------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface()
+
