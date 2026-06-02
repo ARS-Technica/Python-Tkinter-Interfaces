@@ -140,7 +140,11 @@ def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
     return list_container, listbox_widget
 
 
-def build_shuttle_panels(parent: tk.Misc) -> None:
+def build_shuttle_system(
+    label_bottom: tk.Label, 
+    label_top: tk.Label, 
+    parent: tk.Misc
+) -> tuple[tk.Listbox, tk.Listbox]:
     """
     Assembles the side-by-side listbox selection frames.
     Returns the left and right listbox widgets to the main coordinator frame.
