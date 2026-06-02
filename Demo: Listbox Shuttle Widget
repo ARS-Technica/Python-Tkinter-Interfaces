@@ -126,7 +126,7 @@ def build_shuttle_list(parent: tk.Misc) -> tuple[tk.Frame, tk.Listbox]:
 
     listbox_widget = tk.Listbox(
         list_container, 
-        width=22, 
+        width=30, 
         height=10, 
         activestyle="none"
     )
@@ -156,12 +156,12 @@ def build_shuttle_system(
     # Frame for Left Listbox --------------------------------------------------
     # Available Pool Listbox
     left_frame = tk.Frame(parent)
-    left_frame.pack(side="left", padx=10)
+    left_frame.pack(side="left", padx=5)
     tk.Label(
         left_frame, 
         text="Available Pool", 
         font=("Arial", 10, "bold")
-    ).pack(pady=(0, 5))
+    ).pack(pady=(0, 0))
 
     list_frame_left, listbox_left = build_shuttle_list(left_frame)
     list_frame_left.pack()
@@ -169,48 +169,48 @@ def build_shuttle_system(
 
     # Frame for Center Column (Buttons) ---------------------------------------  
     center_control_frame = tk.Frame(parent)
-    center_control_frame.pack(side="left", padx=10, pady=(20, 0))    
+    center_control_frame.pack(side="left", padx=(5, 5), pady=(0, 0))    
 
     # Button: Shuttle Right (Move Available -> Selected)
     move_right_button = tk.Button(
         center_control_frame, 
         text="Add >", 
         font=("Arial", 10, "bold"),
-        width=18,  # Sized uniformly so all buttons are symmetric
+        width=12,  # Sized uniformly so all buttons are symmetric
         command=lambda: shuttle_item(label_bottom, label_top, listbox_left, listbox_right)
     )
-    move_right_button.pack(pady=15)
+    move_right_button.pack(pady=(20, 5))  # Extra padding to isolate transfer operation
 
     # Button: Shuttle Left (Move Selected -> Available)
     move_left_button = tk.Button(
         center_control_frame, 
         text="< Remove", 
         font=("Arial", 10, "bold"),
-        width=18,
+        width=12,
         command=lambda: shuttle_item(label_bottom, label_top, listbox_right, listbox_left)
     )
-    move_left_button.pack(pady=15)
+    move_left_button.pack(pady=(5, 0))
 
     # Row 2: Sort Button (Sorts both lists alphabetically)
     sort_button = tk.Button(
         center_control_frame,
         text="Sort Lists",
         font=("Arial", 10, "bold"),
-        width=18,
+        width=12,
         command=lambda: sort_listboxes(label_bottom, label_top, listbox_left, listbox_right)
     )
-    sort_button.pack(pady=(15, 0))  # Extra padding to isolate sorting operation
+    sort_button.pack(pady=(65, 0))  # Extra padding to isolate sorting operation
 
 
     # Frame for Right Listbox -------------------------------------------------
     # Selected Items Listbox 
     right_frame = tk.Frame(parent)
-    right_frame.pack(side="left", padx=10)
+    right_frame.pack(side="left", padx=5)
     tk.Label(
         right_frame, 
         text="Selected Items", 
         font=("Arial", 10, "bold")
-    ).pack(pady=(0, 5))
+    ).pack(pady=(0, 0))
 
     list_frame_right, listbox_right = build_shuttle_list(right_frame)
     list_frame_right.pack()
@@ -225,19 +225,19 @@ def create_user_interface() -> None:
     """
     root = tk.Tk()
     root.title("Demo: Listbox Shuttle Widget")
-    root.geometry("500x350")
+    root.geometry("550x300")
     root.resizable(False, False)
 
     #1. Create a single container frame to hold the listbox panels and control buttons
     panels_frame = tk.Frame(root)
-    panels_frame.pack(pady=15)
+    panels_frame.pack(pady=(15, 0))  # Extra top padding to separate from window edge
 
     # 2. Build and pack the text labels in root so they stack beneath the panel frame
     status_display_top = tk.Label(root, text="Select an item to transfer", font=("Consolas", 11, "bold"), anchor="center")
-    status_display_top.pack(side="top", fill="x", pady=(15, 0))
+    status_display_top.pack(side="top", fill="x", pady=(25, 0))
 
     status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"), anchor="center")
-    status_display_bottom.pack(side="top", fill="x", pady=(5, 15))
+    status_display_bottom.pack(side="top", fill="x", pady=(0, 15))
 
     # 3. Pass the labels and the top container directly into the builder function
     listbox_left, listbox_right = build_shuttle_system(status_display_bottom, status_display_top, panels_frame)
