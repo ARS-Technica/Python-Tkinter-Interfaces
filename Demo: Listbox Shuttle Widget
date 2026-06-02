@@ -170,6 +170,7 @@ def build_shuttle_system(
     center_control_frame = tk.Frame(panels_frame)
     center_control_frame.pack(side="left", padx=10, pady=(20, 0))    
 
+    # Button: Shuttle Right (Move Available -> Selected)
     move_right_button = tk.Button(
         center_control_frame, 
         text="Add >", 
@@ -179,6 +180,7 @@ def build_shuttle_system(
     )
     move_right_button.pack(pady=15)
 
+    # Button: Shuttle Left (Move Selected -> Available)
     move_left_button = tk.Button(
         center_control_frame, 
         text="< Remove", 
@@ -188,6 +190,7 @@ def build_shuttle_system(
     )
     move_left_button.pack(pady=15)
 
+    # Row 2: Sort Button (Sorts both lists alphabetically)
     sort_button = tk.Button(
         center_control_frame,
         text="Sort Lists",
