@@ -40,7 +40,10 @@ def build_treeview_grid(
     # Column width rules
 
     # Visible Header labels
-
+    treeview_widget.heading("id", text="Asset ID", anchor="w")
+    treeview_widget.heading("name", text="Item Name", anchor="w")
+    treeview_widget.heading("quantity", text="Quantity", anchor="center")
+    treeview_widget.heading("status", text="Health Status", anchor="center")
 
     # 5. Event Binding Loop
 
