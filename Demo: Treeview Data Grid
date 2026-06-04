@@ -41,6 +41,12 @@ def on_row_double_click(
         item_data = treeview_widget.item(selected_item_id)
         row_values = item_data["values"]  # Returns a list: [Asset ID, Name, Quantity, Status]
 
+        asset_name = row_values[1]
+        asset_status = row_values[3]
+
+        # Route text feedback directly into the UI status loops
+        label_top.config(text=f"Selected Record: {asset_name}")
+        label_bottom.config(text=f"Current Operational Status: {asset_status}")
 
 
 # Widget Creation -------------------------------------------------------------
