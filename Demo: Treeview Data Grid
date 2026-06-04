@@ -42,6 +42,18 @@ def create_user_interface() -> None:
 
     # 4. Seed Database for Debugging
     # Array of tuple data structures representing backend database rows
+    database_records = [
+        ("AST-041", "Enterprise Database Server Blade", 4, "Optimal Operational Capacity"),
+        ("AST-092", "Fiber Optic Routing Switch 24-Port", 12, "Maintenance Required (Port 4)"),
+        ("AST-115", "Uninterruptible Power Supply (UPS)", 8, "Critical: Replace Battery Pack"),
+        ("AST-204", "Biometric Network Security Scanner", 15, "Optimal Operational Capacity"),
+        ("AST-318", "Network NAS Storage Array 64TB", 2, "Optimal Operational Capacity"),
+        ("AST-440", "DevOps Local Staging Machine", 6, "Offline - Decommissioned"),
+    ]
+
+    for record in database_records:
+        # Inserting items sequentially. tk.END appends them to the bottom of the ledger
+        asset_grid.insert("", tk.END, values=record)
 
 
     root.mainloop()
