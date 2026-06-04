@@ -30,8 +30,15 @@ def build_treeview_grid(
 
     scrollbar = tk.Scrollbar(grid_container, orient="vertical")
 
-    # 2. Define structural table columns
-
+    # 2. Define table columns
+    column_identifiers = ("id", "name", "quantity", "status")
+    treeview_widget = ttk.Treeview(
+        grid_container, 
+        columns=column_identifiers, 
+        show="headings",
+        selectmode="browse"  # Limits selection to single rows
+    )
+    treeview_widget.pack(side="left", fill="both", expand=True)
 
     # 3. Hook the scrollbar directly to the Treeview's vertical axis
     treeview_widget.config(
