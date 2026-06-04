@@ -24,6 +24,18 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) 
     scrollbar.set(first, last)
 
 
+def on_row_double_click(
+    event: tk.Event, 
+    treeview_widget: ttk.Treeview, 
+    label_top: tk.Label, 
+    label_bottom: tk.Label
+) -> None:
+    """
+    Extracts structural record details from the clicked row to update status logs.
+    """
+    pass
+
+
 # Widget Creation -------------------------------------------------------------
 def build_treeview_grid(
     label_bottom: tk.Label, 
@@ -77,7 +89,9 @@ def build_treeview_grid(
 
 # User Interface Coordinator ---------------------------------------------------
 def create_user_interface() -> None:
-    """Coordinates window initialization, UI theming configuration, and seed data insertion."""
+    """
+    Coordinates window initialization, UI theming configuration, and seed data insertion.
+    """
     root = tk.Tk()
     root.title("Demo: Treeview Data Grid")
     root.geometry("650x380")
