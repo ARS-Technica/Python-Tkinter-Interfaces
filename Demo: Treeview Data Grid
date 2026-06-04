@@ -34,7 +34,10 @@ def build_treeview_grid(
 
 
     # 3. Hook the scrollbar directly to the Treeview's vertical axis
-
+    treeview_widget.config(
+        yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last)
+    )
+    scrollbar.config(command=treeview_widget.yview)
 
     # 4. Set Column Headers and Text Layout Alignment Rules
     # Column width rules
