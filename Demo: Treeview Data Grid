@@ -38,6 +38,10 @@ def build_treeview_grid(
 
     # 4. Set Column Headers and Text Layout Alignment Rules
     # Column width rules
+    treeview_widget.column("id", width=100, minwidth=50)
+    treeview_widget.column("name", width=200, minwidth=150)
+    treeview_widget.column("quantity", width=100, minwidth=50)
+    treeview_widget.column("status", width=100, minwidth=100)
 
     # Visible Header labels
     treeview_widget.heading("id", text="Asset ID", anchor="w")
