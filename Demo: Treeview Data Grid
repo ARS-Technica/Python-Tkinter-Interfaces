@@ -25,19 +25,22 @@ def create_user_interface() -> None:
     root.geometry("650x380")
     root.resizable(True, True)  # Enabled resizing to show off stretching columns
 
-    # 1. Set Native OS Style Themes using ttk Styling Engines
+
+    # 1. Create structural frames
+    main_frame = tk.Frame(root)
+    main_frame.pack(fill="both", expand=True, padx=15, pady=15)
+
+    # 2. Build status labels anchored underneath the data grid 
+    status_display_top = tk.Label(root, text="Double-click any asset row to pull database logs", font=("Consolas", 11, "bold"), anchor="center")
+    status_display_top.pack(side="bottom", fill="x", pady=(5, 0))
+
+    status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"), anchor="center")
+    status_display_bottom.pack(side="bottom", fill="x", pady=(0, 15))
+
+    # 3. Populate the horizontal data layout grid
 
 
-    # 2. Pre-allocate master structural frames
-
-
-    # 3. Build status labels anchored underneath the data grid space
-
-
-    # 4. Populate the horizontal data layout grid
-
-
-    # 5. Database Seed Simulation
+    # 4. Seed Database for Debugging
     # Array of tuple data structures representing backend database rows
 
 
