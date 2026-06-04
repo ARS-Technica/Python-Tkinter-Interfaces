@@ -12,6 +12,16 @@ from tkinter import ttk
 
 
 # Widget Functions ------------------------------------------------------------
+def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) -> None:
+    """
+    Dynamically shows or hides a specific scrollbar depending on content size.
+    """
+    if float(first) <= 0.0 and float(last) >= 1.0:
+        scrollbar.pack_forget()
+    else:
+        scrollbar.pack(side="right", fill="y")
+        
+    scrollbar.set(first, last)
 
 
 # Widget Creation -------------------------------------------------------------
