@@ -25,7 +25,10 @@ def build_treeview_grid(
     """
     
     # 1. Initialize a layout container withn independent scrollbars
+    grid_container = tk.Frame(parent)
+    grid_container.pack(fill="both", expand=True)
 
+    scrollbar = tk.Scrollbar(grid_container, orient="vertical")
 
     # 2. Define structural table columns
 
@@ -40,6 +43,9 @@ def build_treeview_grid(
 
 
     # 5. Event Binding Loop
+
+
+    return treeview_widget
 
 
 # User Interface Coordinator ---------------------------------------------------
