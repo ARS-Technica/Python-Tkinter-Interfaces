@@ -14,7 +14,32 @@ from tkinter import ttk
 # Widget Functions ------------------------------------------------------------
 
 
-# Layout Components ------------------------------------------------------------
+# Widget Creation -------------------------------------------------------------
+def build_treeview_grid(
+    label_bottom: tk.Label, 
+    label_top: tk.Label, 
+    parent: tk.Misc
+) -> ttk.Treeview:
+    """
+    Constructs a themed multi-column spreadsheet layout with scroll bindings.
+    """
+    
+    # 1. Initialize a layout container withn independent scrollbars
+
+
+    # 2. Define structural table columns
+
+
+    # 3. Hook the scrollbar directly to the Treeview's vertical axis
+
+
+    # 4. Set Column Headers and Text Layout Alignment Rules
+    # Column width rules
+
+    # Visible Header labels
+
+
+    # 5. Event Binding Loop
 
 
 # User Interface Coordinator ---------------------------------------------------
@@ -38,7 +63,7 @@ def create_user_interface() -> None:
     status_display_bottom.pack(side="bottom", fill="x", pady=(0, 15))
 
     # 3. Populate the horizontal data layout grid
-
+    asset_grid = build_treeview_grid(status_display_bottom, status_display_top, main_frame)
 
     # 4. Seed Database for Debugging
     # Array of tuple data structures representing backend database rows
