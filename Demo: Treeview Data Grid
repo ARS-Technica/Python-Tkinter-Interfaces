@@ -33,7 +33,14 @@ def on_row_double_click(
     """
     Extracts structural record details from the clicked row to update status logs.
     """
-    pass
+    # Identify the specific row item ID that was double-clicked
+    selected_item_id = treeview_widget.focus()
+    
+    if selected_item_id:
+        # Retrieve the underlying database row dictionary values
+        item_data = treeview_widget.item(selected_item_id)
+        row_values = item_data["values"]  # Returns a list: [Asset ID, Name, Quantity, Status]
+
 
 
 # Widget Creation -------------------------------------------------------------
