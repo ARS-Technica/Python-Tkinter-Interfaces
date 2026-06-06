@@ -85,15 +85,15 @@ def build_treeview_grid(
     # 4. Formatter Engine: Set Column Headers and Text Layout Alignment Rules
     # Column width rules
     treeview_widget.column("id", width=80, minwidth=60, stretch=False)
-    treeview_widget.column("name", width=175, minwidth=125, stretch=True)
-    treeview_widget.column("quantity", width=90, minwidth=70, stretch=False, anchor="center")
-    treeview_widget.column("status", width=175, minwidth=125, stretch=False, anchor="center")
+    treeview_widget.column("name", width=180, minwidth=130, stretch=True)
+    treeview_widget.column("quantity", width=80, minwidth=60, stretch=False, anchor="center")
+    treeview_widget.column("status", width=180, minwidth=130, stretch=False, anchor="w")
 
     # Visible Header labels
     treeview_widget.heading("id", text="Asset ID", anchor="w")
     treeview_widget.heading("name", text="Item Name", anchor="w")
     treeview_widget.heading("quantity", text="Stock Qty", anchor="center")
-    treeview_widget.heading("status", text="Health Status", anchor="center")
+    treeview_widget.heading("status", text="Health Status", anchor="w")
 
     # 5. Event Binding Loop
     # Detects mouse button 1 double-clicks on table rows
