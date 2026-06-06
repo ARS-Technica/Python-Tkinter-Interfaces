@@ -5,8 +5,11 @@ Created: June 5, 2026
 Description: Demonstrates multi-column tabular data management using the 
 Treeview widget. This project demonstrates the Treeview widget's ability to 
 natively display nested parent-child relationships like folders containing 
-files.  This project is an extention of my earlier "Demo: Treeview Data Grid"
-project.
+files.
+
+This project is an extention of my earlier "Demo: Treeview Data Grid"
+project. It transforms a flat multi-column layout into a nested, expandable 
+directory hierarchy. 
 """
 
 import tkinter as tk
