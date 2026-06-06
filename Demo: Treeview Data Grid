@@ -85,9 +85,9 @@ def build_treeview_grid(
     # 4. Formatter Engine: Set Column Headers and Text Layout Alignment Rules
     # Column width rules
     treeview_widget.column("id", width=80, minwidth=60, stretch=False)
-    treeview_widget.column("name", width=220, minwidth=150, stretch=True)
+    treeview_widget.column("name", width=175, minwidth=125, stretch=True)
     treeview_widget.column("quantity", width=90, minwidth=70, stretch=False, anchor="center")
-    treeview_widget.column("status", width=130, minwidth=100, stretch=False, anchor="center")
+    treeview_widget.column("status", width=175, minwidth=125, stretch=False, anchor="center")
 
     # Visible Header labels
     treeview_widget.heading("id", text="Asset ID", anchor="w")
