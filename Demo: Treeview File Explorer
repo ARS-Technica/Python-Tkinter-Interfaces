@@ -17,14 +17,86 @@ from tkinter import ttk
 
 
 # Widget Functions ------------------------------------------------------------
+def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) -> None:
+    """
+    Dynamically shows or hides a specific scrollbar depending on content size.
+    """
+    if float(first) <= 0.0 and float(last) >= 1.0:
+        scrollbar.pack_forget()
+    else:
+        scrollbar.pack(side="right", fill="y")
+        
+    scrollbar.set(first, last)
+
 
 
 
 # Layout Component Builders ---------------------------------------------------
+def build_file_tree(
+    label_bottom: tk.Label, 
+    label_top: tk.Label, 
+    parent: tk.Misc
+) -> ttk.Treeview:
+    """
+    Constructs a themed multi-column hierarchical directory pane with scroll bindings.
+    """
+    # 1. Initialize a layout container and an independent scrollbar engine
+    grid_container = tk.Frame(parent)
+    grid_container.pack(fill="both", expand=True)
+    
+    scrollbar = tk.Scrollbar(grid_container, orient="vertical")
+
+    # 2. Define our structural table columns
+    # Meta-data columns (The main item name is stored in the primary 'tree' column)
+    column_identifiers = ("size", "type", "modified")
+    treeview_widget = ttk.Treeview(
+        grid_container, 
+        columns=column_identifiers, 
+        show="tree headings",  # Activates both the hierarchical tree and the meta headers
+        selectmode="browse"
+    )
+    treeview_widget.pack(side="left", fill="both", expand=True)
+
+    # 3. Hook the scrollbar directly to the Treeview's vertical movement axis
+    treeview_widget.config(
+        yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last)
+    )
+    scrollbar.config(command=treeview_widget.yview)
+
+    # 4. Formatter Engine: Set Column Headers and Text Layout Alignment Rules
+    # Column width rules						
+    treeview_widget.column("id", width=250, minwidth=180, stretch=True)
+    treeview_widget.column("size", width=90, minwidth=70, stretch=False, anchor="w")
+    treeview_widget.column("type", width=120, minwidth=90, stretch=False, anchor="w")
+    treeview_widget.column("modified", width=130, minwidth=100, stretch=False, anchor="w")
+
+    # Header Titles
+    treeview_widget.heading("id", text="Project Directory Tree", anchor="w")
+    treeview_widget.heading("size", text="File Size", anchor="w")
+    treeview_widget.heading("type", text="Element Type", anchor="w")
+    treeview_widget.heading("modified", text="Date Modified", anchor="w")
+
+    # 5. Event Binding Loop
+    # Double-click interaction binding						
+    treeview_widget.bind(
+        "<Double-1>", 
+        lambda event: on_row_double_click(event, treeview_widget, label_top, label_bottom)
+    )
+
+    return treeview_widget
 
 
 
 # User Interface Coordinator --------------------------------------------------
+def create_user_interface() -> None:
+    """
+    Coordinates window initialization, UI theming configuration, and seed data insertion.
+    """
+    root = tk.Tk()
+    root.title("Demo: Treeview Data Grid")
+    root.geometry("650x380")
+    root.resizable(True, True)  # Enabled resizing to show off stretching columns!
+
 
 
 
