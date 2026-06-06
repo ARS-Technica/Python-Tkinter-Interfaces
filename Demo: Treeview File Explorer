@@ -9,10 +9,26 @@ files.
 
 This project is an extention of my earlier "Demo: Treeview Data Grid"
 project. It transforms a flat multi-column layout into a nested, expandable 
-directory hierarchy. 
+directory hierarchy.
 """
 
 import tkinter as tk
 from tkinter import ttk
 
+
+# Widget Functions ------------------------------------------------------------
+
+
+
+# Layout Component Builders ---------------------------------------------------
+
+
+
+# User Interface Coordinator --------------------------------------------------
+
+
+
+# Main Application Entry ------------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface()
 
