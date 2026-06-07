@@ -30,6 +30,17 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) 
 
 
 
+def on_row_double_click(
+    event: tk.Event, 
+    treeview_widget: ttk.Treeview, 
+    label_top: tk.Label, 
+    label_bottom: tk.Label
+) -> None:
+    """
+    Extracts structural record details from the clicked row to update status logs.
+    """
+    pass
+
 
 # Layout Component Builders ---------------------------------------------------
 def build_file_tree(
@@ -98,6 +109,7 @@ def create_user_interface() -> None:
     root.resizable(True, True)  # Enabled resizing to show off stretching columns!
 
 
+    root.mainloop()
 
 
 # Main Application Entry ------------------------------------------------------
