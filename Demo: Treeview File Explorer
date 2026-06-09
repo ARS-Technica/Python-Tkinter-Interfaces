@@ -37,7 +37,7 @@ def on_row_double_click(
     label_bottom: tk.Label
 ) -> None:
     """
-    Extracts structural record details from the clicked row to update status logs.
+    Extracts hierarchical path and file details from the clicked node.
     """
     # Identify the specific row item ID that was double-clicked
     selected_item_id = treeview_widget.focus()
@@ -45,7 +45,11 @@ def on_row_double_click(
     if selected_item_id:
         # Retrieve the underlying database row dictionary values
         item_data = treeview_widget.item(selected_item_id)
+        item_name = item_data["text"]  # This is the 'text' field of the item 
         row_values = item_data["values"]  # Returns a list: [Asset ID, Name, Quantity, Status]
+
+        # Build a pseudo-directory file path by traversing upward to parent folder
+        parent_id = treeview_widget.parent(selected_item_id)
 
         asset_name = row_values[1]
         asset_status = row_values[3]
