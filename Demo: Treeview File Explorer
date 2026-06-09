@@ -29,7 +29,6 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) 
     scrollbar.set(first, last)
 
 
-
 def on_row_double_click(
     event: tk.Event, 
     treeview_widget: ttk.Treeview, 
@@ -106,14 +105,14 @@ def build_file_tree(
     treeview_widget.column("quantity", width=80, minwidth=60, stretch=False, anchor="center")
     treeview_widget.column("status", width=180, minwidth=130, stretch=False, anchor="w")
 
-    # Header Titles
-    treeview_widget.heading("id", text="Project Directory Tree", anchor="w")
-    treeview_widget.heading("size", text="File Size", anchor="w")
-    treeview_widget.heading("type", text="Element Type", anchor="w")
-    treeview_widget.heading("modified", text="Date Modified", anchor="w")
+    # Visible Header Labels
+    treeview_widget.heading("id", text="Asset ID", anchor="w")
+    treeview_widget.heading("name", text="Item Name", anchor="w")
+    treeview_widget.heading("quantity", text="Stock Qty", anchor="center")
+    treeview_widget.heading("status", text="Health Status", anchor="w")
 
     # 5. Event Binding Loop
-    # Double-click interaction binding						
+    # Detects mouse button 1 double-clicks on table rows
     treeview_widget.bind(
         "<Double-1>", 
         lambda event: on_row_double_click(event, treeview_widget, label_top, label_bottom)
