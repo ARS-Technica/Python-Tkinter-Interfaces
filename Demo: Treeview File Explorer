@@ -137,6 +137,19 @@ def create_user_interface() -> None:
     style_engine.theme_use("clam")  # Crisp, borderless engineering theme
     style_engine.configure("Treeview", rowheight=25)  # Set uniform row height for better readability
 
+    # 2. Create structural frames
+    main_frame = tk.Frame(root)
+    main_frame.pack(fill="both", expand=True, padx=15, pady=15)
+
+    # 3. Build status labels anchored underneath the data grid space
+    status_display_top = tk.Label(root, text="Double-click any file to read metadata paths", font=("Consolas", 11, "bold"), anchor="center")
+    status_display_top.pack(side="top", fill="x", pady=(5, 0))  # pady=(10, 2))
+
+    status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"),anchor="center")
+    status_display_bottom.pack(side="top", fill="x", pady=(0, 25))  # pady=(0, 25))
+
+    file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
+
 
     root.mainloop()
 
