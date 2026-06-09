@@ -132,6 +132,11 @@ def create_user_interface() -> None:
     root.geometry("650x380")
     root.resizable(True, True)  # Enabled resizing to show off stretching columns!
 
+    # 1. Set Native OS Style Themes using ttk Styling Engines
+    style_engine = ttk.Style()
+    style_engine.theme_use("clam")  # Crisp, borderless engineering theme
+    style_engine.configure("Treeview", rowheight=25)  # Set uniform row height for better readability
+
 
     root.mainloop()
 
