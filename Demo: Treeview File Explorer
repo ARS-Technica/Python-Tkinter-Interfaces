@@ -100,11 +100,11 @@ def build_file_tree(
     scrollbar.config(command=treeview_widget.yview)
 
     # 4. Formatter Engine: Set Column Headers and Text Layout Alignment Rules
-    # Column width rules						
-    treeview_widget.column("id", width=250, minwidth=180, stretch=True)
-    treeview_widget.column("size", width=90, minwidth=70, stretch=False, anchor="w")
-    treeview_widget.column("type", width=120, minwidth=90, stretch=False, anchor="w")
-    treeview_widget.column("modified", width=130, minwidth=100, stretch=False, anchor="w")
+    # Column width rules
+    treeview_widget.column("id", width=80, minwidth=60, stretch=False)
+    treeview_widget.column("name", width=180, minwidth=130, stretch=True)
+    treeview_widget.column("quantity", width=80, minwidth=60, stretch=False, anchor="center")
+    treeview_widget.column("status", width=180, minwidth=130, stretch=False, anchor="w")
 
     # Header Titles
     treeview_widget.heading("id", text="Project Directory Tree", anchor="w")
