@@ -51,12 +51,19 @@ def on_row_double_click(
         # Build a pseudo-directory file path by traversing upward to parent folder
         parent_id = treeview_widget.parent(selected_item_id)
 
-        asset_name = row_values[1]
-        asset_status = row_values[3]
+        if parent_id:
+            parent_name = treeview_widget.item(parent_id)["text"]
+            full_path = f"root://{parent_name}/{item_name}"
+            item_type = row_values[1]
+            item_size = row_values[0]
 
-        # Route text feedback directly into the UI status loops
-        label_top.config(text=f"Selected Record: {asset_name}")
-        label_bottom.config(text=f"Current Operational Status: {asset_status}")
+            # Route text feedback directly into the UI status loops
+            label_top.config(text=f"Opened File: {full_path}")
+            label_bottom.config(text=f"Type: {item_type} | Allocate Size: {item_size}")
+        else:
+            # The item clicked is a root folder node
+            label_top.config(text=f"Directory Expanded: root://{item_name}/")
+            label_bottom.config(text="Scanning structural sub-directories...")
 
 
 # Layout Component Builders ---------------------------------------------------
