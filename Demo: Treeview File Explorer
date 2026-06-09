@@ -83,12 +83,13 @@ def build_file_tree(
 
     # 2. Define our structural table columns
     # Meta-data columns (The main item name is stored in the primary 'tree' column)
-    column_identifiers = ("size", "type", "modified")
+    # 'show="headings"' completely hides the native hierarchical folder tree column
+    column_identifiers = ("id", "name", "quantity", "status")
     treeview_widget = ttk.Treeview(
         grid_container, 
         columns=column_identifiers, 
-        show="tree headings",  # Activates both the hierarchical tree and the meta headers
-        selectmode="browse"
+        show="headings",
+        selectmode="browse"  # Limits selection to single rows
     )
     treeview_widget.pack(side="left", fill="both", expand=True)
 
