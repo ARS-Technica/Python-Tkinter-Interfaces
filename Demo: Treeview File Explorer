@@ -152,7 +152,10 @@ def create_user_interface() -> None:
     # Node Data for Debugging -----------------------------------------------
 
     # 1. Root Level Folder: Source Control
- 
+    src_folder = file_tree.insert("", tk.END, text="src", values=("---", "Source Folder", "06/02/2026"))
+    file_tree.insert(src_folder, tk.END, text="main.py", values=("14 KB", "Python Script", "06/05/2026"))
+    file_tree.insert(src_folder, tk.END, text="models.py", values=("28 KB", "Python Script", "06/01/2026"))
+    file_tree.insert(src_folder, tk.END, text="utils.py", values=("8 KB", "Python Script", "05/28/2026"))
 
     # 2. Root Level Folder: Assets & Configurations
  
