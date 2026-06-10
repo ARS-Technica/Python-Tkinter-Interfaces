@@ -65,14 +65,14 @@ def on_row_double_click(
             label_bottom.config(text="Scanning structural sub-directories...")
 
 
-# Layout Component Builders ---------------------------------------------------
+# Widget Creation -------------------------------------------------------------
 def build_file_tree(
     label_bottom: tk.Label, 
     label_top: tk.Label, 
     parent: tk.Misc
 ) -> ttk.Treeview:
     """
-    Constructs a themed multi-column hierarchical directory pane with scroll bindings.
+    Constructs a themed multi-column spreadsheet layout with scroll bindings.
     """
     # 1. Initialize a layout container and an independent scrollbar engine
     grid_container = tk.Frame(parent)
@@ -81,13 +81,12 @@ def build_file_tree(
     scrollbar = tk.Scrollbar(grid_container, orient="vertical")
 
     # 2. Define our structural table columns
-    # Meta-data columns (The main item name is stored in the primary 'tree' column)
     # 'show="headings"' completely hides the native hierarchical folder tree column
-    column_identifiers = ("id", "name", "quantity", "status")
+    column_identifiers = ("Size", "Type", "Modified")
     treeview_widget = ttk.Treeview(
         grid_container, 
         columns=column_identifiers, 
-        show="headings",
+        show="tree headings",  # Activates both the hierarchical tree and the meta headers
         selectmode="browse"  # Limits selection to single rows
     )
     treeview_widget.pack(side="left", fill="both", expand=True)
@@ -100,26 +99,25 @@ def build_file_tree(
 
     # 4. Formatter Engine: Set Column Headers and Text Layout Alignment Rules
     # Column width rules
-    treeview_widget.column("id", width=80, minwidth=60, stretch=False)
-    treeview_widget.column("name", width=180, minwidth=130, stretch=True)
-    treeview_widget.column("quantity", width=80, minwidth=60, stretch=False, anchor="center")
-    treeview_widget.column("status", width=180, minwidth=130, stretch=False, anchor="w")
+    treeview_widget.column("#0", width=250, minwidth=180, stretch=True)
+    treeview_widget.column("Size", width=90, minwidth=70, stretch=False, anchor="w")
+    treeview_widget.column("Type", width=120, minwidth=90, stretch=False, anchor="w")
+    treeview_widget.column("Modified", width=130, minwidth=100, stretch=False, anchor="w")
 
     # Visible Header Labels
-    treeview_widget.heading("id", text="Asset ID", anchor="w")
-    treeview_widget.heading("name", text="Item Name", anchor="w")
-    treeview_widget.heading("quantity", text="Stock Qty", anchor="center")
-    treeview_widget.heading("status", text="Health Status", anchor="w")
+    treeview_widget.heading("#0", text="Project Directory Tree", anchor="w")
+    treeview_widget.heading("Size", text="File Size", anchor="w")
+    treeview_widget.heading("Type", text="Element Type", anchor="w")
+    treeview_widget.heading("Modified", text="Date Modified", anchor="w")
 
     # 5. Event Binding Loop
-    # Detects mouse button 1 double-clicks on table rows
+    # Double-click binding on table rows
     treeview_widget.bind(
         "<Double-1>", 
         lambda event: on_row_double_click(event, treeview_widget, label_top, label_bottom)
     )
 
     return treeview_widget
-
 
 
 # User Interface Coordinator --------------------------------------------------
