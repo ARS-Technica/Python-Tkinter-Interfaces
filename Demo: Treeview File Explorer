@@ -151,6 +151,20 @@ def create_user_interface() -> None:
     file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
 
 
+    # Node Data for Debugging -----------------------------------------------
+
+    # 1. Root Level Folder: Source Control
+ 
+
+    # 2. Root Level Folder: Assets & Configurations
+ 
+
+    # 3. Root Level Folder: Documentation
+ 
+
+    # 4. Standalone Root Level File (Not inside a folder node)
+ 
+
     root.mainloop()
 
 
