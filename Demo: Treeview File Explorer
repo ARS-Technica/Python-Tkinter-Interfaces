@@ -158,7 +158,9 @@ def create_user_interface() -> None:
     file_tree.insert(src_folder, tk.END, text="utils.py", values=("8 KB", "Python Script", "05/28/2026"))
 
     # 2. Root Level Folder: Assets & Configurations
- 
+    config_folder = file_tree.insert("", tk.END, text="config", values=("---", "Config Folder", "06/04/2026"))
+    file_tree.insert(config_folder, tk.END, text="settings.json", values=("3 KB", "JSON Schema", "06/04/2026"))
+    file_tree.insert(config_folder, tk.END, text="local_env", values=("1 KB", "Configuration", "05/12/2026"))
 
     # 3. Root Level Folder: Documentation
  
