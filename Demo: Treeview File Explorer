@@ -146,7 +146,7 @@ def create_user_interface() -> None:
     status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"),anchor="center")
     status_display_bottom.pack(side="top", fill="x", pady=(0, 25))  # pady=(0, 25))
 
-    file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
+    file_tree = build_file_tree(status_display_bottom, status_display_top, main_frame)
 
 
     # Node Data for Debugging -----------------------------------------------
