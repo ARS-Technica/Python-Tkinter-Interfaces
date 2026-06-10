@@ -150,6 +150,18 @@ def create_user_interface() -> None:
 
 
     # Node Data for Debugging -----------------------------------------------
+    # GRAPHICS ENGINE: Create and cache internal 16x16 pixel icon assets 
+    # Swap these out for real local files like: tk.PhotoImage(file="folder.png"))
+    icon_cache = {
+        "folder": tk.PhotoImage(width=16, height=16),
+        "file": tk.PhotoImage(width=16, height=16)
+    }
+    
+    # Draw a quick blue square block to simulate a clean folder graphic layout asset
+    icon_cache["folder"].put("#4a90e2", to=(2, 2, 14, 14))
+    # Draw a quick gray document block to simulate a native file asset
+    icon_cache["file"].put("#9b9b9b", to=(3, 1, 13, 15))
+
 
     # 1. Root Level Folder: Source Control
     src_folder = file_tree.insert("", tk.END, text="src", image=icon_cache["folder"],values=("---", "Source Folder", "06/02/2026"))
