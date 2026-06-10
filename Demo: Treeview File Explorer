@@ -163,7 +163,8 @@ def create_user_interface() -> None:
     file_tree.insert(config_folder, tk.END, text="local_env", values=("1 KB", "Configuration", "05/12/2026"))
 
     # 3. Root Level Folder: Documentation
- 
+    doc_folder = file_tree.insert("", tk.END, text="docs", values=("---", "Doc Folder", "05/20/2026"))
+    file_tree.insert(doc_folder, tk.END, text="README.md", values=("11 KB", "Markdown Documentation", "06/05/2026"))
 
     # 4. Standalone Root Level File (Not inside a folder node)
  
