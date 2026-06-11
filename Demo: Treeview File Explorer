@@ -149,6 +149,22 @@ def create_user_interface() -> None:
         )
         canvas.update()
 
+        # Extract the vector canvas raster data straight into your icon cache container
+        # Using postscript data allows us to bypass temporary file requirements entirely
+        try:
+            ps_data = canvas.postscript(colormode="color")
+            photo_image.config(data=ps_data)
+        except tk.TclError:
+            # Safe Fallback: Draws crisp primitive geometric shapes if Ghostscript isn't found
+            if emoji_char == "📁":
+                photo_image.config(width=16, height=16)
+                photo_image.put("#4a90e2", to=(2, 2, 14, 14))
+            else:
+                photo_image.config(width=16, height=16)
+                photo_image.put("#9b9b9b", to=(3, 1, 13, 15))
+        finally:
+            canvas.destroy()
+
 
     # Create structural frames
     panels_frame = tk.Frame(root)
