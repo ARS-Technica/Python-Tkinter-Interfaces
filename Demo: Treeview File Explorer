@@ -149,37 +149,12 @@ def create_user_interface() -> None:
     file_tree = build_file_tree(status_display_bottom, status_display_top, main_frame)
 
 
-    # Node Data for Debugging -----------------------------------------------
-    # GRAPHICS ENGINE: Create and cache internal 16x16 pixel icon assets 
-    # Swap these out for real local files like: tk.PhotoImage(file="folder.png"))
-    icon_cache = {
-        "folder": tk.PhotoImage(width=16, height=16),
-        "file": tk.PhotoImage(width=16, height=16)
-    }
+    # Live System Directory ---------------------------------------------------
+    # Automatically tracks down and isolates the folder path this script is saved inside
+    target_project_directory = os.path.dirname(os.path.abspath(__file__))
     
-    # Draw a quick blue square block to simulate a clean folder graphic layout asset
-    icon_cache["folder"].put("#4a90e2", to=(2, 2, 14, 14))
-    # Draw a quick gray document block to simulate a native file asset
-    icon_cache["file"].put("#9b9b9b", to=(3, 1, 13, 15))
 
 
-    # 1. Root Level Folder: Source Control
-    src_folder = file_tree.insert("", tk.END, text="src", image=icon_cache["folder"], values=("---", "Source Folder", "06/02/2026"))
-    file_tree.insert(src_folder, tk.END, text="main.py", image=icon_cache["file"], values=("14 KB", "Python Script", "06/05/2026"))
-    file_tree.insert(src_folder, tk.END, text="models.py", image=icon_cache["file"], values=("28 KB", "Python Script", "06/01/2026"))
-    file_tree.insert(src_folder, tk.END, text="utils.py", image=icon_cache["file"], values=("8 KB", "Python Script", "05/28/2026"))
-
-    # 2. Root Level Folder: Assets & Configurations
-    config_folder = file_tree.insert("", tk.END, text="config", image=icon_cache["folder"], values=("---", "Config Folder", "06/04/2026"))
-    file_tree.insert(config_folder, tk.END, text="settings.json", image=icon_cache["file"], values=("3 KB", "JSON Schema", "06/04/2026"))
-    file_tree.insert(config_folder, tk.END, text="local_env", image=icon_cache["file"], values=("1 KB", "Configuration", "05/12/2026"))
-
-    # 3. Root Level Folder: Documentation
-    doc_folder = file_tree.insert("", tk.END, text="docs", image=icon_cache["folder"], values=("---", "Doc Folder", "05/20/2026"))
-    file_tree.insert(doc_folder, tk.END, text="README.md", image=icon_cache["file"], values=("11 KB", "Markdown Documentation", "06/05/2026"))
-
-    # 4. Standalone Root Level File (Not inside a folder node)
-    file_tree.insert("", tk.END, text="gitignore", image=icon_cache["file"], values=("1 KB", "Git Configuration", "04/01/2026"))
 
     root.mainloop()
 
