@@ -153,7 +153,22 @@ def create_user_interface() -> None:
     # Automatically tracks down and isolates the folder path this script is saved inside
     target_project_directory = os.path.dirname(os.path.abspath(__file__))
     
+    # Render the target directory root node label at top of the tree stack
+    root_node_name = os.path.basename(target_project_directory) or target_project_directory
+    root_node_id = file_tree.insert(
+        "", 
+        tk.END,
+        text=root_node_name, 
+        image=icon_cache["folder"], 
+        values=("---", "Project Root", ""),
+        tags=(target_project_directory,)
+    )
 
+    # Automatically trigger our background scan engine loops
+    populate_tree_recursively(file_tree, root_node_id, target_project_directory, icon_cache)
+
+    # Auto-expand the topmost project container row for style on launch
+    file_tree.item(root_node_id, open=True)
 
 
     root.mainloop()
