@@ -134,6 +134,22 @@ def create_user_interface() -> None:
     style_engine.configure("Treeview", rowheight=25, font=("Segoe UI", 10))
 
 
+    # Separator Pattern: Render text characters directly onto your image canvases
+    # This acts as an off-screen graphic stamp, separating data parameters from styling
+    def convert_emoji_to_image(emoji_char: str, photo_image: tk.PhotoImage) -> None:
+        # Create a tiny, isolated canvas block matching your row height rules
+        canvas = tk.Canvas(root, width=20, height=20, highlightthickness=0)
+
+        # Stamp the emoji cleanly right in the exact geometric center
+        canvas.create_text(
+            10, 10, 
+            text=emoji_char, 
+            font=("Segoe UI Emoji" if os.name == "nt" else "Arial", 12), 
+            anchor="center"
+        )
+        canvas.update()
+
+
     # Create structural frames
     panels_frame = tk.Frame(root)
     panels_frame.pack(fill="both", expand=True, pady=(15, 0))
@@ -151,7 +167,7 @@ def create_user_interface() -> None:
     # Live System Directory ---------------------------------------------------
     # Automatically tracks down and isolates the folder path this script is saved inside
     target_project_directory = os.path.dirname(os.path.abspath(__file__))
-    
+
     # Render the target directory root node label at top of the tree stack
     root_node_name = os.path.basename(target_project_directory) or target_project_directory
     root_node_id = file_tree.insert(
@@ -168,7 +184,6 @@ def create_user_interface() -> None:
 
     # Auto-expand the topmost project container row for style on launch
     file_tree.item(root_node_id, open=True)
-
 
     root.mainloop()
 
