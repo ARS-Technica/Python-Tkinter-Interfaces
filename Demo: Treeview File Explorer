@@ -122,31 +122,30 @@ def build_file_tree(
 
 # User Interface Coordinator --------------------------------------------------
 def create_user_interface() -> None:
-    """
-    Coordinates window initialization, UI theming configuration, and seed data insertion.
-    """
+    """Coordinates window loops, graphics generation caching, and directory population."""
     root = tk.Tk()
-    root.title("Demo: Treeview Data Grid")
-    root.geometry("650x380")
-    root.resizable(True, True)  # Enabled resizing to show off stretching columns!
+    root.title(CONFIG["WINDOW_TITLE"])
+    root.geometry(CONFIG["WINDOW_GEOMETRY"])
 
-    # 1. Set Native OS Style Themes using ttk Styling Engines
+    # Set Native OS Style Themes using ttk Styling Engines
     style_engine = ttk.Style()
-    style_engine.theme_use("clam")  # Crisp, borderless engineering theme
-    style_engine.configure("Treeview", rowheight=25)  # Set uniform row height for better readability
+    style_engine.theme_use("clam") # Crisp, borderless engineering theme
+    # Set uniform row height for better readability
+    style_engine.configure("Treeview", rowheight=25, font=("Segoe UI", 10))
 
-    # 2. Create structural frames
-    main_frame = tk.Frame(root)
-    main_frame.pack(fill="both", expand=True, padx=15, pady=15)
 
-    # 3. Build status labels anchored underneath the data grid space
-    status_display_top = tk.Label(root, text="Double-click any file to read metadata paths", font=("Consolas", 11, "bold"), anchor="center")
-    status_display_top.pack(side="top", fill="x", pady=(5, 0))  # pady=(10, 2))
+    # Create structural frames
+    panels_frame = tk.Frame(root)
+    panels_frame.pack(fill="both", expand=True, pady=(15, 0))
 
-    status_display_bottom = tk.Label(root, text="", font=("Consolas", 11, "bold"),anchor="center")
-    status_display_bottom.pack(side="top", fill="x", pady=(0, 25))  # pady=(0, 25))
+    # Build status labels anchored underneath the data grid space
+    status_display_top = tk.Label(root, text="Double-click any file node to inspect live OS metadata", font=CONFIG["FONT_STATUS"], anchor="center")
+    status_display_top.pack(side="top", fill="x", pady=(10, 2))
 
-    file_tree = build_file_tree(status_display_bottom, status_display_top, main_frame)
+    status_display_bottom = tk.Label(root, text="", font=("Segoe UI", 10), anchor="center")
+    status_display_bottom.pack(side="top", fill="x", pady=(2, 10))
+
+    file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
 
 
     # Live System Directory ---------------------------------------------------
