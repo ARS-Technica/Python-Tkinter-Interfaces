@@ -140,10 +140,17 @@ def populate_tree_recursively(
                 
                 if entry.is_dir():
                     # 2. Add folder node to the UI layout
-
-                    # 3. RECURSION: Drill inside this directory instantly                  
+                    folder_id = treeview_widget.insert(
+                        parent_node_id, 
+                        tk.END, 
+                        text=entry.name, 
+                        image=icon_cache["folder"],
+                        values=("---", "Folder", mod_time),
+                        tags=(entry.path,)  # Stash the path in tags for retrieval on double-click
+                    )
+                    # 3. RECURSION: Drill inside this directory instantly
                     populate_tree_recursively(treeview_widget, folder_id, entry.path, icon_cache)
-
+                    
                 elif entry.is_file():
                     # 4. Add file node to the UI layout
                     human_size = get_human_readable_size(stats.st_size)
@@ -157,11 +164,9 @@ def populate_tree_recursively(
                         values=(human_size, f"{file_extension} Element", mod_time),
                         tags=(entry.path,)
                     )
-
     except PermissionError:
         # Safe execution guard: skip protected OS system folders smoothly
         pass
-
 
 # User Interface Coordinator --------------------------------------------------
 def create_user_interface() -> None:
