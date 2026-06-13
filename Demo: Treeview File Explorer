@@ -141,7 +141,7 @@ def populate_tree_recursively(
                     folder_id = treeview_widget.insert(
                         parent_node_id, 
                         tk.END, 
-                        text=entry.name, 
+                        text=f"📁  {entry.name}", 
                         image=icon_cache["folder"],
                         values=("---", "Folder", mod_time),
                         tags=(entry.path,)  # Stash the path in tags for retrieval on double-click
@@ -157,7 +157,7 @@ def populate_tree_recursively(
                     treeview_widget.insert(
                         parent_node_id, 
                         tk.END, 
-                        text=entry.name, 
+                        text=f"📄  {entry.name}", 
                         image=icon_cache["file"],
                         values=(human_size, f"{file_extension} Element", mod_time),
                         tags=(entry.path,)
@@ -227,7 +227,7 @@ def create_user_interface() -> None:
     panels_frame.pack(fill="both", expand=True, pady=(15, 0))
 
     # Build status labels anchored underneath the data grid space
-    status_display_top = tk.Label(root, text="Double-click any file node to inspect live OS metadata", font=CONFIG["FONT_STATUS"], anchor="center")
+    status_display_top = tk.Label(root, text="Double-click any file node to inspect live OS metadata", font=("Consolas", 11, "bold"), anchor="center")
     status_display_top.pack(side="top", fill="x", pady=(10, 2))
 
     status_display_bottom = tk.Label(root, text="", font=("Segoe UI", 10), anchor="center")
