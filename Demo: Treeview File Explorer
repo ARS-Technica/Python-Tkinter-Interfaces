@@ -133,8 +133,7 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
 def populate_tree_recursively(
     treeview_widget: ttk.Treeview, 
     parent_node_id: str, 
-    target_directory_path: str,
-    icon_cache: dict[str, tk.PhotoImage]
+    target_directory_path: str
 ) -> None:
     """
     Recursively scans local OS paths to build nested tree node relationships.
@@ -153,12 +152,12 @@ def populate_tree_recursively(
                         parent_node_id, 
                         tk.END, 
                         text=f"📁  {entry.name}", 
-                        image=icon_cache["folder"],
+                        # image=icon_cache["folder"],
                         values=("---", "Folder", mod_time),
                         tags=(entry.path,)  # Stash the path in tags for retrieval on double-click
                     )
                     # 3. RECURSION FLUIDITY: Drill inside this directory instantly
-                    populate_tree_recursively(treeview_widget, folder_id, entry.path, icon_cache)
+                    populate_tree_recursively(treeview_widget, folder_id, entry.path)
                     
                 elif entry.is_file():
                     # 4. Add file node to the UI layout
@@ -169,7 +168,7 @@ def populate_tree_recursively(
                         parent_node_id, 
                         tk.END, 
                         text=f"📄  {entry.name}", 
-                        image=icon_cache["file"],
+                        #image=icon_cache["file"],
                         values=(human_size, f"{file_extension} Element", mod_time),
                         tags=(entry.path,)
                     )
@@ -192,7 +191,8 @@ def create_user_interface() -> None:
     style_engine.theme_use("clam") # Crisp, borderless engineering theme
     # Set uniform row height for better readability
     style_engine.configure("Treeview", rowheight=25, font=("Segoe UI", 10))
-
+    # Set the internal image area padding to 0 to completely eliminate the blank rectangles
+    style_engine.configure("Treeview", padding=0)
 
     # Graphics Caching Generator Engine
     icon_cache = {
@@ -260,13 +260,13 @@ def create_user_interface() -> None:
         "", 
         tk.END,
         text=root_node_name, 
-        image=icon_cache["folder"], 
+        # image=icon_cache["folder"], 
         values=("---", "Project Root", ""),
         tags=(target_project_directory,)
     )
 
     # Fire off recursive scan engine loop
-    populate_tree_recursively(file_tree, root_node_id, target_project_directory, icon_cache)
+    populate_tree_recursively(file_tree, root_node_id, target_project_directory)
 
     # Auto-expand the topmost project container row for style on launch
     file_tree.item(root_node_id, open=True)
