@@ -124,8 +124,8 @@ def build_file_tree(
 def create_user_interface() -> None:
     """Coordinates window loops, graphics generation caching, and directory population."""
     root = tk.Tk()
-    root.title(CONFIG["WINDOW_TITLE"])
-    root.geometry(CONFIG["WINDOW_GEOMETRY"])
+    root.title("Demo: Local File System Explorer")
+    root.geometry("750x400")
 
     # Set Native OS Style Themes using ttk Styling Engines
     style_engine = ttk.Style()
