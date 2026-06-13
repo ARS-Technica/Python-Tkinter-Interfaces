@@ -134,14 +134,29 @@ def populate_tree_recursively(
         # os.scandir is an iterator that reads directory entries on demand
         with os.scandir(target_directory_path) as entries:
             for entry in entries:
-            # 1. Capture core metadata details using the entry stat block
+                # 1. Capture core metadata details using the entry stat block
+                stats = entry.stat()
+                mod_time = datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%d %H:%M')
+                
+                if entry.is_dir():
+                    # 2. Add folder node to the UI layout
 
-            # 2. Add folder node to the UI layout
+                    # 3. RECURSION: Drill inside this directory instantly                  
+                    populate_tree_recursively(treeview_widget, folder_id, entry.path, icon_cache)
 
-            # 3. RECURSION: Drill inside this directory instantly                  
-
-            # 4. Add file node to the UI layout
-
+                elif entry.is_file():
+                    # 4. Add file node to the UI layout
+                    human_size = get_human_readable_size(stats.st_size)
+                    file_extension = os.path.splitext(entry.name)[1].upper() or "FILE"
+                    
+                    treeview_widget.insert(
+                        parent_node_id, 
+                        tk.END, 
+                        text=entry.name, 
+                        image=icon_cache["file"],
+                        values=(human_size, f"{file_extension} Element", mod_time),
+                        tags=(entry.path,)
+                    )
 
     except PermissionError:
         # Safe execution guard: skip protected OS system folders smoothly
