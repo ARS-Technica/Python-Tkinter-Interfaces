@@ -157,7 +157,7 @@ def populate_tree_recursively(
                         values=("---", "Folder", mod_time),
                         tags=(entry.path,)  # Stash the path in tags for retrieval on double-click
                     )
-                    # 3. RECURSION: Drill inside this directory instantly
+                    # 3. RECURSION FLUIDITY: Drill inside this directory instantly
                     populate_tree_recursively(treeview_widget, folder_id, entry.path, icon_cache)
                     
                 elif entry.is_file():
@@ -177,9 +177,12 @@ def populate_tree_recursively(
         # Safe execution guard: skip protected OS system folders smoothly
         pass
 
+
 # User Interface Coordinator --------------------------------------------------
 def create_user_interface() -> None:
-    """Coordinates window loops, graphics generation caching, and directory population."""
+    """
+    Coordinates window loops, graphics generation caching, and directory population.
+    """
     root = tk.Tk()
     root.title("Demo: Local File System Explorer")
     root.geometry("750x400")
@@ -262,7 +265,7 @@ def create_user_interface() -> None:
         tags=(target_project_directory,)
     )
 
-    # Automatically trigger our background scan engine loops
+    # Fire off recursive scan engine loop
     populate_tree_recursively(file_tree, root_node_id, target_project_directory, icon_cache)
 
     # Auto-expand the topmost project container row for style on launch
