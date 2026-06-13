@@ -12,6 +12,9 @@ project. It transforms a flat multi-column layout into a nested, expandable
 directory hierarchy.
 """
 
+from datetime import datetime 
+import math
+import os
 import tkinter as tk
 from tkinter import ttk
 
@@ -36,7 +39,7 @@ def on_row_double_click(
     label_bottom: tk.Label
 ) -> None:
     """
-    Extracts hierarchical path and file details from the clicked node.
+    Extracts structural metadata profiles from the clicked item row node.
     """
     # Identify the specific row item ID that was double-clicked
     selected_item_id = treeview_widget.focus()
@@ -44,25 +47,20 @@ def on_row_double_click(
     if selected_item_id:
         # Retrieve the underlying database row dictionary values
         item_data = treeview_widget.item(selected_item_id)
-        item_name = item_data["text"]  # This is the 'text' field of the item 
-        row_values = item_data["values"]  # Returns a list: [Asset ID, Name, Quantity, Status]
+        item_name = item_data["text"]
+        row_values = item_data["values"]
+        
+        # Pull the absolute system path we stored in the hidden 'tags' property
+        absolute_path = treeview_widget.item(selected_item_id, "tags")[0]
 
-        # Build a pseudo-directory file path by traversing upward to parent folder
-        parent_id = treeview_widget.parent(selected_item_id)
-
-        if parent_id:
-            parent_name = treeview_widget.item(parent_id)["text"]
-            full_path = f"root://{parent_name}/{item_name}"
-            item_type = row_values[1]
-            item_size = row_values[0]
-
-            # Route text feedback directly into the UI status loops
-            label_top.config(text=f"Opened File: {full_path}")
-            label_bottom.config(text=f"Type: {item_type} | Allocate Size: {item_size}")
+        # Clean up character prefixes from display logs if they exist
+        clean_name = item_name.replace("📁 ", "").replace("📄 ", "")
+        
+        if os.path.isdir(absolute_path):
+            label_top.config(text=f"Directory Container: {clean_name}/")
+            label_bottom.config(text=f"System Path: {absolute_path}")
         else:
-            # The item clicked is a root folder node
-            label_top.config(text=f"Directory Expanded: root://{item_name}/")
-            label_bottom.config(text="Scanning structural sub-directories...")
+            label_top.config(text=f"Selected File: {clean_name}")
 
 
 # Widget Creation -------------------------------------------------------------
