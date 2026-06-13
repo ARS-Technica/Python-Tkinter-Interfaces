@@ -131,7 +131,17 @@ def populate_tree_recursively(
     Recursively scans local OS paths to build nested tree node relationships.
     """
     try:
-        pass
+        # os.scandir is an iterator that reads directory entries on demand
+        with os.scandir(target_directory_path) as entries:
+            for entry in entries:
+            # 1. Capture core metadata details using the entry stat block
+
+            # 2. Add folder node to the UI layout
+
+            # 3. RECURSION: Drill inside this directory instantly                  
+
+            # 4. Add file node to the UI layout
+
 
     except PermissionError:
         # Safe execution guard: skip protected OS system folders smoothly
