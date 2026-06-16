@@ -81,6 +81,24 @@ def on_row_double_click(
             label_bottom.config(text=f"Size: {row_values[0]} | Modified: {row_values[2]}")
 
 
+def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bool, current_folder_id: str = "") -> None:
+    """
+    Recursively sorts items under each directory branch based on column values
+    while maintaining proper parent-child hierarchy levels.
+    """
+    # 1. Gather all immediate child nodes inside the current folder layer
+
+    # 2. Extract pairs of (value, item_id) to sort
+        
+    # 3. Sort the localized list array in place
+
+    # 4. Re-arrange the UI layout index positions based on the sorted list order
+
+    # 5. RECURSIVE: Look inside sub-folders to sort their contents too!
+
+    # 6. Toggle command binding so clicking twice flips the sort order arrow direction
+
+
 # Widget Creation -------------------------------------------------------------
 def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc) -> ttk.Treeview:
     """
