@@ -196,52 +196,6 @@ def create_user_interface() -> None:
     style_engine.configure("Treeview", padding=0)
 
 
-    # Completely removed the old canvas icon_cache generation block! ----------
-    '''
-    # Graphics Caching Generator Engine
-    icon_cache = {
-        "folder": tk.PhotoImage(width=16, height=16),
-        "file": tk.PhotoImage(width=16, height=16)
-    }
-
-    # Separator Pattern: Render text characters directly onto your image canvases
-    # This acts as an off-screen graphic stamp, separating data parameters from styling
-    def convert_emoji_to_image(emoji_char: str, photo_image: tk.PhotoImage) -> None:
-        # Create a tiny, isolated canvas block matching your row height rules
-        canvas = tk.Canvas(root, width=20, height=20, highlightthickness=0)
-        
-        # Stamp the emoji cleanly right in the exact geometric center
-        canvas.create_text(
-            10, 10, 
-            text=emoji_char, 
-            font=("Segoe UI Emoji" if os.name == "nt" else "Arial", 12), 
-            anchor="center"
-        )
-        canvas.update()
-
-        # Extract the vector canvas raster data straight into your icon cache container
-        # Using postscript data allows us to bypass temporary file requirements entirely
-        try:
-            ps_data = canvas.postscript(colormode="color")
-            photo_image.config(data=ps_data)
-        except tk.TclError:
-            # Safe Fallback: Draws crisp primitive geometric shapes if Ghostscript isn't found
-            if emoji_char == "📁":
-                photo_image.config(width=16, height=16)
-                photo_image.put("#4a90e2", to=(2, 2, 14, 14))
-            else:
-                photo_image.config(width=16, height=16)
-                photo_image.put("#9b9b9b", to=(3, 1, 13, 15))
-        finally:
-            canvas.destroy()
-    
-    # Compile your centralized graphic elements seamlessly
-    convert_emoji_to_image("📁", icon_cache["folder"])
-    convert_emoji_to_image("📄", icon_cache["file"])
-    '''
-    # Completely removed the old canvas icon_cache generation block! ----------    
-
-
     # Create structural frames
     panels_frame = tk.Frame(root)
     panels_frame.pack(fill="both", expand=True, pady=(15, 0))
@@ -254,7 +208,7 @@ def create_user_interface() -> None:
     status_display_bottom.pack(side="top", fill="x", pady=(2, 10))
 
     file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
- 
+
 
     # Live System Directory ---------------------------------------------------
     # Automatically tracks down and isolates the folder path this script is saved inside
