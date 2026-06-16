@@ -195,6 +195,9 @@ def create_user_interface() -> None:
     # Set the internal image area padding to 0 to completely eliminate the blank rectangles
     style_engine.configure("Treeview", padding=0)
 
+
+    # Completely removed the old canvas icon_cache generation block! ----------
+    '''
     # Graphics Caching Generator Engine
     icon_cache = {
         "folder": tk.PhotoImage(width=16, height=16),
@@ -235,7 +238,9 @@ def create_user_interface() -> None:
     # Compile your centralized graphic elements seamlessly
     convert_emoji_to_image("📁", icon_cache["folder"])
     convert_emoji_to_image("📄", icon_cache["file"])
-    
+    '''
+    # Completely removed the old canvas icon_cache generation block! ----------    
+
 
     # Create structural frames
     panels_frame = tk.Frame(root)
