@@ -12,7 +12,7 @@ project. It transforms a flat multi-column layout into a nested, expandable
 directory hierarchy.
 """
 
-from datetime import datetime 
+from datetime import datetime
 import math
 import os
 import tkinter as tk
@@ -20,7 +20,7 @@ from tkinter import ttk
 
 
 # Widget Functions ------------------------------------------------------------
-def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float) -> None:
+def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float, grid_container: tk.Frame) -> None:
     """
     Dynamically shows or hides a specific scrollbar depending on content size.
     """
@@ -103,7 +103,7 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
 
     # 3. Hook the scrollbar directly to the Treeview's vertical movement axis
     treeview_widget.config(
-        yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last)
+        yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last, grid_container)
     )
     scrollbar.config(command=treeview_widget.yview)
 
@@ -130,7 +130,7 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     return treeview_widget
 
 
-# Tree Population Automation Engine -------------------------------------------
+# Tree Population -------------------------------------------------------------
 def populate_tree_recursively(
     treeview_widget: ttk.Treeview, 
     parent_node_id: str, 
