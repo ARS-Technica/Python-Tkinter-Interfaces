@@ -198,7 +198,7 @@ def create_user_interface() -> None:
 
     # Create structural frames
     panels_frame = tk.Frame(root)
-    panels_frame.pack(fill="both", expand=True, padx=15)
+    panels_frame.pack(fill="both", expand=True, padx=15, pady=(15, 0))
 
     # Build status labels anchored underneath the data grid space
     status_display_top = tk.Label(root, text="Double-click any file node to inspect live OS metadata", font=("Consolas", 11, "bold"), anchor="center")
