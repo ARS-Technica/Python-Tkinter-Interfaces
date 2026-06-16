@@ -116,11 +116,11 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     treeview_widget.column("type", width=120, minwidth=90, stretch=False, anchor="w")
     treeview_widget.column("modified", width=130, minwidth=100, stretch=False, anchor="w")
 
-    # Visible Header Labels
-    treeview_widget.heading("#0", text="Local System Directory Tree", anchor="w")
-    treeview_widget.heading("size", text="File Size", anchor="w")
-    treeview_widget.heading("type", text="Element Type", anchor="w")
-    treeview_widget.heading("modified", text="Date Modified", anchor="w")
+    # Clickable Header Labels
+    treeview_widget.heading("#0", text="Local System Directory Tree", anchor="w", command=lambda: sort_column(treeview_widget, "#0", False))
+    treeview_widget.heading("size", text="File Size", anchor="w", command=lambda: sort_column(treeview_widget, "size", False))
+    treeview_widget.heading("type", text="Element Type", anchor="w", command=lambda: sort_column(treeview_widget, "type", False))
+    treeview_widget.heading("modified", text="Date Modified", anchor="w", command=lambda: sort_column(treeview_widget, "modified", False))
 
     # 5. Event Binding Loop
     # Double-click binding on table rows
