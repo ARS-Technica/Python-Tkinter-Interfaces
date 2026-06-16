@@ -76,6 +76,7 @@ def on_row_double_click(
             label_bottom.config(text=f"System Path: {absolute_path}")
         else:
             label_top.config(text=f"Selected File: {clean_name}")
+            label_bottom.config(text=f"Size: {row_values[0]} | Modified: {row_values[2]}")
 
 
 # Widget Creation -------------------------------------------------------------
@@ -259,7 +260,7 @@ def create_user_interface() -> None:
     root_node_id = file_tree.insert(
         "", 
         tk.END,
-        text=root_node_name, 
+        text=f"📁  {root_node_name}", 
         # image=icon_cache["folder"], 
         values=("---", "Project Root", ""),
         tags=(target_project_directory,)
