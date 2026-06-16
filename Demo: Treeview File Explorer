@@ -26,11 +26,8 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float, 
     """
     if float(first) <= 0.0 and float(last) >= 1.0:
         scrollbar.pack_forget()
-        grid_container.pack_configure(padx=(0, 0))
     else:
         scrollbar.pack(side="right", fill="y")
-        scrollbar_width = scrollbar.winfo_reqwidth()
-        grid_container.pack_configure(padx=(scrollbar_width, 0))
         
     scrollbar.set(first, last)
 
