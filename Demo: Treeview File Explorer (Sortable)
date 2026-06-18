@@ -272,7 +272,7 @@ def create_user_interface() -> None:
     panels_frame.pack(fill="both", expand=True, padx=15, pady=(15, 0))
 
     # Build status labels anchored underneath the data grid space
-    status_display_top = tk.Label(root, text="Click column headers to sort | Double-click nodes to view metadata", font=("Consolas", 11, "bold"), anchor="center")
+    status_display_top = tk.Label(root, text="Click column headers to sort\nDouble-click nodes to view metadata", font=("Consolas", 11, "bold"), anchor="center")
     status_display_top.pack(side="top", fill="x", pady=(10, 2))
 
     status_display_bottom = tk.Label(root, text="", font=("Segoe UI", 10), anchor="center")
