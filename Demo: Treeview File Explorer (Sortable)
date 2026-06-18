@@ -28,8 +28,11 @@ def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float, 
     """
     if float(first) <= 0.0 and float(last) >= 1.0:
         scrollbar.pack_forget()
+        grid_container.pack_configure(padx=(0, 0))
     else:
         scrollbar.pack(side="right", fill="y")
+        scrollbar_width = scrollbar.winfo_reqwidth()
+        grid_container.pack_configure(padx=(scrollbar_width, 0))
         
     scrollbar.set(first, last)
 
@@ -93,9 +96,15 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
     # 3. Sort the localized list array in place
 
     # 4. Re-arrange the UI layout index positions based on the sorted list order
-
-    # 5. RECURSIVE: Look inside sub-folders to sort their contents too!
-
+    for index, (_, item_id) in enumerate(sorting_list):
+        treeview_widget.move(item_id, current_folder_id, index)
+        
+    # 5. RECURSIVE DEEP DRILL: Look inside sub-folders to sort their contents too!
+    for item_id in child_items:
+        absolute_path = treeview_widget.item(item_id, "tags")[0]
+        if os.path.isdir(absolute_path):
+            sort_column(treeview_widget, column_id, reverse_state, current_folder_id=item_id)
+            
     # 6. Toggle command binding so clicking twice flips the sort order arrow direction
 
 
@@ -139,6 +148,7 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     treeview_widget.heading("size", text="File Size", anchor="w", command=lambda: sort_column(treeview_widget, "size", False))
     treeview_widget.heading("type", text="Element Type", anchor="w", command=lambda: sort_column(treeview_widget, "type", False))
     treeview_widget.heading("modified", text="Date Modified", anchor="w", command=lambda: sort_column(treeview_widget, "modified", False))
+
 
     # 5. Event Binding Loop
     # Double-click binding on table rows
@@ -189,7 +199,6 @@ def populate_tree_recursively(
                         parent_node_id, 
                         tk.END, 
                         text=f"📄  {entry.name}", 
-                        #image=icon_cache["file"],
                         values=(human_size, f"{file_extension} Element", mod_time),
                         tags=(entry.path,)
                     )
@@ -221,7 +230,7 @@ def create_user_interface() -> None:
     panels_frame.pack(fill="both", expand=True, padx=15, pady=(15, 0))
 
     # Build status labels anchored underneath the data grid space
-    status_display_top = tk.Label(root, text="Double-click any file node to inspect live OS metadata", font=("Consolas", 11, "bold"), anchor="center")
+    status_display_top = tk.Label(root, text="Click column headers to sort | Double-click nodes to view metadata", font=("Consolas", 11, "bold"), anchor="center")
     status_display_top.pack(side="top", fill="x", pady=(10, 2))
 
     status_display_bottom = tk.Label(root, text="", font=("Segoe UI", 10), anchor="center")
@@ -257,3 +266,4 @@ def create_user_interface() -> None:
 # Main Application Entry ------------------------------------------------------
 if __name__ == "__main__":
     create_user_interface()
+
