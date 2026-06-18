@@ -90,8 +90,26 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
     while maintaining proper parent-child hierarchy levels.
     """
     # 1. Gather all immediate child nodes inside the current folder layer
-
+    child_items = treeview_widget.get_children(current_folder_id)
+    
     # 2. Extract pairs of (value, item_id) to sort
+    sorting_list = []
+    for item_id in child_items:
+        if column_id == "#0":
+            # Sorting by the main directory name
+            value = treeview_widget.item(item_id, "text").lower()
+        else:
+            # Sorting by size, type, or date modified values columns
+            column_index = treeview_widget["columns"].index(column_id)
+            value = treeview_widget.item(item_id, "values")[column_index]
+            
+            # Helper to parse human sizes back to sortable bytes
+            if column_id == "size" and "B" in str(value):
+                value = parse_size_to_bytes(str(value))
+            elif isinstance(value, str):
+                value = value.lower()
+                
+        sorting_list.append((value, item_id))
         
     # 3. Sort the localized list array in place
 
