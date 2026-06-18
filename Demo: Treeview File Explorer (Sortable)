@@ -84,6 +84,20 @@ def on_row_double_click(
             label_bottom.config(text=f"Size: {row_values[0]} | Modified: {row_values[2]}")
 
 
+def parse_size_to_bytes(size_str: str) -> float:
+    """
+    Helper function to convert human readable size strings into raw numeric 
+    data for sorting.
+    """
+    if size_str == "---" or not size_str:
+        return -1.0  # Keep folders grouped cleanly together at top or bottom boundaries
+    else:
+        num, unit = size_str.split()
+        multipliers = {"B": 1, "KB": 1024, "MB": 1024**2, "GB": 1024**3}
+
+        return float(num) * multipliers.get(unit, 1)
+
+
 def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bool, current_folder_id: str = "") -> None:
     """
     Recursively sorts items under each directory branch based on column values
@@ -91,7 +105,7 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
     """
     # 1. Gather all immediate child nodes inside the current folder layer
     child_items = treeview_widget.get_children(current_folder_id)
-    
+
     # 2. Extract pairs of (value, item_id) to sort
     sorting_list = []
     for item_id in child_items:
