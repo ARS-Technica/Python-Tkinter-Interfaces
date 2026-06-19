@@ -75,12 +75,15 @@ def show_right_click_menu(event: tk.Event, treeview_widget: ttk.Treeview, contex
     Identifies the row coordinate beneath the mouse cursor and displays a floating menu.
     """
     # 1. Look up what row index is sitting at the mouse pointer's Y coordinate
+    clicked_item_id = treeview_widget.identify_row(event.y)
 
-    # 2. Programmatically highlight and focus the item that was right-clicked
-
-    # 3. Post the floating menu at the exact root coordinate pixels of your screen cursor
-
-    pass
+    if clicked_item_id:
+        # 2. Programmatically highlight and focus the item that was right-clicked
+        treeview_widget.selection_set(clicked_item_id)
+        treeview_widget.focus(clicked_item_id)
+        
+        # 3. Post the floating menu at the exact root coordinate pixels of your screen cursor
+        context_menu.post(event.x_root, event.y_root)
 
 
 def on_row_double_click(
