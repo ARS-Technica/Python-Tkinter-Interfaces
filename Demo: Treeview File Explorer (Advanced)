@@ -76,12 +76,14 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
             pass
             
     elif action_type == "reveal":
-
         # Open the native OS file explorer and select the folder
-
-        # Windows specific shell argument to highlight a file in explorer
-        # Linux / Mac fallback to open parent directory
-        pass
+        if os.name == "nt":
+            # Windows specific shell argument to highlight a file in explorer
+            subprocess.run([f"explorer.exe", f"/select,", absolute_path])
+        elif os.name == "posix":
+            # Linux / Mac fallback to open parent directory
+            parent_dir = os.path.dirname(absolute_path)
+            subprocess.run(["open" if os.name == "mac" else "xdg-open", parent_dir])
 
 
 def show_right_click_menu(event: tk.Event, treeview_widget: ttk.Treeview, context_menu: tk.Menu) -> None:
