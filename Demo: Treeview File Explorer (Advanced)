@@ -342,6 +342,12 @@ def create_user_interface() -> None:
     right_click_menu.add_separator() # Draw a clean horizontal separation line
     right_click_menu.add_command(label="ℹ️ View Metadata Properties", command=lambda: on_row_double_click(None, file_tree, status_display_top, status_display_bottom))
 
+    # 3. Bind the mouse trigger to the file_tree widget
+    # <Button-3> captures right-clicks on Windows/Linux. On macOS, use <Button-2> 
+    mac_os_trigger = "<Button-2>" if os.name != "nt" else "<Button-3>"
+    file_tree.bind("<Button-3>", lambda event: show_right_click_menu(event, file_tree, right_click_menu))
+    file_tree.bind("<Button-2>", lambda event: show_right_click_menu(event, file_tree, right_click_menu))
+
 
     # Live System Directory ---------------------------------------------------
     # Automatically tracks down and isolates the folder path this script is saved inside
