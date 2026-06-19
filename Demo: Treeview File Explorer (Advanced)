@@ -20,6 +20,7 @@ directory hierarchy.
 from datetime import datetime
 import math
 import os
+import subprocess
 import tkinter as tk
 from tkinter import ttk
 
@@ -53,6 +54,21 @@ def get_human_readable_size(size_bytes: int) -> str:
     s = round(size_bytes / p, 2)
 
     return f"{s} {size_names[i]}"
+
+
+def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> None:
+    """
+    Extracts target paths from tags and executes native OS shell actions.
+    """
+
+    pass
+
+def show_right_click_menu(event: tk.Event, treeview_widget: ttk.Treeview, context_menu: tk.Menu) -> None:
+    """
+    Identifies the row coordinate beneath the mouse cursor and displays a floating menu.
+    """
+
+    pass
 
 
 def on_row_double_click(
