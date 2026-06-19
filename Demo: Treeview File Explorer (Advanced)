@@ -16,3 +16,299 @@ project and the more complex "Demo: Treeview File Explorer (Sortable)".
 It transforms a flat multi-column layout into a nested, expandable 
 directory hierarchy.
 """
+
+from datetime import datetime
+import math
+import os
+import tkinter as tk
+from tkinter import ttk
+
+
+# Widget Functions ------------------------------------------------------------
+def auto_scroll(scrollbar: tk.Scrollbar, first: str | float, last: str | float, grid_container: tk.Frame) -> None:
+    """
+    Dynamically shows or hides a specific scrollbar depending on content size.
+    """
+    if float(first) <= 0.0 and float(last) >= 1.0:
+        scrollbar.pack_forget()
+        grid_container.pack_configure(padx=(0, 0))
+    else:
+        scrollbar.pack(side="right", fill="y")
+        scrollbar_width = scrollbar.winfo_reqwidth()
+        grid_container.pack_configure(padx=(scrollbar_width, 0))
+        
+    scrollbar.set(first, last)
+
+
+def get_human_readable_size(size_bytes: int) -> str:
+    """
+    Converts raw integer bytes into clean, human-readable file metrics.
+    """
+    if size_bytes == 0:
+        return "0 B"
+
+    size_names = ("B", "KB", "MB", "GB")
+    i = int(math.floor(math.log(size_bytes, 1024)))
+    p = math.pow(1024, i)
+    s = round(size_bytes / p, 2)
+
+    return f"{s} {size_names[i]}"
+
+
+def on_row_double_click(
+    event: tk.Event, 
+    treeview_widget: ttk.Treeview, 
+    label_top: tk.Label, 
+    label_bottom: tk.Label
+) -> None:
+    """
+    Extracts structural metadata profiles from the clicked item row node.
+    """
+    # Identify the specific row item ID that was double-clicked
+    selected_item_id = treeview_widget.focus()
+    
+    if selected_item_id:
+        # Retrieve the underlying database row dictionary values
+        item_data = treeview_widget.item(selected_item_id)
+        item_name = item_data["text"]
+        row_values = item_data["values"]
+        
+        # Pull the absolute system path we stored in the hidden 'tags' property
+        absolute_path = treeview_widget.item(selected_item_id, "tags")[0]
+
+        # Clean up character prefixes from display logs if they exist
+        clean_name = item_name.replace("📁 ", "").replace("📄 ", "")
+        
+        if os.path.isdir(absolute_path):
+            label_top.config(text=f"Directory Container: {clean_name}/")
+            label_bottom.config(text=f"System Path: {absolute_path}")
+        else:
+            label_top.config(text=f"Selected File: {clean_name}")
+            label_bottom.config(text=f"Size: {row_values[0]} | Modified: {row_values[2]}")
+
+
+def parse_size_to_bytes(size_str: str) -> float:
+    """
+    Helper function to convert human readable size strings into raw numeric 
+    data for sorting.
+    """
+    if size_str == "---" or not size_str:
+        return -1.0  # Keep folders grouped cleanly together at top or bottom boundaries
+    try:
+        num, unit = size_str.split()
+        multipliers = {"B": 1, "KB": 1024, "MB": 1024**2, "GB": 1024**3}
+        
+        return float(num) * multipliers.get(unit, 1)
+    except (ValueError, KeyError):
+        return 0.0  # Fallback for any unexpected formats
+    
+
+def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bool, current_folder_id: str = "") -> None:
+    """
+    Recursively sorts items under each directory branch based on column values
+    while maintaining proper parent-child hierarchy levels.
+    """
+    # 1. Gather all immediate child nodes inside the current folder layer
+    child_items = treeview_widget.get_children(current_folder_id)
+    
+    # 2. Extract pairs of (value, item_id) to sort
+    sorting_list = []
+    for item_id in child_items:
+        if column_id == "#0":
+            # Sorting by the main directory name
+            value = treeview_widget.item(item_id, "text").lower()
+        else:
+            # Sorting by size, type, or date modified values columns
+            column_index = treeview_widget["columns"].index(column_id)
+            value = treeview_widget.item(item_id, "values")[column_index]
+            
+            # Helper to parse human sizes back to sortable bytes
+            # If sorting by size, ensure everything is a float so they compare correctly
+            # if column_id == "size" and "B" in str(value):
+            if column_id == "size":
+                value = parse_size_to_bytes(str(value))
+            #elif isinstance(value, str):
+            else:
+                value = str(value).lower()
+                
+        sorting_list.append((value, item_id))
+        
+    # 3. Sort the localized list array in place
+    sorting_list.sort(reverse=reverse_state, key=lambda x: x[0])
+    
+    # 4. Re-arrange the UI layout index positions based on the sorted list order
+    for index, (_, item_id) in enumerate(sorting_list):
+        treeview_widget.move(item_id, current_folder_id, index)
+        
+    # 5. Recursively look inside sub-folders to sort their contents too!
+    for item_id in child_items:
+        absolute_path = treeview_widget.item(item_id, "tags")[0]
+        if os.path.isdir(absolute_path):
+            sort_column(treeview_widget, column_id, reverse_state, current_folder_id=item_id)
+            
+    # 6. Toggle command binding logic so clicking again flips the sort order arrow direction
+    treeview_widget.heading(
+        column_id, 
+        command=lambda: sort_column(treeview_widget, column_id, not reverse_state, current_folder_id)
+    )
+
+
+# Widget Creation -------------------------------------------------------------
+def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc) -> ttk.Treeview:
+    """
+    Constructs a themed multi-column hierarchical directory pane with scroll bindings.
+    """
+    # 1. Initialize a layout container and an independent scrollbar engine
+    grid_container = tk.Frame(parent)
+    grid_container.pack(fill="both", expand=True)
+    
+    scrollbar = tk.Scrollbar(grid_container, orient="vertical")
+
+    # 2. Define our structural table columns
+    # 'show="headings"' completely hides the native hierarchical folder tree column
+    column_identifiers = ("size", "type", "modified")
+    treeview_widget = ttk.Treeview(
+        grid_container, 
+        columns=column_identifiers, 
+        show="tree headings",
+        selectmode="browse"
+    )
+    treeview_widget.pack(side="left", fill="both", expand=True)
+
+    # 3. Hook the scrollbar directly to the Treeview's vertical movement axis
+    treeview_widget.config(
+        yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last, grid_container)
+    )
+    scrollbar.config(command=treeview_widget.yview)
+
+    # 4. Formatter Engine: Set Column Headers and Text Layout Alignment Rules
+    # Column width rules 
+    treeview_widget.column("#0", width=280, minwidth=200, stretch=True)
+    treeview_widget.column("size", width=90, minwidth=70, stretch=False, anchor="w")
+    treeview_widget.column("type", width=120, minwidth=90, stretch=False, anchor="w")
+    treeview_widget.column("modified", width=130, minwidth=100, stretch=False, anchor="w")
+
+    # Clickable Header Labels
+    treeview_widget.heading("#0", text="Local System Directory Tree", anchor="w", command=lambda: sort_column(treeview_widget, "#0", False))
+    treeview_widget.heading("size", text="File Size", anchor="w", command=lambda: sort_column(treeview_widget, "size", False))
+    treeview_widget.heading("type", text="Element Type", anchor="w", command=lambda: sort_column(treeview_widget, "type", False))
+    treeview_widget.heading("modified", text="Date Modified", anchor="w", command=lambda: sort_column(treeview_widget, "modified", False))
+
+
+    # 5. Event Binding Loop
+    # Double-click binding on table rows
+    treeview_widget.bind(
+        "<Double-1>", 
+        lambda event: on_row_double_click(event, treeview_widget, label_top, label_bottom)
+    )
+
+    return treeview_widget
+
+
+# Tree Population -------------------------------------------------------------
+def populate_tree_recursively(
+    treeview_widget: ttk.Treeview, 
+    parent_node_id: str, 
+    target_directory_path: str
+) -> None:
+    """
+    Recursively scans local OS paths to build nested tree node relationships.
+    """
+    try:
+        # os.scandir is an iterator that reads directory entries on demand
+        with os.scandir(target_directory_path) as entries:
+            for entry in entries:
+                # 1. Capture core metadata details using the entry stat block
+                stats = entry.stat()
+                mod_time = datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%d %H:%M')
+                
+                if entry.is_dir():
+                    # 2. Add folder node to the UI layout
+                    folder_id = treeview_widget.insert(
+                        parent_node_id, 
+                        tk.END, 
+                        text=f"📁  {entry.name}", 
+                        # image=icon_cache["folder"],
+                        values=("---", "Folder", mod_time),
+                        tags=(entry.path,)  # Stash the path in tags for retrieval on double-click
+                    )
+                    # 3. RECURSION FLUIDITY: Drill inside this directory instantly
+                    populate_tree_recursively(treeview_widget, folder_id, entry.path)
+                    
+                elif entry.is_file():
+                    # 4. Add file node to the UI layout
+                    human_size = get_human_readable_size(stats.st_size)
+                    file_extension = os.path.splitext(entry.name)[1].upper() or "FILE"
+                    
+                    treeview_widget.insert(
+                        parent_node_id, 
+                        tk.END, 
+                        text=f"📄  {entry.name}", 
+                        values=(human_size, f"{file_extension} Element", mod_time),
+                        tags=(entry.path,)
+                    )
+    except PermissionError:
+        # Safe execution guard: skip protected OS system folders smoothly
+        pass
+
+
+# User Interface Coordinator --------------------------------------------------
+def create_user_interface() -> None:
+    """
+    Coordinates window loops, graphics generation caching, and directory population.
+    """
+    root = tk.Tk()
+    root.title("Demo: Local File System Explorer")
+    root.geometry("750x400")
+
+    # Set Native OS Style Themes using ttk Styling Engines
+    style_engine = ttk.Style()
+    style_engine.theme_use("clam") # Crisp, borderless engineering theme
+    # Set uniform row height for better readability
+    style_engine.configure("Treeview", rowheight=25, font=("Segoe UI", 10))
+    # Set the internal image area padding to 0 to completely eliminate the blank rectangles
+    style_engine.configure("Treeview", padding=0)
+
+
+    # Create structural frames
+    panels_frame = tk.Frame(root)
+    panels_frame.pack(fill="both", expand=False, padx=15, pady=(15, 0))
+
+    # Build status labels anchored underneath the data grid space
+    status_display_top = tk.Label(root, text="Click column headers to sort", font=("Consolas", 11, "bold"), anchor="center")
+    status_display_top.pack(side="top", fill="x", pady=(25, 2))
+
+    status_display_bottom = tk.Label(root, text="Double-click nodes to view metadata", font=("Segoe UI", 10), anchor="center")
+    status_display_bottom.pack(side="top", fill="x", pady=(2, 10))
+
+    file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
+
+
+    # Live System Directory ---------------------------------------------------
+    # Automatically tracks down and isolates the folder path this script is saved inside
+    target_project_directory = os.path.dirname(os.path.abspath(__file__))
+
+    # Render the target directory root node label at top of the tree stack
+    root_node_name = os.path.basename(target_project_directory) or target_project_directory
+    root_node_id = file_tree.insert(
+        "", 
+        tk.END,
+        text=f"📁  {root_node_name}", 
+        # image=icon_cache["folder"], 
+        values=("---", "Project Root", ""),
+        tags=(target_project_directory,)
+    )
+
+    # Fire off recursive scan engine loop
+    populate_tree_recursively(file_tree, root_node_id, target_project_directory)
+
+    # Auto-expand the topmost project container row for style on launch
+    file_tree.item(root_node_id, open=True)
+
+    root.mainloop()
+
+
+# Main Application Entry ------------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface()
+
