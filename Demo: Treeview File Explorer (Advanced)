@@ -1,0 +1,18 @@
+"""
+Demo: Treeview File Explorer (Advanced)
+Created: June 18, 2026
+
+Description: Demonstrates multi-column tabular data management using the 
+Treeview widget. This project demonstrates the Treeview widget's ability to 
+natively display nested parent-child relationships like folders containing 
+files.
+
+This version sorts file columns when the headers are clicked. It also 
+features a (right-click) context menu and lazy loading, which make a
+file exlorer practical.
+
+This project is an extention of my earlier "Demo: Treeview Data Grid"
+project and the more complex "Demo: Treeview File Explorer (Sortable)". 
+It transforms a flat multi-column layout into a nested, expandable 
+directory hierarchy.
+"""
