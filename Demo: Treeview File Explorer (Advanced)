@@ -317,7 +317,7 @@ def create_user_interface() -> None:
     style_engine.configure("Treeview", padding=0)
 
 
-    # Create structural frames
+    # Create structural frames ------------------------------------------------
     panels_frame = tk.Frame(root)
     panels_frame.pack(fill="both", expand=False, padx=15, pady=(15, 0))
 
@@ -329,6 +329,18 @@ def create_user_interface() -> None:
     status_display_bottom.pack(side="top", fill="x", pady=(2, 10))
 
     file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
+
+
+    # Context Menu ------------------------------------------------------------
+    # 1. Create a floating menu container attached to the root window template
+    # tearoff=0 prevents the user from sliding/detaching the menu into a separate popup window
+    right_click_menu = tk.Menu(root, tearoff=0)    
+
+    # 2. Inject command buttons into the context layout
+    right_click_menu.add_command(label="⚡ Open Item", command=lambda: handle_context_action("open", file_tree))
+    right_click_menu.add_command(label="📁 Reveal in File Explorer", command=lambda: handle_context_action("reveal", file_tree))
+    right_click_menu.add_separator() # Draw a clean horizontal separation line
+    right_click_menu.add_command(label="ℹ️ View Metadata Properties", command=lambda: on_row_double_click(None, file_tree, status_display_top, status_display_bottom))
 
 
     # Live System Directory ---------------------------------------------------
