@@ -60,14 +60,28 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
     """
     Extracts target paths from tags and executes native OS shell actions.
     """
+    selected_item_id = treeview_widget.focus()
+
+    if not selected_item_id:
+        return
 
     # Pull the absolute system path inside the row tags
+    absolute_path = os.path.abspath(treeview_widget.item(selected_item_id, "tags")[0])
 
-    # Open the native OS file explorer and select the folder
+    if action_type == "open":
+        # Launches the file using the operating system's default assigned application
+        try:
+            os.startfile(absolute_path) if os.name == "nt" else subprocess.run(["open", absolute_path])
+        except Exception:
+            pass
+            
+    elif action_type == "reveal":
 
-    # Windows specific shell argument to highlight a file in explorer
-    # Linux / Mac fallback to open parent directory
-    pass
+        # Open the native OS file explorer and select the folder
+
+        # Windows specific shell argument to highlight a file in explorer
+        # Linux / Mac fallback to open parent directory
+        pass
 
 
 def show_right_click_menu(event: tk.Event, treeview_widget: ttk.Treeview, context_menu: tk.Menu) -> None:
