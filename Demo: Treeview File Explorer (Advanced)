@@ -77,9 +77,12 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
     if action_type == "open":
         # Launches the file using the operating system's default assigned application
         try:
-            os.startfile(absolute_path) if os.name == "nt" else subprocess.run(["open", absolute_path])
-        except Exception:
-            pass
+            if os.name == "nt":
+                os.startfile(absolute_path)
+            else:
+                subprocess.run(["open", absolute_path], check=True)
+        except Exception as e:
+            print(f"[OS Error] Failed to launch default application. System Reason: {e}")
             
     elif action_type == "reveal":
         # Open the native OS file explorer and select the folder
