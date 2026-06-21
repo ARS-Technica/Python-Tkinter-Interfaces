@@ -352,10 +352,10 @@ def create_user_interface() -> None:
     right_click_menu = tk.Menu(root, tearoff=0)    
 
     # 2. Inject command buttons into the context layout
-    right_click_menu.add_command(label="⚡ Open Item", command=lambda: handle_context_action("open", file_tree))
-    right_click_menu.add_command(label="📁 Reveal in File Explorer", command=lambda: handle_context_action("reveal", file_tree))
+    right_click_menu.add_command(label="Open Item", command=lambda: handle_context_action("open", file_tree))
+    right_click_menu.add_command(label="Reveal in File Explorer", command=lambda: handle_context_action("reveal", file_tree))
     right_click_menu.add_separator() # Draw a clean horizontal separation line
-    right_click_menu.add_command(label="ℹ️ View Metadata Properties", command=lambda: on_row_double_click(None, file_tree, status_display_top, status_display_bottom))
+    right_click_menu.add_command(label="View Metadata Properties", command=lambda: on_row_double_click(None, file_tree, status_display_top, status_display_bottom))
 
     # 3. Bind the mouse trigger to the file_tree widget
     # <Button-3> captures right-clicks on Windows/Linux. On macOS, use <Button-2> 
