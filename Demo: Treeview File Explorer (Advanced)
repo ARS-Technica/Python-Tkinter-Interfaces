@@ -63,10 +63,16 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
     selected_item_id = treeview_widget.focus()
 
     if not selected_item_id:
+        print("Context Menu Error: No item selected in the UI.")
         return
 
     # Pull the absolute system path inside the row tags
-    absolute_path = os.path.abspath(treeview_widget.item(selected_item_id, "tags")[0])
+    raw_path = treeview_widget.item(selected_item_id, "tags")[0]
+    absolute_path = os.path.normpath(os.path.abspath(raw_path))
+
+    if not os.path.exists(absolute_path):
+        print(f"[OS Error] File system path does not exist: {absolute_path}")
+        return
 
     if action_type == "open":
         # Launches the file using the operating system's default assigned application
