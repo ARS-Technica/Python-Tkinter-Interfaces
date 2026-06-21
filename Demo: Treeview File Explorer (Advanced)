@@ -85,9 +85,10 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
                 else:
                     subprocess.run(["explorer.exe", absolute_path])
             else:
-                subprocess.run(["open", absolute_path], check=True)
+                parent_dir = os.path.dirname(absolute_path) if os.path.isfile(absolute_path) else absolute_path
+                subprocess.run(["open" if os.name == "mac" else "xdg-open", parent_dir], check=True)
         except Exception as e:
-            print(f"[OS Error] Failed to launch default application. System Reason: {e}")
+            print(f"[OS Error] Failed to reveal path in system explorer: {e}")
             
     elif action_type == "reveal":
         # Open the native OS file explorer and select the folder
@@ -146,7 +147,7 @@ def parse_size_to_bytes(size_str: str) -> float:
         return float(num) * multipliers.get(unit, 1)
     except (ValueError, KeyError):
         return 0.0  # Fallback for any unexpected formats
-    
+
 
 def show_right_click_menu(event: tk.Event, treeview_widget: ttk.Treeview, context_menu: tk.Menu) -> None:
     """
