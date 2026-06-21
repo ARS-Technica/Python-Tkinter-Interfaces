@@ -79,7 +79,6 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
         # Launches the file using the operating system's default assigned application
         try:
             if os.name == "nt":
-
                 # Windows: Launches the file natively in its default application
                 os.startfile(absolute_path)
             elif sys.platform == "darwin":
@@ -89,16 +88,22 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
                 # Linux: Launches the file natively
                 subprocess.run(["xdg-open", absolute_path], check=True)
         except Exception as e:
-            print(f"[OS Launcher Error] Failed to open {absolute_path}: {e}")           
+            print(f"[OS Launcher Error] Failed to open {absolute_path}: {e}")          
     elif action_type == "reveal":
-        # Open the native OS file explorer and select the folder
-        if os.name == "nt":
-            # Windows specific shell argument to highlight a file in explorer
-            subprocess.run([f"explorer.exe", f"/select,", absolute_path])
-        else:
-            # Linux / Mac fallback to open parent directory
-            parent_dir = os.path.dirname(absolute_path)
-            subprocess.run(["open" if os.name == "mac" else "xdg-open", parent_dir])
+        try:
+            # Open the native OS file explorer and select the folder
+            if os.name == "nt":
+                # Windows: Highlights the file *inside* its parent directory window
+                if os.path.isfile(absolute_path):
+                    subprocess.run(["explorer.exe", "/select,", absolute_path])
+                else:
+                    subprocess.run(["explorer.exe", absolute_path])
+            else:
+                # macOS/Linux: Opens the enclosing folder window
+                parent_dir = os.path.dirname(absolute_path) if os.path.isfile(absolute_path) else absolute_path
+                subprocess.run(["open" if sys.platform == "darwin" else "xdg-open", parent_dir], check=True)
+        except Exception as e:
+            print(f"[OS Explorer Error] Failed to reveal {absolute_path}: {e}")
 
 
 def on_row_double_click(
