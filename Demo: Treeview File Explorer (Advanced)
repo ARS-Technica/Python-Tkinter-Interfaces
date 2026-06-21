@@ -74,22 +74,22 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
         print(f"[OS Error] File system path does not exist: {absolute_path}")
         return
 
+    # Handle Action Branching
     if action_type == "open":
         # Launches the file using the operating system's default assigned application
         try:
             if os.name == "nt":
-                # If it's a file, highlight it. If it's a folder, open inside it.
-                # os.startfile(absolute_path)
-                if os.path.isfile(absolute_path):
-                    subprocess.run(["explorer.exe", "/select,", absolute_path])
-                else:
-                    subprocess.run(["explorer.exe", absolute_path])
+
+                # Windows: Launches the file natively in its default application
+                os.startfile(absolute_path)
+            elif sys.platform == "darwin":
+                # macOS: Launches the file natively
+                subprocess.run(["open", absolute_path], check=True)
             else:
-                parent_dir = os.path.dirname(absolute_path) if os.path.isfile(absolute_path) else absolute_path
-                subprocess.run(["open" if os.name == "mac" else "xdg-open", parent_dir], check=True)
+                # Linux: Launches the file natively
+                subprocess.run(["xdg-open", absolute_path], check=True)
         except Exception as e:
-            print(f"[OS Error] Failed to reveal path in system explorer: {e}")
-            
+            print(f"[OS Launcher Error] Failed to open {absolute_path}: {e}")           
     elif action_type == "reveal":
         # Open the native OS file explorer and select the folder
         if os.name == "nt":
