@@ -78,7 +78,12 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
         # Launches the file using the operating system's default assigned application
         try:
             if os.name == "nt":
-                os.startfile(absolute_path)
+                # If it's a file, highlight it. If it's a folder, open inside it.
+                # os.startfile(absolute_path)
+                if os.path.isfile(absolute_path):
+                    subprocess.run(["explorer.exe", "/select,", absolute_path])
+                else:
+                    subprocess.run(["explorer.exe", absolute_path])
             else:
                 subprocess.run(["open", absolute_path], check=True)
         except Exception as e:
