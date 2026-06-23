@@ -276,7 +276,12 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
 
 
 # Tree Population -------------------------------------------------------------
+def scan_single_directory_level(treeview_widget: ttk.Treeview, parent_node_id: str, target_directory_path: str) -> None:
+    """
+    Scans exactly ONE level of a directory and inserts nodes with dummy placeholders.
+    """
 
+    pass
 
 
 # User Interface Coordinator --------------------------------------------------
