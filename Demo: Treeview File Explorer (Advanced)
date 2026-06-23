@@ -81,7 +81,7 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
             if os.name == "nt":
                 # Windows: Launches the file natively in its default application
                 os.startfile(absolute_path)
-            elif sys.platform == "Darwin":
+            elif os.uname().sysname == "Darwin":
                 # macOS: Launches the file natively
                 subprocess.run(["open", absolute_path], check=True)
             else:
@@ -102,6 +102,7 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
             else:
                 # macOS/Linux: Opens the enclosing folder window
                 parent_dir = os.path.dirname(absolute_path) if os.path.isfile(absolute_path) else absolute_path
+                # FIX: Standardized mac check using unified os.uname engine
                 is_mac = os.uname().sysname == "Darwin"
                 subprocess.run(["open" if is_mac else "xdg-open", parent_dir], check=True)
         except Exception as e:
