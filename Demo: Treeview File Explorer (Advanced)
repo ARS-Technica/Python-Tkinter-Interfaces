@@ -276,50 +276,7 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
 
 
 # Tree Population -------------------------------------------------------------
-def populate_tree_recursively(
-    treeview_widget: ttk.Treeview, 
-    parent_node_id: str, 
-    target_directory_path: str
-) -> None:
-    """
-    Recursively scans local OS paths to build nested tree node relationships.
-    """
-    try:
-        # os.scandir is an iterator that reads directory entries on demand
-        with os.scandir(target_directory_path) as entries:
-            for entry in entries:
-                # 1. Capture core metadata details using the entry stat block
-                stats = entry.stat()
-                mod_time = datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%d %H:%M')
-                
-                if entry.is_dir():
-                    # 2. Add folder node to the UI layout
-                    folder_id = treeview_widget.insert(
-                        parent_node_id, 
-                        tk.END, 
-                        text=f"📁  {entry.name}", 
-                        # image=icon_cache["folder"],
-                        values=("---", "Folder", mod_time),
-                        tags=(entry.path,)  # Stash the path in tags for retrieval on double-click
-                    )
-                    # 3. RECURSION FLUIDITY: Drill inside this directory instantly
-                    populate_tree_recursively(treeview_widget, folder_id, entry.path)
-                    
-                elif entry.is_file():
-                    # 4. Add file node to the UI layout
-                    human_size = get_human_readable_size(stats.st_size)
-                    file_extension = os.path.splitext(entry.name)[1].upper() or "FILE"
-                    
-                    treeview_widget.insert(
-                        parent_node_id, 
-                        tk.END, 
-                        text=f"📄  {entry.name}", 
-                        values=(human_size, f"{file_extension} Element", mod_time),
-                        tags=(entry.path,)
-                    )
-    except PermissionError:
-        # Safe execution guard: skip protected OS system folders smoothly
-        pass
+
 
 
 # User Interface Coordinator --------------------------------------------------
