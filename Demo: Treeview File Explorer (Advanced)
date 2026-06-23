@@ -267,10 +267,10 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
 
     # 5. Event Binding Loop
     # Double-click binding on table rows
-    treeview_widget.bind(
-        "<Double-1>", 
-        lambda event: on_row_double_click(event, treeview_widget, label_top, label_bottom)
-    )
+    treeview_widget.bind("<Double-1>", lambda event: on_row_double_click(event, treeview_widget, label_top, label_bottom))
+    
+    # Lazy Loading Binding: Catches when a folder tree branch expands
+    treeview_widget.bind("<<TreeviewOpen>>", populate_tree_on_demand)
 
     return treeview_widget
 
