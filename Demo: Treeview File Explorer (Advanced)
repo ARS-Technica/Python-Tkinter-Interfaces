@@ -234,6 +234,7 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     
     scrollbar = tk.Scrollbar(grid_container, orient="vertical")
 
+
     # 2. Define our structural table columns
     # 'show="headings"' completely hides the native hierarchical folder tree column
     column_identifiers = ("size", "type", "modified")
@@ -245,11 +246,13 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     )
     treeview_widget.pack(side="left", fill="both", expand=True)
 
+
     # 3. Hook the scrollbar directly to the Treeview's vertical movement axis
     treeview_widget.config(
         yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last, grid_container)
     )
     scrollbar.config(command=treeview_widget.yview)
+
 
     # 4. Formatter Engine: Set Column Headers and Text Layout Alignment Rules
     # Column width rules 
@@ -291,7 +294,7 @@ def scan_single_directory_level(
                 # 1. Capture core metadata details using the entry stat block
                 stats = entry.stat()
                 mod_time = datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%d %H:%M')
-                
+
                 if entry.is_dir():
                     # 2. Add folder node to the UI layout
                     folder_id = treeview_widget.insert(
@@ -304,11 +307,13 @@ def scan_single_directory_level(
 
                     # 3. RECURSION: Drill inside this directory instantly
                     # populate_tree_recursively(treeview_widget, folder_id, entry.path)
+                    # Remove the Deep Recursion Engine to implement Lazy Loading instead. 
+                    # This prevents the UI from freezing on large directories.
 
                     # 3. LAZY LOADING: Place a temporary child row inside this folder.
                     # This tricks the Treeview into drawing the expand/collapse arrow.
                     treeview_widget.insert(folder_id, tk.END, text="Scanning...", tags=("dummy",))
-                                 
+
                 elif entry.is_file():
                     # 4. Add file node to the UI layout
                     human_size = get_human_readable_size(stats.st_size)
