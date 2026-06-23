@@ -276,12 +276,21 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
 
 
 # Tree Population -------------------------------------------------------------
-def scan_single_directory_level(treeview_widget: ttk.Treeview, parent_node_id: str, target_directory_path: str) -> None:
+def scan_single_directory_level(
+	treeview_widget: ttk.Treeview, 
+	parent_node_id: str, 
+	target_directory_path: str
+	) -> None:
     """
-    Scans exactly ONE level of a directory and inserts nodes with dummy placeholders.
+    Recursively scans local OS paths to build nested tree node relationships.
     """
-
-    pass
+    try:
+        # os.scandir is an iterator that reads directory entries on demand
+        with os.scandir(target_directory_path) as entries:
+            for entry in entries:
+                # 1. Capture core metadata details using the entry stat block
+                stats = entry.stat()
+                mod_time = datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%d %H:%M')
 
 
 # User Interface Coordinator --------------------------------------------------
