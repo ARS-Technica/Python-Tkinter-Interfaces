@@ -291,17 +291,16 @@ def populate_tree_on_demand(event: tk.Event) -> None:
     if not selected_item_id:
         return
 
-    # Retrieve the absolute path from the row's hidden tags
-    absolute_path = treeview_widget.item(selected_item_id, "tags")[0]
+    # Get all direct sub-items inside the opened folder node
+    children = treeview_widget.get_children(opened_item_id)
 
-    if os.path.isdir(absolute_path):
-        # Check if the folder has a dummy child node (indicating it hasn't been populated yet)
-        children = treeview_widget.get_children(selected_item_id)
-        if len(children) == 1 and "dummy" in treeview_widget.item(children[0], "tags"):
-            # Remove the dummy node
-            treeview_widget.delete(children[0])
-            # Populate the actual contents of the directory
-            scan_single_directory_level(treeview_widget, selected_item_id, absolute_path)
+    # First, check if the first child is our placeholder dummy node
+    if children and treeview_widget.item(children[0], "tags")[0] == "dummy":
+    # 1. Remove the dummy node from UI memory
+
+    # 2. Fetch the true absolute directory path stashed in the parent folder's tags
+
+    # 3. Perform a quick single-level scan to populate the contents of the directory
 
 
 def scan_single_directory_level(
