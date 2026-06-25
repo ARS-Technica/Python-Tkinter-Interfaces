@@ -379,6 +379,12 @@ def create_user_interface() -> None:
 
 
     # Create structural frames ------------------------------------------------
+    # Implemented strict grid architecture wrapper to freeze status tracking elements
+    main_layout = tk.Frame(root)
+    main_layout.pack(fill="both", expand=True, padx=15, pady=15)
+    main_layout.rowconfigure(0, weight=1)
+    main_layout.columnconfigure(0, weight=1)
+
     panels_frame = tk.Frame(root)
     panels_frame.pack(fill="both", expand=False, padx=15, pady=(15, 0))
 
