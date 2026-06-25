@@ -69,9 +69,7 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
 
     # Pull the absolute system path inside the row tags
     raw_path = treeview_widget.item(selected_item_id, "tags")[0]
-    # Clean the raw path of quotes and whitespace first
-    clean_raw_path = raw_path.strip().strip('"').strip("'")
-    absolute_path = os.path.normpath(os.path.abspath(clean_raw_path))
+    absolute_path = os.path.normpath(os.path.abspath(raw_path))
 
     if not os.path.exists(absolute_path):
         print(f"[OS Error] File system path does not exist: {absolute_path}")
@@ -392,14 +390,12 @@ def create_user_interface() -> None:
     right_click_menu = tk.Menu(root, tearoff=0)
 
     # 2. Inject command buttons into the context layout
-    right_click_menu.add_command(label="Open Item", command=lambda: handle_context_action("open", file_tree))
     right_click_menu.add_command(label="Open File Location", command=lambda: handle_context_action("reveal", file_tree))
     right_click_menu.add_separator() # Draw a clean horizontal separation line
     right_click_menu.add_command(label="View Metadata Properties", command=lambda: on_row_double_click(None, file_tree, status_display_top, status_display_bottom))
 
     # 3. Bind the mouse trigger to the file_tree widget
     # <Button-3> captures right-clicks on Windows/Linux. On macOS, use <Button-2> 
-    mac_os_trigger = "<Button-2>" if os.name != "nt" else "<Button-3>"
     file_tree.bind("<Button-3>", lambda event: show_right_click_menu(event, file_tree, right_click_menu))
     file_tree.bind("<Button-2>", lambda event: show_right_click_menu(event, file_tree, right_click_menu))
 
