@@ -69,31 +69,16 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
 
     # Pull the absolute system path inside the row tags
     raw_path = treeview_widget.item(selected_item_id, "tags")[0]
-    absolute_path = os.path.normpath(os.path.abspath(raw_path))
+    # Clean the raw path of quotes and whitespace first
+    clean_raw_path = raw_path.strip().strip('"').strip("'")
+    absolute_path = os.path.normpath(os.path.abspath(clean_raw_path))
 
     if not os.path.exists(absolute_path):
         print(f"[OS Error] File system path does not exist: {absolute_path}")
         return
 
-    current_os = platform.system()
 
-    # Handle Action Branching
-    if action_type == "open":
-        # Launches the file using the operating system's default assigned application
-        try:
-            if current_os == "Windows":
-                # Windows: Launches the file natively in its default application
-                os.startfile(absolute_path)
-            elif current_os == "Darwin":
-                # macOS: Launches the file natively
-                subprocess.run(["open", absolute_path], check=True)
-            else:
-                # Linux: Launches the file natively
-                subprocess.run(["xdg-open", absolute_path], check=True)
-        except Exception as e:
-            # Re-routed print logs to make sure any underlying OS permission errors show up
-            print(f"[OS Launcher Error] Could not open {absolute_path}. Reason: {e}") 
-    elif action_type == "reveal":
+    if action_type == "reveal":
         try:
             # Open the native OS file explorer and select the folder
             if current_os == "Windows":
@@ -107,7 +92,7 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
                 parent_dir = os.path.dirname(absolute_path) if os.path.isfile(absolute_path) else absolute_path
                 # FIX: Standardized mac check using unified os.uname engine
                 is_mac = os.uname().sysname == "Darwin"
-                subprocess.run(["open" if is_mac else "xdg-open", parent_dir], check=True)
+                subprocess.run(["open" if current_os == "Darwin" else "xdg-open", parent_dir], check=True)        
         except Exception as e:
             print(f"[OS Explorer Error] Could not reveal {absolute_path}. Reason: {e}")
 
