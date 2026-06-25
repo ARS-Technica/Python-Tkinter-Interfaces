@@ -426,7 +426,7 @@ def create_user_interface() -> None:
     )
 
     # Fire off recursive scan engine loop
-    populate_tree_recursively(file_tree, root_node_id, target_project_directory)
+    scan_single_directory_level(file_tree, root_node_id, target_project_directory)
 
     # Auto-expand the topmost project container row for style on launch
     file_tree.item(root_node_id, open=True)
