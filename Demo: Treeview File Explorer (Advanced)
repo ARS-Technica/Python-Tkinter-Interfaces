@@ -20,6 +20,7 @@ directory hierarchy.
 from datetime import datetime
 import math
 import os
+import platform
 import subprocess
 import tkinter as tk
 from tkinter import ttk
@@ -74,14 +75,16 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
         print(f"[OS Error] File system path does not exist: {absolute_path}")
         return
 
+    current_os = platform.system()
+
     # Handle Action Branching
     if action_type == "open":
         # Launches the file using the operating system's default assigned application
         try:
-            if os.name == "nt":
+            if current_os == "Windows":
                 # Windows: Launches the file natively in its default application
                 os.startfile(absolute_path)
-            elif os.uname().sysname == "Darwin":
+            elif current_os == "Darwin":
                 # macOS: Launches the file natively
                 subprocess.run(["open", absolute_path], check=True)
             else:
@@ -93,7 +96,7 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
     elif action_type == "reveal":
         try:
             # Open the native OS file explorer and select the folder
-            if os.name == "nt":
+            if current_os == "Windows":
                 # Windows: Highlights the file *inside* its parent directory window
                 if os.path.isfile(absolute_path):
                     subprocess.run(["explorer.exe", "/select,", absolute_path])
@@ -300,10 +303,10 @@ def populate_tree_on_demand(event: tk.Event) -> None:
         treeview_widget.delete(children[0])
 
         # 2. Fetch the true absolute directory path stashed in the parent folder's tags
-        target_path = treeview_widget.item(opened_item_id, "tags")[0]
+        target_path = treeview_widget.item(selected_item_id, "tags")[0]
 
         # 3. Perform a quick single-level scan to populate the contents of the directory
-        scan_single_directory_level(treeview_widget, opened_item_id, target_path)
+        scan_single_directory_level(treeview_widget, selected_item_id, target_path)
         # This is "lazy loading." Only populate the folder's contents when the 
         # user explicitly expands it, rather than preloading everything at once.
 
