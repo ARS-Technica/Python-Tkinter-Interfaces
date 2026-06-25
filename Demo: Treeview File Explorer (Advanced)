@@ -282,6 +282,8 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
 def populate_tree_on_demand(event: tk.Event) -> None:
     """
     Event handler for lazy loading: populates a folder's contents when expanded.
+    Triggered dynamically when a user expands a folder. Swaps out dummy nodes 
+    for real files.
     """
     treeview_widget = event.widget
     selected_item_id = treeview_widget.focus()
