@@ -292,7 +292,7 @@ def populate_tree_on_demand(event: tk.Event) -> None:
         return
 
     # Get all direct sub-items inside the opened folder node
-    children = treeview_widget.get_children(opened_item_id)
+    children = treeview_widget.get_children(selected_item_id)
 
     # First, check if the first child is our placeholder dummy node
     if children and treeview_widget.item(children[0], "tags")[0] == "dummy":
