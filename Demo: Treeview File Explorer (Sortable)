@@ -418,7 +418,6 @@ def create_user_interface() -> None:
     root.title("Demo: Local File System Explorer")
     root.geometry("750x400")
 
-
     # Set Native OS Style Themes using ttk Styling Engines
     style_engine = ttk.Style()
     style_engine.theme_use("clam") # Crisp, borderless engineering theme
@@ -426,7 +425,6 @@ def create_user_interface() -> None:
     style_engine.configure("Treeview", rowheight=25, font=("Segoe UI", 10))
     # Set the internal image area padding to 0 to completely eliminate the blank rectangles
     style_engine.configure("Treeview", padding=0)
-
 
     # Create structural frames ------------------------------------------------
     # Master Frame Grid Wrapper to freeze status tracking elements
@@ -449,6 +447,10 @@ def create_user_interface() -> None:
 
     file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
 
+    # Execute context menu
+    build_context_menu(root, file_tree, status_display_top, status_display_bottom)
+    # Initialize the root directory to seed the treeview with the script's folder
+    initialize_root_directory(file_tree)
 
     root.mainloop()
 
