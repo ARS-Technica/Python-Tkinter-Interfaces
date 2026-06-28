@@ -235,6 +235,12 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
         "modified": "Date Modified"
     }
 
+    # 7. Reset all headers back to their clean, raw titles to erase old arrows
+        
+    # 8. Append a crisp directional arrow symbol onto the currently active column header
+    
+    # 9. Commit the active header state and flip the toggle command for the next click
+
 
 # Widget Creation -------------------------------------------------------------
 def build_context_menu(
