@@ -95,6 +95,14 @@ def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> No
             print(f"[OS Explorer Error] Could not reveal {absolute_path}. Reason: {e}")
 
 
+def initialize_root_directory(treeview_widget: ttk.Treeview) -> None:
+    """
+    Locates the application script path and seeds the baseline directory level.
+    """
+
+    pass
+
+
 def on_row_double_click(
     event: tk.Event, 
     treeview_widget: ttk.Treeview, 
@@ -210,6 +218,19 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
 
 
 # Widget Creation -------------------------------------------------------------
+def build_context_menu(
+    root: tk.Tk, 
+    treeview_widget: ttk.Treeview, 
+    label_top: tk.Label, 
+    label_bottom: tk.Label
+) -> tk.Menu:
+    """
+    Constructs and binds an isolated right-click context menu component.
+    """
+
+    pass
+
+
 def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc) -> ttk.Treeview:
     """
     Constructs a themed multi-column hierarchical directory pane with scroll bindings.
@@ -355,6 +376,7 @@ def create_user_interface() -> None:
     root.title("Demo: Local File System Explorer")
     root.geometry("750x400")
 
+
     # Set Native OS Style Themes using ttk Styling Engines
     style_engine = ttk.Style()
     style_engine.theme_use("clam") # Crisp, borderless engineering theme
@@ -377,7 +399,7 @@ def create_user_interface() -> None:
     panels_frame.grid(row=0, column=0, sticky="nsew")
 
     # Build status labels anchored underneath the data grid space
-    # status_display_top = tk.Label(main_layout, text="Click column headers to sort", font=("Consolas", 11, "bold"), anchor="center")
+    status_display_top = tk.Label(main_layout, text="Click column headers to sort", font=("Consolas", 11, "bold"), anchor="center")
     status_display_top.grid(row=1, column=0, sticky="ew", pady=(10, 2))
 
     status_display_bottom = tk.Label(main_layout, text="Double-click nodes to view metadata", font=("Segoe UI", 10), anchor="center")
@@ -392,9 +414,9 @@ def create_user_interface() -> None:
     right_click_menu = tk.Menu(root, tearoff=0)
 
     # 2. Inject command buttons into the context layout
-    right_click_menu.add_command(label="Open Item", command=lambda: handle_context_action("open", file_tree))
+    # right_click_menu.add_command(label="Open Item", command=lambda: handle_context_action("open", file_tree))
     right_click_menu.add_command(label="Open File Location", command=lambda: handle_context_action("reveal", file_tree))
-    right_click_menu.add_separator() # Draw a clean horizontal separation line
+    # right_click_menu.add_separator() # Draw a clean horizontal separation line
     right_click_menu.add_command(label="View Metadata Properties", command=lambda: on_row_double_click(None, file_tree, status_display_top, status_display_bottom))
 
     # 3. Bind the mouse trigger to the file_tree widget
