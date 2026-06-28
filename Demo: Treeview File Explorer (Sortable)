@@ -100,7 +100,25 @@ def initialize_root_directory(treeview_widget: ttk.Treeview) -> None:
     Locates the application script path and seeds the baseline directory level.
     """
 
-    pass
+    # Automatically tracks down and isolates the folder path this script is saved inside
+    target_project_directory = os.path.dirname(os.path.abspath(__file__))
+
+    # Render the target directory root node label at top of the tree stack
+    root_node_name = os.path.basename(target_project_directory) or target_project_directory
+    root_node_id = file_tree.insert(
+        "", 
+        tk.END,
+        text=f"📁  {root_node_name}", 
+        # image=icon_cache["folder"], 
+        values=("---", "Project Root", ""),
+        tags=(target_project_directory,)
+    )
+
+    # Fire off recursive scan engine loop
+    scan_single_directory_level(file_tree, root_node_id, target_project_directory)
+
+    # Auto-expand the topmost project container row for style on launch
+    file_tree.item(root_node_id, open=True)
 
 
 def on_row_double_click(
@@ -437,25 +455,7 @@ def create_user_interface() -> None:
 
 
     # Live System Directory ---------------------------------------------------
-    # Automatically tracks down and isolates the folder path this script is saved inside
-    target_project_directory = os.path.dirname(os.path.abspath(__file__))
 
-    # Render the target directory root node label at top of the tree stack
-    root_node_name = os.path.basename(target_project_directory) or target_project_directory
-    root_node_id = file_tree.insert(
-        "", 
-        tk.END,
-        text=f"📁  {root_node_name}", 
-        # image=icon_cache["folder"], 
-        values=("---", "Project Root", ""),
-        tags=(target_project_directory,)
-    )
-
-    # Fire off recursive scan engine loop
-    scan_single_directory_level(file_tree, root_node_id, target_project_directory)
-
-    # Auto-expand the topmost project container row for style on launch
-    file_tree.item(root_node_id, open=True)
 
     root.mainloop()
 
