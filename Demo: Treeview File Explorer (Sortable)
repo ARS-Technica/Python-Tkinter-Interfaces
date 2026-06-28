@@ -99,7 +99,6 @@ def initialize_root_directory(treeview_widget: ttk.Treeview) -> None:
     """
     Locates the application script path and seeds the baseline directory level.
     """
-
     # Automatically tracks down and isolates the folder path this script is saved inside
     target_project_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -449,12 +448,6 @@ def create_user_interface() -> None:
     status_display_bottom.grid(row=2, column=0, sticky="ew", pady=(2, 5))
 
     file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
-
-
-    # Context Menu ------------------------------------------------------------
-
-
-    # Live System Directory ---------------------------------------------------
 
 
     root.mainloop()
