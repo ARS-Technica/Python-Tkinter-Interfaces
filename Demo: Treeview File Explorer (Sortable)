@@ -104,7 +104,7 @@ def initialize_root_directory(treeview_widget: ttk.Treeview) -> None:
 
     # Render the target directory root node label at top of the tree stack
     root_node_name = os.path.basename(target_project_directory) or target_project_directory
-    root_node_id = file_tree.insert(
+    root_node_id = treeview_widget.insert(
         "", 
         tk.END,
         text=f"📁  {root_node_name}", 
@@ -114,10 +114,10 @@ def initialize_root_directory(treeview_widget: ttk.Treeview) -> None:
     )
 
     # Fire off recursive scan engine loop
-    scan_single_directory_level(file_tree, root_node_id, target_project_directory)
+    scan_single_directory_level(treeview_widget, root_node_id, target_project_directory)
 
     # Auto-expand the topmost project container row for style on launch
-    file_tree.item(root_node_id, open=True)
+    treeview_widget.item(root_node_id, open=True)
 
 
 def on_row_double_click(
@@ -251,24 +251,24 @@ def build_context_menu(
     # 2. Inject command buttons into the context layout
     # context_menu.add_command(
     #   label="Open Item", 
-    #   command=lambda: handle_context_action("open", file_tree)
+    #   command=lambda: handle_context_action("open", treeview_widget)
     #)
     # context_menu.add_separator()
     context_menu.add_command(
         label="Open File Location", 
-        command=lambda: handle_context_action("reveal", file_tree)
+        command=lambda: handle_context_action("reveal", treeview_widget)
     )
     # right_click_menu.add_separator() # Draw a clean horizontal separation line
     context_menu.add_command(
         label="View Metadata Properties", 
-        command=lambda: on_row_double_click(None, file_tree, status_display_top, status_display_bottom)
+        command=lambda: on_row_double_click(None, treeview_widget, status_display_top, status_display_bottom)
     )
 
     # 3. Bind the mouse trigger to the file_tree widget
     # <Button-3> captures right-clicks on Windows/Linux. On macOS, use <Button-2> 
     mac_os_trigger = "<Button-2>" if os.name != "nt" else "<Button-3>"
-    file_tree.bind("<Button-3>", lambda event: show_right_click_menu(event, file_tree, context_menu))
-    file_tree.bind("<Button-2>", lambda event: show_right_click_menu(event, file_tree, context_menu))
+    treeview_widget.bind("<Button-3>", lambda event: show_right_click_menu(event, treeview_widget, context_menu))
+    treeview_widget.bind("<Button-2>", lambda event: show_right_click_menu(event, treeview_widget, context_menu))
 
     return context_menu
 
