@@ -372,11 +372,12 @@ def create_user_interface() -> None:
     main_layout.rowconfigure(0, weight=1)
     main_layout.columnconfigure(0, weight=1)
 
+    # File tree container anchored to Row 0
     panels_frame = tk.Frame(main_layout)
     panels_frame.grid(row=0, column=0, sticky="nsew")
 
     # Build status labels anchored underneath the data grid space
-    status_display_top = tk.Label(main_layout, text="Click column headers to sort", font=("Consolas", 11, "bold"), anchor="center")
+    # status_display_top = tk.Label(main_layout, text="Click column headers to sort", font=("Consolas", 11, "bold"), anchor="center")
     status_display_top.grid(row=1, column=0, sticky="ew", pady=(10, 2))
 
     status_display_bottom = tk.Label(main_layout, text="Double-click nodes to view metadata", font=("Segoe UI", 10), anchor="center")
