@@ -189,6 +189,14 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
     Recursively sorts items under each directory branch based on column values
     while maintaining proper parent-child hierarchy levels.
     """
+    # Initialize the static title map for each column to reset after sorting
+    header_titles = {
+            "#0": "Local System Directory Tree",
+            "size": "File Size",
+            "type": "Element Type",
+            "modified": "Date Modified"
+    }
+
     # 1. Gather all immediate child nodes inside the current folder layer
     child_items = treeview_widget.get_children(current_folder_id)
 
@@ -229,16 +237,9 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
 
     # 6. Toggle command binding logic so clicking again flips the sort order arrow direction
     if current_folder_id == "": # Only fire on the main root execution pass
-        header_titles = {
-            "#0": "Local System Directory Tree",
-            "size": "File Size",
-            "type": "Element Type",
-            "modified": "Date Modified"
-    }
-
-    # 7. Reset all headers back to their clean, raw titles to erase old arrows
-    for col, title in header_titles.items():
-        treeview_widget.heading(col, text=title)
+        # 7. Reset all headers back to their clean, raw titles to erase old arrows
+        for col, title in header_titles.items():
+            treeview_widget.heading(col, text=title)
 
     # 8. Append a crisp directional arrow symbol onto the currently active column header
     direction_marker = " ▼" if reverse_state else " ▲" # Down and up arrows
@@ -329,7 +330,7 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     treeview_widget.column("modified", width=130, minwidth=100, stretch=False, anchor="w")
 
     # Clickable Header Labels
-    treeview_widget.heading("#0", text="Local System Directory Tree", anchor="w", command=lambda: sort_column(treeview_widget, "#0", False))
+    treeview_widget.heading("#0", text="Local System Directory Tree ▲", anchor="w", command=lambda: sort_column(treeview_widget, "#0", False))
     treeview_widget.heading("size", text="File Size", anchor="w", command=lambda: sort_column(treeview_widget, "size", False))
     treeview_widget.heading("type", text="Element Type", anchor="w", command=lambda: sort_column(treeview_widget, "type", False))
     treeview_widget.heading("modified", text="Date Modified", anchor="w", command=lambda: sort_column(treeview_widget, "modified", False))
