@@ -329,7 +329,10 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     treeview_widget.column("modified", width=130, minwidth=100, stretch=False, anchor="w")
 
     # Clickable Header Labels
-    treeview_widget.heading("#0", text="Local System Directory Tree ▲", anchor="w", command=lambda: sort_column(treeview_widget, "#0", False))
+    treeview_widget.heading("#0", text="Local System Directory Tree ▲", anchor="w", command=lambda: sort_column(treeview_widget, "#0", True))
+    # Changed the launch command for the primary directory column ("#0") so that 
+    # its very # first click actively triggers a reverse sort (True). 
+    # Keep the other columns at False because they haven't been sorted yet!
     treeview_widget.heading("size", text="File Size", anchor="w", command=lambda: sort_column(treeview_widget, "size", False))
     treeview_widget.heading("type", text="Element Type", anchor="w", command=lambda: sort_column(treeview_widget, "type", False))
     treeview_widget.heading("modified", text="Date Modified", anchor="w", command=lambda: sort_column(treeview_widget, "modified", False))
