@@ -240,7 +240,7 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
         treeview_widget.heading(col, text=title)
 
     # 8. Append a crisp directional arrow symbol onto the currently active column header
-	direction_marker = " ▼" if reverse_state else " ▲" # Down and up arrows
+    direction_marker = " ▼" if reverse_state else " ▲" # Down and up arrows
     active_title = header_titles[column_id] + direction_marker
 
     # 9. Commit the active header state and flip the toggle command for the next click
@@ -475,3 +475,4 @@ def create_user_interface() -> None:
 # Main Application Entry ------------------------------------------------------
 if __name__ == "__main__":
     create_user_interface()
+
