@@ -246,9 +246,10 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
 
     # 9. Commit the active header state and flip the toggle command for the next click
     treeview_widget.heading(
-        column_id, 
+        column_id,
         text=active_title,
-        command=lambda: sort_column(treeview_widget, column_id, not reverse_state, current_folder_id)
+        # Lambda ensures the next click will be the opposite of the current state:
+        command=lambda: sort_column(treeview_widget, column_id, not reverse_state, current_folder_id="")
     )
 
 
