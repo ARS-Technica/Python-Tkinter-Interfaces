@@ -108,7 +108,6 @@ def initialize_root_directory(treeview_widget: ttk.Treeview) -> None:
         "", 
         tk.END,
         text=f"📁  {root_node_name}", 
-        # image=icon_cache["folder"], 
         values=("---", "Project Root", ""),
         tags=(target_project_directory,)
     )
