@@ -228,11 +228,12 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
             sort_column(treeview_widget, column_id, reverse_state, current_folder_id=item_id)
 
     # 6. Toggle command binding logic so clicking again flips the sort order arrow direction
-    header_titles = {
-        "#0": "Local System Directory Tree",
-        "size": "File Size",
-        "type": "Element Type",
-        "modified": "Date Modified"
+    if current_folder_id == "":
+        header_titles = {
+            "#0": "Local System Directory Tree",
+            "size": "File Size",
+            "type": "Element Type",
+            "modified": "Date Modified"
     }
 
     # 7. Reset all headers back to their clean, raw titles to erase old arrows
