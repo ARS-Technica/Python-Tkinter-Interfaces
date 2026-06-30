@@ -191,7 +191,7 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
     """
     # 1. Gather all immediate child nodes inside the current folder layer
     child_items = treeview_widget.get_children(current_folder_id)
-    
+
     # 2. Extract pairs of (value, item_id) to sort
     sorting_list = []
     for item_id in child_items:
@@ -213,20 +213,20 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
                 value = str(value).lower()
                 
         sorting_list.append((value, item_id))
-        
+
     # 3. Sort the localized list array in place
     sorting_list.sort(reverse=reverse_state, key=lambda x: x[0])
-    
+
     # 4. Re-arrange the UI layout index positions based on the sorted list order
     for index, (_, item_id) in enumerate(sorting_list):
         treeview_widget.move(item_id, current_folder_id, index)
-        
+
     # 5. Recursively look inside sub-folders to sort their contents too!
     for item_id in child_items:
         absolute_path = treeview_widget.item(item_id, "tags")[0]
         if os.path.isdir(absolute_path):
             sort_column(treeview_widget, column_id, reverse_state, current_folder_id=item_id)
-            
+
     # 6. Toggle command binding logic so clicking again flips the sort order arrow direction
     header_titles = {
         "#0": "Local System Directory Tree",
@@ -236,10 +236,15 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
     }
 
     # 7. Reset all headers back to their clean, raw titles to erase old arrows
-        
+    for col, title in header_titles.items():
+        treeview_widget.heading(col, text=title)
+
     # 8. Append a crisp directional arrow symbol onto the currently active column header
-    
+
+
     # 9. Commit the active header state and flip the toggle command for the next click
+
+
 
 
 # Widget Creation -------------------------------------------------------------
