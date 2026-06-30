@@ -301,7 +301,6 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     
     scrollbar = tk.Scrollbar(grid_container, orient="vertical")
 
-
     # 2. Define our structural table columns
     # 'show="headings"' completely hides the native hierarchical folder tree column
     column_identifiers = ("size", "type", "modified")
@@ -313,13 +312,11 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     )
     treeview_widget.pack(side="left", fill="both", expand=True)
 
-
     # 3. Hook the scrollbar directly to the Treeview's vertical movement axis
     treeview_widget.config(
         yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last, grid_container)
     )
     scrollbar.config(command=treeview_widget.yview)
-
 
     # 4. Formatter Engine: Set Column Headers and Text Layout Alignment Rules
     # Column width rules 
@@ -336,7 +333,6 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     treeview_widget.heading("size", text="File Size", anchor="w", command=lambda: sort_column(treeview_widget, "size", False))
     treeview_widget.heading("type", text="Element Type", anchor="w", command=lambda: sort_column(treeview_widget, "type", False))
     treeview_widget.heading("modified", text="Date Modified", anchor="w", command=lambda: sort_column(treeview_widget, "modified", False))
-
 
     # 5. Event Binding Loop
     # Double-click binding on table rows
@@ -403,11 +399,6 @@ def scan_single_directory_level(
                         values=("---", "Folder", mod_time),
                         tags=(entry.path,)  # Stash the path in tags for retrieval on double-click
                     )
-
-                    # 3. RECURSION: Drill inside this directory instantly
-                    # populate_tree_recursively(treeview_widget, folder_id, entry.path)
-                    # Remove the Deep Recursion Engine to implement Lazy Loading instead. 
-                    # This prevents the UI from freezing on large directories.
 
                     # 3. LAZY LOADING: Place a temporary child row inside this folder.
                     # This tricks the Treeview into drawing the expand/collapse arrow.
