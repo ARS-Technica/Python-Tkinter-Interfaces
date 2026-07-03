@@ -395,10 +395,10 @@ def populate_tree_on_demand(event: tk.Event) -> None:
         treeview_widget.delete(children[0])
 
         # 2. Fetch the true absolute directory path stashed in the parent folder's tags
-        target_path = treeview_widget.item(opened_item_id, "tags")[0]
+        target_path = treeview_widget.item(selected_item_id, "tags")[0]
 
         # 3. Perform a quick single-level scan to populate the contents of the directory
-        scan_single_directory_level(treeview_widget, opened_item_id, target_path)
+        scan_single_directory_level(treeview_widget, selected_item_id, target_path)
         # This is "lazy loading." Only populate the folder's contents when the 
         # user explicitly expands it, rather than preloading everything at once.
 
