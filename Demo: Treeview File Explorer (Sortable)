@@ -254,6 +254,14 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
 
 
 # Widget Creation -------------------------------------------------------------
+def _bind_tree_events(treeview_widget: ttk.Treeview, label_top: tk.Label, label_bottom: tk.Label) -> None:
+    """
+    Binds mouse inputs and dynamic lazy-loading virtual event loops.
+    """
+
+    pass
+
+
 def build_context_menu(
     root: tk.Tk, 
     treeview_widget: ttk.Treeview, 
@@ -351,6 +359,13 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     treeview_widget.bind("<<TreeviewOpen>>", populate_tree_on_demand)
 
     return treeview_widget
+
+def _configure_tree_columns(treeview_widget: ttk.Treeview) -> None:
+    """
+    Creates structural grid column rules, widths, and clickable headers.
+    """
+
+    pass
 
 
 # Tree Population -------------------------------------------------------------
