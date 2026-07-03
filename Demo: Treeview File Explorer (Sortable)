@@ -119,7 +119,7 @@ def initialize_root_directory(treeview_widget: ttk.Treeview) -> None:
     treeview_widget.item(root_node_id, open=True)
 
 
-def on_row_double_click(
+def on_row_click(
     event: tk.Event, 
     treeview_widget: ttk.Treeview, 
     label_top: tk.Label, 
@@ -280,7 +280,7 @@ def build_context_menu(
     # right_click_menu.add_separator() # Draw a clean horizontal separation line
     context_menu.add_command(
         label="View Metadata Properties", 
-        command=lambda: on_row_double_click(None, treeview_widget, status_display_top, status_display_bottom)
+        command=lambda: on_row_click(None, treeview_widget, status_display_top, status_display_bottom)
     )
 
     # 3. Bind the mouse trigger to the file_tree widget
@@ -339,7 +339,7 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     # Single left-click binding on table rows updates the status labels with metadata
     treeview_widget.bind(
         "<ButtonRelease-1>", 
-        lambda event: on_row_double_click(event, treeview_widget, label_top, label_bottom))
+        lambda event: on_row_click(event, treeview_widget, label_top, label_bottom))
 
     # Double-click binding on table rows opens the file's folder location
     treeview_widget.bind(
