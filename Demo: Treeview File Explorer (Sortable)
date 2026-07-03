@@ -258,8 +258,21 @@ def _bind_tree_events(treeview_widget: ttk.Treeview, label_top: tk.Label, label_
     """
     Binds mouse inputs and dynamic lazy-loading virtual event loops.
     """
+    # Event Binding Loop
+    # Single left-click binding on table rows updates the status labels with metadata
+    treeview_widget.bind(
+        "<ButtonRelease-1>", 
+        lambda event: on_row_click(event, treeview_widget, label_top, label_bottom)
+    )
 
-    pass
+    # Double-click binding on table rows opens the file's folder location
+    treeview_widget.bind(
+        "<Double-1>", 
+        lambda event: handle_context_action("reveal", treeview_widget)
+    )
+
+    # Lazy Loading Binding: Catches when a folder tree branch expands
+    treeview_widget.bind("<<TreeviewOpen>>", populate_tree_on_demand)
 
 
 def build_context_menu(
