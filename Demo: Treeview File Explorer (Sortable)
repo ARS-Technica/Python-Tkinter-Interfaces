@@ -136,7 +136,7 @@ def on_row_double_click(
         item_data = treeview_widget.item(selected_item_id)
         item_name = item_data["text"]
         row_values = item_data["values"]
-        
+
         # Pull the absolute system path we stored in the hidden 'tags' property
         absolute_path = treeview_widget.item(selected_item_id, "tags")[0]
 
