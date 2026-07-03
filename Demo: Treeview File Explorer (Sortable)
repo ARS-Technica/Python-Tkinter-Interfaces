@@ -336,8 +336,16 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     treeview_widget.heading("modified", text="Date Modified", anchor="w", command=lambda: sort_column(treeview_widget, "modified", False))
 
     # 5. Event Binding Loop
-    # Double-click binding on table rows
-    treeview_widget.bind("<Double-1>", lambda event: on_row_double_click(event, treeview_widget, label_top, label_bottom))
+    # Single left-click binding on table rows updates the status labels with metadata
+    treeview_widget.bind(
+        "<ButtonRelease-1>", 
+        lambda event: on_row_double_click(event, treeview_widget, label_top, label_bottom))
+
+    # Double-click binding on table rows opens the file's folder location
+    treeview_widget.bind(
+        "<Double-1>", 
+        lambda event: handle_context_action("reveal", treeview_widget)
+    )
     
     # Lazy Loading Binding: Catches when a folder tree branch expands
     treeview_widget.bind("<<TreeviewOpen>>", populate_tree_on_demand)
