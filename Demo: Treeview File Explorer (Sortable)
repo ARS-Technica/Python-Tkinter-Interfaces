@@ -365,7 +365,25 @@ def _configure_tree_columns(treeview_widget: ttk.Treeview) -> None:
     Creates structural grid column rules, widths, and clickable headers.
     """
 
-    pass
+    # Formatter Engine: Set Column Headers and Text Layout Alignment Rules
+    # Column width rules and stretch configurations
+    treeview_widget.column("#0", width=280, minwidth=200, stretch=True)
+    treeview_widget.column("size", width=90, minwidth=70, stretch=False, anchor="w")
+    treeview_widget.column("type", width=120, minwidth=90, stretch=False, anchor="w")
+    treeview_widget.column("modified", width=130, minwidth=100, stretch=False, anchor="w")
+   
+    # Clickable Header Labels with Sort Directives
+    treeview_widget.heading("#0", text="Local System Directory Tree ▲", anchor="w", 
+                             command=lambda: sort_column(treeview_widget, "#0", True))
+    # Changed the launch command for the primary directory column ("#0") so that 
+    # its very # first click actively triggers a reverse sort (True). 
+    # Keep the other columns at False because they haven't been sorted yet!
+    treeview_widget.heading("size", text="File Size", anchor="w", 
+                             command=lambda: sort_column(treeview_widget, "size", False))
+    treeview_widget.heading("type", text="Element Type", anchor="w", 
+                             command=lambda: sort_column(treeview_widget, "type", False))
+    treeview_widget.heading("modified", text="Date Modified", anchor="w", 
+                             command=lambda: sort_column(treeview_widget, "modified", False))
 
 
 # Tree Population -------------------------------------------------------------
