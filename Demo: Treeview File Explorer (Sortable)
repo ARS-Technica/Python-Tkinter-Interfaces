@@ -130,7 +130,7 @@ def on_row_double_click(
     """
     # Identify the specific row item ID that was double-clicked
     selected_item_id = treeview_widget.focus()
-    
+
     if selected_item_id:
         # Retrieve the underlying database row dictionary values
         item_data = treeview_widget.item(selected_item_id)
@@ -142,7 +142,7 @@ def on_row_double_click(
 
         # Clean up character prefixes from display logs if they exist
         clean_name = item_name.replace("📁 ", "").replace("📄 ", "")
-        
+
         if os.path.isdir(absolute_path):
             label_top.config(text=f"Directory Container: {clean_name}/")
             label_bottom.config(text=f"System Path: {absolute_path}")
@@ -178,7 +178,7 @@ def show_right_click_menu(event: tk.Event, treeview_widget: ttk.Treeview, contex
         # 2. Programmatically highlight and focus the item that was right-clicked
         treeview_widget.selection_set(clicked_item_id)
         treeview_widget.focus(clicked_item_id)
-        
+
         # 3. Post the floating menu at the exact root coordinate pixels of your screen cursor
         context_menu.post(event.x_root, event.y_root)
 
@@ -209,7 +209,7 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
             # Sorting by size, type, or date modified values columns
             column_index = treeview_widget["columns"].index(column_id)
             value = treeview_widget.item(item_id, "values")[column_index]
-            
+
             # Helper to parse human sizes back to sortable bytes
             # If sorting by size, ensure everything is a float so they compare correctly
             # if column_id == "size" and "B" in str(value):
@@ -218,7 +218,7 @@ def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bo
             #elif isinstance(value, str):
             else:
                 value = str(value).lower()
-                
+
         sorting_list.append((value, item_id))
 
     # 3. Sort the localized list array in place
@@ -299,7 +299,7 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     # 1. Initialize a layout container and an independent scrollbar engine
     grid_container = tk.Frame(parent)
     grid_container.pack(fill="both", expand=True)
-    
+
     scrollbar = tk.Scrollbar(grid_container, orient="vertical")
 
     # 2. Define our structural table columns
@@ -346,7 +346,7 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
         "<Double-1>", 
         lambda event: handle_context_action("reveal", treeview_widget)
     )
-    
+
     # Lazy Loading Binding: Catches when a folder tree branch expands
     treeview_widget.bind("<<TreeviewOpen>>", populate_tree_on_demand)
 
