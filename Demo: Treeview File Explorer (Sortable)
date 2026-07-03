@@ -340,6 +340,11 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     )
     scrollbar.config(command=treeview_widget.yview)
 
+    # Initializer Columns
+    _configure_tree_columns(treeview_widget)
+    # Initialize Event Bindings for Mouse Clicks
+    _bind_tree_events(treeview_widget, label_top, label_bottom)    
+
     return treeview_widget
 
 def _configure_tree_columns(treeview_widget: ttk.Treeview) -> None:
