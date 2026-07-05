@@ -304,27 +304,8 @@ def create_user_interface() -> None:
 
     treeview_widget = build_file_tree(status_display_bottom, status_display_top, panels_frame)
 
-
-    # Live System Directory ---------------------------------------------------
-    # Automatically tracks down and isolates the folder path this script is saved inside
-    target_project_directory = os.path.dirname(os.path.abspath(__file__))
-
-    # Render the target directory root node label at top of the tree stack
-    root_node_name = os.path.basename(target_project_directory) or target_project_directory
-    root_node_id = treeview_widget.insert(
-        "", 
-        tk.END,
-        text=f"📁  {root_node_name}", 
-        # image=icon_cache["folder"], 
-        values=("---", "Project Root", ""),
-        tags=(target_project_directory,)
-    )
-
-    # Fire off recursive scan engine loop
-    populate_tree_recursively(treeview_widget, root_node_id, target_project_directory)
-
-    # Auto-expand the topmost project container row for style on launch
-    treeview_widget.item(root_node_id, open=True)
+    # Initialize the root directory and populate the tree
+    initialize_root_directory(treeview_widget)
 
     root.mainloop()
 
