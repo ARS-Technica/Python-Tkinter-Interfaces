@@ -56,26 +56,24 @@ def initialize_root_directory(treeview_widget: ttk.Treeview) -> None:
     """
     Locates the application script path and seeds the baseline directory level.
     """
-    # Live System Directory ---------------------------------------------------
     # Automatically tracks down and isolates the folder path this script is saved inside
     target_project_directory = os.path.dirname(os.path.abspath(__file__))
 
     # Render the target directory root node label at top of the tree stack
     root_node_name = os.path.basename(target_project_directory) or target_project_directory
-    root_node_id = file_tree.insert(
+    root_node_id = treeview_widget.insert(
         "", 
         tk.END,
-        text=f"📁  {root_node_name}", 
-        # image=icon_cache["folder"], 
+        text=f"📁  {root_node_name}",
         values=("---", "Project Root", ""),
         tags=(target_project_directory,)
     )
 
     # Fire off recursive scan engine loop
-    populate_tree_recursively(file_tree, root_node_id, target_project_directory)
+    populate_tree_recursively(treeview_widget, root_node_id, target_project_directory)
 
     # Auto-expand the topmost project container row for style on launch
-    file_tree.item(root_node_id, open=True)
+    treeview_widget.item(root_node_id, open=True)
 
 
 def on_row_click(
@@ -304,7 +302,7 @@ def create_user_interface() -> None:
     status_display_bottom = tk.Label(root, text="Double-click nodes to view metadata", font=("Segoe UI", 10), anchor="center")
     status_display_bottom.pack(side="top", fill="x", pady=(2, 10))
 
-    file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
+    treeview_widget = build_file_tree(status_display_bottom, status_display_top, panels_frame)
 
 
     # Live System Directory ---------------------------------------------------
@@ -313,7 +311,7 @@ def create_user_interface() -> None:
 
     # Render the target directory root node label at top of the tree stack
     root_node_name = os.path.basename(target_project_directory) or target_project_directory
-    root_node_id = file_tree.insert(
+    root_node_id = treeview_widget.insert(
         "", 
         tk.END,
         text=f"📁  {root_node_name}", 
@@ -323,10 +321,10 @@ def create_user_interface() -> None:
     )
 
     # Fire off recursive scan engine loop
-    populate_tree_recursively(file_tree, root_node_id, target_project_directory)
+    populate_tree_recursively(treeview_widget, root_node_id, target_project_directory)
 
     # Auto-expand the topmost project container row for style on launch
-    file_tree.item(root_node_id, open=True)
+    treeview_widget.item(root_node_id, open=True)
 
     root.mainloop()
 
