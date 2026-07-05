@@ -1,27 +1,22 @@
 """
-Demo: Treeview File Explorer (Advanced)
-Created: June 18, 2026
+Demo: Treeview File Explorer (Sortable)
+Created: June 15, 2026
 
 Description: Demonstrates multi-column tabular data management using the 
 Treeview widget. This project demonstrates the Treeview widget's ability to 
 natively display nested parent-child relationships like folders containing 
 files.
 
-This version sorts file columns when the headers are clicked. It also 
-features a (right-click) context menu and lazy loading, which make a
-file exlorer practical.
+This version sorts file columns when the headers are clicked.
 
 This project is an extention of my earlier "Demo: Treeview Data Grid"
-project and the more complex "Demo: Treeview File Explorer (Sortable)". 
-It transforms a flat multi-column layout into a nested, expandable 
+project. It transforms a flat multi-column layout into a nested, expandable 
 directory hierarchy.
 """
 
 from datetime import datetime
 import math
 import os
-import platform
-import subprocess
 import tkinter as tk
 from tkinter import ttk
 
@@ -57,44 +52,7 @@ def get_human_readable_size(size_bytes: int) -> str:
     return f"{s} {size_names[i]}"
 
 
-def handle_context_action(action_type: str, treeview_widget: ttk.Treeview) -> None:
-    """
-    Extracts target paths from tags and executes native OS shell actions.
-    """
-    selected_item_id = treeview_widget.focus()
-
-    if not selected_item_id:
-        # print("Context Menu Error: No item selected in the UI.")
-        return
-
-    # Pull the absolute system path inside the row tags
-    raw_path = treeview_widget.item(selected_item_id, "tags")[0]
-    absolute_path = os.path.normpath(os.path.abspath(raw_path))
-
-    if not os.path.exists(absolute_path):
-        print(f"[OS Error] File system path does not exist: {absolute_path}")
-        return
-
-    if action_type == "reveal":
-        try:
-            # Open the native OS file explorer and select the folder
-            if os.name == "nt":
-                # Windows: Highlights the file *inside* its parent directory window
-                if os.path.isfile(absolute_path):
-                    subprocess.run(["explorer.exe", "/select,", absolute_path])
-                else:
-                    subprocess.run(["explorer.exe", absolute_path])
-            else:
-                # macOS/Linux: Opens the enclosing folder window
-                parent_dir = os.path.dirname(absolute_path) if os.path.isfile(absolute_path) else absolute_path
-                # FIX: Standardized mac check using unified os.uname engine
-                is_mac = os.uname().sysname == "Darwin"
-                subprocess.run(["open" if is_mac else "xdg-open", parent_dir], check=True)       
-        except Exception as e:
-            print(f"[OS Explorer Error] Could not reveal {absolute_path}. Reason: {e}")
-
-
-def on_row_double_click(
+def on_row_click(
     event: tk.Event, 
     treeview_widget: ttk.Treeview, 
     label_top: tk.Label, 
@@ -140,23 +98,7 @@ def parse_size_to_bytes(size_str: str) -> float:
         return float(num) * multipliers.get(unit, 1)
     except (ValueError, KeyError):
         return 0.0  # Fallback for any unexpected formats
-
-
-def show_right_click_menu(event: tk.Event, treeview_widget: ttk.Treeview, context_menu: tk.Menu) -> None:
-    """
-    Identifies the row coordinate beneath the mouse cursor and displays a floating menu.
-    """
-    # 1. Look up what row index is sitting at the mouse pointer's Y coordinate
-    clicked_item_id = treeview_widget.identify_row(event.y)
-
-    if clicked_item_id:
-        # 2. Programmatically highlight and focus the item that was right-clicked
-        treeview_widget.selection_set(clicked_item_id)
-        treeview_widget.focus(clicked_item_id)
-        
-        # 3. Post the floating menu at the exact root coordinate pixels of your screen cursor
-        context_menu.post(event.x_root, event.y_root)
-
+    
 
 def sort_column(treeview_widget: ttk.Treeview, column_id: str, reverse_state: bool, current_folder_id: str = "") -> None:
     """
@@ -219,7 +161,6 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     
     scrollbar = tk.Scrollbar(grid_container, orient="vertical")
 
-
     # 2. Define our structural table columns
     # 'show="headings"' completely hides the native hierarchical folder tree column
     column_identifiers = ("size", "type", "modified")
@@ -231,13 +172,11 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
     )
     treeview_widget.pack(side="left", fill="both", expand=True)
 
-
     # 3. Hook the scrollbar directly to the Treeview's vertical movement axis
     treeview_widget.config(
         yscrollcommand=lambda first, last: auto_scroll(scrollbar, first, last, grid_container)
     )
     scrollbar.config(command=treeview_widget.yview)
-
 
     # 4. Formatter Engine: Set Column Headers and Text Layout Alignment Rules
     # Column width rules 
@@ -255,49 +194,20 @@ def build_file_tree(label_bottom: tk.Label, label_top: tk.Label, parent: tk.Misc
 
     # 5. Event Binding Loop
     # Double-click binding on table rows
-    treeview_widget.bind("<Double-1>", lambda event: on_row_double_click(event, treeview_widget, label_top, label_bottom))
-    
-    # Lazy Loading Binding: Catches when a folder tree branch expands
-    treeview_widget.bind("<<TreeviewOpen>>", populate_tree_on_demand)
+    treeview_widget.bind(
+        "<Double-1>", 
+        lambda event: on_row_click(event, treeview_widget, label_top, label_bottom)
+    )
 
     return treeview_widget
 
 
 # Tree Population -------------------------------------------------------------
-def populate_tree_on_demand(event: tk.Event) -> None:
-    """
-    Event handler for lazy loading: populates a folder's contents when expanded.
-    Triggered dynamically when a user expands a folder. Swaps out dummy nodes 
-    for real files.
-    """
-    treeview_widget = event.widget
-    selected_item_id = treeview_widget.focus()
-
-    if not selected_item_id:
-        return
-
-    # Get all direct sub-items inside the opened folder node
-    children = treeview_widget.get_children(selected_item_id)
-
-    # First, check if the first child is our placeholder dummy node
-    if children and treeview_widget.item(children[0], "tags")[0] == "dummy":
-        # 1. Remove the dummy node from UI memory
-        treeview_widget.delete(children[0])
-
-        # 2. Fetch the true absolute directory path stashed in the parent folder's tags
-        target_path = treeview_widget.item(selected_item_id, "tags")[0]
-
-        # 3. Perform a quick single-level scan to populate the contents of the directory
-        scan_single_directory_level(treeview_widget, selected_item_id, target_path)
-        # This is "lazy loading." Only populate the folder's contents when the 
-        # user explicitly expands it, rather than preloading everything at once.
-
-
-def scan_single_directory_level(
-	treeview_widget: ttk.Treeview, 
-	parent_node_id: str, 
-	target_directory_path: str
-	) -> None:
+def populate_tree_recursively(
+    treeview_widget: ttk.Treeview, 
+    parent_node_id: str, 
+    target_directory_path: str
+) -> None:
     """
     Recursively scans local OS paths to build nested tree node relationships.
     """
@@ -308,31 +218,25 @@ def scan_single_directory_level(
                 # 1. Capture core metadata details using the entry stat block
                 stats = entry.stat()
                 mod_time = datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%d %H:%M')
-
+                
                 if entry.is_dir():
                     # 2. Add folder node to the UI layout
                     folder_id = treeview_widget.insert(
                         parent_node_id, 
                         tk.END, 
                         text=f"📁  {entry.name}", 
+                        # image=icon_cache["folder"],
                         values=("---", "Folder", mod_time),
                         tags=(entry.path,)  # Stash the path in tags for retrieval on double-click
                     )
-
-                    # 3. RECURSION: Drill inside this directory instantly
-                    # populate_tree_recursively(treeview_widget, folder_id, entry.path)
-                    # Remove the Deep Recursion Engine to implement Lazy Loading instead. 
-                    # This prevents the UI from freezing on large directories.
-
-                    # 3. LAZY LOADING: Place a temporary child row inside this folder.
-                    # This tricks the Treeview into drawing the expand/collapse arrow.
-                    treeview_widget.insert(folder_id, tk.END, text="Scanning...", tags=("dummy",))
-
+                    # 3. RECURSION FLUIDITY: Drill inside this directory instantly
+                    populate_tree_recursively(treeview_widget, folder_id, entry.path)
+                    
                 elif entry.is_file():
                     # 4. Add file node to the UI layout
                     human_size = get_human_readable_size(stats.st_size)
                     file_extension = os.path.splitext(entry.name)[1].upper() or "FILE"
-
+                    
                     treeview_widget.insert(
                         parent_node_id, 
                         tk.END, 
@@ -363,41 +267,18 @@ def create_user_interface() -> None:
     style_engine.configure("Treeview", padding=0)
 
 
-    # Create structural frames ------------------------------------------------
-    # Master Frame Grid Wrapper to freeze status tracking elements
-    main_layout = tk.Frame(root)
-    main_layout.pack(fill="both", expand=True, padx=15, pady=15)
-
-    main_layout.rowconfigure(0, weight=1)
-    main_layout.columnconfigure(0, weight=1)
-
-    panels_frame = tk.Frame(main_layout)
-    panels_frame.grid(row=0, column=0, sticky="nsew")
+    # Create structural frames
+    panels_frame = tk.Frame(root)
+    panels_frame.pack(fill="both", expand=False, padx=15, pady=(15, 0))
 
     # Build status labels anchored underneath the data grid space
-    status_display_top = tk.Label(main_layout, text="Click column headers to sort", font=("Consolas", 11, "bold"), anchor="center")
-    status_display_top.grid(row=1, column=0, sticky="ew", pady=(10, 2))
+    status_display_top = tk.Label(root, text="Click column headers to sort", font=("Consolas", 11, "bold"), anchor="center")
+    status_display_top.pack(side="top", fill="x", pady=(25, 2))
 
-    status_display_bottom = tk.Label(main_layout, text="Double-click nodes to view metadata", font=("Segoe UI", 10), anchor="center")
-    status_display_bottom.grid(row=2, column=0, sticky="ew", pady=(2, 5))
+    status_display_bottom = tk.Label(root, text="Double-click nodes to view metadata", font=("Segoe UI", 10), anchor="center")
+    status_display_bottom.pack(side="top", fill="x", pady=(2, 10))
 
     file_tree = build_file_tree(status_display_bottom, status_display_top, panels_frame)
-
-
-    # Context Menu ------------------------------------------------------------
-    # 1. Create a floating menu container attached to the root window template
-    # tearoff=0 prevents the user from sliding/detaching the menu into a separate popup window
-    right_click_menu = tk.Menu(root, tearoff=0)
-
-    # 2. Inject command buttons into the context layout
-    right_click_menu.add_command(label="Open File Location", command=lambda: handle_context_action("reveal", file_tree))
-    right_click_menu.add_separator() # Draw a clean horizontal separation line
-    right_click_menu.add_command(label="View Metadata Properties", command=lambda: on_row_double_click(None, file_tree, status_display_top, status_display_bottom))
-
-    # 3. Bind the mouse trigger to the file_tree widget
-    # <Button-3> captures right-clicks on Windows/Linux. On macOS, use <Button-2> 
-    file_tree.bind("<Button-3>", lambda event: show_right_click_menu(event, file_tree, right_click_menu))
-    file_tree.bind("<Button-2>", lambda event: show_right_click_menu(event, file_tree, right_click_menu))
 
 
     # Live System Directory ---------------------------------------------------
@@ -416,7 +297,7 @@ def create_user_interface() -> None:
     )
 
     # Fire off recursive scan engine loop
-    scan_single_directory_level(file_tree, root_node_id, target_project_directory)
+    populate_tree_recursively(file_tree, root_node_id, target_project_directory)
 
     # Auto-expand the topmost project container row for style on launch
     file_tree.item(root_node_id, open=True)
