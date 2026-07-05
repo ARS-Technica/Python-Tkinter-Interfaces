@@ -52,6 +52,14 @@ def get_human_readable_size(size_bytes: int) -> str:
     return f"{s} {size_names[i]}"
 
 
+def initialize_root_directory(treeview_widget: ttk.Treeview) -> None:
+    """
+    Locates the application script path and seeds the baseline directory level.
+    """
+
+    pass
+
+
 def on_row_click(
     event: tk.Event, 
     treeview_widget: ttk.Treeview, 
