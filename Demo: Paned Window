@@ -1,0 +1,8 @@
+"""
+Demo: Paned Window Workspace Interface
+Created: July 4, 2026
+
+Description: Demonstrates advanced workspace design patterns using 
+ttk.PanedWindow for resizable dual-panel splits and ttk.Notebook for 
+high-performance tabbed view management.
+"""
