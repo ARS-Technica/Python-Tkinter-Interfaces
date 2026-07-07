@@ -19,10 +19,35 @@ def create_workspace_interface() -> None:
     root.title("Paned Window Workspace Interface")
     root.geometry("800x450")
 
-    # Establish modern theme base
+    # Establish modern theme 
     style_engine = ttk.Style()
     style_engine.theme_use("clam")
 
+
+
+    # 1. Paned Window Widget -----------------------------------------------
+    # This acts as the master structural wrapper splitting the window horizontally
+    master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
+    master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
+
+    # 2. Left Sidebar Panel ----------------------------------------------------
+    # We create a simple frame and add it to the left side of the PanedWindow
+    sidebar_frame = ttk.Frame(master_paned_window, width=200, relief="flat")
+    
+    # Pack content inside the sidebar
+
+
+    # 3. Main Workspace (Notebook Widget) ----------------------------
+    # Initialize a Notebook container to handle multi-view tab switches
+
+
+    # Tab 1 Setup: Dashboard View
+
+
+    # Tab 2 Setup: Console Code Terminal
+
+
+    # Launch Application
     root.mainloop()
 
 
