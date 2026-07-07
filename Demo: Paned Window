@@ -31,7 +31,7 @@ def create_workspace_interface() -> None:
     master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
 
     # 2. Left Sidebar Panel ----------------------------------------------------
-    # We create a simple frame and add it to the left side of the PanedWindow
+    # Create a simple frame and add it to the left side of the Paned Window
     sidebar_frame = ttk.Frame(master_paned_window, width=200, relief="flat")
     
     # Pack content inside the sidebar
@@ -39,7 +39,11 @@ def create_workspace_interface() -> None:
 
     # 3. Main Workspace (Notebook Widget) ----------------------------
     # Initialize a Notebook container to handle multi-view tab switches
+    workspace_notebook = ttk.Notebook(master_paned_window)
 
+    # Create the Notebook directly in the right panel of the PanedWindow
+    master_paned_window.add(workspace_notebook, weight=1)
+    # (weight=1 means it absorbs 100% of any extra window resizing expansion)
 
     # Tab 1 Setup: Dashboard View
 
