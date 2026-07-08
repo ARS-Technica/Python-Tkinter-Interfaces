@@ -55,10 +55,12 @@ def create_user_interface() -> None:
     # (weight=1 means it absorbs 100% of any extra window resizing expansion)
 
     # Tab 1 Setup: Dashboard View ---------------------------------------------
-
+    tab_dashboard = ttk.Frame(workspace_notebook)
+    workspace_notebook.add(tab_dashboard, text="Activity Dashboard")
 
     # Tab 2 Setup: Console Code Terminal --------------------------------------
-
+    tab_console = ttk.Frame(workspace_notebook)
+    workspace_notebook.add(tab_console, text="Shell Developer Console")
 
     # 4. Launch Application ---------------------------------------------------
     root.mainloop()
