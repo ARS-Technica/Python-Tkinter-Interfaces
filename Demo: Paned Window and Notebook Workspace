@@ -35,6 +35,20 @@ def build_sidebar_panel(paned_window: ttk.PanedWindow) -> ttk.Frame:
     return sidebar_frame
 
 
+def build_workspace_notebook(paned_window: ttk.PanedWindow) -> ttk.Notebook:
+    """
+    Constructs and injects the multi-view tabbed workspace notebook.
+    
+    Args:
+        paned_window (ttk.PanedWindow): The parent PanedWindow to attach the notebook to.
+    Returns:
+        ttk.Notebook: The constructed workspace notebook.
+    """
+    pass
+
+    return workspace_notebook
+
+
 # User Interface Coordinator --------------------------------------------------
 
 def create_user_interface() -> None:
