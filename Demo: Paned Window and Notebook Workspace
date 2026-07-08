@@ -58,9 +58,15 @@ def create_user_interface() -> None:
     tab_dashboard = ttk.Frame(workspace_notebook)
     workspace_notebook.add(tab_dashboard, text="Activity Dashboard")
 
+    dash_desc = ttk.Label(tab_dashboard, text="This tab represents an isolated workspace context frame.", font=CONFIGURATON["FONT_BODY"])
+    dash_desc.pack(anchor="w", padx=20, pady=0)
+
     # Tab 2 Setup: Console Code Terminal --------------------------------------
     tab_console = ttk.Frame(workspace_notebook)
     workspace_notebook.add(tab_console, text="Shell Developer Console")
+
+    console_title = ttk.Label(tab_console, text="Natively Isolated Environment Shell Output", font=CONFIGURATON["FONT_HEADER"])
+    console_title.pack(anchor="w", padx=20, pady=20)
 
     # 4. Launch Application ---------------------------------------------------
     root.mainloop()
