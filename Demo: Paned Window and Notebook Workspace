@@ -32,8 +32,6 @@ def create_user_interface() -> None:
     style_engine = ttk.Style()
     style_engine.theme_use("clam")
 
-
-
     # 1. Paned Window Widget -----------------------------------------------
     # This acts as the master structural wrapper splitting the window horizontally
     master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
@@ -47,7 +45,14 @@ def create_user_interface() -> None:
     sidebar_header = ttk.Label(sidebar_frame, text="Navigation Sidebar", font=CONFIGURATON["FONT_HEADER"])
     sidebar_header.pack(anchor="w", padx=10, pady=10)
 
-    
+    sidebar_hint = ttk.Label(
+        sidebar_frame, 
+        text="← Drag the vertical sash line to resize this panel dynamically!", 
+        font=CONFIGURATON["FONT_BODY"],
+        wraplength=180,
+        justify="left"
+    )
+    sidebar_hint.pack(anchor="w", padx=10, pady=5)
 
     # 3. Main Workspace (Notebook Widget) ----------------------------
     # Initialize a Notebook container to handle multi-view tab switches
