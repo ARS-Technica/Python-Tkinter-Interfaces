@@ -1,5 +1,5 @@
 """
-Demo: Paned Window Workspace Interface
+Demo: Paned Window and Notebook Workspace
 Created: July 4, 2026
 
 Description: Demonstrates advanced workspace design patterns using 
@@ -10,6 +10,7 @@ high-performance tabbed view management.
 import tkinter as tk
 from tkinter import ttk
 
+
 # Centralized Interface Configuration -----------------------------------------
 
 # One place to configure all of the interface variables to save time
@@ -19,7 +20,12 @@ CONFIGURATON = {
 }
 
 
+# Widget Creation -------------------------------------------------------------
+
+
+
 # User Interface Coordinator --------------------------------------------------
+
 def create_user_interface() -> None:
     """
     Coordinates the initialization of resizable multi-panel tabbed layouts.
@@ -28,7 +34,7 @@ def create_user_interface() -> None:
     root.title("Demo: Paned Window and Notebook Workspace")
     root.geometry("800x450")
 
-    # Establish modern theme 
+    # Establish modern theme base
     style_engine = ttk.Style()
     style_engine.theme_use("clam")
 
@@ -44,7 +50,7 @@ def create_user_interface() -> None:
     # Pack content inside the sidebar
     sidebar_header = ttk.Label(sidebar_frame, text="Navigation Sidebar", font=CONFIGURATON["FONT_HEADER"])
     sidebar_header.pack(anchor="w", padx=10, pady=10)
-
+    
     sidebar_hint = ttk.Label(
         sidebar_frame, 
         text="← Drag the vertical sash line to resize this panel dynamically!", 
@@ -54,7 +60,10 @@ def create_user_interface() -> None:
     )
     sidebar_hint.pack(anchor="w", padx=10, pady=5)
 
-    # 3. Main Workspace (Notebook Widget) ----------------------------
+    # Inject the sidebar into the PanedWindow stack (weight=0 means it won't greedily grow on window resize)
+    master_paned_window.add(sidebar_frame, weight=0)
+
+    # 3. Main Workspace (Notebook Widget) -------------------------------------
     # Initialize a Notebook container to handle multi-view tab switches
     workspace_notebook = ttk.Notebook(master_paned_window)
 
@@ -68,7 +77,7 @@ def create_user_interface() -> None:
 
     dash_title = ttk.Label(tab_dashboard, text="System Metrics Analytics Overview", font=CONFIGURATON["FONT_HEADER"])
     dash_title.pack(anchor="w", padx=20, pady=20)
-
+    
     dash_desc = ttk.Label(tab_dashboard, text="This tab represents an isolated workspace context frame.", font=CONFIGURATON["FONT_BODY"])
     dash_desc.pack(anchor="w", padx=20, pady=0)
 
