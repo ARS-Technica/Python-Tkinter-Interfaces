@@ -21,7 +21,18 @@ CONFIGURATON = {
 
 
 # Widget Creation -------------------------------------------------------------
+def build_sidebar_panel(paned_window: ttk.PanedWindow) -> ttk.Frame:
+    """
+    Constructs and injects the isolated navigation sidebar panel.
 
+    Args:
+        paned_window (ttk.PanedWindow): The parent PanedWindow to attach the sidebar to.
+    Returns:
+        ttk.Frame: The constructed sidebar frame.
+    """
+    pass
+
+    return sidebar_frame
 
 
 # User Interface Coordinator --------------------------------------------------
