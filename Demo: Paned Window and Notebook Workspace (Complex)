@@ -1,0 +1,122 @@
+"""
+Demo: Paned Window and Notebook Workspace (Simple)
+Created: July 9, 2026
+
+Description: Demonstrates advanced workspace design patterns using 
+ttk.PanedWindow for resizable dual-panel splits and ttk.Notebook for 
+high-performance tabbed view management.
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+# Centralized Interface Configuration -----------------------------------------
+
+# One place to configure all of the interface variables to save time
+CONFIGURATON = {
+    "FONT_HEADER": ("Segoe UI", 12, "bold"),
+    "FONT_BODY": ("Segoe UI", 10)
+}
+
+
+# Widget Creation -------------------------------------------------------------
+def build_sidebar_panel(paned_window: ttk.PanedWindow) -> ttk.Frame:
+    """
+    Constructs and injects the isolated navigation sidebar panel.
+
+    Args:
+        paned_window (ttk.PanedWindow): The parent PanedWindow to attach the sidebar to.
+    Returns:
+        ttk.Frame: The constructed sidebar frame.
+    """
+    # Create a simple frame and add it to the left side of the Paned Window
+    sidebar_frame = ttk.Frame(master_paned_window, width=200, relief="flat")
+    
+    # Generate internal sidebar layout elements
+    sidebar_header = ttk.Label(sidebar_frame, text="Navigation Sidebar", font=CONFIGURATON["FONT_HEADER"])
+    sidebar_header.pack(anchor="w", padx=10, pady=10) # Pack content inside the sidebar
+    
+    sidebar_hint = ttk.Label(
+        sidebar_frame, 
+        text="← Drag the vertical sash line to resize this panel dynamically!", 
+        font=CONFIGURATON["FONT_BODY"],
+        wraplength=180,
+        justify="left"
+    )
+    sidebar_hint.pack(anchor="w", padx=10, pady=5)
+
+    # Inject the sidebar into the PanedWindow stack 
+    # Attach to the paned layout stack with zero expansion priority
+    # weight=0 means it won't greedily grow on window resize
+    paned_window.add(sidebar_frame, weight=0)
+
+    return sidebar_frame
+
+
+def build_workspace_notebook(paned_window: ttk.PanedWindow) -> ttk.Notebook:
+    """
+    Constructs and injects the multi-view tabbed workspace notebook.
+    
+    Args:
+        paned_window (ttk.PanedWindow): The parent PanedWindow to attach the notebook to.
+    Returns:
+        ttk.Notebook: The constructed workspace notebook.
+    """
+    # Initialize a Notebook container to handle multi-view tab switches
+    workspace_notebook = ttk.Notebook(master_paned_window)
+
+    # Tab 1 Setup: Dashboard View ---------------------------------------------
+    tab_dashboard = ttk.Frame(workspace_notebook)
+    workspace_notebook.add(tab_dashboard, text="Activity Dashboard")
+
+    dash_title = ttk.Label(tab_dashboard, text="System Metrics Analytics Overview", font=CONFIGURATON["FONT_HEADER"])
+    dash_title.pack(anchor="w", padx=20, pady=20)
+    
+    dash_desc = ttk.Label(tab_dashboard, text="This tab represents an isolated workspace context frame.", font=CONFIGURATON["FONT_BODY"])
+    dash_desc.pack(anchor="w", padx=20, pady=0)
+
+    # Tab 2 Setup: Console Code Terminal --------------------------------------
+    tab_console = ttk.Frame(workspace_notebook)
+    workspace_notebook.add(tab_console, text="Shell Developer Console")
+
+    console_title = ttk.Label(tab_console, text="Natively Isolated Environment Shell Output", font=CONFIGURATON["FONT_HEADER"])
+    console_title.pack(anchor="w", padx=20, pady=20)
+
+    # Attach to the paned layout stack with maximum expansion priority
+    paned_window.add(workspace_notebook, weight=1)
+
+    return workspace_notebook
+
+
+# User Interface Coordinator --------------------------------------------------
+
+def create_user_interface() -> None:
+    """
+    Coordinates the initialization of resizable multi-panel tabbed layouts.
+    """
+    root = tk.Tk()
+    root.title("Demo: Paned Window and Notebook Workspace")
+    root.geometry("800x450")
+
+    # Establish modern theme base
+    style_engine = ttk.Style()
+    style_engine.theme_use("clam")
+
+    # Paned Window Widget -----------------------------------------------
+    # This acts as the master structural wrapper splitting the window horizontally
+    master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
+    master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
+
+    # Create the Notebook directly in the right panel of the PanedWindow
+    master_paned_window.add(workspace_notebook, weight=1)
+    # (weight=1 means it absorbs 100% of any extra window resizing expansion)
+
+    # 4. Launch Application ---------------------------------------------------
+    root.mainloop()
+
+
+# Main Application Entry ------------------------------------------------------
+if __name__ == "__main__":
+    create_user_interface()
+
