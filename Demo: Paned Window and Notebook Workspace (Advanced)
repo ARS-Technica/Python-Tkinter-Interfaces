@@ -17,10 +17,33 @@ from tkinter import ttk
 # Centralized Interface Configuration -----------------------------------------
 
 # One place to configure all of the interface variables to save time
-CONFIGURATON = {
-    "FONT_HEADER": ("Segoe UI", 12, "bold"),
-    "FONT_BODY": ("Segoe UI", 10)
+CONFIG = {
+    "FONT_HEADER": ("Segoe UI", 11, "bold"),
+    "FONT_BODY": ("Segoe UI", 10),
+    "ROW_HEIGHT": 28
 }
+
+
+# Sidebar Navigation Logic ----------------------------------------------------
+def _on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
+    """
+    Catches sidebar row clicks and changes focus to new active notebook tab.
+    Args:
+        event (tk.Event): The event object triggered by the sidebar selection.
+        notebook (ttk.Notebook): The notebook instance to switch tabs on.
+    """
+    treeview_widget = event.widget
+    selected_item = treeview_widget.focus()
+    
+    if not selected_item:
+        return
+        
+    # Extract the custom index number we stashed inside the row values array
+    item_values = treeview_widget.item(selected_item, "values")
+    if item_values:
+        tab_index = int(item_values[0])
+        # Force the notebook engine to switch directly to that specific index frame
+        notebook.select(tab_index)
 
 
 # Widget Creation -------------------------------------------------------------
