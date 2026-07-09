@@ -30,13 +30,12 @@ def build_sidebar_panel(paned_window: ttk.PanedWindow) -> ttk.Frame:
     Returns:
         ttk.Frame: The constructed sidebar frame.
     """
-    # 2. Left Sidebar Panel ----------------------------------------------------
     # Create a simple frame and add it to the left side of the Paned Window
     sidebar_frame = ttk.Frame(master_paned_window, width=200, relief="flat")
     
-    # Pack content inside the sidebar
+    # Generate internal sidebar layout elements
     sidebar_header = ttk.Label(sidebar_frame, text="Navigation Sidebar", font=CONFIGURATON["FONT_HEADER"])
-    sidebar_header.pack(anchor="w", padx=10, pady=10)
+    sidebar_header.pack(anchor="w", padx=10, pady=10) # Pack content inside the sidebar
     
     sidebar_hint = ttk.Label(
         sidebar_frame, 
@@ -47,9 +46,10 @@ def build_sidebar_panel(paned_window: ttk.PanedWindow) -> ttk.Frame:
     )
     sidebar_hint.pack(anchor="w", padx=10, pady=5)
 
+    # Inject the sidebar into the PanedWindow stack 
     # Attach to the paned layout stack with zero expansion priority
-    # Inject the sidebar into the PanedWindow stack (weight=0 means it won't greedily grow on window resize)
-    master_paned_window.add(sidebar_frame, weight=0)
+    # weight=0 means it won't greedily grow on window resize
+    paned_window.add(sidebar_frame, weight=0)
 
     return sidebar_frame
 
