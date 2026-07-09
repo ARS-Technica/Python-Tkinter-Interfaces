@@ -63,6 +63,9 @@ def build_workspace_notebook(paned_window: ttk.PanedWindow) -> ttk.Notebook:
     Returns:
         ttk.Notebook: The constructed workspace notebook.
     """
+    # Initialize a Notebook container to handle multi-view tab switches
+    workspace_notebook = ttk.Notebook(master_paned_window)
+
     # Tab 1 Setup: Dashboard View ---------------------------------------------
     tab_dashboard = ttk.Frame(workspace_notebook)
     workspace_notebook.add(tab_dashboard, text="Activity Dashboard")
@@ -79,6 +82,9 @@ def build_workspace_notebook(paned_window: ttk.PanedWindow) -> ttk.Notebook:
 
     console_title = ttk.Label(tab_console, text="Natively Isolated Environment Shell Output", font=CONFIGURATON["FONT_HEADER"])
     console_title.pack(anchor="w", padx=20, pady=20)
+
+    # Attach to the paned layout stack with maximum expansion priority
+    paned_window.add(workspace_notebook, weight=1)
 
     return workspace_notebook
 
@@ -123,11 +129,11 @@ def create_user_interface() -> None:
     # Inject the sidebar into the PanedWindow stack (weight=0 means it won't greedily grow on window resize)
     master_paned_window.add(sidebar_frame, weight=0)
     '''
-    
+    '''
     # 3. Main Workspace (Notebook Widget) -------------------------------------
     # Initialize a Notebook container to handle multi-view tab switches
     workspace_notebook = ttk.Notebook(master_paned_window)
-
+    '''
     # Create the Notebook directly in the right panel of the PanedWindow
     master_paned_window.add(workspace_notebook, weight=1)
     # (weight=1 means it absorbs 100% of any extra window resizing expansion)
