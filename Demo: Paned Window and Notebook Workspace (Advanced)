@@ -4,7 +4,10 @@ Created: July 9, 2026
 
 Description: Demonstrates advanced workspace design patterns using 
 ttk.PanedWindow for resizable dual-panel splits and ttk.Notebook for 
-high-performance tabbed view management.
+high-performance tabbed view management. Advanced application workspace
+design pattern. Integrates an isolated ttk.Treeview sidebar controller
+on the left to dynamically manage and toggle the visibility states of
+top-tabbed context panels inside a ttk.Notebook.
 """
 
 import tkinter as tk
