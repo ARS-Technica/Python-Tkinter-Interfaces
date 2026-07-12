@@ -123,12 +123,21 @@ def build_sidebar_panel(paned_window: ttk.PanedWindow, notebook_map: dict, conta
     nav_tree.insert(cluster_adm, tk.END, text="⚙️ Global System Rules", values=("admin_notebook", 0))
     nav_tree.insert(cluster_adm, tk.END, text="🔒 Database Key Vault", values=("admin_notebook", 1))
 
+    # Auto-expand development node by default on boot
+    nav_tree.item(cluster_dev, open=True)
+    first_leaf = nav_tree.get_children(cluster_dev)[0]
+    nav_tree.selection_set(first_leaf)
+    nav_tree.focus(first_leaf)
+
+    # Bind node click triggers
+    nav_tree.bind("<ButtonRelease-1>", lambda event: _on_sidebar_select(event, notebook_map, container))
+
     # Inject the sidebar into the PanedWindow stack 
     # Attach to the paned layout stack with zero expansion priority
     # weight=0 means it won't greedily grow on window resize
     paned_window.add(sidebar_frame, weight=0)
 
-    return sidebar_frame
+    return nav_tree
 
 
 def build_workspace_notebook(paned_window: ttk.PanedWindow) -> ttk.Notebook:
