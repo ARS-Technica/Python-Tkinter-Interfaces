@@ -34,10 +34,20 @@ def _on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
     """
     treeview_widget = event.widget
     selected_item = treeview_widget.focus()
-    
+
+    item_values = treeview_widget.item(selected_item, "values")
+
     if not selected_item:
+        return  # Clicked a generic non-mapped header node
+
+    notebook_key = item_values[0]
+    tab_index = int(item_values[1])
+
+    # 1. Fetch the targeted notebook component
+    target_notebook = notebook_map.get(notebook_key)
+    if not target_notebook:
         return
-        
+
     # Extract the custom index number we stashed inside the row values array
     item_values = treeview_widget.item(selected_item, "values")
     if item_values:
@@ -138,7 +148,7 @@ def create_user_interface() -> None:
     master_paned_window.add(workspace_notebook, weight=1)
     # (weight=1 means it absorbs 100% of any extra window resizing expansion)
 
-    # 4. Launch Application ---------------------------------------------------
+    # Launch Application ---------------------------------------------------
     root.mainloop()
 
 
