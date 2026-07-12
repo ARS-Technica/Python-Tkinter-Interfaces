@@ -15,7 +15,6 @@ from tkinter import ttk
 
 
 # Centralized Interface Configuration -----------------------------------------
-
 # One place to configure all of the interface variables to save time
 CONFIG = {
     "FONT_HEADER": ("Segoe UI", 11, "bold"),
@@ -42,6 +41,13 @@ def _on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview, note
         current_tab_index = notebook.index(notebook.select())
     except tk.TclError:
         return
+
+    # Loop through the treeview rows to locate the matching key and index values
+    for parent_id in treeview_widget.get_children():
+        for child_id in treeview_widget.get_children(parent_id):
+            vals = treeview_widget.item(child_id, "values")
+
+            return
 
 
 def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.Frame) -> None:
