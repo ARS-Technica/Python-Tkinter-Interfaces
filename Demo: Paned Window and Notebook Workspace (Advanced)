@@ -25,6 +25,14 @@ CONFIG = {
 
 
 # Sidebar Navigation Logic ----------------------------------------------------
+def _on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview, notebook_key: str) -> None:
+    """
+    Listens to active tab shifts and expands/highlights the correct sidebar leaf.
+    """
+
+    pass
+
+
 def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.Frame) -> None:
     """
     Catches sidebar row clicks and changes focus to new active notebook tab.
