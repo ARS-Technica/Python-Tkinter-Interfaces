@@ -54,12 +54,14 @@ def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.
     """
     treeview_widget = event.widget
     selected_item = treeview_widget.focus()
-
-    item_values = treeview_widget.item(selected_item, "values")
-
+    
     if not selected_item:
+        return
+        
+    item_values = treeview_widget.item(selected_item, "values")
+    if not item_values:
         return  # Clicked a generic non-mapped header node
-
+        
     notebook_key = item_values[0]
     tab_index = int(item_values[1])
 
