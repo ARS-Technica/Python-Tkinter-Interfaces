@@ -28,6 +28,7 @@ CONFIG = {
 def _on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
     """
     Catches sidebar row clicks and changes focus to new active notebook tab.
+
     Args:
         event (tk.Event): The event object triggered by the sidebar selection.
         notebook (ttk.Notebook): The notebook instance to switch tabs on.
@@ -48,12 +49,12 @@ def _on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
     if not target_notebook:
         return
 
-    # Extract the custom index number we stashed inside the row values array
-    item_values = treeview_widget.item(selected_item, "values")
-    if item_values:
-        tab_index = int(item_values[0])
-        # Force the notebook engine to switch directly to that specific index frame
-        notebook.select(tab_index)
+    # 2. Layer Switching Engine: Lift the chosen notebook to the top of the stack
+    target_notebook.lift()
+
+    # 3. Focus Toggle: Flip to the matching inner tab index channel
+    if target_notebook.index(target_notebook.select()) != tab_index:
+        target_notebook.select(tab_index)
 
 
 # Widget Creation -------------------------------------------------------------
