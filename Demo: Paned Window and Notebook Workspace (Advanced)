@@ -79,14 +79,6 @@ def build_sidebar_panel(paned_window: ttk.PanedWindow, notebook_map: dict, conta
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
     nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
 
-    sidebar_hint = ttk.Label(
-        sidebar_frame, 
-        text="← Drag the vertical sash line to resize this panel dynamically!", 
-        font=CONFIGURATON["FONT_BODY"],
-        wraplength=180,
-        justify="left"
-    )
-    sidebar_hint.pack(anchor="w", padx=10, pady=5)
 
     # Inject the sidebar into the PanedWindow stack 
     # Attach to the paned layout stack with zero expansion priority
