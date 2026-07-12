@@ -29,8 +29,19 @@ def _on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview, note
     """
     Listens to active tab shifts and expands/highlights the correct sidebar leaf.
     """
+    notebook = event.widget
 
-    pass
+    # Safety Check: Only process updates if this notebook is currently the visible layer
+    # Check if this notebook is sitting at the very top of the stacking order
+    if notebook.winfo_parent() != "":
+        # Find out what the top-most widget in the grid stack is right now
+        # If this notebook isn't active, don't run this synchronization
+        pass
+
+    try:
+        current_tab_index = notebook.index(notebook.select())
+    except tk.TclError:
+        return
 
 
 def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.Frame) -> None:
