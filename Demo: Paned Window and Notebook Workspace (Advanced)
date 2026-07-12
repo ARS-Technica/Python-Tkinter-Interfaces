@@ -189,9 +189,11 @@ def build_workspace_notebook(paned_window: ttk.PanedWindow) -> ttk.Notebook:
 
 
 # User Interface Coordinator --------------------------------------------------
-def create_user_interface() -> None:
+def create_workspace_interface() -> None:
     """
-    Coordinates the initialization of resizable multi-panel tabbed layouts.
+    Acts as the master coordinator for the multi-notebook cluster system.
+    This function initializes the main Tkinter window, sets up the paned window layout,
+    and constructs the sidebar and notebook layers.
     """
     root = tk.Tk()
     root.title("Demo: Paned Window and Notebook Workspace")
