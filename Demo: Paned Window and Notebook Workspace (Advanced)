@@ -46,8 +46,14 @@ def _on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview, note
     for parent_id in treeview_widget.get_children():
         for child_id in treeview_widget.get_children(parent_id):
             vals = treeview_widget.item(child_id, "values")
-
-            return
+            if vals and vals[0] == notebook_key and int(vals[1]) == current_tab_index:
+                if treeview_widget.focus() != child_id:
+                    # Automatically expand the parent node folder group
+                    treeview_widget.item(parent_id, open=True)
+                    # Highlight and focus the matching child node leaf
+                    treeview_widget.selection_set(child_id)
+                    treeview_widget.focus(child_id)
+                return
 
 
 def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.Frame) -> None:
