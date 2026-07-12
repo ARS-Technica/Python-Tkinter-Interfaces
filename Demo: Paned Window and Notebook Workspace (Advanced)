@@ -25,7 +25,7 @@ CONFIG = {
 
 
 # Sidebar Navigation Logic ----------------------------------------------------
-def _on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
+def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.Frame) -> None:
     """
     Catches sidebar row clicks and changes focus to new active notebook tab.
 
@@ -58,9 +58,9 @@ def _on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
 
 
 # Widget Creation -------------------------------------------------------------
-def build_sidebar_panel(paned_window: ttk.PanedWindow) -> ttk.Frame:
+def build_sidebar_panel(paned_window: ttk.PanedWindow, notebook_map: dict, container: tk.Frame) -> ttk.Treeview:
     """
-    Constructs and injects the isolated navigation sidebar panel.
+    Constructs an expanding and collapsing multi-tier hierarchical sidebar navigation.
 
     Args:
         paned_window (ttk.PanedWindow): The parent PanedWindow to attach the sidebar to.
@@ -68,12 +68,17 @@ def build_sidebar_panel(paned_window: ttk.PanedWindow) -> ttk.Frame:
         ttk.Frame: The constructed sidebar frame.
     """
     # Create a simple frame and add it to the left side of the Paned Window
-    sidebar_frame = ttk.Frame(master_paned_window, width=200, relief="flat")
+    sidebar_frame = ttk.Frame(paned_window, width=240, relief="flat")
+    sidebar_frame.pack_propagate(False) 
     
     # Generate internal sidebar layout elements
     sidebar_header = ttk.Label(sidebar_frame, text="Navigation Sidebar", font=CONFIGURATON["FONT_HEADER"])
     sidebar_header.pack(anchor="w", padx=10, pady=10) # Pack content inside the sidebar
-    
+
+    # Initialize the Sidebar Treeview (Enable folder-arrow behaviors)
+    nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
+    nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
+
     sidebar_hint = ttk.Label(
         sidebar_frame, 
         text="← Drag the vertical sash line to resize this panel dynamically!", 
@@ -127,7 +132,6 @@ def build_workspace_notebook(paned_window: ttk.PanedWindow) -> ttk.Notebook:
 
 
 # User Interface Coordinator --------------------------------------------------
-
 def create_user_interface() -> None:
     """
     Coordinates the initialization of resizable multi-panel tabbed layouts.
