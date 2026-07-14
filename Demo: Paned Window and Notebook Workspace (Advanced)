@@ -107,7 +107,17 @@ def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dic
     
     notebook_map = {}
 
-    # Workspace Notebook 1: Development Engine
+    # Workspace Notebook 1 
+    dev_notebook = ttk.Notebook(dashboard_container)
+    dev_notebook.grid(row=0, column=0, sticky="nsew")
+    
+    tab_dash = ttk.Frame(dev_notebook)
+    dev_notebook.add(tab_dash, text="📊 Analytics Dashboard")
+    ttk.Label(tab_dash, text="Development Cluster Metrics", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=20, pady=20)
+    
+    tab_shell = ttk.Frame(dev_notebook)
+    dev_notebook.add(tab_shell, text="💻 Shell Terminal Console")
+    ttk.Label(tab_shell, text="Developer Sandbox Local Shell Environment", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=20, pady=20)
 
     # Workspace Notebook 2: Administration Engine
 
