@@ -30,16 +30,12 @@ def _on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview, note
     """
     notebook = event.widget
 
-    # Safety Check: Only process updates if this notebook is currently the visible layer
-    # Check if this notebook is sitting at the very top of the stacking order
-    if notebook.winfo_parent() != "":
-        # Find out what the top-most widget in the grid stack is right now
-        # If this notebook isn't active, don't run this synchronization
-        pass
-
+    # Safety Check: Only process updates if this notebook is currently the visible layer  
     try:
+        # Check if this notebook is sitting at the very top of the stacking order  
         current_tab_index = notebook.index(notebook.select())
     except tk.TclError:
+        # If this notebook isn't active, don't run this synchronization
         return
 
     # Loop through the treeview rows to locate the matching key and index values
