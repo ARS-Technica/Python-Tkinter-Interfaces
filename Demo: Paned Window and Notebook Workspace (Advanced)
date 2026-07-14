@@ -102,8 +102,20 @@ def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dic
     Returns:    
         tuple: A tuple containing the dashboard container frame and a mapping of notebook keys to notebook instances.
     """
+    # This core wrapper frame will anchor all notebooks inside the same pixel boundaries
+    dashboard_container = tk.Frame(paned_window)
+    
+    notebook_map = {}
 
-    pass
+    # Workspace Notebook 1: Development Engine
+
+    # Workspace Notebook 2: Administration Engine
+
+    # Lock sizing scale calculations to standard stretch ratios
+    
+    # Pack memory structures into map registry keys
+
+    return dashboard_container, notebook_map
 
 
 def build_sidebar_panel(paned_window: ttk.PanedWindow, notebook_map: dict, container: tk.Frame) -> ttk.Treeview:
