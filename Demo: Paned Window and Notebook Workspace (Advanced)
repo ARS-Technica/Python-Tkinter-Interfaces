@@ -244,11 +244,14 @@ def create_workspace_interface() -> None:
     master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
     master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
 
-    # 1. Build the stack frame container space and map registry values
+    # 1. Build the widget layout frames cleanly into memory
+    sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
     dashboard_container, notebook_map = build_dashboard_layers(master_paned_window)
 
     # 2. Build the sidebar controller on the left edge wall
-    nav_tree = build_sidebar_panel(master_paned_window, notebook_map, dashboard_container)
+    # Explicitly add components to PanedWindow in precise LEFT-to-RIGHT sequence
+    master_paned_window.add(sidebar_frame, weight=0)         # Added 1st -> Locks LEFT
+    master_paned_window.add(dashboard_container, weight=1)   # Added 2nd -> Fills RIGHT
     
     # 3. Setup backward synchronization triggers for each notebook layer
     notebook_map["dev_notebook"].bind(
