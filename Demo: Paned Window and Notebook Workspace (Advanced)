@@ -145,44 +145,33 @@ def build_sidebar_panel(paned_window: ttk.PanedWindow, notebook_map: dict, conta
     Returns:
         ttk.Frame: The constructed sidebar frame.
     """
-    # Create a simple frame and add it to the left side of the Paned Window
+    # Create a simple frame and add it to the left side of the Paned Window 
     sidebar_frame = ttk.Frame(paned_window, width=240, relief="flat")
     sidebar_frame.pack_propagate(False) 
     
     # Generate internal sidebar layout elements
-    sidebar_header = ttk.Label(sidebar_frame, text="Navigation Sidebar", font=CONFIGURATON["FONT_HEADER"])
-    sidebar_header.pack(anchor="w", padx=10, pady=10) # Pack content inside the sidebar
-
+    sidebar_header = ttk.Label(sidebar_frame, text="Navigation Sidebar", font=CONFIG["FONT_HEADER"])
+    sidebar_header.pack(anchor="w", padx=10, pady=(10, 5))  # Pack content inside the sidebar
+    
     # Initialize the Sidebar Treeview (Enable folder-arrow behaviors)
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
     nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
-
+    
     # Level 1: Build Expanding Node Folders
     cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
     cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
-
+    
     # Level 2: Build Child Leaves
     nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_notebook", 0))
     nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_notebook", 1))
-
+    
     nav_tree.insert(cluster_adm, tk.END, text="⚙️ Global System Rules", values=("admin_notebook", 0))
     nav_tree.insert(cluster_adm, tk.END, text="🔒 Database Key Vault", values=("admin_notebook", 1))
-
+    
     # Auto-expand development node by default on boot
     nav_tree.item(cluster_dev, open=True)
-    first_leaf = nav_tree.get_children(cluster_dev)[0]
-    nav_tree.selection_set(first_leaf)
-    nav_tree.focus(first_leaf)
-
-    # Bind node click triggers
-    nav_tree.bind("<ButtonRelease-1>", lambda event: _on_sidebar_select(event, notebook_map, container))
-
-    # Inject the sidebar into the PanedWindow stack 
-    # Attach to the paned layout stack with zero expansion priority
-    # weight=0 means it won't greedily grow on window resize
-    paned_window.add(sidebar_frame, weight=0)
-
-    return nav_tree
+    
+    return sidebar_frame, nav_tree
 
 
 def build_workspace_notebook(paned_window: ttk.PanedWindow) -> ttk.Notebook:
