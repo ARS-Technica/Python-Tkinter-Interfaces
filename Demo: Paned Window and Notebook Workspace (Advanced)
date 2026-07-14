@@ -132,7 +132,9 @@ def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dic
     ttk.Label(tab_vault, text="Encrypted Asset Storage Credentials Access", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=20, pady=20)
 
     # Lock sizing scale calculations to standard stretch ratios
-    
+    dashboard_container.rowconfigure(0, weight=1)
+    dashboard_container.columnconfigure(0, weight=1)
+
     # Pack memory structures into map registry keys
 
     return dashboard_container, notebook_map
