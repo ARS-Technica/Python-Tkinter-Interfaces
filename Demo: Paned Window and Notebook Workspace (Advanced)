@@ -52,7 +52,7 @@ def _on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview, note
                 return
 
 
-def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.Frame) -> None:
+def _on_sidebar_select(event: tk.Event, notebook_map: dict) -> None:
     """
     Catches sidebar row clicks and changes focus to new active notebook tab.
 
@@ -72,7 +72,7 @@ def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.
         
     notebook_key = item_values[0]
     tab_index = int(item_values[1])
-
+    
     # 1. Fetch the targeted notebook component
     target_notebook = notebook_map.get(notebook_key)
     if not target_notebook:
@@ -80,7 +80,7 @@ def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.
 
     # 2. Layer Switching Engine: Lift the chosen notebook to the top of the stack
     target_notebook.lift()
-
+    
     # 3. Focus Toggle: Flip to the matching inner tab index channel
     if target_notebook.index(target_notebook.select()) != tab_index:
         target_notebook.select(tab_index)
@@ -89,7 +89,7 @@ def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.
 
 
 # Widget Creation -------------------------------------------------------------
-def build_dashboard_layers(parent_pane: ttk.PanedWindow) -> tuple[tk.Frame, dict]:
+def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dict]:
     """
     Generates an overlay frame layout stacking independent notebook workspace layers.
 
@@ -99,7 +99,7 @@ def build_dashboard_layers(parent_pane: ttk.PanedWindow) -> tuple[tk.Frame, dict
         tuple: A tuple containing the dashboard container frame and a mapping of notebook keys to notebook instances.
     """
     # This core wrapper frame will anchor all notebooks inside the same pixel boundaries
-    dashboard_container = tk.Frame(parent_pane)
+    dashboard_container = tk.Frame(paned_window)
     notebook_map = {}
 
     # Workspace Notebook 1
@@ -136,7 +136,7 @@ def build_dashboard_layers(parent_pane: ttk.PanedWindow) -> tuple[tk.Frame, dict
     return dashboard_container, notebook_map
 
 
-def build_sidebar_panel(paned_window: ttk.PanedWindow, notebook_map: dict, container: tk.Frame) -> ttk.Treeview:
+def build_sidebar_panel(paned_window: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
     """
     Constructs an expanding and collapsing multi-tier hierarchical sidebar navigation.
 
@@ -174,43 +174,8 @@ def build_sidebar_panel(paned_window: ttk.PanedWindow, notebook_map: dict, conta
     return sidebar_frame, nav_tree
 
 
-def build_workspace_notebook(paned_window: ttk.PanedWindow) -> ttk.Notebook:
-    """
-    Constructs and injects the multi-view tabbed workspace notebook.
-    
-    Args:
-        paned_window (ttk.PanedWindow): The parent PanedWindow to attach the notebook to.
-    Returns:
-        ttk.Notebook: The constructed workspace notebook.
-    """
-    # Initialize a Notebook container to handle multi-view tab switches
-    workspace_notebook = ttk.Notebook(master_paned_window)
-
-    # Tab 1 Setup: Dashboard View ---------------------------------------------
-    tab_dashboard = ttk.Frame(workspace_notebook)
-    workspace_notebook.add(tab_dashboard, text="Activity Dashboard")
-
-    dash_title = ttk.Label(tab_dashboard, text="System Metrics Analytics Overview", font=CONFIGURATON["FONT_HEADER"])
-    dash_title.pack(anchor="w", padx=20, pady=20)
-    
-    dash_desc = ttk.Label(tab_dashboard, text="This tab represents an isolated workspace context frame.", font=CONFIGURATON["FONT_BODY"])
-    dash_desc.pack(anchor="w", padx=20, pady=0)
-
-    # Tab 2 Setup: Console Code Terminal --------------------------------------
-    tab_console = ttk.Frame(workspace_notebook)
-    workspace_notebook.add(tab_console, text="Shell Developer Console")
-
-    console_title = ttk.Label(tab_console, text="Natively Isolated Environment Shell Output", font=CONFIGURATON["FONT_HEADER"])
-    console_title.pack(anchor="w", padx=20, pady=20)
-
-    # Attach to the paned layout stack with maximum expansion priority
-    paned_window.add(workspace_notebook, weight=1)
-
-    return workspace_notebook
-
-
 # User Interface Coordinator --------------------------------------------------
-def create_workspace_interface() -> None:
+def create_user_interface() -> None:
     """
     Acts as the master coordinator for the multi-notebook cluster system.
     This function initializes the main Tkinter window, sets up the paned window layout,
@@ -235,13 +200,15 @@ def create_workspace_interface() -> None:
 
     # 1. Build the widget layout frames cleanly into memory
     sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
+
+    #sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
     dashboard_container, notebook_map = build_dashboard_layers(master_paned_window)
 
     # 2. Build the sidebar controller on the left edge wall
     # Explicitly add components to PanedWindow in precise LEFT-to-RIGHT sequence
     master_paned_window.add(sidebar_frame, weight=0)         # Added 1st -> Locks LEFT
     master_paned_window.add(dashboard_container, weight=1)   # Added 2nd -> Fills RIGHT
-    
+
     # 3. Setup forward/backward binding synchronization controllers
     nav_tree.bind("<ButtonRelease-1>", lambda event: _on_sidebar_select(event, notebook_map))
 
