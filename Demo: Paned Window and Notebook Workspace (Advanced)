@@ -265,6 +265,10 @@ def create_workspace_interface() -> None:
         lambda event: _on_notebook_tab_change(event, nav_tree, "admin_notebook")
     )
 
+    # Select the first element by default on boot (raise first workspace to top)
+    first_leaf = nav_tree.get_children(nav_tree.get_children()[0])[0]
+    nav_tree.selection_set(first_leaf)
+    nav_tree.focus(first_leaf)
     # Boot initialization pass: raise first workspace to top
     notebook_map["dev_notebook"].lift()
 
