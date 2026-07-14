@@ -107,7 +107,7 @@ def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dic
     
     notebook_map = {}
 
-    # Workspace Notebook 1 
+    # Workspace Notebook 1: Development Engine
     dev_notebook = ttk.Notebook(dashboard_container)
     dev_notebook.grid(row=0, column=0, sticky="nsew")
     
@@ -119,7 +119,7 @@ def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dic
     dev_notebook.add(tab_shell, text="💻 Shell Terminal Console")
     ttk.Label(tab_shell, text="Developer Sandbox Local Shell Environment", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=20, pady=20)
 
-    # Workspace Notebook 2 
+    # Workspace Notebook 2: Administration Engine
     admin_notebook = ttk.Notebook(dashboard_container)
     admin_notebook.grid(row=0, column=0, sticky="nsew")
     
@@ -134,9 +134,12 @@ def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dic
     # Lock sizing scale calculations to standard stretch ratios
     dashboard_container.rowconfigure(0, weight=1)
     dashboard_container.columnconfigure(0, weight=1)
-
+    
     # Pack memory structures into map registry keys
+    notebook_map["dev_notebook"] = dev_notebook
+    notebook_map["admin_notebook"] = admin_notebook
 
+    paned_window.add(dashboard_container, weight=1)
     return dashboard_container, notebook_map
 
 
