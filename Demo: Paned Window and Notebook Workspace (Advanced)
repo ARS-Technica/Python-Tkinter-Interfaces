@@ -89,6 +89,8 @@ def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.
     if target_notebook.index(target_notebook.select()) != tab_index:
         target_notebook.select(tab_index)
 
+    return None
+
 
 # Widget Creation -------------------------------------------------------------
 def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dict]:
@@ -205,6 +207,7 @@ def create_workspace_interface() -> None:
     # Establish modern theme base
     style_engine = ttk.Style()
     style_engine.theme_use("clam")
+    style_engine.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
 
     # Paned Window Widget -----------------------------------------------
     # This acts as the master structural wrapper splitting the window horizontally
