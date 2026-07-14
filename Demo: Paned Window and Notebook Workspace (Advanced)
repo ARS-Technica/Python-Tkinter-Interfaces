@@ -253,7 +253,9 @@ def create_workspace_interface() -> None:
     master_paned_window.add(sidebar_frame, weight=0)         # Added 1st -> Locks LEFT
     master_paned_window.add(dashboard_container, weight=1)   # Added 2nd -> Fills RIGHT
     
-    # 3. Setup backward synchronization triggers for each notebook layer
+    # 3. Setup forward/backward binding synchronization controllers
+    nav_tree.bind("<ButtonRelease-1>", lambda event: _on_sidebar_select(event, notebook_map))
+
     notebook_map["dev_notebook"].bind(
         "<<NotebookTabChanged>>", 
         lambda event: _on_notebook_tab_change(event, nav_tree, "dev_notebook")
