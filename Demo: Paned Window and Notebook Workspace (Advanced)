@@ -194,10 +194,13 @@ def create_workspace_interface() -> None:
     Acts as the master coordinator for the multi-notebook cluster system.
     This function initializes the main Tkinter window, sets up the paned window layout,
     and constructs the sidebar and notebook layers.
+    
+    Returns:
+        None
     """
     root = tk.Tk()
-    root.title("Demo: Paned Window and Notebook Workspace")
-    root.geometry("800x450")
+    root.title("Demo: Paned Window and Notebook Workspace (Advanced)")
+    root.geometry("900x520")
 
     # Establish modern theme base
     style_engine = ttk.Style()
@@ -208,12 +211,29 @@ def create_workspace_interface() -> None:
     master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
     master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
 
-    # Create the Notebook directly in the right panel of the PanedWindow
-    master_paned_window.add(workspace_notebook, weight=1)
-    # (weight=1 means it absorbs 100% of any extra window resizing expansion)
+    # 1. Build the stack frame container space and map registry values
+    dashboard_container, notebook_map = build_dashboard_layers(master_paned_window)
+
+    # 2. Build the sidebar controller on the left edge wall
+    nav_tree = build_sidebar_panel(master_paned_window, notebook_map, dashboard_container)
+    
+    # 3. Setup backward synchronization triggers for each notebook layer
+    notebook_map["dev_notebook"].bind(
+        "<<NotebookTabChanged>>", 
+        lambda event: _on_notebook_tab_change(event, nav_tree, "dev_notebook")
+    )
+    notebook_map["admin_notebook"].bind(
+        "<<NotebookTabChanged>>", 
+        lambda event: _on_notebook_tab_change(event, nav_tree, "admin_notebook")
+    )
+
+    # Boot initialization pass: raise first workspace to top
+    notebook_map["dev_notebook"].lift()
 
     # Launch Application ---------------------------------------------------
     root.mainloop()
+
+    return None
 
 
 # Main Application Entry ------------------------------------------------------
