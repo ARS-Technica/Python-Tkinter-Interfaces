@@ -89,7 +89,7 @@ def _on_sidebar_select(event: tk.Event, notebook_map: dict, container_frame: tk.
 
 
 # Widget Creation -------------------------------------------------------------
-def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dict]:
+def build_dashboard_layers(parent_pane: ttk.PanedWindow) -> tuple[tk.Frame, dict]:
     """
     Generates an overlay frame layout stacking independent notebook workspace layers.
 
@@ -99,23 +99,22 @@ def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dic
         tuple: A tuple containing the dashboard container frame and a mapping of notebook keys to notebook instances.
     """
     # This core wrapper frame will anchor all notebooks inside the same pixel boundaries
-    dashboard_container = tk.Frame(paned_window)
-    
+    dashboard_container = tk.Frame(parent_pane)
     notebook_map = {}
 
-    # Workspace Notebook 1: Development Engine
+    # Workspace Notebook 1
     dev_notebook = ttk.Notebook(dashboard_container)
     dev_notebook.grid(row=0, column=0, sticky="nsew")
-    
+
     tab_dash = ttk.Frame(dev_notebook)
     dev_notebook.add(tab_dash, text="📊 Analytics Dashboard")
     ttk.Label(tab_dash, text="Development Cluster Metrics", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=20, pady=20)
-    
+
     tab_shell = ttk.Frame(dev_notebook)
     dev_notebook.add(tab_shell, text="💻 Shell Terminal Console")
     ttk.Label(tab_shell, text="Developer Sandbox Local Shell Environment", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=20, pady=20)
 
-    # Workspace Notebook 2: Administration Engine
+    # Workspace Notebook 2 
     admin_notebook = ttk.Notebook(dashboard_container)
     admin_notebook.grid(row=0, column=0, sticky="nsew")
     
@@ -131,11 +130,9 @@ def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dic
     dashboard_container.rowconfigure(0, weight=1)
     dashboard_container.columnconfigure(0, weight=1)
     
-    # Pack memory structures into map registry keys
     notebook_map["dev_notebook"] = dev_notebook
     notebook_map["admin_notebook"] = admin_notebook
 
-    paned_window.add(dashboard_container, weight=1)
     return dashboard_container, notebook_map
 
 
