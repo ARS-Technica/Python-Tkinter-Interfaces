@@ -119,7 +119,17 @@ def build_dashboard_layers(paned_window: ttk.PanedWindow) -> tuple[tk.Frame, dic
     dev_notebook.add(tab_shell, text="💻 Shell Terminal Console")
     ttk.Label(tab_shell, text="Developer Sandbox Local Shell Environment", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=20, pady=20)
 
-    # Workspace Notebook 2: Administration Engine
+    # Workspace Notebook 2 
+    admin_notebook = ttk.Notebook(dashboard_container)
+    admin_notebook.grid(row=0, column=0, sticky="nsew")
+    
+    tab_rules = ttk.Frame(admin_notebook)
+    admin_notebook.add(tab_rules, text="⚙️ Global System Rules")
+    ttk.Label(tab_rules, text="Cluster Operations & Security Configurations", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=20, pady=20)
+    
+    tab_vault = ttk.Frame(admin_notebook)
+    admin_notebook.add(tab_vault, text="🔒 Database Key Vault")
+    ttk.Label(tab_vault, text="Encrypted Asset Storage Credentials Access", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=20, pady=20)
 
     # Lock sizing scale calculations to standard stretch ratios
     
