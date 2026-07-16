@@ -86,6 +86,12 @@ def _on_sidebar_select(event: tk.Event, notebook_map: dict) -> None:
     if not tab_index:
         return
 
+    # If tab was not found open, build a fresh content panel frame
+    new_tab_frame = ttk.Frame(notebook)
+    new_tab_frame.node_key = node_key  # Injection tag for future identity lookups
+
+    ttk.Label(new_tab_frame, text=tab_index["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
+    ttk.Label(new_tab_frame, text=f"Active Environment Context: [{tab_index['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
 
     return None
 
