@@ -23,6 +23,16 @@ CONFIG = {
 }
 
 
+# Tab Content Registry Schema -------------------------------------------------
+# Maps sidebar keys directly to their respective viewport layouts dynamically
+TAB_REGISTRY = {
+    "dev_dash": {"title": "Analytics Dashboard", "header": "Development Analytics Overview"},
+    "dev_shell": {"title": "Shell Terminal Console", "header": "Developer Sandbox Environment Shell"},
+    "adm_rules": {"title": "Global System Rules", "header": "Cluster Operations & Security Configurations"},
+    "adm_vault": {"title": "Database Key Vault", "header": "Encrypted Asset Credentials Storage"}
+}
+
+
 # Sidebar Navigation Logic ----------------------------------------------------
 def _on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview, notebook_key: str) -> None:
     """
