@@ -20,6 +20,24 @@ def handle_tab_click(event: tk.Event) -> None:
     return None
 
 
+# Create User Interface -------------------------------------------------------
+def create_application() -> None:
+    """
+    Sets up the Tkinter window and initialize the widget bindings.
+    """
+    # 1. Establish modern theme base
+
+    # 2. Initialize a standard Notebook
+
+    # 3. Bind the click release event directly to the global function handler
+
+    # 4.  Add open tabs iteratively for demonstration
+
+    # Append "  ✕" directly to the tab titles
+
+    root.mainloop()
+
+
 # Main Application Entry ------------------------------------------------------
 if __name__ == "__main__":
     create_application()
