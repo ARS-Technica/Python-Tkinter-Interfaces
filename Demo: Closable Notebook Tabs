@@ -34,7 +34,13 @@ def create_application() -> None:
     """
     Sets up the Tkinter window and initialize the widget bindings.
     """
+    root = tk.Tk()
+    root.title("Demo: Closable Notebook Tabs")
+    root.geometry("400x300")
+
     # 1. Establish modern theme base
+    style_engine = ttk.Style()
+    style_engine.theme_use("clam")
 
     # 2. Initialize a standard Notebook
 
