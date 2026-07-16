@@ -224,8 +224,6 @@ def create_user_interface() -> None:
 
     # 1. Build the widget layout frames cleanly into memory
     sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
-
-    #sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
     dashboard_container, notebook_map = build_dashboard_layers(master_paned_window)
 
     # 2. Build the sidebar controller on the left edge wall
