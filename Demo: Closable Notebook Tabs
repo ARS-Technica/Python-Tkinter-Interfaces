@@ -46,12 +46,19 @@ def create_application() -> None:
     style_engine.theme_use("clam")
 
     # 2. Initialize a standard Notebook
+    notebook = ttk.Notebook(root)
+    notebook.pack(expand=True, fill="both", padx=10, pady=10)
 
     # 3. Bind the click release event directly to the global function handler
+    notebook.bind("<ButtonRelease-1>", handle_tab_click)
 
     # 4.  Add open tabs iteratively for demonstration
-
+    frame = ttk.Frame(notebook)
+    label = ttk.Label(frame, text=f"This is the interior of Tab {i}")
+    label.pack(padx=20, pady=20)
+        
     # Append "  ✕" directly to the tab titles
+    notebook.add(frame, text=f"{i}   ✕") 
 
     root.mainloop()
 
