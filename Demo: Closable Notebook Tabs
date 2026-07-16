@@ -16,6 +16,15 @@ def handle_tab_click(event: tk.Event) -> None:
     """
     Processes clicks to determine if the user clickedthe close icon.
     """
+    # Identify if the click landed on the tab structure
+
+    # Determine which numerical tab index was clicked
+
+    # Get the pixel bounding box of the clicked tab 
+
+    # If the click was in the last 20 pixels of the tab, they clicked the 'X'
+
+    # Pull the underlying frame widget and cleanly destroy it
 
     return None
 
