@@ -52,13 +52,14 @@ def create_application() -> None:
     # 3. Bind the click release event directly to the global function handler
     notebook.bind("<ButtonRelease-1>", handle_tab_click)
 
-    # 4.  Add open tabs iteratively for demonstration
-    frame = ttk.Frame(notebook)
-    label = ttk.Label(frame, text=f"This is the interior of Tab {i}")
-    label.pack(padx=20, pady=20)
+    # 4. Add open tabs iteratively for demonstration
+    for i in range(1, 4):
+        frame = ttk.Frame(notebook)
+        label = ttk.Label(frame, text=f"This is the interior of Tab {i}")
+        label.pack(padx=20, pady=20)
         
-    # Append "  ✕" directly to the tab titles
-    notebook.add(frame, text=f"{i}   ✕") 
+        # Append "  ✕" directly to the tab titles
+        notebook.add(frame, text=f"Tab {i}   ✕") 
 
     root.mainloop()
 
