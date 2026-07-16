@@ -16,6 +16,9 @@ def handle_tab_click(event: tk.Event) -> None:
     """
     Processes clicks to determine if the user clickedthe close icon.
     """
+    notebook = event.widget
+    clicked_element = notebook.identify(event.x, event.y)
+
     # Identify if the click landed on the tab structure
 
     # Determine which numerical tab index was clicked
