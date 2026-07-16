@@ -1,0 +1,16 @@
+"""
+Demo: Closable Notebook Tabs  
+Created: July 16, 2026
+
+Description: Demonstrates a closable notebook tab behavior using a custom ttk 
+style layout. The user can click the 'x' to close the tab, and the underlying 
+frame is destroyed to free memory.
+"""
+
+
+
+
+
+
+
+
