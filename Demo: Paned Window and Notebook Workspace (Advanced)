@@ -86,12 +86,24 @@ def _on_sidebar_select(event: tk.Event, notebook_map: dict) -> None:
     if not tab_index:
         return
 
+    # Check if this specific layout frame is already open in the notebook strip
+    for index in range(notebook.index("end")):
+        # Read the unique frame tag key we stashed inside the widget instance window
+        tab_frame = notebook.nametowidget(notebook.tabs()[index])
+        if getattr(tab_frame, "node_key", None) == node_key:
+            notebook.select(index)
+            return
+
     # If tab was not found open, build a fresh content panel frame
     new_tab_frame = ttk.Frame(notebook)
     new_tab_frame.node_key = node_key  # Injection tag for future identity lookups
 
     ttk.Label(new_tab_frame, text=tab_index["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
     ttk.Label(new_tab_frame, text=f"Active Environment Context: [{tab_index['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
+    
+    # Append the text name along with our interactive string close element suffix
+    notebook.add(new_tab_frame, text=f"{tab_index['title']}   ✕") # Add a close button 
+    notebook.select(new_tab_frame)
 
     return None
 
