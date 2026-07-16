@@ -1,5 +1,5 @@
 """
-Demo: Closable Notebook Tabs  
+Demo: Closable Notebook Tabs
 Created: July 16, 2026
 
 Description: Demonstrates a closable notebook tab behavior using a custom ttk 
@@ -7,10 +7,20 @@ style layout. The user can click the 'x' to close the tab, and the underlying
 frame is destroyed to free memory.
 """
 
+import tkinter as tk
+from tkinter import ttk
 
 
+# Create Widgets --------------------------------------------------------------
+def handle_tab_click(event: tk.Event) -> None:
+    """
+    Processes clicks to determine if the user clickedthe close icon.
+    """
+
+    return None
 
 
-
-
+# Main Application Entry ------------------------------------------------------
+if __name__ == "__main__":
+    create_application()
 
