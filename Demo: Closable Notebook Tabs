@@ -20,8 +20,11 @@ def handle_tab_click(event: tk.Event) -> None:
     clicked_element = notebook.identify(event.x, event.y)
 
     # Identify if the click landed on the tab structure
+    if "tab" in clicked_element or "label" in clicked_element:
+        # Determine which numerical tab index was clicked
+        tab_index = notebook.index(f"@{event.x},{event.y}")
 
-    # Determine which numerical tab index was clicked
+        # Determine which numerical tab index was clicked
 
     # Get the pixel bounding box of the clicked tab 
 
