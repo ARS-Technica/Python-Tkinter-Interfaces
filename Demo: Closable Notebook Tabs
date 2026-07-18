@@ -18,24 +18,26 @@ def handle_tab_click(event: tk.Event) -> None:
     """
     notebook = event.widget
     clicked_element = notebook.identify(event.x, event.y)
-
+    
     # Identify if the click landed on the tab structure
     if "tab" in clicked_element or "label" in clicked_element:
         # Determine which numerical tab index was clicked
         tab_index = notebook.index(f"@{event.x},{event.y}")
-
+        
         # Get the pixel bounding box of the clicked tab: [X, Y, Width, Height]
         tab_rect = notebook.bbox(tab_index)
         
         if tab_rect:
             # If the click was in the last 20 pixels of the tab, they clicked the 'X'
             click_is_on_x = event.x > (tab_rect[0] + tab_rect[2] - 20)
-
-    # If the click was in the last 20 pixels of the tab, they clicked the 'X'
-
-    # Pull the underlying frame widget and cleanly destroy it
-
-    return None
+            
+            if click_is_on_x:
+                # Pull the underlying frame widget and cleanly destroy it
+                tab_widget_name = notebook.tabs()[tab_index]
+                tab_widget = notebook.nametowidget(tab_widget_name)
+                
+                notebook.forget(tab_index)
+                tab_widget.destroy()
 
 
 # Create User Interface -------------------------------------------------------
