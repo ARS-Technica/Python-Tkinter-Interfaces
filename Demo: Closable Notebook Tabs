@@ -17,13 +17,13 @@ def handle_tab_click(event: tk.Event) -> None:
     Processes clicks to determine if the user clickedthe close icon.
     """
     notebook = event.widget
-    clicked_element = notebook.identify(event.x, event.y)
     
-    # Identify if the click landed on the tab structure
-    if "tab" in clicked_element or "label" in clicked_element:
-        # Determine which numerical tab index was clicked
+    try:
+        # Determine which numerical tab index was targeted based on mouse coordinates
         tab_index = notebook.index(f"@{event.x},{event.y}")
-        
+    except tk.TclError:
+        return  # Clicked outside of any active tab elements
+
     # Get the pixel bounding box of the clicked tab: [X, Y, Width, Height]
     tab_rect = notebook.bbox(tab_index)
         
