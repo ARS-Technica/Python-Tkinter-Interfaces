@@ -24,20 +24,24 @@ def handle_tab_click(event: tk.Event) -> None:
         # Determine which numerical tab index was clicked
         tab_index = notebook.index(f"@{event.x},{event.y}")
         
-        # Get the pixel bounding box of the clicked tab: [X, Y, Width, Height]
-        tab_rect = notebook.bbox(tab_index)
+    # Get the pixel bounding box of the clicked tab: [X, Y, Width, Height]
+    tab_rect = notebook.bbox(tab_index)
         
-        if tab_rect:
-            # If the click was in the last 20 pixels of the tab, they clicked the 'X'
-            click_is_on_x = event.x > (tab_rect[0] + tab_rect[2] - 20)
+    if tab_rect:
+        tab_left_x = tab_rect[0]
+        tab_width = tab_rect[2]
+        
+        # Calculate the absolute X boundary threshold for the right side of the tab
+        right_side_boundary = tab_left_x + tab_width - 24
             
-            if click_is_on_x:
-                # Pull the underlying frame widget and cleanly destroy it
-                tab_widget_name = notebook.tabs()[tab_index]
-                tab_widget = notebook.nametowidget(tab_widget_name)
+        # Verify the mouse click coordinates fall squarely within that right edge zone
+        if event.x > right_side_boundary:
+            # Pull the underlying frame widget and cleanly destroy it
+            tab_widget_name = notebook.tabs()[tab_index]
+            tab_widget = notebook.nametowidget(tab_widget_name)
                 
-                notebook.forget(tab_index)
-                tab_widget.destroy()
+            notebook.forget(tab_index)
+            tab_widget.destroy()
 
 
 # Create User Interface -------------------------------------------------------
