@@ -53,6 +53,9 @@ def create_application() -> None:
     style_engine = ttk.Style()
     style_engine.theme_use("clam")
 
+    # Configure comfortable interior padding for the tab label text
+    style_engine.configure("TNotebook.Tab", padding=[14, 4, 14, 4])
+
     # 2. Initialize a standard Notebook
     notebook = ttk.Notebook(root)
     notebook.pack(expand=True, fill="both", padx=10, pady=10)
