@@ -200,6 +200,33 @@ def on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview) -> No
                 return
 
 
+def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
+    """Safely extracts and spawns the primary default tab panel on program launch."""
+    root_folders = nav_tree.get_children()
+    if not root_folders:
+        return
+        
+    child_leaves = nav_tree.get_children(root_folders[0])
+    if not child_leaves:
+        return
+        
+    target_leaf = child_leaves[0]
+    nav_tree.selection_set(target_leaf)
+    nav_tree.focus(target_leaf)
+    
+    node_key = nav_tree.item(target_leaf, "values")[0]
+    tab_data = TAB_REGISTRY.get(node_key)
+    
+    new_tab_frame = ttk.Frame(notebook)
+    new_tab_frame.node_key = node_key
+    
+    ttk.Label(new_tab_frame, text=tab_data["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
+    ttk.Label(new_tab_frame, text=f"Active Environment Context: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
+    
+    notebook.add(new_tab_frame, text=f"{tab_data['title']} ")
+    notebook.select(new_tab_frame)
+
+
 # Create Widgets --------------------------------------------------------------
 def create_closable_notebook(parent: tk.Misc, **kwargs) -> ttk.Notebook:
     """
@@ -215,6 +242,31 @@ def create_closable_notebook(parent: tk.Misc, **kwargs) -> ttk.Notebook:
 
 
 # Create User Interface -------------------------------------------------------
+def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
+    """Constructs the left-hand hierarchical navigation controller pane."""
+    sidebar_frame = ttk.Frame(parent_pane, width=240, relief="flat")
+    sidebar_frame.pack_propagate(False) 
+    
+    sidebar_header = ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"])
+    sidebar_header.pack(anchor="w", padx=10, pady=(10, 5))
+    
+    nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
+    nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
+    
+    # Tier 1 Root Folders
+    cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
+    cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
+    
+    # Tier 2 Data Map Leaves
+    nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
+    nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
+    nav_tree.insert(cluster_adm, tk.END, text="⚙️ Global System Rules", values=("adm_rules",))
+    nav_tree.insert(cluster_adm, tk.END, text="🔒 Database Key Vault", values=("adm_vault",))
+    
+    nav_tree.item(cluster_dev, open=True)
+    return sidebar_frame, nav_tree
+
+
 def create_application() -> None:
     """
     Sets up the Tkinter window and seeds sample tabs.
@@ -238,6 +290,49 @@ def create_application() -> None:
         notebook.add(frame, text=color)
 
     root.mainloop()
+
+
+def create_workspace_interface() -> None:
+    """
+    Acts as the master coordinator for the dynamic workspace engine.
+    """
+    root = tk.Tk()
+    root.title(CONFIG["WINDOW_TITLE"])
+    root.geometry(CONFIG["WINDOW_GEOMETRY"])
+
+    style_engine = ttk.Style()
+    style_engine.theme_use("clam")
+    style_engine.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
+
+    # Register custom close style and retain image references
+    _, tab_images = setup_closable_notebook_style()
+
+    master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
+    master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
+
+    # 1. Instantiate the modular components
+    sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
+    
+    # 2. Build Notebook using CustomNotebook style layout
+    workspace_notebook = ttk.Notebook(master_paned_window, style="CustomNotebook")
+    workspace_notebook._active_tab = None
+    workspace_notebook._tab_images = tab_images  # Protect images from garbage collection
+
+    # 3. Add panels in left-to-right order
+    master_paned_window.add(sidebar_frame, weight=0)
+    master_paned_window.add(workspace_notebook, weight=1)
+
+    # 4. Attach event listeners
+    nav_tree.bind("<ButtonRelease-1>", lambda event: on_sidebar_select(event, workspace_notebook))
+    workspace_notebook.bind("<ButtonPress-1>", on_close_press, True)
+    workspace_notebook.bind("<ButtonRelease-1>", on_close_release)
+    workspace_notebook.bind("<<NotebookTabChanged>>", lambda event: on_notebook_tab_change(event, nav_tree))
+
+    # 5. Open primary tab on launch
+    open_default_tab(nav_tree, workspace_notebook)
+
+    root.mainloop()
+
 
 # Main Application Entry ------------------------------------------------------
 if __name__ == "__main__":
