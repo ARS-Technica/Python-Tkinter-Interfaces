@@ -137,7 +137,9 @@ def on_close_release(event: tk.Event) -> None:
 
 # Core Navigation Logic --------------------------------------
 def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
-    """Spawns a new tab panel or shifts focus to an existing one upon node click."""
+    """
+    Spawns a new tab panel or shifts focus to an existing one upon node click.
+    """
     treeview_widget = event.widget
     selected_item = treeview_widget.focus()
     
@@ -170,6 +172,32 @@ def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
     # Add tab cleanly without manual text-padding hacks
     notebook.add(new_tab_frame, text=f"{tab_data['title']} ")
     notebook.select(new_tab_frame)
+
+
+def on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview) -> None:
+    """
+    Backward Sync: Highlights the matching sidebar row when a tab is focused.
+    """
+    notebook = event.widget
+    if notebook.index("end") == 0:
+        return
+
+    try:
+        current_frame = notebook.nametowidget(notebook.select())
+        active_key = getattr(current_frame, "node_key", None)
+    except (tk.TclError, KeyError):
+        return
+
+    # Highlight the leaf node sharing the active signature key
+    for parent_id in treeview_widget.get_children():
+        for child_id in treeview_widget.get_children(parent_id):
+            vals = treeview_widget.item(child_id, "values")
+            if vals and vals[0] == active_key:
+                if treeview_widget.focus() != child_id:
+                    treeview_widget.item(parent_id, open=True)
+                    treeview_widget.selection_set(child_id)
+                    treeview_widget.focus(child_id)
+                return
 
 
 # Create Widgets --------------------------------------------------------------
