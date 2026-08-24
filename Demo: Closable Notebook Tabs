@@ -1,17 +1,14 @@
 """
-Demo: Closable Notebook Tabs
-Created: July 16, 2026
+Demo: Dynamic Workspace Manager (Native Closable Tabs & Treeview Sync)
+Created: July 17, 2026
 
-Description: Demonstrates a closable notebook tab behavior using a custom ttk 
-style layout. The user can click the 'x' to close the tab, and the underlying 
-frame is destroyed to free memory.
-
-Based on "Closable Notebook Tabs (Class)" Project
+Description: Advanced application workspace layout. Integrates an expanding
+hierarchical sidebar Treeview on the left with a dynamic ttk.Notebook on the 
+right featuring native image-element close buttons on each tab.
 """
 
 import tkinter as tk
 from tkinter import ttk
-
 
 # Centralized Interface Configuration -----------------------------------------
 CONFIG = {
@@ -21,7 +18,6 @@ CONFIG = {
     "FONT_BODY": ("Segoe UI", 10),
     "ROW_HEIGHT": 28
 }
-
 
 # Tab Content Registry Schema -------------------------------------------------
 TAB_REGISTRY = {
@@ -33,11 +29,10 @@ TAB_REGISTRY = {
 
 
 # Style & Theme Setup ---------------------------------------------------------
-def setup_closable_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
+def setup_closable_notebook_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
     """Registers custom close-state images and builds the CustomNotebook style layout."""
     style = ttk.Style()
 
-    # Create distinct images for normal, active (hover), and pressed states
     images = (
         tk.PhotoImage("img_close", data="""
             R0lGODlhCAAIAMIBAAAAADs7O4+Pj9nZ2Ts7Ozs7Ozs7Ozs7OyH+EUNyZWF0ZWQg
@@ -55,7 +50,6 @@ def setup_closable_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
         """)
     )
 
-    # Register the 'close' element with state-based image transitions
     style.element_create(
         "close", "image", "img_close",
         ("active", "pressed", "!disabled", "img_closepressed"),
@@ -63,7 +57,6 @@ def setup_closable_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
         border=8, sticky=""
     )
 
-    # Configure the Notebook and Tab structural layout
     style.layout("CustomNotebook", [("CustomNotebook.client", {"sticky": "nswe"})])
     style.layout("CustomNotebook.Tab", [
         ("CustomNotebook.tab", {
@@ -90,11 +83,9 @@ def setup_closable_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
     return style, images
 
 
-# Tab Functions --------------------------------------------------------------
+# Close Button Event Handlers -------------------------------------------------
 def on_close_press(event: tk.Event) -> str | None:
-    """
-    Detects when mouse down occurs over the close button.
-    """
+    """Detects when mouse down occurs over the close button."""
     notebook = event.widget
     element = notebook.identify(event.x, event.y)
 
@@ -102,13 +93,11 @@ def on_close_press(event: tk.Event) -> str | None:
         index = notebook.index(f"@{event.x},{event.y}")
         notebook.state(["pressed"])
         notebook._active_tab = index
-        return "break"  # Prevents default tab selection behavior while pressing 'X'
+        return "break"
 
 
 def on_close_release(event: tk.Event) -> None:
-    """
-    Detects when mouse release occurs over the close button to destroy the tab.
-    """
+    """Detects when mouse release occurs over the close button to destroy the tab."""
     notebook = event.widget
 
     if not notebook.instate(["pressed"]):
@@ -124,22 +113,18 @@ def on_close_release(event: tk.Event) -> None:
     index = notebook.index(f"@{event.x},{event.y}")
 
     if getattr(notebook, "_active_tab", None) == index:
-        # Retrieve and destroy the underlying frame widget to free memory
         tab_widget_name = notebook.tabs()[index]
         tab_widget = notebook.nametowidget(tab_widget_name)
         
         notebook.forget(index)
         tab_widget.destroy()
-        notebook.event_generate("<<NotebookTabClosed>>")
 
     notebook._active_tab = None
 
 
-# Core Navigation Logic --------------------------------------
+# Core Navigation Logic -------------------------------------------------------
 def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
-    """
-    Spawns a new tab panel or shifts focus to an existing one upon node click.
-    """
+    """Spawns a new tab panel or shifts focus to an existing one upon node click."""
     treeview_widget = event.widget
     selected_item = treeview_widget.focus()
     
@@ -175,9 +160,7 @@ def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
 
 
 def on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview) -> None:
-    """
-    Backward Sync: Highlights the matching sidebar row when a tab is focused.
-    """
+    """Backward Sync: Highlights the matching sidebar row when a tab is focused."""
     notebook = event.widget
     if notebook.index("end") == 0:
         return
@@ -198,6 +181,32 @@ def on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview) -> No
                     treeview_widget.selection_set(child_id)
                     treeview_widget.focus(child_id)
                 return
+
+
+# Layout Component Builders ---------------------------------------------------
+def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
+    """Constructs the left-hand hierarchical navigation controller pane."""
+    sidebar_frame = ttk.Frame(parent_pane, width=240, relief="flat")
+    sidebar_frame.pack_propagate(False) 
+    
+    sidebar_header = ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"])
+    sidebar_header.pack(anchor="w", padx=10, pady=(10, 5))
+    
+    nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
+    nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
+    
+    # Tier 1 Root Folders
+    cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
+    cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
+    
+    # Tier 2 Data Map Leaves
+    nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
+    nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
+    nav_tree.insert(cluster_adm, tk.END, text="⚙️ Global System Rules", values=("adm_rules",))
+    nav_tree.insert(cluster_adm, tk.END, text="🔒 Database Key Vault", values=("adm_vault",))
+    
+    nav_tree.item(cluster_dev, open=True)
+    return sidebar_frame, nav_tree
 
 
 def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
@@ -227,75 +236,9 @@ def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
     notebook.select(new_tab_frame)
 
 
-# Create Widgets --------------------------------------------------------------
-def create_closable_notebook(parent: tk.Misc, **kwargs) -> ttk.Notebook:
-    """
-    Factory helper to construct a configured CustomNotebook instance.
-    """
-    notebook = ttk.Notebook(parent, style="CustomNotebook", **kwargs)
-    notebook._active_tab = None
-
-    notebook.bind("<ButtonPress-1>", on_close_press, True)
-    notebook.bind("<ButtonRelease-1>", on_close_release)
-
-    return notebook
-
-
-# Create User Interface -------------------------------------------------------
-def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
-    """Constructs the left-hand hierarchical navigation controller pane."""
-    sidebar_frame = ttk.Frame(parent_pane, width=240, relief="flat")
-    sidebar_frame.pack_propagate(False) 
-    
-    sidebar_header = ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"])
-    sidebar_header.pack(anchor="w", padx=10, pady=(10, 5))
-    
-    nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
-    nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
-    
-    # Tier 1 Root Folders
-    cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
-    cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
-    
-    # Tier 2 Data Map Leaves
-    nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
-    nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
-    nav_tree.insert(cluster_adm, tk.END, text="⚙️ Global System Rules", values=("adm_rules",))
-    nav_tree.insert(cluster_adm, tk.END, text="🔒 Database Key Vault", values=("adm_vault",))
-    
-    nav_tree.item(cluster_dev, open=True)
-    return sidebar_frame, nav_tree
-
-
-def create_application() -> None:
-    """
-    Sets up the Tkinter window and seeds sample tabs.
-    """
-    root = tk.Tk()
-    root.title("Closable Tabs (Functional)")
-    root.geometry("400x300")
-
-    # Initialize custom style definitions and retain images reference
-    _, tab_images = setup_closable_style()
-
-    # Build the notebook
-    notebook = create_closable_notebook(root)
-    notebook.pack(side="top", fill="both", expand=True)
-
-    # Attach images reference to widget to prevent garbage collection
-    notebook._tab_images = tab_images
-
-    for color in ("red", "orange", "green", "blue", "violet"):
-        frame = tk.Frame(notebook, background=color)
-        notebook.add(frame, text=color)
-
-    root.mainloop()
-
-
+# Master Interface Coordinator ------------------------------------------------
 def create_workspace_interface() -> None:
-    """
-    Acts as the master coordinator for the dynamic workspace engine.
-    """
+    """Acts as the master coordinator for the dynamic workspace engine."""
     root = tk.Tk()
     root.title(CONFIG["WINDOW_TITLE"])
     root.geometry(CONFIG["WINDOW_GEOMETRY"])
@@ -334,7 +277,6 @@ def create_workspace_interface() -> None:
     root.mainloop()
 
 
-# Main Application Entry ------------------------------------------------------
 if __name__ == "__main__":
     create_workspace_interface()
 
