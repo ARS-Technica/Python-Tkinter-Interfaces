@@ -32,7 +32,7 @@ TAB_REGISTRY = {
 }
 
 
-# Tab Functions --------------------------------------------------------------
+# Style & Theme Setup ---------------------------------------------------------
 def setup_closable_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
     """Registers custom close-state images and builds the CustomNotebook style layout."""
     style = ttk.Style()
@@ -90,6 +90,7 @@ def setup_closable_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
     return style, images
 
 
+# Tab Functions --------------------------------------------------------------
 def on_close_press(event: tk.Event) -> str | None:
     """Detects when mouse down occurs over the close button."""
     notebook = event.widget
