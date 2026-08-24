@@ -92,7 +92,9 @@ def setup_closable_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
 
 # Tab Functions --------------------------------------------------------------
 def on_close_press(event: tk.Event) -> str | None:
-    """Detects when mouse down occurs over the close button."""
+    """
+    Detects when mouse down occurs over the close button.
+    """
     notebook = event.widget
     element = notebook.identify(event.x, event.y)
 
@@ -104,7 +106,9 @@ def on_close_press(event: tk.Event) -> str | None:
 
 
 def on_close_release(event: tk.Event) -> None:
-    """Detects when mouse release occurs over the close button to destroy the tab."""
+    """
+    Detects when mouse release occurs over the close button to destroy the tab.
+    """
     notebook = event.widget
 
     if not notebook.instate(["pressed"]):
@@ -129,6 +133,43 @@ def on_close_release(event: tk.Event) -> None:
         notebook.event_generate("<<NotebookTabClosed>>")
 
     notebook._active_tab = None
+
+
+# Core Navigation Logic --------------------------------------
+def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
+    """Spawns a new tab panel or shifts focus to an existing one upon node click."""
+    treeview_widget = event.widget
+    selected_item = treeview_widget.focus()
+    
+    if not selected_item:
+        return
+        
+    item_values = treeview_widget.item(selected_item, "values")
+    if not item_values:
+        return  # Clicked a cluster folder header
+        
+    node_key = item_values[0]
+    tab_data = TAB_REGISTRY.get(node_key)
+    if not tab_data:
+        return
+
+    # Check if this tab frame is already open in the notebook
+    for index in range(notebook.index("end")):
+        tab_frame = notebook.nametowidget(notebook.tabs()[index])
+        if getattr(tab_frame, "node_key", None) == node_key:
+            notebook.select(index)
+            return
+
+    # Dynamic Spawn: Tab was not open, create it
+    new_tab_frame = ttk.Frame(notebook)
+    new_tab_frame.node_key = node_key  
+
+    ttk.Label(new_tab_frame, text=tab_data["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
+    ttk.Label(new_tab_frame, text=f"Active Environment Context: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
+    
+    # Add tab cleanly without manual text-padding hacks
+    notebook.add(new_tab_frame, text=f"{tab_data['title']} ")
+    notebook.select(new_tab_frame)
 
 
 # Create Widgets --------------------------------------------------------------
