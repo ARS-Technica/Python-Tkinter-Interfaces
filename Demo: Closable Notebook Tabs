@@ -13,6 +13,10 @@ right featuring native image-element close buttons on each tab.
 Features Native Closable Tabs & Treeview Sync
 """
 
+
+# Next Issue: When all of the tabs are open, the user can't see the "X" to close the tabs. 
+
+
 import tkinter as tk
 from tkinter import ttk
 
