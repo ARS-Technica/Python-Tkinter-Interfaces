@@ -26,7 +26,6 @@ CONFIG = {
     "ROW_HEIGHT": 28
 }
 
-
 # Tab Content Registry Schema -------------------------------------------------
 TAB_REGISTRY = {
     "dev_dash": {"title": "Analytics Dashboard", "header": "Development Analytics Overview"},
@@ -46,6 +45,8 @@ def setup_closable_notebook_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...
     Registers custom close-state images and builds the CustomNotebook style layout.
     """
     style = ttk.Style()
+    style.theme_use("clam")
+    style.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
 
     images = (
         tk.PhotoImage("img_close", data="""
@@ -109,7 +110,7 @@ def on_close_press(event: tk.Event) -> str | None:
         index = notebook.index(f"@{event.x},{event.y}")
         notebook.state(["pressed"])
         notebook._active_tab = index
-        return "break"
+        return "break" # Prevents switching tabs while pressing 'X'
 
 
 def on_close_release(event: tk.Event) -> None:
@@ -220,17 +221,20 @@ def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Tr
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
     nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
     
-    # Tier 1 Root Folders
-    cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
-    cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
-
-    # Tier 2 Data Map Leaves
+    # Cluster 1: Development Stack (4 items)
     nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
     nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
+    nav_tree.insert(cluster_dev, tk.END, text="🌿 Source Version Control", values=("dev_git",))
+    nav_tree.insert(cluster_dev, tk.END, text="🌐 API Gateway Inspector", values=("dev_api",))
+
+    # Cluster 2: Server Administration Space (4 items)
     nav_tree.insert(cluster_adm, tk.END, text="⚙️ Global System Rules", values=("adm_rules",))
     nav_tree.insert(cluster_adm, tk.END, text="🔒 Database Key Vault", values=("adm_vault",))
-    
+    nav_tree.insert(cluster_adm, tk.END, text="📋 Live Server Logs", values=("adm_logs",))
+    nav_tree.insert(cluster_adm, tk.END, text="📈 Performance Monitor", values=("adm_perf",))
+
     nav_tree.item(cluster_dev, open=True)
+    nav_tree.item(cluster_adm, open=True)
     return sidebar_frame, nav_tree
 
 
