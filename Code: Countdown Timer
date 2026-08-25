@@ -1,0 +1,24 @@
+"""
+Code: Countdown Timer 
+Created August 25, 2026
+
+A simple countdown timer.
+"""
+
+
+import tkinter as tk
+import time
+
+def countdown(time_in_seconds):
+    while time_in_seconds:
+        mins, secs = divmod(time_in_seconds, 60)
+        timer = '{:02d}:{:02d}'.format(mins, secs)
+        print(timer, end = '\r') #overwrite the line each second 
+        time.sleep(1)
+        time_in_seconds-= 1
+
+    print("Booooooom!")
+
+time_in_seconds = input("Enter the time in seconds: ")
+countdown(int(time_in_seconds))
+
