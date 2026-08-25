@@ -26,18 +26,25 @@ CONFIG = {
     "ROW_HEIGHT": 28
 }
 
+
 # Tab Content Registry Schema -------------------------------------------------
 TAB_REGISTRY = {
     "dev_dash": {"title": "Analytics Dashboard", "header": "Development Analytics Overview"},
     "dev_shell": {"title": "Shell Terminal Console", "header": "Developer Sandbox Environment Shell"},
     "adm_rules": {"title": "Global System Rules", "header": "Cluster Operations & Security Configurations"},
     "adm_vault": {"title": "Database Key Vault", "header": "Encrypted Asset Credentials Storage"}
+    "dev_git": {"title": "Source Version Control", "header": "Git Repository Branches & Commit History"},
+    "dev_api": {"title": "API Gateway Inspector", "header": "REST & GraphQL Endpoint Traffic Monitor"},
+    "adm_logs": {"title": "Live Server Logs", "header": "Real-Time System Log Streams & Trace Audits"},
+    "adm_perf": {"title": "Performance Monitor", "header": "CPU, RAM & Network Resource Diagnostics"}
 }
 
 
 # Style & Theme Setup ---------------------------------------------------------
 def setup_closable_notebook_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
-    """Registers custom close-state images and builds the CustomNotebook style layout."""
+    """
+    Registers custom close-state images and builds the CustomNotebook style layout.
+    """
     style = ttk.Style()
 
     images = (
@@ -92,7 +99,9 @@ def setup_closable_notebook_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...
 
 # Close Button Event Handlers -------------------------------------------------
 def on_close_press(event: tk.Event) -> str | None:
-    """Detects when mouse down occurs over the close button."""
+    """
+    Detects when mouse down occurs over the close button.
+    """
     notebook = event.widget
     element = notebook.identify(event.x, event.y)
 
@@ -104,7 +113,9 @@ def on_close_press(event: tk.Event) -> str | None:
 
 
 def on_close_release(event: tk.Event) -> None:
-    """Detects when mouse release occurs over the close button to destroy the tab."""
+    """
+    Detects when mouse release occurs over the close button to destroy the tab.
+    """
     notebook = event.widget
 
     if not notebook.instate(["pressed"]):
@@ -131,7 +142,9 @@ def on_close_release(event: tk.Event) -> None:
 
 # Core Navigation Logic -------------------------------------------------------
 def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
-    """Spawns a new tab panel or shifts focus to an existing one upon node click."""
+    """
+    Spawns a new tab panel or shifts focus to an existing one upon node click.
+    """
     treeview_widget = event.widget
     selected_item = treeview_widget.focus()
     
@@ -159,7 +172,7 @@ def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
     new_tab_frame.node_key = node_key  
 
     ttk.Label(new_tab_frame, text=tab_data["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
-    ttk.Label(new_tab_frame, text=f"Active Environment Context: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
+    ttk.Label(new_tab_frame, text=f"Active Environment: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
     
     # Add tab cleanly without manual text-padding hacks
     notebook.add(new_tab_frame, text=f"{tab_data['title']} ")
@@ -167,9 +180,12 @@ def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
 
 
 def on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview) -> None:
-    """Backward Sync: Highlights the matching sidebar row when a tab is focused."""
+    """
+    Backward Sync: Highlights the matching sidebar row when a tab is focused.
+    """
     notebook = event.widget
     if notebook.index("end") == 0:
+        treeview_widget.selection_set()
         return
 
     try:
@@ -192,7 +208,9 @@ def on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview) -> No
 
 # Layout Component Builders ---------------------------------------------------
 def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
-    """Constructs the left-hand hierarchical navigation controller pane."""
+    """
+    Constructs the left-hand hierarchical navigation controller pane.
+    """
     sidebar_frame = ttk.Frame(parent_pane, width=240, relief="flat")
     sidebar_frame.pack_propagate(False) 
     
@@ -205,7 +223,7 @@ def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Tr
     # Tier 1 Root Folders
     cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
     cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
-    
+
     # Tier 2 Data Map Leaves
     nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
     nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
@@ -217,35 +235,39 @@ def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Tr
 
 
 def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
-    """Safely extracts and spawns the primary default tab panel on program launch."""
+    """
+    Safely extracts and spawns the primary default tab panel on program launch.
+    """
     root_folders = nav_tree.get_children()
     if not root_folders:
         return
-        
+
     child_leaves = nav_tree.get_children(root_folders[0])
     if not child_leaves:
         return
-        
+
     target_leaf = child_leaves[0]
     nav_tree.selection_set(target_leaf)
     nav_tree.focus(target_leaf)
-    
+
     node_key = nav_tree.item(target_leaf, "values")[0]
     tab_data = TAB_REGISTRY.get(node_key)
-    
+
     new_tab_frame = ttk.Frame(notebook)
     new_tab_frame.node_key = node_key
-    
+
     ttk.Label(new_tab_frame, text=tab_data["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
-    ttk.Label(new_tab_frame, text=f"Active Environment Context: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
-    
+    ttk.Label(new_tab_frame, text=f"Active Environment: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
+
     notebook.add(new_tab_frame, text=f"{tab_data['title']} ")
     notebook.select(new_tab_frame)
 
 
 # Master Interface Coordinator ------------------------------------------------
 def create_workspace_interface() -> None:
-    """Acts as the master coordinator for the dynamic workspace engine."""
+    """
+    Acts as the master coordinator for the dynamic workspace engine.
+    """
     root = tk.Tk()
     root.title(CONFIG["WINDOW_TITLE"])
     root.geometry(CONFIG["WINDOW_GEOMETRY"])
