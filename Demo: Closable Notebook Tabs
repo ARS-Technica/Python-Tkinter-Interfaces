@@ -31,7 +31,7 @@ TAB_REGISTRY = {
     "dev_dash": {"title": "Analytics Dashboard", "header": "Development Analytics Overview"},
     "dev_shell": {"title": "Shell Terminal Console", "header": "Developer Sandbox Environment Shell"},
     "adm_rules": {"title": "Global System Rules", "header": "Cluster Operations & Security Configurations"},
-    "adm_vault": {"title": "Database Key Vault", "header": "Encrypted Asset Credentials Storage"}
+    "adm_vault": {"title": "Database Key Vault", "header": "Encrypted Asset Credentials Storage"},
     "dev_git": {"title": "Source Version Control", "header": "Git Repository Branches & Commit History"},
     "dev_api": {"title": "API Gateway Inspector", "header": "REST & GraphQL Endpoint Traffic Monitor"},
     "adm_logs": {"title": "Live Server Logs", "header": "Real-Time System Log Streams & Trace Audits"},
@@ -220,14 +220,18 @@ def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Tr
     
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
     nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
+
+    # Tier 1 Root Folders
+    cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
+    cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
     
-    # Cluster 1: Development Stack (4 items)
+    # Tier 1: Development Stack (4 items)
     nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
     nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
     nav_tree.insert(cluster_dev, tk.END, text="🌿 Source Version Control", values=("dev_git",))
     nav_tree.insert(cluster_dev, tk.END, text="🌐 API Gateway Inspector", values=("dev_api",))
 
-    # Cluster 2: Server Administration Space (4 items)
+    # Tier 2: Server Administration Space (4 items)
     nav_tree.insert(cluster_adm, tk.END, text="⚙️ Global System Rules", values=("adm_rules",))
     nav_tree.insert(cluster_adm, tk.END, text="🔒 Database Key Vault", values=("adm_vault",))
     nav_tree.insert(cluster_adm, tk.END, text="📋 Live Server Logs", values=("adm_logs",))
