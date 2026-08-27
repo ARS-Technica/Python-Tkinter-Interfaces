@@ -122,6 +122,23 @@ def spawn_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     pass
 
 
+
+# Sidebar & Synchronization ---------------------------------------------------
+def sync_sidebar_selection(treeview_widget: ttk.Treeview, active_key: str) -> None:
+    """
+    Highlights the corresponding node in the sidebar.
+    """
+    for parent_id in treeview_widget.get_children():
+        for child_id in treeview_widget.get_children(parent_id):
+            vals = treeview_widget.item(child_id, "values")
+            if vals and vals[0] == active_key:
+                if treeview_widget.focus() != child_id:
+                    treeview_widget.item(parent_id, open=True)
+                    treeview_widget.selection_set(child_id)
+                    treeview_widget.focus(child_id)
+                return
+
+
 # Close Button Event Handlers -------------------------------------------------
 def on_close_press(event: tk.Event) -> str | None:
     """
