@@ -201,6 +201,40 @@ def spawn_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     )
     lbl_title.pack(side="left")
 
+    btn_close = tk.Label(
+        tab_item, text="✕", font=CONFIG["FONT_CLOSE"],
+        fg="#555555", bg=CONFIG["COLOR_TAB_BG"], padx=4, pady=3, cursor="hand2"
+    )
+    btn_close.pack(side="right")
+
+    # Hover feedback on close button
+    btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
+    btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#555555"))
+
+    # Event bindings
+    tab_item.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+    lbl_title.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+    btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+
+    # Mousewheel forwarding
+    for widget in (tab_item, lbl_title, btn_close):
+        widget.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+        widget.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+        widget.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+
+    # Save to state registry
+    tabs_dict[node_key] = {
+        "page": page_frame,
+        "frame": tab_item,
+        "lbl_title": lbl_title,
+        "btn_close": btn_close
+    }
+
+    # Update scroll region and activate
+    tab_bar_state["canvas"].update_idletasks()
+    tab_bar_state["canvas"].configure(scrollregion=tab_bar_state["canvas"].bbox("all"))
+    select_workspace_tab(node_key, tab_bar_state)
+
 
 # Sidebar & Synchronization ---------------------------------------------------
 def sync_sidebar_selection(treeview_widget: ttk.Treeview, active_key: str) -> None:
