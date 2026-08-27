@@ -83,7 +83,13 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
     Updates background colors to reflect the active tab.
     """
-    pass
+    for node_key, item in tab_bar_state["tabs"].items():
+        is_active = (node_key == active_key)
+        bg = CONFIG["COLOR_TAB_ACTIVE"] if is_active else CONFIG["COLOR_TAB_BG"]
+        
+        item["frame"].configure(bg=bg)
+        item["lbl_title"].configure(bg=bg)
+        item["btn_close"].configure(bg=bg)
 
 
 def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
