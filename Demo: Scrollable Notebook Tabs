@@ -71,6 +71,14 @@ def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
         scroll_tab_bar(canvas, 1)
 
 
+def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
+    """
+    Ensures that the active tab is visible in the scrollable viewport.
+    """
+    canvas.update_idletasks()
+
+    
+
 
 # Close Button Event Handlers -------------------------------------------------
 def on_close_press(event: tk.Event) -> str | None:
