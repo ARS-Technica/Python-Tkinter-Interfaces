@@ -362,7 +362,7 @@ def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
 
 
 # Master Interface Coordinator ------------------------------------------------
-def create_workspace_interface() -> None:
+def create_application() -> None:
     """
     Acts as the master coordinator for the dynamic workspace engine.
     """
@@ -377,27 +377,21 @@ def create_workspace_interface() -> None:
 
     # 1. Build Left & Right Panes
     sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
-    
-    # 2. Build Notebook using CustomNotebook style layout
-    workspace_notebook = ttk.Notebook(master_paned_window, style="CustomNotebook")
-    workspace_notebook._active_tab = None
-    workspace_notebook._tab_images = tab_images  # Protect images from garbage collection
 
-    # 3. Add panels in left-to-right order
-    master_paned_window.add(sidebar_frame, weight=0)
-    master_paned_window.add(workspace_notebook, weight=1)
+    sidebar_frame, nav_tree = build_sidebar(paned_window)
+    workspace_frame, tab_bar_state = build_workspace(paned_window)
+    tab_bar_state["nav_tree"] = nav_tree
 
-    # 4. Attach event listeners
-    nav_tree.bind("<ButtonRelease-1>", lambda event: on_sidebar_select(event, workspace_notebook))
-    workspace_notebook.bind("<ButtonPress-1>", on_close_press, True)
-    workspace_notebook.bind("<ButtonRelease-1>", on_close_release)
-    workspace_notebook.bind("<<NotebookTabChanged>>", lambda event: on_notebook_tab_change(event, nav_tree))
+    # 2. Add panels in left-to-right order
+    paned_window.add(sidebar_frame, weight=0)
+    paned_window.add(workspace_frame, weight=1)
 
-    # 5. Open primary tab on launch
-    open_default_tab(nav_tree, workspace_notebook)
+    # 3. Bind Sidebar Click Event
+    nav_tree.bind("<ButtonRelease-1>", lambda e: on_sidebar_click(e, tab_bar_state))
 
+    # 4. Launch with initial default tab
+    spawn_workspace_tab("dev_dash", tab_bar_state)
 
-    # Launch with initial default tab
     root.mainloop()
 
 
