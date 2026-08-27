@@ -96,6 +96,13 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Selects an open tab in the notebook and highlights its header.
     """
+
+    # Select notebook page
+
+    # Update visuals & auto-scroll
+
+    # Sync Treeview selection
+
     pass
 
 
@@ -103,7 +110,12 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Closes and deallocates a tab frame and its tab-strip button.
     """
-    pass
+    # Destroy page in notebook
+
+    # Update canvas scroll boundaries
+
+    # Switch focus to the latest tab if any remain
+
 
 
 def spawn_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
