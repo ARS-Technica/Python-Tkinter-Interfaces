@@ -1,0 +1,315 @@
+"""
+Demo: Scrollable Notebook Tabs
+Created: August 26, 2026
+
+Description: Solves tab overflow by pairing a tabless ttk.Notebook with a
+canvas-backed scrollable tab bar. Features mousewheel scrolling, left/right
+scroll buttons, active-tab auto-scrolling, and sidebar bidirectional sync.
+
+Based on "Demo: Closeable Notebook Tabs" project.
+"""
+
+import tkinter as tk
+from tkinter import ttk
+
+
+# Centralized Interface Configuration -----------------------------------------
+CONFIG = {
+    "WINDOW_TITLE": "Demo: Dynamic Workspace Manager",
+    "WINDOW_GEOMETRY": "950x520",
+    "FONT_HEADER": ("Segoe UI", 11, "bold"),
+    "FONT_BODY": ("Segoe UI", 10),
+    "ROW_HEIGHT": 28
+}
+
+# Tab Content Registry Schema -------------------------------------------------
+TAB_REGISTRY = {
+    "dev_dash": {"title": "Analytics Dashboard", "header": "Development Analytics Overview"},
+    "dev_shell": {"title": "Shell Terminal Console", "header": "Developer Sandbox Environment Shell"},
+    "adm_rules": {"title": "Global System Rules", "header": "Cluster Operations & Security Configurations"},
+    "adm_vault": {"title": "Database Key Vault", "header": "Encrypted Asset Credentials Storage"},
+    "dev_git": {"title": "Source Version Control", "header": "Git Repository Branches & Commit History"},
+    "dev_api": {"title": "API Gateway Inspector", "header": "REST & GraphQL Endpoint Traffic Monitor"},
+    "adm_logs": {"title": "Live Server Logs", "header": "Real-Time System Log Streams & Trace Audits"},
+    "adm_perf": {"title": "Performance Monitor", "header": "CPU, RAM & Network Resource Diagnostics"}
+}
+
+
+# Style & Theme Setup ---------------------------------------------------------
+def setup_closable_notebook_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
+    """
+    Registers custom close-state images and builds the CustomNotebook style layout.
+    """
+    style = ttk.Style()
+    style.theme_use("clam")
+    style.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
+
+    images = (
+        tk.PhotoImage("img_close", data="""
+            R0lGODlhCAAIAMIBAAAAADs7O4+Pj9nZ2Ts7Ozs7Ozs7Ozs7OyH+EUNyZWF0ZWQg
+            d2l0aCBHSU1QACH5BAEKAAQALAAAAAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU
+            5kEJADs=
+        """),
+        tk.PhotoImage("img_closeactive", data="""
+            R0lGODlhCAAIAMIEAAAAAP/SAP/bNNnZ2cbGxsbGxsbGxsbGxiH5BAEKAAQALAAA
+            AAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU5kEJADs=
+        """),
+        tk.PhotoImage("img_closepressed", data="""
+            R0lGODlhCAAIAMIEAAAAAOUqKv9mZtnZ2Ts7Ozs7Ozs7Ozs7OyH+EUNyZWF0ZWQg
+            d2l0aCBHSU1QACH5BAEKAAQALAAAAAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU
+            5kEJADs=
+        """)
+    )
+
+    style.element_create(
+        "close", "image", "img_close",
+        ("active", "pressed", "!disabled", "img_closepressed"),
+        ("active", "!disabled", "img_closeactive"),
+        border=8, sticky=""
+    )
+
+    style.layout("CustomNotebook", [("CustomNotebook.client", {"sticky": "nswe"})])
+    style.layout("CustomNotebook.Tab", [
+        ("CustomNotebook.tab", {
+            "sticky": "nswe",
+            "children": [
+                ("CustomNotebook.padding", {
+                    "side": "top",
+                    "sticky": "nswe",
+                    "children": [
+                        ("CustomNotebook.focus", {
+                            "side": "top",
+                            "sticky": "nswe",
+                            "children": [
+                                ("CustomNotebook.label", {"side": "left", "sticky": ""}),
+                                ("CustomNotebook.close", {"side": "left", "sticky": ""}),
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    ])
+
+    return style, images
+
+
+# Close Button Event Handlers -------------------------------------------------
+def on_close_press(event: tk.Event) -> str | None:
+    """
+    Detects when mouse down occurs over the close button.
+    """
+    notebook = event.widget
+    element = notebook.identify(event.x, event.y)
+
+    if "close" in element:
+        index = notebook.index(f"@{event.x},{event.y}")
+        notebook.state(["pressed"])
+        notebook._active_tab = index
+        return "break" # Prevents switching tabs while pressing 'X'
+
+
+def on_close_release(event: tk.Event) -> None:
+    """
+    Detects when mouse release occurs over the close button to destroy the tab.
+    """
+    notebook = event.widget
+
+    if not notebook.instate(["pressed"]):
+        return
+
+    element = notebook.identify(event.x, event.y)
+    notebook.state(["!pressed"])
+
+    if "close" not in element:
+        notebook._active_tab = None
+        return
+
+    index = notebook.index(f"@{event.x},{event.y}")
+
+    if getattr(notebook, "_active_tab", None) == index:
+        tab_widget_name = notebook.tabs()[index]
+        tab_widget = notebook.nametowidget(tab_widget_name)
+        
+        notebook.forget(index)
+        tab_widget.destroy()
+
+    notebook._active_tab = None
+
+
+# Core Navigation Logic -------------------------------------------------------
+def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
+    """
+    Spawns a new tab panel or shifts focus to an existing one upon node click.
+    """
+    treeview_widget = event.widget
+    selected_item = treeview_widget.focus()
+    
+    if not selected_item:
+        return
+        
+    item_values = treeview_widget.item(selected_item, "values")
+    if not item_values:
+        return  # Clicked a cluster folder header
+        
+    node_key = item_values[0]
+    tab_data = TAB_REGISTRY.get(node_key)
+    if not tab_data:
+        return
+
+    # Check if this tab frame is already open in the notebook
+    for index in range(notebook.index("end")):
+        tab_frame = notebook.nametowidget(notebook.tabs()[index])
+        if getattr(tab_frame, "node_key", None) == node_key:
+            notebook.select(index)
+            return
+
+    # Dynamic Spawn: Tab was not open, create it
+    new_tab_frame = ttk.Frame(notebook)
+    new_tab_frame.node_key = node_key  
+
+    ttk.Label(new_tab_frame, text=tab_data["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
+    ttk.Label(new_tab_frame, text=f"Active Environment: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
+    
+    # Add tab cleanly without manual text-padding hacks
+    notebook.add(new_tab_frame, text=f"{tab_data['title']} ")
+    notebook.select(new_tab_frame)
+
+
+def on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview) -> None:
+    """
+    Backward Sync: Highlights the matching sidebar row when a tab is focused.
+    """
+    notebook = event.widget
+    if notebook.index("end") == 0:
+        treeview_widget.selection_set()
+        return
+
+    try:
+        current_frame = notebook.nametowidget(notebook.select())
+        active_key = getattr(current_frame, "node_key", None)
+    except (tk.TclError, KeyError):
+        return
+
+    # Highlight the leaf node sharing the active signature key
+    for parent_id in treeview_widget.get_children():
+        for child_id in treeview_widget.get_children(parent_id):
+            vals = treeview_widget.item(child_id, "values")
+            if vals and vals[0] == active_key:
+                if treeview_widget.focus() != child_id:
+                    treeview_widget.item(parent_id, open=True)
+                    treeview_widget.selection_set(child_id)
+                    treeview_widget.focus(child_id)
+                return
+
+
+# Layout Component Builders ---------------------------------------------------
+def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
+    """
+    Constructs the left-hand hierarchical navigation controller pane.
+    """
+    sidebar_frame = ttk.Frame(parent_pane, width=240, relief="flat")
+    sidebar_frame.pack_propagate(False) 
+    
+    sidebar_header = ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"])
+    sidebar_header.pack(anchor="w", padx=10, pady=(10, 5))
+    
+    nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
+    nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
+
+    # Tier 1 Root Folders
+    cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
+    cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
+    
+    # Tier 1: Development Stack (4 items)
+    nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
+    nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
+    nav_tree.insert(cluster_dev, tk.END, text="🌿 Source Version Control", values=("dev_git",))
+    nav_tree.insert(cluster_dev, tk.END, text="🌐 API Gateway Inspector", values=("dev_api",))
+
+    # Tier 2: Server Administration Space (4 items)
+    nav_tree.insert(cluster_adm, tk.END, text="⚙️ Global System Rules", values=("adm_rules",))
+    nav_tree.insert(cluster_adm, tk.END, text="🔒 Database Key Vault", values=("adm_vault",))
+    nav_tree.insert(cluster_adm, tk.END, text="📋 Live Server Logs", values=("adm_logs",))
+    nav_tree.insert(cluster_adm, tk.END, text="📈 Performance Monitor", values=("adm_perf",))
+
+    nav_tree.item(cluster_dev, open=True)
+    nav_tree.item(cluster_adm, open=True)
+    return sidebar_frame, nav_tree
+
+
+def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
+    """
+    Safely extracts and spawns the primary default tab panel on program launch.
+    """
+    root_folders = nav_tree.get_children()
+    if not root_folders:
+        return
+
+    child_leaves = nav_tree.get_children(root_folders[0])
+    if not child_leaves:
+        return
+
+    target_leaf = child_leaves[0]
+    nav_tree.selection_set(target_leaf)
+    nav_tree.focus(target_leaf)
+
+    node_key = nav_tree.item(target_leaf, "values")[0]
+    tab_data = TAB_REGISTRY.get(node_key)
+
+    new_tab_frame = ttk.Frame(notebook)
+    new_tab_frame.node_key = node_key
+
+    ttk.Label(new_tab_frame, text=tab_data["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
+    ttk.Label(new_tab_frame, text=f"Active Environment: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
+
+    notebook.add(new_tab_frame, text=f"{tab_data['title']} ")
+    notebook.select(new_tab_frame)
+
+
+# Master Interface Coordinator ------------------------------------------------
+def create_workspace_interface() -> None:
+    """
+    Acts as the master coordinator for the dynamic workspace engine.
+    """
+    root = tk.Tk()
+    root.title(CONFIG["WINDOW_TITLE"])
+    root.geometry(CONFIG["WINDOW_GEOMETRY"])
+
+    style_engine = ttk.Style()
+    style_engine.theme_use("clam")
+    style_engine.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
+
+    # Register custom close style and retain image references
+    _, tab_images = setup_closable_notebook_style()
+
+    master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
+    master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
+
+    # 1. Instantiate the modular components
+    sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
+    
+    # 2. Build Notebook using CustomNotebook style layout
+    workspace_notebook = ttk.Notebook(master_paned_window, style="CustomNotebook")
+    workspace_notebook._active_tab = None
+    workspace_notebook._tab_images = tab_images  # Protect images from garbage collection
+
+    # 3. Add panels in left-to-right order
+    master_paned_window.add(sidebar_frame, weight=0)
+    master_paned_window.add(workspace_notebook, weight=1)
+
+    # 4. Attach event listeners
+    nav_tree.bind("<ButtonRelease-1>", lambda event: on_sidebar_select(event, workspace_notebook))
+    workspace_notebook.bind("<ButtonPress-1>", on_close_press, True)
+    workspace_notebook.bind("<ButtonRelease-1>", on_close_release)
+    workspace_notebook.bind("<<NotebookTabChanged>>", lambda event: on_notebook_tab_change(event, nav_tree))
+
+    # 5. Open primary tab on launch
+    open_default_tab(nav_tree, workspace_notebook)
+
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    create_workspace_interface()
+
