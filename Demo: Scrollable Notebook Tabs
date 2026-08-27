@@ -233,15 +233,10 @@ def create_workspace_interface() -> None:
     root.title(CONFIG["WINDOW_TITLE"])
     root.geometry(CONFIG["WINDOW_GEOMETRY"])
 
-    style_engine = ttk.Style()
-    style_engine.theme_use("clam")
-    style_engine.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
+    setup_workspace_styles()
 
-    # Register custom close style and retain image references
-    _, tab_images = setup_closable_notebook_style()
-
-    master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
-    master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
+    paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
+    paned_window.pack(fill="both", expand=True, padx=10, pady=10)
 
     # 1. Instantiate the modular components
     sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
