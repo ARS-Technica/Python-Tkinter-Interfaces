@@ -376,8 +376,6 @@ def create_application() -> None:
     paned_window.pack(fill="both", expand=True, padx=10, pady=10)
 
     # 1. Build Left & Right Panes
-    sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
-
     sidebar_frame, nav_tree = build_sidebar(paned_window)
     workspace_frame, tab_bar_state = build_workspace(paned_window)
     tab_bar_state["nav_tree"] = nav_tree
