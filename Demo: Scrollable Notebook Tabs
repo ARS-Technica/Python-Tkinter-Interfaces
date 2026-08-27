@@ -93,6 +93,33 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     pass
 
 
+def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Closes and deallocates a tab frame and its tab-strip button.
+    """
+    pass
+
+
+def spawn_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Spawns a new tab in the notebook and a pill button in the tab bar.
+    """
+    # If already open, just bring to front
+
+
+    # 1. Create Notebook Page
+
+
+    # 2. Create Tab Button Frame in Scrollable Strip
+
+
+    # Event bindings
+
+
+    # Mousewheel interaction
+
+
+    pass
 
 
 # Close Button Event Handlers -------------------------------------------------
