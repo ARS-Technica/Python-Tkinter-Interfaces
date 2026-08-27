@@ -36,62 +36,17 @@ TAB_REGISTRY = {
 
 
 # Style & Theme Setup ---------------------------------------------------------
-def setup_closable_notebook_style() -> tuple[ttk.Style, tuple[tk.PhotoImage, ...]]:
+def setup_workspace_styles() -> ttk.Style:
     """
-    Registers custom close-state images and builds the CustomNotebook style layout.
+    Configures the theme and tabless notebook style.
     """
     style = ttk.Style()
     style.theme_use("clam")
     style.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
 
-    images = (
-        tk.PhotoImage("img_close", data="""
-            R0lGODlhCAAIAMIBAAAAADs7O4+Pj9nZ2Ts7Ozs7Ozs7Ozs7OyH+EUNyZWF0ZWQg
-            d2l0aCBHSU1QACH5BAEKAAQALAAAAAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU
-            5kEJADs=
-        """),
-        tk.PhotoImage("img_closeactive", data="""
-            R0lGODlhCAAIAMIEAAAAAP/SAP/bNNnZ2cbGxsbGxsbGxsbGxiH5BAEKAAQALAAA
-            AAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU5kEJADs=
-        """),
-        tk.PhotoImage("img_closepressed", data="""
-            R0lGODlhCAAIAMIEAAAAAOUqKv9mZtnZ2Ts7Ozs7Ozs7Ozs7OyH+EUNyZWF0ZWQg
-            d2l0aCBHSU1QACH5BAEKAAQALAAAAAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU
-            5kEJADs=
-        """)
-    )
+    
 
-    style.element_create(
-        "close", "image", "img_close",
-        ("active", "pressed", "!disabled", "img_closepressed"),
-        ("active", "!disabled", "img_closeactive"),
-        border=8, sticky=""
-    )
 
-    style.layout("CustomNotebook", [("CustomNotebook.client", {"sticky": "nswe"})])
-    style.layout("CustomNotebook.Tab", [
-        ("CustomNotebook.tab", {
-            "sticky": "nswe",
-            "children": [
-                ("CustomNotebook.padding", {
-                    "side": "top",
-                    "sticky": "nswe",
-                    "children": [
-                        ("CustomNotebook.focus", {
-                            "side": "top",
-                            "sticky": "nswe",
-                            "children": [
-                                ("CustomNotebook.label", {"side": "left", "sticky": ""}),
-                                ("CustomNotebook.close", {"side": "left", "sticky": ""}),
-                            ]
-                        })
-                    ]
-                })
-            ]
-        })
-    ])
-
-    return style, images
 
 
 # Close Button Event Handlers -------------------------------------------------
