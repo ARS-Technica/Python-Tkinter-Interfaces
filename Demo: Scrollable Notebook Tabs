@@ -396,5 +396,5 @@ def create_application() -> None:
 
 
 if __name__ == "__main__":
-    create_workspace_interface()
+    create_application()
 
