@@ -165,11 +165,13 @@ def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Tr
     """
     Constructs the left-hand hierarchical navigation controller pane.
     """
-    sidebar_frame = ttk.Frame(parent_pane, width=240, relief="flat")
+    sidebar_frame = ttk.Frame(parent_pane, width=250, relief="flat")
     sidebar_frame.pack_propagate(False) 
-    
-    sidebar_header = ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"])
-    sidebar_header.pack(anchor="w", padx=10, pady=(10, 5))
+
+    ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=(10, 5))
+
+    # sidebar_header = ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"])
+    # sidebar_header.pack(anchor="w", padx=10, pady=(10, 5))
     
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
     nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
@@ -238,7 +240,7 @@ def create_workspace_interface() -> None:
     paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
     paned_window.pack(fill="both", expand=True, padx=10, pady=10)
 
-    # 1. Instantiate the modular components
+    # 1. Build Left & Right Panes
     sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
     
     # 2. Build Notebook using CustomNotebook style layout
@@ -259,6 +261,8 @@ def create_workspace_interface() -> None:
     # 5. Open primary tab on launch
     open_default_tab(nav_tree, workspace_notebook)
 
+
+    # Launch with initial default tab
     root.mainloop()
 
 
