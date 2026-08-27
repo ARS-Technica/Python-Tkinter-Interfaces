@@ -77,9 +77,26 @@ def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
 
 def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
     """
-    Ensures that the active tab is visible in the scrollable viewport.
+    Ensures the active tab is visible in the scrollable viewport.
     """
     canvas.update_idletasks()
+    
+    tab_x = tab_item.winfo_x()
+    tab_w = tab_item.winfo_width()
+    canvas_w = canvas.winfo_width()
+    
+    scroll_region = canvas.bbox("all")
+    if not scroll_region or scroll_region[2] <= canvas_w:
+        return
+        
+    total_w = scroll_region[2]
+    current_left = canvas.xview()[0] * total_w
+    current_right = current_left + canvas_w
+    
+    if tab_x < current_left:
+        canvas.xview_moveto(max(0.0, tab_x / total_w))
+    elif (tab_x + tab_w) > current_right:
+        canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
 
 
 # Tab Lifecycle Management ---------------------------------------------------
