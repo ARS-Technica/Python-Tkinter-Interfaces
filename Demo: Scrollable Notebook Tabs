@@ -15,21 +15,25 @@ from tkinter import ttk
 
 # Centralized Interface Configuration -----------------------------------------
 CONFIG = {
-    "WINDOW_TITLE": "Demo: Dynamic Workspace Manager",
-    "WINDOW_GEOMETRY": "950x520",
+    "WINDOW_TITLE": "Demo: Scrollable Notebook Tabs",
+    "WINDOW_GEOMETRY": "1000x560",
     "FONT_HEADER": ("Segoe UI", 11, "bold"),
     "FONT_BODY": ("Segoe UI", 10),
-    "ROW_HEIGHT": 28
+    "FONT_TAB": ("Segoe UI", 9),
+    "FONT_CLOSE": ("Segoe UI", 8, "bold"),
+    "ROW_HEIGHT": 28,
+    "COLOR_TAB_BG": "#E1E1E1",
+    "COLOR_TAB_ACTIVE": "#FFFFFF",
 }
 
-# Tab Content Registry Schema -------------------------------------------------
+# Tab Content Registry -----------------------------------------------------------
 TAB_REGISTRY = {
     "dev_dash": {"title": "Analytics Dashboard", "header": "Development Analytics Overview"},
     "dev_shell": {"title": "Shell Terminal Console", "header": "Developer Sandbox Environment Shell"},
-    "adm_rules": {"title": "Global System Rules", "header": "Cluster Operations & Security Configurations"},
-    "adm_vault": {"title": "Database Key Vault", "header": "Encrypted Asset Credentials Storage"},
     "dev_git": {"title": "Source Version Control", "header": "Git Repository Branches & Commit History"},
     "dev_api": {"title": "API Gateway Inspector", "header": "REST & GraphQL Endpoint Traffic Monitor"},
+    "adm_rules": {"title": "Global System Rules", "header": "Cluster Operations & Security Configurations"},
+    "adm_vault": {"title": "Database Key Vault", "header": "Encrypted Asset Credentials Storage"},
     "adm_logs": {"title": "Live Server Logs", "header": "Real-Time System Log Streams & Trace Audits"},
     "adm_perf": {"title": "Performance Monitor", "header": "CPU, RAM & Network Resource Diagnostics"},
 }
