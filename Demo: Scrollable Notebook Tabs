@@ -77,7 +77,13 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
     """
     canvas.update_idletasks()
 
-    
+
+# Tab Lifecycle Management ---------------------------------------------------
+def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
+    """
+    Updates background colors to reflect the active tab.
+    """
+    pass
 
 
 # Close Button Event Handlers -------------------------------------------------
