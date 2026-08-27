@@ -31,7 +31,7 @@ TAB_REGISTRY = {
     "dev_git": {"title": "Source Version Control", "header": "Git Repository Branches & Commit History"},
     "dev_api": {"title": "API Gateway Inspector", "header": "REST & GraphQL Endpoint Traffic Monitor"},
     "adm_logs": {"title": "Live Server Logs", "header": "Real-Time System Log Streams & Trace Audits"},
-    "adm_perf": {"title": "Performance Monitor", "header": "CPU, RAM & Network Resource Diagnostics"}
+    "adm_perf": {"title": "Performance Monitor", "header": "CPU, RAM & Network Resource Diagnostics"},
 }
 
 
@@ -51,6 +51,27 @@ def setup_workspace_styles() -> ttk.Style:
     return style
 
 
+# Tab Bar Scrolling & Interaction  --------------------------------------------
+def scroll_tab_bar(canvas: tk.Canvas, direction: int) -> None:
+    """
+    Scrolls the canvas horizontally by units.
+    """
+    canvas.xview_scroll(direction * 2, "units")
+
+
+def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
+    """
+    Scrolls the tab bar horizontally using the mouse wheel.
+    """
+    if event.delta:
+        scroll_tab_bar(canvas, -1 if event.delta > 0 else 1)
+    elif event.num == 4:
+        scroll_tab_bar(canvas, -1)
+    elif event.num == 5:
+        scroll_tab_bar(canvas, 1)
+
+
+
 # Close Button Event Handlers -------------------------------------------------
 def on_close_press(event: tk.Event) -> str | None:
     """
@@ -64,6 +85,9 @@ def on_close_press(event: tk.Event) -> str | None:
         notebook.state(["pressed"])
         notebook._active_tab = index
         return "break" # Prevents switching tabs while pressing 'X'
+
+
+
 
 
 def on_close_release(event: tk.Event) -> None:
