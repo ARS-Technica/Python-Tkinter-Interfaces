@@ -265,7 +265,24 @@ def on_sidebar_click(event: tk.Event, tab_bar_state: dict) -> None:
         spawn_workspace_tab(vals[0], tab_bar_state)
 
 
-# Layout Component Builders ---------------------------------------------------
+# Layout Builders --------------------------------------------------------------
+def build_sidebar(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
+    """
+    Builds the left-side hierarchical navigation Treeview.
+    """
+    sidebar_frame = ttk.Frame(parent, width=250, relief="flat")
+    sidebar_frame.pack_propagate(False)
+
+    ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=(10, 5))
+
+    # sidebar_header = ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"])
+    # sidebar_header.pack(anchor="w", padx=10, pady=(10, 5))
+
+    nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
+    nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
+
+    
+
 def build_sidebar(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
     """
     Builds the left-side hierarchical navigation Treeview.
@@ -302,7 +319,62 @@ def build_sidebar(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
     return sidebar_frame, nav_tree
 
 
+def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
+    """
+    Builds the right-hand panel containing the scrollable tab strip and notebook.
+    """
+    workspace_container = ttk.Frame(parent)
+    
+    # 1. Top Scrollable Tab Header Bar
+    tab_strip_frame = tk.Frame(workspace_container, height=36, bg="#D9D9D9")
+    tab_strip_frame.pack(side="top", fill="x")
+    tab_strip_frame.pack_propagate(False)
 
+    btn_left = tk.Button(
+        tab_strip_frame, text="◀", relief="flat", bg="#CCCCCC", width=2,
+        command=lambda: scroll_tab_bar(canvas, -1)
+    )
+    btn_left.pack(side="left", fill="y")
+
+    btn_right = tk.Button(
+        tab_strip_frame, text="▶", relief="flat", bg="#CCCCCC", width=2,
+        command=lambda: scroll_tab_bar(canvas, 1)
+    )
+    btn_right.pack(side="right", fill="y")
+
+    canvas = tk.Canvas(tab_strip_frame, height=32, bg="#D9D9D9", highlightthickness=0)
+    canvas.pack(side="left", fill="both", expand=True)
+			  
+
+    scroll_content = tk.Frame(canvas, bg="#D9D9D9")
+    canvas_window = canvas.create_window((0, 0), window=scroll_content, anchor="nw")
+							   
+
+    # Keep canvas window height matched
+    scroll_content.bind(
+        "<Configure>", 
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+    )
+    
+    # Mousewheel scrolling over the canvas strip
+    for w in (canvas, scroll_content, tab_strip_frame):
+        w.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, canvas))
+        w.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, canvas))
+        w.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, canvas))
+
+    # 2. Bottom Tabless Notebook Workspace
+    notebook = ttk.Notebook(workspace_container, style="Tabless.TNotebook")
+    notebook.pack(side="top", fill="both", expand=True)
+
+    tab_bar_state = {
+        "canvas": canvas,
+        "scroll_content": scroll_content,
+        "notebook": notebook,
+        "tabs": {},
+        "nav_tree": None,
+    }
+
+    return workspace_container, tab_bar_state
 
 
 # Master Interface Coordinator ------------------------------------------------
