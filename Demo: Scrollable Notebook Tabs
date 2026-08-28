@@ -380,7 +380,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
 # Master Interface Coordinator ------------------------------------------------
 def create_application() -> None:
     """
-    Acts as the master coordinator for the dynamic workspace engine.
+    Sets up the window and initializes all workspace components.
     """
     root = tk.Tk()
     root.title(CONFIG["WINDOW_TITLE"])
