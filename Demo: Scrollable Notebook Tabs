@@ -302,33 +302,7 @@ def build_sidebar(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
     return sidebar_frame, nav_tree
 
 
-def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
-    """
-    Safely extracts and spawns the primary default tab panel on program launch.
-    """
-    root_folders = nav_tree.get_children()
-    if not root_folders:
-        return
 
-    child_leaves = nav_tree.get_children(root_folders[0])
-    if not child_leaves:
-        return
-
-    target_leaf = child_leaves[0]
-    nav_tree.selection_set(target_leaf)
-    nav_tree.focus(target_leaf)
-
-    node_key = nav_tree.item(target_leaf, "values")[0]
-    tab_data = TAB_REGISTRY.get(node_key)
-
-    new_tab_frame = ttk.Frame(notebook)
-    new_tab_frame.node_key = node_key
-
-    ttk.Label(new_tab_frame, text=tab_data["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
-    ttk.Label(new_tab_frame, text=f"Active Environment: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
-
-    notebook.add(new_tab_frame, text=f"{tab_data['title']} ")
-    notebook.select(new_tab_frame)
 
 
 # Master Interface Coordinator ------------------------------------------------
