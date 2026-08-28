@@ -266,23 +266,6 @@ def on_sidebar_click(event: tk.Event, tab_bar_state: dict) -> None:
 
 
 # Close Button Event Handlers -------------------------------------------------
-def on_close_press(event: tk.Event) -> str | None:
-    """
-    Detects when mouse down occurs over the close button.
-    """
-    notebook = event.widget
-    element = notebook.identify(event.x, event.y)
-
-    if "close" in element:
-        index = notebook.index(f"@{event.x},{event.y}")
-        notebook.state(["pressed"])
-        notebook._active_tab = index
-        return "break" # Prevents switching tabs while pressing 'X'
-
-
-
-
-
 def on_close_release(event: tk.Event) -> None:
     """
     Detects when mouse release occurs over the close button to destroy the tab.
