@@ -106,6 +106,24 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
         canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
 
 
+# Tab Functions --------------------------------------------------------------
+
+
+def select_workspace_tab(node_key, tab_bar_state):
+    """
+    Selects an open tab in the notebook and highlights its header.
+    """
+
+
+def update_tab_bar_visuals(tab_bar_state, active_key):
+    """
+    Updates background colors to reflect the active tab.
+    """
+    pass
+
+
+
+
 # Core Navigation Logic -------------------------------------------------------
 def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
     """
