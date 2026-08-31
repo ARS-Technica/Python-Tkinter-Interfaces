@@ -105,6 +105,7 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
     elif (tab_x + tab_w) > current_right:
         canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
 
+
 # Core Navigation Logic -------------------------------------------------------
 def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
     """
@@ -236,9 +237,9 @@ def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
 
 
 # Master Interface Coordinator ------------------------------------------------
-def create_workspace_interface() -> None:
+def create_application() -> None:
     """
-    Acts as the master coordinator for the dynamic workspace engine.
+    Sets up the window and initializes all workspace components.
     """
     root = tk.Tk()
     root.title(CONFIG["WINDOW_TITLE"])
@@ -247,9 +248,6 @@ def create_workspace_interface() -> None:
     style_engine = ttk.Style()
     style_engine.theme_use("clam")
     style_engine.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
-
-    # Register custom close style and retain image references
-    _, tab_images = setup_closable_notebook_style()
 
     master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
     master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
@@ -266,12 +264,6 @@ def create_workspace_interface() -> None:
     master_paned_window.add(sidebar_frame, weight=0)
     master_paned_window.add(workspace_notebook, weight=1)
 
-    # 4. Attach event listeners
-    nav_tree.bind("<ButtonRelease-1>", lambda event: on_sidebar_select(event, workspace_notebook))
-    workspace_notebook.bind("<ButtonPress-1>", on_close_press, True)
-    workspace_notebook.bind("<ButtonRelease-1>", on_close_release)
-    workspace_notebook.bind("<<NotebookTabChanged>>", lambda event: on_notebook_tab_change(event, nav_tree))
-
     # 5. Open primary tab on launch
     open_default_tab(nav_tree, workspace_notebook)
 
@@ -279,6 +271,6 @@ def create_workspace_interface() -> None:
 
 
 if __name__ == "__main__":
-    create_workspace_interface()
+    create_application()
 
 
