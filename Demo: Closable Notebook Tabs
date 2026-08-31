@@ -62,49 +62,6 @@ def setup_workspace_styles() -> ttk.Style:
     return style
 
 
-# Close Button Event Handlers -------------------------------------------------
-def on_close_press(event: tk.Event) -> str | None:
-    """
-    Detects when mouse down occurs over the close button.
-    """
-    notebook = event.widget
-    element = notebook.identify(event.x, event.y)
-
-    if "close" in element:
-        index = notebook.index(f"@{event.x},{event.y}")
-        notebook.state(["pressed"])
-        notebook._active_tab = index
-        return "break" # Prevents switching tabs while pressing 'X'
-
-
-def on_close_release(event: tk.Event) -> None:
-    """
-    Detects when mouse release occurs over the close button to destroy the tab.
-    """
-    notebook = event.widget
-
-    if not notebook.instate(["pressed"]):
-        return
-
-    element = notebook.identify(event.x, event.y)
-    notebook.state(["!pressed"])
-
-    if "close" not in element:
-        notebook._active_tab = None
-        return
-
-    index = notebook.index(f"@{event.x},{event.y}")
-
-    if getattr(notebook, "_active_tab", None) == index:
-        tab_widget_name = notebook.tabs()[index]
-        tab_widget = notebook.nametowidget(tab_widget_name)
-        
-        notebook.forget(index)
-        tab_widget.destroy()
-
-    notebook._active_tab = None
-
-
 # Core Navigation Logic -------------------------------------------------------
 def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
     """
