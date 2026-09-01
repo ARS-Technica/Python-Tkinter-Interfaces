@@ -105,6 +105,28 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
     elif (tab_x + tab_w) > current_right:
         canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
 
+
+# Tab Functions ---------------------------------------------------------------
+# Close, Create, Select
+
+def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Closes and deallocates a tab frame and its tab-strip button.
+    """
+ 
+
+def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Creates a new tab in the notebook and a pill button in the tab bar.
+    """
+
+
+def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Selects an open tab in the notebook and highlights its header.
+    """
+
+
 # Core Navigation Logic -------------------------------------------------------
 def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
     """
