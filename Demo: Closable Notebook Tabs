@@ -157,11 +157,21 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     tab_item = tk.Frame(scroll_content, bg=CONFIG["COLOR_TAB_BG"], bd=1, relief="solid")
     tab_item.pack(side="left", padx=2, pady=3)
 
+    lbl_title = tk.Label(
+        tab_item, text=tab_meta["title"], font=CONFIG["FONT_TAB"],
+        bg=CONFIG["COLOR_TAB_BG"], padx=6, pady=3, cursor="hand2"
+    )
+    lbl_title.pack(side="left")
+
     btn_close = tk.Label(
         tab_item, text="✕", font=CONFIG["FONT_CLOSE"],
         fg="#555555", bg=CONFIG["COLOR_TAB_BG"], padx=4, pady=3, cursor="hand2"
     )
     btn_close.pack(side="right")
+
+    # Hover feedback on close button
+    btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
+    btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#555555"))
 
     # Event bindings
 
