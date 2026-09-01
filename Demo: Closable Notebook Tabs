@@ -64,6 +64,22 @@ def setup_workspace_styles() -> ttk.Style:
 # Sidebar Functions -----------------------------------------------------------
 # Click, Sync
 
+
+def sync_sidebar_selection(treeview_widget: ttk.Treeview, active_key: str) -> None:
+    """
+    Highlights the corresponding node in the sidebar.
+    """
+    for parent_id in treeview_widget.get_children():
+        for child_id in treeview_widget.get_children(parent_id):
+            vals = treeview_widget.item(child_id, "values")
+            if vals and vals[0] == active_key:
+                if treeview_widget.focus() != child_id:
+                    treeview_widget.item(parent_id, open=True)
+                    treeview_widget.selection_set(child_id)
+                    treeview_widget.focus(child_id)
+                return
+
+
 # Tab Bar Scrolling & Interaction ---------------------------------------------
 def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
     """
@@ -195,7 +211,7 @@ def on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview) -> No
                 return
 
 
-# Layout Component Builders ---------------------------------------------------
+# Widget Layout Functions -----------------------------------------------------
 def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
     """
     Constructs the left-hand hierarchical navigation controller pane.
