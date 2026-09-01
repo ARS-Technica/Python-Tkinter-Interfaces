@@ -293,6 +293,24 @@ def on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview) -> No
                 return
 
 
+def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Selects an open tab in the notebook and highlights its header.
+    """
+    notebook = tab_bar_state["notebook"]
+    tabs_dict = tab_bar_state["tabs"]
+    nav_tree = tab_bar_state["nav_tree"]
+
+    if node_key not in tabs_dict:
+        return
+
+
+def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
+    """
+    Updates background colors to reflect the active tab.
+    """
+
+
 # Widget Layout Functions -----------------------------------------------------
 def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
     """
