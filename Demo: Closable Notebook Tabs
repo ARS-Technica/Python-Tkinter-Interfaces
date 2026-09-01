@@ -61,6 +61,8 @@ def setup_workspace_styles() -> ttk.Style:
     style.configure("Tabless.TNotebook", tabmargins=0, borderwidth=0, highlightthickness=0)
     return style
 
+# Sidebar Functions -----------------------------------------------------------
+# Click, Sync
 
 # Tab Bar Scrolling & Interaction ---------------------------------------------
 def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
