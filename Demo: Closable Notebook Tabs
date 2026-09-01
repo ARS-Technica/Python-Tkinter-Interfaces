@@ -63,6 +63,18 @@ def setup_workspace_styles() -> ttk.Style:
 
 
 # Tab Bar Scrolling & Interaction ---------------------------------------------
+def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
+    """
+    Scrolls the tab bar horizontally using the mouse wheel.
+    """
+    if event.delta:
+        scroll_tab_bar(canvas, -1 if event.delta > 0 else 1)
+    elif event.num == 4:
+        scroll_tab_bar(canvas, -1)
+    elif event.num == 5:
+        scroll_tab_bar(canvas, 1)
+
+
 def scroll_tab_bar(canvas: tk.Canvas, direction: int) -> None:
     """
     Scrolls the canvas horizontally by units.
