@@ -129,8 +129,6 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
 
 
 # Tab Functions ---------------------------------------------------------------
-# Close, Create, Select
-
 def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Closes and deallocates a tab frame and its tab-strip button.
