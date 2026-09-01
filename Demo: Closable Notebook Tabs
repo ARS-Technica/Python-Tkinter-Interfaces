@@ -368,11 +368,8 @@ def create_application() -> None:
 
     setup_workspace_styles()
 
-    # Register custom close style and retain image references
-    _, tab_images = setup_closable_notebook_style()
-
-    master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
-    master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
+    paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
+    paned_window.pack(fill="both", expand=True, padx=10, pady=10)
 
     # 1. Instantiate the modular components
     sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
