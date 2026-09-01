@@ -138,7 +138,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     notebook = tab_bar_state["notebook"]
     scroll_content = tab_bar_state["scroll_content"]
     tab_meta = TAB_REGISTRY.get(node_key)
-    
+
     if not tab_meta:
         return
 
@@ -149,10 +149,21 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 
     # 1. Create Notebook Page
     page_frame = ttk.Frame(notebook)
+    ttk.Label(page_frame, text=tab_meta["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
+    ttk.Label(page_frame, text=f"Active", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
+    notebook.add(page_frame)
 
     # 2. Create Tab Button Frame in Scrollable Strip
     tab_item = tk.Frame(scroll_content, bg=CONFIG["COLOR_TAB_BG"], bd=1, relief="solid")
     tab_item.pack(side="left", padx=2, pady=3)
+
+    btn_close = tk.Label(
+        tab_item, text="✕", font=CONFIG["FONT_CLOSE"],
+        fg="#555555", bg=CONFIG["COLOR_TAB_BG"], padx=4, pady=3, cursor="hand2"
+    )
+    btn_close.pack(side="right")
+
+    # Event bindings
 
     # Save to state registry
 
