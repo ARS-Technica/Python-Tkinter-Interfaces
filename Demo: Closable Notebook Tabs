@@ -135,7 +135,16 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Closes and deallocates a tab frame and its tab-strip button.
     """
- 
+     if node_key not in tabs_dict:
+        return
+
+    # Switch focus to the latest tab if any remain
+    if tabs_dict:
+        next_key = list(tabs_dict.keys())[-1]
+        select_workspace_tab(next_key, tab_bar_state)
+    else:
+        tab_bar_state["nav_tree"].selection_set()
+    
 
 def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
