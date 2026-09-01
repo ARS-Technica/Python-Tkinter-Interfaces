@@ -141,8 +141,15 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     if not tab_meta:
         return
 
-    
+    # If already open, just bring to front
 
+    # 1. Create Notebook Page
+
+    # 2. Create Tab Button Frame in Scrollable Strip
+
+    # Save to state registry
+
+    # Update scroll region and activate
 
 
 def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
