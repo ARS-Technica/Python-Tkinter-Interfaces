@@ -129,6 +129,22 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
 
 
 # Tab Functions ---------------------------------------------------------------
+def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Creates a new tab in the notebook and a pill button in the tab bar.
+    """
+    tabs_dict = tab_bar_state["tabs"]
+    notebook = tab_bar_state["notebook"]
+    scroll_content = tab_bar_state["scroll_content"]
+    tab_meta = TAB_REGISTRY.get(node_key)
+    
+    if not tab_meta:
+        return
+
+    
+
+
+
 def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Closes and deallocates a tab frame and its tab-strip button.
@@ -143,12 +159,6 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     else:
         tab_bar_state["nav_tree"].selection_set()
     
-
-def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
-    """
-    Creates a new tab in the notebook and a pill button in the tab bar.
-    """
-
 
 def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
