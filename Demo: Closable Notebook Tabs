@@ -34,6 +34,7 @@ CONFIG = {
     "COLOR_TAB_ACTIVE": "#FFFFFF",
 }
 
+
 # Tab Content Registry Schema -------------------------------------------------
 TAB_REGISTRY = {
     "dev_dash": {"title": "Analytics Dashboard", "header": "Development Analytics Overview"},
@@ -142,10 +143,16 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         return
 
     # If already open, just bring to front
+    if node_key in tabs_dict:
+        select_workspace_tab(node_key, tab_bar_state)
+        return
 
     # 1. Create Notebook Page
+    page_frame = ttk.Frame(notebook)
 
     # 2. Create Tab Button Frame in Scrollable Strip
+    tab_item = tk.Frame(scroll_content, bg=CONFIG["COLOR_TAB_BG"], bd=1, relief="solid")
+    tab_item.pack(side="left", padx=2, pady=3)
 
     # Save to state registry
 
