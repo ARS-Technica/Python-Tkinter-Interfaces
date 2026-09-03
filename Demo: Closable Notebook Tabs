@@ -308,6 +308,14 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     return sidebar_frame, nav_tree
 
 
+def build_workspace(ttk.PanedWindow):
+    """
+    Builds the right-hand panel containing the scrollable tab strip and notebook.
+    """
+    # 1. Top Scrollable Tab Header Bar
+    # 2. Bottom Tabless Notebook Workspace
+
+
 def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
     """
     Safely extracts and spawns the primary default tab panel on program launch.
