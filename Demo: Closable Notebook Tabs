@@ -144,7 +144,10 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Closes and deallocates a tab frame and its tab-strip button.
     """
-     if node_key not in tabs_dict:
+    notebook = tab_bar_state["notebook"]
+    tabs_dict = tab_bar_state["tabs"]
+
+    if node_key not in tabs_dict:
         return
 
     tab_info = tabs_dict.pop(node_key)
@@ -152,7 +155,11 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 
     # Destroy page in notebook
     notebook.forget(tab_info["page"])
-    tab_info["page"].destroy()    
+    tab_info["page"].destroy()
+
+    # Update canvas scroll boundaries
+    tab_bar_state["canvas"].update_idletasks()
+    tab_bar_state["canvas"].configure(scrollregion=tab_bar_state["canvas"].bbox("all"))
 
     # Switch focus to the latest tab if any remain
     if tabs_dict:
