@@ -275,23 +275,22 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
 
 
 # Widget Layout Functions -----------------------------------------------------
-def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
+def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
     """
-    Constructs the left-hand hierarchical navigation controller pane.
+    Builds the left-side hierarchical navigation Treeview.
     """
-    sidebar_frame = ttk.Frame(parent_pane, width=240, relief="flat")
-    sidebar_frame.pack_propagate(False) 
-    
-    sidebar_header = ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"])
-    sidebar_header.pack(anchor="w", padx=10, pady=(10, 5))
-    
+    sidebar_frame = ttk.Frame(parent, width=250, relief="flat")
+    sidebar_frame.pack_propagate(False)
+
+    ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=(10, 5))
+
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
     nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
 
     # Tier 1 Root Folders
     cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
     cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
-    
+
     # Tier 1: Development Stack (4 items)
     nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
     nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
