@@ -312,6 +312,8 @@ def build_workspace(parent: ttk.PanedWindow):
     """
     Builds the right-hand panel containing the scrollable tab strip and notebook.
     """
+    workspace_container = ttk.Frame(parent)
+
     # 1. Top Scrollable Tab Header Bar
     tab_strip_frame = tk.Frame(workspace_container, height=36, bg="#D9D9D9")
     tab_strip_frame.pack(side="top", fill="x")
@@ -332,6 +334,16 @@ def build_workspace(parent: ttk.PanedWindow):
     # 2. Bottom Tabless Notebook Workspace
     notebook = ttk.Notebook(workspace_container, style="Tabless.TNotebook")
     notebook.pack(side="top", fill="both", expand=True)
+
+    tab_bar_state = {
+        "canvas": canvas,
+        "scroll_content": scroll_content,
+        "notebook": notebook,
+        "tabs": {},
+        "nav_tree": None,
+    }
+
+    return workspace_container, tab_bar_state
 
 
 def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
