@@ -236,7 +236,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     tab_bar_state["canvas"].update_idletasks()
     tab_bar_state["canvas"].configure(scrollregion=tab_bar_state["canvas"].bbox("all"))
     select_workspace_tab(node_key, tab_bar_state)
- 
+
 
 def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
