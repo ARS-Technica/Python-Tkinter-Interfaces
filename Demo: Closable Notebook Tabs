@@ -261,6 +261,15 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     sync_sidebar_selection(nav_tree, node_key)
 
 
+def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
+    """
+    Updates background colors to reflect the active tab.
+    """
+    for node_key, item in tab_bar_state["tabs"].items():
+        is_active = (node_key == active_key)
+        bg = CONFIG["COLOR_TAB_ACTIVE"] if is_active else CONFIG["COLOR_TAB_BG"]
+
+
 # Core Navigation Logic -------------------------------------------------------
 def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
     """
