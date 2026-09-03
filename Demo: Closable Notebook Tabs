@@ -308,7 +308,7 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     return sidebar_frame, nav_tree
 
 
-def build_workspace(ttk.PanedWindow):
+def build_workspace(parent: ttk.PanedWindow):
     """
     Builds the right-hand panel containing the scrollable tab strip and notebook.
     """
@@ -316,6 +316,18 @@ def build_workspace(ttk.PanedWindow):
     tab_strip_frame = tk.Frame(workspace_container, height=36, bg="#D9D9D9")
     tab_strip_frame.pack(side="top", fill="x")
     tab_strip_frame.pack_propagate(False)
+
+    btn_left = tk.Button(
+        tab_strip_frame, text="◀", relief="flat", bg="#CCCCCC", width=2,
+        command=lambda: scroll_tab_bar(canvas, -1)
+    )
+    btn_left.pack(side="left", fill="y")
+
+    btn_right = tk.Button(
+        tab_strip_frame, text="▶", relief="flat", bg="#CCCCCC", width=2,
+        command=lambda: scroll_tab_bar(canvas, 1)
+    )
+    btn_right.pack(side="right", fill="y")
 
     # 2. Bottom Tabless Notebook Workspace
     notebook = ttk.Notebook(workspace_container, style="Tabless.TNotebook")
