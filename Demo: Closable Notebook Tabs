@@ -140,6 +140,28 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
 
 
 # Tab Functions ---------------------------------------------------------------
+def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Closes and deallocates a tab frame and its tab-strip button.
+    """
+     if node_key not in tabs_dict:
+        return
+
+    tab_info = tabs_dict.pop(node_key)
+    tab_info["frame"].destroy()
+
+    # Destroy page in notebook
+    notebook.forget(tab_info["page"])
+    tab_info["page"].destroy()    
+
+    # Switch focus to the latest tab if any remain
+    if tabs_dict:
+        next_key = list(tabs_dict.keys())[-1]
+        select_workspace_tab(next_key, tab_bar_state)
+    else:
+        tab_bar_state["nav_tree"].selection_set()
+
+
 def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Creates a new tab in the notebook and a pill button in the tab bar.
@@ -207,22 +229,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     tab_bar_state["canvas"].update_idletasks()
     tab_bar_state["canvas"].configure(scrollregion=tab_bar_state["canvas"].bbox("all"))
     select_workspace_tab(node_key, tab_bar_state)
-
-
-def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
-    """
-    Closes and deallocates a tab frame and its tab-strip button.
-    """
-     if node_key not in tabs_dict:
-        return
-
-    # Switch focus to the latest tab if any remain
-    if tabs_dict:
-        next_key = list(tabs_dict.keys())[-1]
-        select_workspace_tab(next_key, tab_bar_state)
-    else:
-        tab_bar_state["nav_tree"].selection_set()
-    
+ 
 
 def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
