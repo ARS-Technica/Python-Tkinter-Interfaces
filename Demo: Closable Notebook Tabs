@@ -331,6 +331,12 @@ def build_workspace(parent: ttk.PanedWindow):
     )
     btn_right.pack(side="right", fill="y")
 
+    canvas = tk.Canvas(tab_strip_frame, height=32, bg="#D9D9D9", highlightthickness=0)
+    canvas.pack(side="left", fill="both", expand=True)
+
+    scroll_content = tk.Frame(canvas, bg="#D9D9D9")
+    canvas_window = canvas.create_window((0, 0), window=scroll_content, anchor="nw")
+
     # 2. Bottom Tabless Notebook Workspace
     notebook = ttk.Notebook(workspace_container, style="Tabless.TNotebook")
     notebook.pack(side="top", fill="both", expand=True)
