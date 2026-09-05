@@ -45,7 +45,9 @@ TAB_REGISTRY = {
 
 # Styles Setup ----------------------------------------------------------------
 def setup_workspace_styles() -> ttk.Style:
-    """Configures the theme and completely suppresses native notebook tabs."""
+    """
+    Configures the theme and completely suppresses native notebook tabs.
+    """
     style = ttk.Style()
     style.theme_use("clam")
     style.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
@@ -67,10 +69,11 @@ def setup_workspace_styles() -> ttk.Style:
         highlightthickness=0
     )
     style.configure(
-        "Tabless.TNotebook.Tab", 
-        padding=0, 
-        borderwidth=0, 
-        height=0
+        "Tabless.TNotebook",
+        tabmargins=0,
+        borderwidth=0,
+        highlightthickness=0,
+        background=CONFIG["COLOR_WORKSPACE_BG"]
     )
 
     return style
