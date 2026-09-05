@@ -43,15 +43,11 @@ TAB_REGISTRY = {
 
 # Styles Setup ----------------------------------------------------------------
 def setup_workspace_styles() -> ttk.Style:
-    """
-    Registers custom close-state images and builds the CustomNotebook style layout.
-    This function is the master interface coordinator for all visual elements.
-    Native notebook tabs are hidden, and a custom scrollable tab bar is used instead.
-    """
+    """Configures the theme and completely suppresses native notebook tabs."""
     style = ttk.Style()
     style.theme_use("clam")
     style.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
- 
+
     # 1. Redefine the notebook layout so it ONLY draws the client viewport
     # This strips out the tab row entirely.
     style.layout("Tabless.TNotebook", [
@@ -61,7 +57,19 @@ def setup_workspace_styles() -> ttk.Style:
     # 2. Empty out the Tab element layout explicitly
     style.layout("Tabless.TNotebook.Tab", [])
 
-
+    # 3. Collapse tab dimensions and padding to 0
+    style.configure(
+        "Tabless.TNotebook", 
+        tabmargins=0, 
+        borderwidth=0, 
+        highlightthickness=0
+    )
+    style.configure(
+        "Tabless.TNotebook.Tab", 
+        padding=0, 
+        borderwidth=0, 
+        height=0
+    )
 
     return style
 
