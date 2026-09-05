@@ -23,8 +23,10 @@ CONFIG = {
     "FONT_TAB": ("Segoe UI", 9),
     "FONT_CLOSE": ("Segoe UI", 8, "bold"),
     "ROW_HEIGHT": 28,
-    "COLOR_TAB_BG": "#E1E1E1",
-    "COLOR_TAB_ACTIVE": "#FFFFFF",
+    "COLOR_STRIP_BG": "#EFEFEF",
+    "COLOR_BORDER": "#BCBCBC",
+    "COLOR_TAB_INACTIVE": "#E4E4E4",
+    "COLOR_WORKSPACE_BG": "#FFFFFF",
 }
 
 
