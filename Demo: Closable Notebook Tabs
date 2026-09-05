@@ -51,10 +51,13 @@ def setup_workspace_styles() -> ttk.Style:
     style = ttk.Style()
     style.theme_use("clam")
     style.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
-    
-    # Hide native notebook tabs completely
-    style.layout("Tabless.TNotebook.Tab", None)
-    style.configure("Tabless.TNotebook", tabmargins=0, borderwidth=0, highlightthickness=0)
+ 
+    # 1. Redefine the notebook layout so it ONLY draws the client viewport
+    # This strips out the tab row entirely.
+    style.layout("Tabless.TNotebook", [
+        ("Tabless.TNotebook.client", {"sticky": "nswe"})
+    ])
+
     return style
 
 
