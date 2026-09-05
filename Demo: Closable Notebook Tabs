@@ -407,13 +407,10 @@ def create_application() -> None:
     paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
     paned_window.pack(fill="both", expand=True, padx=10, pady=10)
 
-    # 1. Instantiate the modular components
-    sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
-    
-    # 2. Build Notebook using CustomNotebook style layout
-    workspace_notebook = ttk.Notebook(master_paned_window, style="CustomNotebook")
-    workspace_notebook._active_tab = None
-    workspace_notebook._tab_images = tab_images  # Protect images from garbage collection
+    # Build Left & Right Panes
+    sidebar_frame, nav_tree = build_sidebar_panel(paned_window)
+    workspace_frame, tab_bar_state = build_workspace(paned_window)
+    tab_bar_state["nav_tree"] = nav_tree
 
     # 3. Add panels in left-to-right order
     master_paned_window.add(sidebar_frame, weight=0)
