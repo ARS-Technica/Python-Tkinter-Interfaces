@@ -45,6 +45,8 @@ TAB_REGISTRY = {
 def setup_workspace_styles() -> ttk.Style:
     """
     Registers custom close-state images and builds the CustomNotebook style layout.
+    This function is the master interface coordinator for all visual elements.
+    Native notebook tabs are hidden, and a custom scrollable tab bar is used instead.
     """
     style = ttk.Style()
     style.theme_use("clam")
