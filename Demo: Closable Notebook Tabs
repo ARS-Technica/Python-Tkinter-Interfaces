@@ -396,7 +396,7 @@ def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
 # Master Interface Coordinator ------------------------------------------------
 def create_application() -> None:
     """
-    Acts as the master coordinator for the dynamic workspace engine.
+    Sets up the window and initializes all workspace components.
     """
     root = tk.Tk()
     root.title(CONFIG["WINDOW_TITLE"])
@@ -415,11 +415,8 @@ def create_application() -> None:
     paned_window.add(sidebar_frame, weight=0)
     paned_window.add(workspace_frame, weight=1)
 
-    # 4. Attach event listeners
-    nav_tree.bind("<ButtonRelease-1>", lambda event: on_sidebar_select(event, workspace_notebook))
-    workspace_notebook.bind("<ButtonPress-1>", on_close_press, True)
-    workspace_notebook.bind("<ButtonRelease-1>", on_close_release)
-    workspace_notebook.bind("<<NotebookTabChanged>>", lambda event: on_notebook_tab_change(event, nav_tree))
+    # Bind Sidebar Click Event
+    nav_tree.bind("<ButtonRelease-1>", lambda e: on_sidebar_click(e, tab_bar_state))
 
     # Launch with initial default tab
     create_workspace_tab("dev_dash", tab_bar_state)
@@ -429,4 +426,3 @@ def create_application() -> None:
 
 if __name__ == "__main__":
     create_application()
-
