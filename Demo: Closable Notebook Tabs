@@ -1,27 +1,20 @@
 """
 Demo: Scrollable Notebook Tabs
-Created: July 17, 2026
+Created: August 26, 2026
 
-Description: Demonstrates a closable notebook tab behavior using a custom ttk 
-style layout. The user can click the 'x' to close the tab, and the underlying 
-frame is destroyed to free memory.
+Description: Solves tab overflow problem in the "Demo: Closable Notebook Tabs" 
+project by pairing a tabless ttk.Notebook with a canvas-backed scrollable tab 
+bar. Features mousewheel scrolling, left/right scroll buttons, active-tab 
+auto-scrolling, and sidebar bidirectional sync.
 
-Advanced application workspace layout. Integrates an expanding
-hierarchical sidebar Treeview on the left with a dynamic ttk.Notebook on the 
-right featuring native image-element close buttons on each tab.
-
-Features Native Closable Tabs & Treeview Sync
+Based on "Demo: Closable Notebook Tabs" project.
 """
-
-
-# Next Issue: When all of the tabs are open, the user can't see the "X" to close the tabs. 
-
 
 import tkinter as tk
 from tkinter import ttk
 
 
-# Centralized Interface Configuration -----------------------------------------
+# Centralized Configuration ---------------------------------------------------
 CONFIG = {
     "WINDOW_TITLE": "Demo: Dynamic Workspace Manager (Scrollable Tabs)",
     "WINDOW_GEOMETRY": "1000x560",
@@ -35,7 +28,7 @@ CONFIG = {
 }
 
 
-# Tab Content Registry Schema -------------------------------------------------
+# Tab Content Registry --------------------------------------------------------
 TAB_REGISTRY = {
     "dev_dash": {"title": "Analytics Dashboard", "header": "Development Analytics Overview"},
     "dev_shell": {"title": "Shell Terminal Console", "header": "Developer Sandbox Environment Shell"},
@@ -397,3 +390,4 @@ def create_application() -> None:
 
 if __name__ == "__main__":
     create_application()
+
