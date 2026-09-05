@@ -58,6 +58,11 @@ def setup_workspace_styles() -> ttk.Style:
         ("Tabless.TNotebook.client", {"sticky": "nswe"})
     ])
 
+    # 2. Empty out the Tab element layout explicitly
+    style.layout("Tabless.TNotebook.Tab", [])
+
+
+
     return style
 
 
