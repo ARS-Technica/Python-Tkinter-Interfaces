@@ -202,11 +202,12 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         select_workspace_tab(node_key, tab_bar_state)
         return
 
-    # 1. Create Notebook Page
-    page_frame = ttk.Frame(notebook)
+    # 1. Workspace Notebook Page (White canvas background)
+    page_frame = tk.Frame(notebook, bg=CONFIG["COLOR_WORKSPACE_BG"])
     page_frame.node_key = node_key
-    ttk.Label(page_frame, text=tab_meta["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
-    ttk.Label(page_frame, text=f"Active Context: [{tab_meta['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
+
+    ttk.Label(page_frame, text=tab_meta["header"], font=CONFIG["FONT_HEADER"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25, pady=25)
+    ttk.Label(page_frame, text=f"Active Context: [{tab_meta['title']}]", font=CONFIG["FONT_BODY"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25)
     notebook.add(page_frame)
 
     # 2. Create Tab Button Frame in Scrollable Strip
