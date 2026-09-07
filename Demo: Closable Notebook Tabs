@@ -281,13 +281,14 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
     Updates background colors to reflect the active tab.
     """
-    for node_key, item in tab_bar_state["tabs"].items():
-        is_active = (node_key == active_key)
-        bg = CONFIG["COLOR_TAB_ACTIVE"] if is_active else CONFIG["COLOR_TAB_BG"]
+    
+    # Update visuals & auto-scroll
+    update_tab_bar_visuals(tab_bar_state, node_key)
+    scroll_tab_into_view(tab_bar_state["canvas"], tab_info["tab_root"])
 
-        item["frame"].configure(bg=bg)
-        item["lbl_title"].configure(bg=bg)
-        item["btn_close"].configure(bg=bg)
+    # Sync Treeview selection
+    sync_sidebar_selection(nav_tree, node_key)
+
 
 
 # Widget Layout Functions -----------------------------------------------------
