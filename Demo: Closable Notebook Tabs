@@ -282,7 +282,10 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
     Updates tab borders, baseline connectors, and background colors to reflect the active tab.
     """
-    
+    for node_key, item in tab_bar_state["tabs"].items():
+        is_active = (node_key == active_key)
+
+        bg_fill = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_TAB_INACTIVE"]
 
     # For the active tab, the bottom border matches workspace background
     # (erasing the bottom baseline so it merges with the workspace).
