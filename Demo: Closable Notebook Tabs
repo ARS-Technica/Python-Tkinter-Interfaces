@@ -277,7 +277,7 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     # Sync Treeview selection
     sync_sidebar_selection(nav_tree, node_key)
 
-
+Color the tab body
 def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
     Updates tab borders, baseline connectors, and background colors to reflect the active tab.
@@ -287,12 +287,16 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
 
         bg_fill = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_TAB_INACTIVE"]
 
+        # Color the tab body
+        item["body"].configure(bg=bg_fill)
+        item["lbl_title"].configure(bg=bg_fill)
+        item["btn_close"].configure(bg=bg_fill)
+
     # For the active tab, the bottom border matches workspace background
     # (erasing the bottom baseline so it merges with the workspace).
     # For inactive tabs, the bottom border draws the baseline border.
     bottom_line_color = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_BORDER"]
     item["bottom_gap"].configure(bg=bottom_line_color)
-
 
 
 # Widget Layout Functions -----------------------------------------------------
