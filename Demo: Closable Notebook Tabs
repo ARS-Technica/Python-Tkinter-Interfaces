@@ -10,6 +10,16 @@ auto-scrolling, and sidebar bidirectional sync.
 Based on "Demo: Closable Notebook Tabs" project.
 """
 
+"""
+Next Issue: 
+    Unresolved KeyError in update_tab_bar_visuals Function:
+--> 293 item["body"].configure(bg=bg_fill)
+    294 item["lbl_title"].configure(bg=bg_fill)
+    295 item["btn_close"].configure(bg=bg_fill)
+
+KeyError: 'body'
+"""
+
 import tkinter as tk
 from tkinter import ttk
 
