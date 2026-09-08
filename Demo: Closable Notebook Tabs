@@ -72,6 +72,19 @@ def setup_workspace_styles() -> ttk.Style:
     )
 
     style.configure(
+        "ScrollingTab.TLabel",
+        background=CONFIG["COLOR_TAB_INACTIVE"],
+        foreground="#000000",
+        padding=(8, 4),
+    )
+
+    style.configure(
+        "ScrollingTabClose.TButton",
+        padding=(2, 2),
+        relief="flat",
+    )
+
+    style.configure(
         "Tabless.TNotebook", 
         tabmargins=0, 
         borderwidth=0, 
