@@ -311,8 +311,8 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
         # For the active tab, the bottom border matches workspace background
         # (erasing the bottom baseline so it merges with the workspace).
         # For inactive tabs, the bottom border draws the baseline border.
-        bottom_line_color = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_BORDER"]
-        item["bottom_gap"].configure(bg=bottom_line_color)
+        # bottom_line_color = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_BORDER"]
+        # item["bottom_gap"].configure(bg=bottom_line_color)
 
 
 # Widget Layout Functions -----------------------------------------------------
