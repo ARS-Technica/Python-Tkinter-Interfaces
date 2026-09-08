@@ -302,6 +302,9 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
 
         # Color the tab body
         item["body"].configure(bg=bg_fill)
+
+        # Color the tab frame
+        item["frame"].configure(bg=bg_fill)
         item["lbl_title"].configure(bg=bg_fill)
         item["btn_close"].configure(bg=bg_fill)
 
