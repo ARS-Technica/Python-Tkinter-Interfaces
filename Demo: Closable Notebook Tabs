@@ -285,6 +285,7 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     # Update visuals & auto-scroll
     update_tab_bar_visuals(tab_bar_state, node_key)
     scroll_tab_into_view(tab_bar_state["canvas"], tab_info["tab_root"])
+    scroll_tab_into_view(tab_bar_state["canvas"], tab_info["frame"])
 
     # Sync Treeview selection
     sync_sidebar_selection(nav_tree, node_key)
