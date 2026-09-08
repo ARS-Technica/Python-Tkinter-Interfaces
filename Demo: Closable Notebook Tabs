@@ -214,7 +214,16 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 
     # 2. Create Tab Button Frame in Scrollable Strip
     tab_item = tk.Frame(scroll_content, bg=CONFIG["COLOR_TAB_BG"], bd=1, relief="solid")
-    tab_item.pack(side="left", padx=2, pady=3)
+    # tab_item.pack(side="left", padx=2, pady=3)
+    # pady=3 leaves space below each tab
+    scroll_content.pack_propagate(False)
+
+    canvas_window = canvas.create_window(
+        (0, 0),
+        window=scroll_content,
+        anchor="nw",
+        height=36
+    )
 
     lbl_title = tk.Label(
         tab_item, text=tab_meta["title"], font=CONFIG["FONT_TAB"],
