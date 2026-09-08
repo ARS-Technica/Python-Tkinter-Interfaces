@@ -65,6 +65,13 @@ def setup_workspace_styles() -> ttk.Style:
 
     # 3. Collapse tab dimensions and padding to 0
     style.configure(
+        "ScrollingTab.TFrame",
+        background=CONFIG["COLOR_TAB_INACTIVE"],
+        borderwidth=1,
+        relief="raised",
+    )
+
+    style.configure(
         "Tabless.TNotebook", 
         tabmargins=0, 
         borderwidth=0, 
@@ -214,8 +221,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 
     # 2. Create Tab Button Frame in Scrollable Strip
     tab_item = tk.Frame(scroll_content, bg=CONFIG["COLOR_TAB_BG"], bd=1, relief="solid")
-    # tab_item.pack(side="left", padx=2, pady=3)
-    # pady=3 leaves space below each tab
+    tab_item.pack(side="left", padx=(2, 2), pady=(5, 0), anchor="s")
     scroll_content.pack_propagate(False)
 
     canvas_window = canvas.create_window(
@@ -283,7 +289,6 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 
     # Update visuals & auto-scroll
     update_tab_bar_visuals(tab_bar_state, node_key)
-    scroll_tab_into_view(tab_bar_state["canvas"], tab_info["tab_root"])
     scroll_tab_into_view(tab_bar_state["canvas"], tab_info["frame"])
 
     # Sync Treeview selection
@@ -299,19 +304,10 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
 
         bg_fill = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_TAB_INACTIVE"]
 
-        # Color the tab body
-        item["body"].configure(bg=bg_fill)
-
         # Color the tab frame
         item["frame"].configure(bg=bg_fill)
         item["lbl_title"].configure(bg=bg_fill)
         item["btn_close"].configure(bg=bg_fill)
-
-        # For the active tab, the bottom border matches workspace background
-        # (erasing the bottom baseline so it merges with the workspace).
-        # For inactive tabs, the bottom border draws the baseline border.
-        # bottom_line_color = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_BORDER"]
-        # item["bottom_gap"].configure(bg=bottom_line_color)
 
 
 # Widget Layout Functions -----------------------------------------------------
