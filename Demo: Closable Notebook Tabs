@@ -239,8 +239,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         borderwidth=1,
         relief="raised",
     )
-    tab_item.pack(side="left", padx=(2, 2), pady=(5, 0), anchor="s")
-    scroll_content.pack_propagate(False)
+    tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="n")
 
     lbl_title = tk.Label(
         tab_item,
