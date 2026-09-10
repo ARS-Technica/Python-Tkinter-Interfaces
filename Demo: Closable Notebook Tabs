@@ -242,11 +242,14 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     tab_item.pack(side="left", padx=(2, 2), pady=(5, 0), anchor="s")
     scroll_content.pack_propagate(False)
 
-    lbl_title = ttk.Label(
+    lbl_title = tk.Label(
         tab_item,
         text=tab_meta["title"],
         font=CONFIG["FONT_TAB"],
-        style="ScrollingTab.TLabel",
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        fg="#000000",
+        padx=8,
+        pady=4,
         cursor="hand2",
     )
     lbl_title.pack(side="left")
