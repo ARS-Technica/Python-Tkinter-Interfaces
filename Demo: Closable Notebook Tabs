@@ -254,10 +254,15 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     )
     lbl_title.pack(side="left")
 
-    btn_close = ttk.Button(
+    btn_close = tk.Button(
         tab_item,
         text="×",
-        style="ScrollingTabClose.TButton",
+        font=CONFIG["FONT_CLOSE"],
+        relief="flat",
+        borderwidth=0,
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        fg="#555555",
+        activebackground=CONFIG["COLOR_TAB_INACTIVE"],
         cursor="hand2",
         command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
     )
