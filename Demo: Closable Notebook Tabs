@@ -282,13 +282,12 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         borderwidth=0,
         highlightthickness=0,
     )
-    corner_canvas.pack(side="right", anchor="n")
+    corner_canvas.place(relx=1.0, rely=0.0, anchor="ne")
     corner_canvas.create_polygon(
+        0, 0,
         0, 9,
         9, 9,
-        9, 0,
-        fill=CONFIG["COLOR_TAB_INACTIVE"],
-        outline=CONFIG["COLOR_BORDER"],
+        fill=CONFIG["COLOR_TAB_INACTIVE"], 
         width=1,
     )
 
@@ -299,10 +298,11 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     # Event bindings
     tab_item.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
     lbl_title.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+    corner_canvas.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
     btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
 
     # Mousewheel forwarding
-    for widget in (tab_item, lbl_title, btn_close):
+    for widget in (tab_item, lbl_title, btn_close, corner_canvas):
         widget.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
         widget.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
         widget.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
