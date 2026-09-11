@@ -88,14 +88,18 @@ def setup_workspace_styles() -> ttk.Style:
         "Tabless.TNotebook", 
         tabmargins=0, 
         borderwidth=0, 
-        highlightthickness=0
+        highlightthickness=0,
+        relief="flat",
+        padding=0,
     )
     style.configure(
         "Tabless.TNotebook",
         tabmargins=0,
         borderwidth=0,
         highlightthickness=0,
-        background=CONFIG["COLOR_WORKSPACE_BG"]
+        background=CONFIG["COLOR_WORKSPACE_BG"],
+        relief="flat",
+        padding=0,
     )
 
     return style
@@ -377,7 +381,13 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     workspace_container = ttk.Frame(parent)
     
     # 1. Top Scrollable Tab Header Bar
-    tab_strip_frame = tk.Frame(workspace_container, height=32, bg="#D9D9D9")
+    tab_strip_frame = tk.Frame(
+        workspace_container,
+        height=32,
+        bg=CONFIG["COLOR_WORKSPACE_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
     tab_strip_frame.pack(side="top", fill="x")
     tab_strip_frame.pack_propagate(False)
 
@@ -393,10 +403,21 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     )
     btn_right.pack(side="right", fill="y")
 
-    canvas = tk.Canvas(tab_strip_frame, height=32, bg="#D9D9D9", highlightthickness=0)
+    canvas = tk.Canvas(
+        tab_strip_frame,
+        height=32,
+        bg=CONFIG["COLOR_WORKSPACE_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
     canvas.pack(side="left", fill="both", expand=True)
 
-    scroll_content = tk.Frame(canvas, bg="#D9D9D9")
+    scroll_content = tk.Frame(
+        canvas,
+        bg=CONFIG["COLOR_WORKSPACE_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
     canvas_window = canvas.create_window(
         (0, 0),
         window=scroll_content,
