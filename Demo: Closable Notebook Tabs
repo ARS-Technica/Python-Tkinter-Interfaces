@@ -243,7 +243,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         borderwidth=0,
         relief="flat",
     )
-    tab_item.pack(side="left", padx=(2, 2), pady=0, fill="none", anchor="s")
+    tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
 
     lbl_title = tk.Label(
         tab_item,
@@ -273,6 +273,25 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     )
     btn_close.pack(side="right", padx=(0, 2))
 
+    # Overlay a small cut corner to give the tab a native-style dog-ear.
+    corner_canvas = tk.Canvas(
+        tab_item,
+        width=9,
+        height=9,
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    corner_canvas.pack(side="right", anchor="n")
+    corner_canvas.create_polygon(
+        0, 9,
+        9, 9,
+        9, 0,
+        fill=CONFIG["COLOR_TAB_INACTIVE"],
+        outline=CONFIG["COLOR_BORDER"],
+        width=1,
+    )
+
     # Hover feedback on close button
     btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
     btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#555555"))
@@ -293,7 +312,8 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         "page": page_frame,
         "frame": tab_item,
         "lbl_title": lbl_title,
-        "btn_close": btn_close
+        "btn_close": btn_close,
+        "corner": corner_canvas,
     }
 
     # Update scroll region and activate
@@ -338,6 +358,7 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
         item["frame"].configure(bg=bg_fill)
         item["lbl_title"].configure(bg=bg_fill)
         item["btn_close"].configure(bg=bg_fill)
+        item["corner"].itemconfigure(1, fill=bg_fill)
 
 
 # Widget Layout Functions -----------------------------------------------------
