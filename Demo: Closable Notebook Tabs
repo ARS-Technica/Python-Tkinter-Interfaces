@@ -240,8 +240,8 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     tab_item = tk.Frame(
         scroll_content,
         bg=CONFIG["COLOR_TAB_INACTIVE"],
-        borderwidth=0,
-        relief="flat",
+        borderwidth=1,
+        relief="raised",
     )
     tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
 
@@ -278,7 +278,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         tab_item,
         width=9,
         height=9,
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        bg=CONFIG["COLOR_STRIP_BG"],
         borderwidth=0,
         highlightthickness=0,
     )
