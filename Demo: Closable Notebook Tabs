@@ -405,7 +405,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     tab_strip_frame = tk.Frame(
         workspace_container,
         height=32,
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        bg=CONFIG["COLOR_STRIP_BG"],
         borderwidth=0,
         highlightthickness=0,
     )
@@ -427,7 +427,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     canvas = tk.Canvas(
         tab_strip_frame,
         height=32,
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        bg=CONFIG["COLOR_STRIP_BG"],
         borderwidth=0,
         highlightthickness=0,
     )
@@ -435,7 +435,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
 
     scroll_content = tk.Frame(
         canvas,
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        bg=CONFIG["COLOR_STRIP_BG"],
         borderwidth=0,
         highlightthickness=0,
     )
