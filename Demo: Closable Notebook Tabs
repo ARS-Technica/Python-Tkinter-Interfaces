@@ -10,7 +10,6 @@ auto-scrolling, and sidebar bidirectional sync.
 Based on "Demo: Closable Notebook Tabs" project.
 """
 
-
 import tkinter as tk
 from tkinter import ttk
 
@@ -244,7 +243,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         borderwidth=0,
         relief="flat",
     )
-    tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="n")
+    tab_item.pack(side="left", padx=(2, 2), pady=0, fill="none", anchor="n")
 
     lbl_title = tk.Label(
         tab_item,
@@ -385,7 +384,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     tab_strip_frame = tk.Frame(
         workspace_container,
         height=32,
-        bg=CONFIG["COLOR_WORKSPACE_BG"],
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
         borderwidth=0,
         highlightthickness=0,
     )
@@ -407,7 +406,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     canvas = tk.Canvas(
         tab_strip_frame,
         height=32,
-        bg=CONFIG["COLOR_WORKSPACE_BG"],
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
         borderwidth=0,
         highlightthickness=0,
     )
@@ -415,7 +414,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
 
     scroll_content = tk.Frame(
         canvas,
-        bg=CONFIG["COLOR_WORKSPACE_BG"],
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
         borderwidth=0,
         highlightthickness=0,
     )
@@ -428,8 +427,8 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
 
     # Keep canvas window height matched
     scroll_content.bind(
-        "<Configure>", 
-        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        "<Configure>",
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all")),
     )
 
     # Mousewheel scrolling over the canvas strip
