@@ -240,8 +240,8 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     tab_item = tk.Frame(
         scroll_content,
         bg=CONFIG["COLOR_TAB_INACTIVE"],
-        borderwidth=1,
-        relief="raised",
+        borderwidth=0,
+        relief="flat",
     )
     tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
 
@@ -272,6 +272,17 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
     )
     btn_close.pack(side="right", padx=(0, 2))
+
+    # Draw a three-sided bevel without adding a bottom border.
+    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
+        x=0, y=0, relwidth=1.0, anchor="nw"
+    )
+    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(
+        x=0, y=0, relheight=1.0, anchor="nw"
+    )
+    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(
+        relx=1.0, x=-1, y=0, relheight=1.0, anchor="ne"
+    )
 
     # Overlay a small cut corner to give the tab a native-style dog-ear.
     corner_canvas = tk.Canvas(
