@@ -10,6 +10,7 @@ auto-scrolling, and sidebar bidirectional sync.
 Based on "Demo: Closable Notebook Tabs" project.
 """
 
+
 import tkinter as tk
 from tkinter import ttk
 
