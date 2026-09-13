@@ -21,7 +21,7 @@ CONFIG = {
     "FONT_HEADER": ("Segoe UI", 11, "bold"),
     "FONT_BODY": ("Segoe UI", 10),
     "FONT_TAB": ("Segoe UI", 9),
-    "FONT_CLOSE": ("Segoe UI", 10, "bold"),
+    "FONT_CLOSE": ("Segoe UI", 14, "bold"),
     "ROW_HEIGHT": 28,
     "COLOR_TAB_BG": "#E1E1E1",
     "COLOR_TAB_ACTIVE": "#FFFFFF",
@@ -273,7 +273,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         borderwidth=0,
         relief="flat",
     )
-    tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
+    # tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
 
     lbl_title = tk.Label(
         tab_item,
@@ -302,7 +302,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         cursor="hand2",
         command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
     )
-    btn_close.pack(side="right", padx=(0, 2))
+    btn_close.pack(side="left", padx=(0, 6))
 
     # Draw a three-sided bevel without adding a bottom border.
     tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
@@ -329,7 +329,13 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         0, 0,
         0, 9,
         9, 9,
-        fill=CONFIG["COLOR_TAB_INACTIVE"], 
+        fill=CONFIG["COLOR_TAB_INACTIVE"],
+        width=1,
+    )
+    corner_top_line = corner_canvas.create_line(
+        0, 0,
+        9, 0,
+        fill="#FFFFFF",
         width=1,
     )
 
