@@ -402,7 +402,6 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
     active_frame = None
     tab_items = list(tab_bar_state["tabs"].items())
-
     for index, (node_key, item) in enumerate(tab_items):
         is_active = (node_key == active_key)
 
@@ -412,7 +411,28 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
         item["frame"].configure(bg=bg_fill)
         item["lbl_title"].configure(bg=bg_fill)
         item["btn_close"].configure(bg=bg_fill)
+        beneath_fill = CONFIG["COLOR_STRIP_BG"]
+
+        if index + 1 < len(tab_items):
+            beneath_fill = (
+                CONFIG["COLOR_WORKSPACE_BG"]
+                if tab_items[index + 1][0] == active_key
+                else CONFIG["COLOR_TAB_INACTIVE"]
+            )
+
+        item["corner"].configure(bg=beneath_fill)
         item["corner"].itemconfigure(1, fill=bg_fill)
+        hide_corner_line = index == len(tab_items) - 1
+        item["corner"].itemconfigure(
+            item["corner_top_line"],
+            state="hidden" if hide_corner_line else "normal",
+        )
+
+        if is_active:
+            active_frame = item["frame"]
+
+    if active_frame is not None:
+        active_frame.lift()
 
 
 # Widget Layout Functions -----------------------------------------------------
