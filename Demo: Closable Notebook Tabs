@@ -181,6 +181,7 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
     elif (tab_x + tab_w) > current_right:
         canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
 
+
 def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     """
     Positions tabs so each later tab overlaps the previous tab.
@@ -192,12 +193,19 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     scroll_content.update_idletasks()
 
+    left_edge = 2
+    right_edge = left_edge
     for tab_info in tabs.values():
         tab_item = tab_info["frame"]
         tab_width = tab_item.winfo_reqwidth()
         tab_item.place(x=left_edge, rely=1.0, anchor="sw")
         right_edge = left_edge + tab_width
         left_edge += max(1, tab_width - CONFIG["TAB_OVERLAP"])
+
+    content_width = max(right_edge + 2, canvas.winfo_width())
+    canvas.itemconfigure(canvas_window, width=content_width, height=32)
+    scroll_content.configure(width=content_width, height=32)
+    canvas.configure(scrollregion=canvas.bbox("all"))
 
 
 # Tab Functions ---------------------------------------------------------------
