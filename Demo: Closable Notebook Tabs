@@ -281,10 +281,11 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         font=CONFIG["FONT_TAB"],
         bg=CONFIG["COLOR_TAB_INACTIVE"],
         fg="#000000",
-        padx=8,
+        padx=2,
         pady=4,
         cursor="hand2",
     )
+    tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
     lbl_title.pack(side="left")
 
     btn_close = tk.Button(
