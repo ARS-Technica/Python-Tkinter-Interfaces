@@ -365,11 +365,11 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         "lbl_title": lbl_title,
         "btn_close": btn_close,
         "corner": corner_canvas,
+        "corner_top_line": corner_top_line,
     }
 
-    # Update scroll region and activate
-    tab_bar_state["canvas"].update_idletasks()
-    tab_bar_state["canvas"].configure(scrollregion=tab_bar_state["canvas"].bbox("all"))
+    # Lay out the overlapping stack and activate the new tab
+    layout_overlapping_tabs(tab_bar_state)
     select_workspace_tab(node_key, tab_bar_state)
 
 
