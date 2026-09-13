@@ -227,10 +227,6 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     tab_info["page"].destroy()
 
     # Update canvas scroll boundaries
-    tab_bar_state["canvas"].update_idletasks()
-    tab_bar_state["canvas"].configure(scrollregion=tab_bar_state["canvas"].bbox("all"))
-
-    # Update canvas scroll boundaries
     layout_overlapping_tabs(tab_bar_state)
 
     # Switch focus to the latest tab if any remain
@@ -285,7 +281,6 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         pady=4,
         cursor="hand2",
     )
-    tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
     lbl_title.pack(side="left")
 
     btn_close = tk.Button(
@@ -302,7 +297,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         cursor="hand2",
         command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
     )
-    btn_close.pack(side="left", padx=(0, 6))
+    btn_close.pack(side="left", padx=(0, 6),)
 
     # Draw a three-sided bevel without adding a bottom border.
     tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
@@ -402,6 +397,7 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
     active_frame = None
     tab_items = list(tab_bar_state["tabs"].items())
+    
     for index, (node_key, item) in enumerate(tab_items):
         is_active = (node_key == active_key)
 
@@ -412,14 +408,12 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
         item["lbl_title"].configure(bg=bg_fill)
         item["btn_close"].configure(bg=bg_fill)
         beneath_fill = CONFIG["COLOR_STRIP_BG"]
-
         if index + 1 < len(tab_items):
             beneath_fill = (
                 CONFIG["COLOR_WORKSPACE_BG"]
                 if tab_items[index + 1][0] == active_key
                 else CONFIG["COLOR_TAB_INACTIVE"]
             )
-
         item["corner"].configure(bg=beneath_fill)
         item["corner"].itemconfigure(1, fill=bg_fill)
         hide_corner_line = index == len(tab_items) - 1
