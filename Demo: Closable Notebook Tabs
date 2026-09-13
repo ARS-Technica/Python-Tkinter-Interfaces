@@ -345,8 +345,11 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 
     # Event bindings
     tab_item.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+    tab_item.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
     lbl_title.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+    lbl_title.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
     corner_canvas.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+    corner_canvas.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
     btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
 
     # Mousewheel forwarding
