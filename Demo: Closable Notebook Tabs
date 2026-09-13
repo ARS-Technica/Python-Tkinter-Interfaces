@@ -192,6 +192,13 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     scroll_content.update_idletasks()
 
+    for tab_info in tabs.values():
+        tab_item = tab_info["frame"]
+        tab_width = tab_item.winfo_reqwidth()
+        tab_item.place(x=left_edge, rely=1.0, anchor="sw")
+        right_edge = left_edge + tab_width
+        left_edge += max(1, tab_width - CONFIG["TAB_OVERLAP"])
+
 
 # Tab Functions ---------------------------------------------------------------
 def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
@@ -214,6 +221,9 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     # Update canvas scroll boundaries
     tab_bar_state["canvas"].update_idletasks()
     tab_bar_state["canvas"].configure(scrollregion=tab_bar_state["canvas"].bbox("all"))
+
+    # Update canvas scroll boundaries
+    layout_overlapping_tabs(tab_bar_state)
 
     # Switch focus to the latest tab if any remain
     if tabs_dict:
