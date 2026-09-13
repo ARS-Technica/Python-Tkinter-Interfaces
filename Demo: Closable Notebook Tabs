@@ -21,7 +21,7 @@ CONFIG = {
     "FONT_HEADER": ("Segoe UI", 11, "bold"),
     "FONT_BODY": ("Segoe UI", 10),
     "FONT_TAB": ("Segoe UI", 9),
-    "FONT_CLOSE": ("Segoe UI", 8, "bold"),
+    "FONT_CLOSE": ("Segoe UI", 10, "bold"),
     "ROW_HEIGHT": 28,
     "COLOR_TAB_BG": "#E1E1E1",
     "COLOR_TAB_ACTIVE": "#FFFFFF",
@@ -29,6 +29,7 @@ CONFIG = {
     "COLOR_BORDER": "#BCBCBC",
     "COLOR_TAB_INACTIVE": "#E4E4E4",
     "COLOR_WORKSPACE_BG": "#FFFFFF",
+    "TAB_OVERLAP": 16,
 }
 
 
@@ -179,6 +180,17 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
         canvas.xview_moveto(max(0.0, tab_x / total_w))
     elif (tab_x + tab_w) > current_right:
         canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
+
+def layout_overlapping_tabs(tab_bar_state: dict) -> None:
+    """
+    Positions tabs so each later tab overlaps the previous tab.
+    """
+    canvas = tab_bar_state["canvas"]
+    scroll_content = tab_bar_state["scroll_content"]
+    canvas_window = tab_bar_state["canvas_window"]
+    tabs = tab_bar_state["tabs"]
+
+    scroll_content.update_idletasks()
 
 
 # Tab Functions ---------------------------------------------------------------
