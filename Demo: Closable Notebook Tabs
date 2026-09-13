@@ -400,7 +400,10 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
     Updates tab borders, baseline connectors, and background colors.
     """
-    for node_key, item in tab_bar_state["tabs"].items():
+    active_frame = None
+    tab_items = list(tab_bar_state["tabs"].items())
+
+    for index, (node_key, item) in enumerate(tab_items):
         is_active = (node_key == active_key)
 
         bg_fill = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_TAB_INACTIVE"]
