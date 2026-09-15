@@ -25,7 +25,7 @@ CONFIG = {
     "ROW_HEIGHT": 28,
     "COLOR_TAB_BG": "#E1E1E1",
     "COLOR_TAB_ACTIVE": "#FFFFFF",
-    "COLOR_STRIP_BG": "#EFEFEF",
+    "COLOR_STRIP_BG": "#E1E1E1", #Over the scrolling tab bar
     "COLOR_BORDER": "#BCBCBC",
     "COLOR_TAB_INACTIVE": "#E4E4E4",
     "COLOR_WORKSPACE_BG": "#FFFFFF",
