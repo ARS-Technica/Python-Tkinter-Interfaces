@@ -25,7 +25,7 @@ CONFIG = {
     "ROW_HEIGHT": 28,
     "COLOR_TAB_BG": "#E1E1E1",
     "COLOR_TAB_ACTIVE": "#FFFFFF",
-    "COLOR_STRIP_BG": "#E1E1E1", #Over the scrolling tab bar
+    "COLOR_STRIP_BG": "#F0F0F0", #Over the scrolling tab bar
     "COLOR_BORDER": "#BCBCBC",
     "COLOR_TAB_INACTIVE": "#E4E4E4",
     "COLOR_WORKSPACE_BG": "#FFFFFF",
@@ -260,7 +260,11 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         return
 
     # 1. Workspace Notebook Page (White canvas background)
-    page_frame = tk.Frame(notebook, bg=CONFIG["COLOR_WORKSPACE_BG"])
+    page_frame = tk.Frame(notebook, 
+    bg=CONFIG["COLOR_WORKSPACE_BG"],
+    highlightbackground="#000000",
+    highlightthickness=1,
+    highlightcolor="#000000",)
     page_frame.node_key = node_key
 
     ttk.Label(page_frame, text=tab_meta["header"], font=CONFIG["FONT_HEADER"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25, pady=25)
@@ -444,7 +448,7 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
 
     # ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=(10, 5))
 
-    ttk.Label(sidebar_frame, text="", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=8) # pady 8 leaves sidebar flush with top of tab bar
+    ttk.Label(sidebar_frame, text="System Nodes", font=CONFIG["FONT_HEADER"]).pack(anchor="center", padx=10, pady=8) # pady 8 leaves sidebar flush with top of tab bar
 
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
     nav_tree.pack(fill="both", expand=True, padx=5, pady=0)
