@@ -30,6 +30,8 @@ CONFIG = {
     "COLOR_TAB_INACTIVE": "#E4E4E4",
     "COLOR_WORKSPACE_BG": "#FFFFFF",
     "TAB_OVERLAP": 24,
+    "TAB_BAR_HEIGHT": 40,
+    "SIDEBAR_TREE_INSET": 2,
 }
 
 
@@ -106,6 +108,16 @@ def setup_workspace_styles() -> ttk.Style:
         background=CONFIG["COLOR_WORKSPACE_BG"],
         relief="flat",
         padding=0,
+    )
+    style.configure(
+        "Treeview",
+        rowheight=CONFIG["ROW_HEIGHT"],
+        font=CONFIG["FONT_BODY"],
+        bordercolor="#000000",
+        lightcolor="#000000",
+        darkcolor="#000000",
+        borderwidth=1,
+        relief="solid",
     )
 
     return style
@@ -261,10 +273,11 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 
     # 1. Workspace Notebook Page (White canvas background)
     page_frame = tk.Frame(notebook, 
-    bg=CONFIG["COLOR_WORKSPACE_BG"],
-    highlightbackground="#000000",
-    highlightthickness=1,
-    highlightcolor="#000000",)
+        bg=CONFIG["COLOR_WORKSPACE_BG"],
+        highlightbackground="#000000",
+        highlightthickness=1,
+        highlightcolor="#000000",
+    )
     page_frame.node_key = node_key
 
     ttk.Label(page_frame, text=tab_meta["header"], font=CONFIG["FONT_HEADER"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25, pady=25)
@@ -446,12 +459,24 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     sidebar_frame = ttk.Frame(parent, height=10, width=250, relief="flat")
     sidebar_frame.pack_propagate(False)
 
-    # ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=(10, 5))
-
-    ttk.Label(sidebar_frame, text="System Nodes", font=CONFIG["FONT_HEADER"]).pack(anchor="center", padx=10, pady=8) # pady 8 leaves sidebar flush with top of tab bar
+    sidebar_header = tk.Frame(
+        sidebar_frame,
+        height=CONFIG["TAB_BAR_HEIGHT"],
+        bg=CONFIG["COLOR_STRIP_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    sidebar_header.pack(side="top", fill="x")
+    sidebar_header.pack_propagate(False)
 
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
-    nav_tree.pack(fill="both", expand=True, padx=5, pady=0)
+    nav_tree.pack(
+        side="top",
+        fill="both",
+        expand=True,
+        padx=5,
+        pady=(CONFIG["SIDEBAR_TREE_INSET"], CONFIG["SIDEBAR_TREE_INSET"]),
+    )
 
     # Tier 1 Root Folders
     cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
@@ -483,7 +508,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     # 1. Top Scrollable Tab Header Bar
     tab_strip_frame = tk.Frame(
         workspace_container,
-        height=40,
+        height=CONFIG["TAB_BAR_HEIGHT"],
         bg=CONFIG["COLOR_STRIP_BG"],
         borderwidth=0,
         highlightthickness=0,
@@ -505,7 +530,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
 
     canvas = tk.Canvas(
         tab_strip_frame,
-        height=45,
+        height=CONFIG["TAB_BAR_HEIGHT"],
         bg=CONFIG["COLOR_STRIP_BG"],
         borderwidth=0,
         highlightthickness=0,
@@ -519,10 +544,10 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         highlightthickness=0,
     )
     canvas_window = canvas.create_window(
-        (0, 40),
+        (0, CONFIG["TAB_BAR_HEIGHT"]),
         window=scroll_content,
         anchor="sw",
-        height=40,
+        height=CONFIG["TAB_BAR_HEIGHT"],
     )
 
     # Keep canvas window height matched
