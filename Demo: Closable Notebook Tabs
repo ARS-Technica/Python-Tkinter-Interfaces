@@ -52,7 +52,7 @@ def setup_workspace_styles() -> ttk.Style:
     Configures the theme and completely suppresses native notebook tabs.
     """
     style = ttk.Style()
-    style.theme_use("clam")
+    # style.theme_use("clam")
     style.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
 
     # 1. Redefine the notebook layout so it ONLY draws the client viewport
@@ -83,6 +83,11 @@ def setup_workspace_styles() -> ttk.Style:
         "ScrollingTabClose.TButton",
         padding=(2, 2),
         relief="flat",
+    )
+
+    style.configure(
+        "Sidebar.TFrame",
+        background=CONFIG["COLOR_STRIP_BG"],
     )
 
     style.configure(
