@@ -210,7 +210,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     scroll_content.update_idletasks()
 
-    left_edge = 2
+    left_edge = 0
     right_edge = left_edge
     for tab_info in tabs.values():
         tab_item = tab_info["frame"]
@@ -219,7 +219,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
         right_edge = left_edge + tab_width
         left_edge += max(1, tab_width - CONFIG["TAB_OVERLAP"])
 
-    content_width = max(right_edge + 2, canvas.winfo_width())
+    content_width = max(right_edge, canvas.winfo_width())
     canvas.itemconfigure(canvas_window, width=content_width, height=40)
     scroll_content.configure(width=content_width, height=40)
     canvas.configure(scrollregion=canvas.bbox("all"))
