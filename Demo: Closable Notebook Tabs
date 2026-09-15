@@ -21,7 +21,7 @@ CONFIG = {
     "FONT_HEADER": ("Segoe UI", 11, "bold"),
     "FONT_BODY": ("Segoe UI", 10),
     "FONT_TAB": ("Segoe UI", 9),
-    "FONT_CLOSE": ("Segoe UI", 14, "bold"),
+    "FONT_CLOSE": ("Segoe UI", 10, "bold"),
     "ROW_HEIGHT": 28,
     "COLOR_TAB_BG": "#E1E1E1",
     "COLOR_TAB_ACTIVE": "#FFFFFF",
@@ -29,7 +29,7 @@ CONFIG = {
     "COLOR_BORDER": "#BCBCBC",
     "COLOR_TAB_INACTIVE": "#E4E4E4",
     "COLOR_WORKSPACE_BG": "#FFFFFF",
-    "TAB_OVERLAP": 16,
+    "TAB_OVERLAP": 24,
 }
 
 
@@ -203,8 +203,8 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
         left_edge += max(1, tab_width - CONFIG["TAB_OVERLAP"])
 
     content_width = max(right_edge + 2, canvas.winfo_width())
-    canvas.itemconfigure(canvas_window, width=content_width, height=32)
-    scroll_content.configure(width=content_width, height=32)
+    canvas.itemconfigure(canvas_window, width=content_width, height=40)
+    scroll_content.configure(width=content_width, height=40)
     canvas.configure(scrollregion=canvas.bbox("all"))
 
 
@@ -277,7 +277,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         font=CONFIG["FONT_TAB"],
         bg=CONFIG["COLOR_TAB_INACTIVE"],
         fg="#000000",
-        padx=2,
+        padx=5,
         pady=4,
         cursor="hand2",
     )
@@ -397,7 +397,7 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
     active_frame = None
     tab_items = list(tab_bar_state["tabs"].items())
-    
+
     for index, (node_key, item) in enumerate(tab_items):
         is_active = (node_key == active_key)
 
@@ -434,13 +434,13 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     """
     Builds the left-side hierarchical navigation Treeview.
     """
-    sidebar_frame = ttk.Frame(parent, width=250, relief="flat")
+    sidebar_frame = ttk.Frame(parent, height=45, width=250, relief="flat")
     sidebar_frame.pack_propagate(False)
 
     ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=(10, 5))
 
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
-    nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
+    nav_tree.pack(fill="both", expand=True, padx=5, pady=0)
 
     # Tier 1 Root Folders
     cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
@@ -472,7 +472,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     # 1. Top Scrollable Tab Header Bar
     tab_strip_frame = tk.Frame(
         workspace_container,
-        height=32,
+        height=40,
         bg=CONFIG["COLOR_STRIP_BG"],
         borderwidth=0,
         highlightthickness=0,
@@ -484,17 +484,17 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         tab_strip_frame, text="◀", relief="flat", bg="#CCCCCC", width=2, height=1,
         command=lambda: scroll_tab_bar(canvas, -1)
     )
-    btn_left.pack(side="left")
+    btn_left.pack(side="left", anchor="s")
 
     btn_right = tk.Button(
         tab_strip_frame, text="▶", relief="flat", bg="#CCCCCC", width=2, height=1,
         command=lambda: scroll_tab_bar(canvas, 1)
     )
-    btn_right.pack(side="right")
+    btn_right.pack(side="right", anchor="s")
 
     canvas = tk.Canvas(
         tab_strip_frame,
-        height=32,
+        height=45,
         bg=CONFIG["COLOR_STRIP_BG"],
         borderwidth=0,
         highlightthickness=0,
@@ -508,10 +508,10 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         highlightthickness=0,
     )
     canvas_window = canvas.create_window(
-        (0, 32),
+        (0, 40),
         window=scroll_content,
         anchor="sw",
-        height=32,
+        height=40,
     )
 
     # Keep canvas window height matched
