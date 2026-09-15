@@ -526,16 +526,28 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     tab_strip_frame.pack_propagate(False)
 
     btn_left = tk.Button(
-        tab_strip_frame, text="◀", relief="flat", bg="#CCCCCC", width=2, height=1,
+        tab_strip_frame, text="◀", relief="flat", bg="#CCCCCC", width=3, height=1,
         command=lambda: scroll_tab_bar(canvas, -1)
     )
-    btn_left.pack(side="left", anchor="s")
+    btn_left.pack(
+        side="left",
+        anchor="s",
+        padx=(1, 0),
+        pady=(0, 0),
+        ipady=0,
+    )
 
     btn_right = tk.Button(
-        tab_strip_frame, text="▶", relief="flat", bg="#CCCCCC", width=2, height=1,
+        tab_strip_frame, text="▶", relief="flat", bg="#CCCCCC", width=3, height=1,
         command=lambda: scroll_tab_bar(canvas, 1)
     )
-    btn_right.pack(side="right", anchor="s")
+    btn_right.pack(
+        side="right",
+        anchor="s",
+        padx=(0, 3),
+        pady=(0, 0),
+        ipady=0,
+    )
 
     canvas = tk.Canvas(
         tab_strip_frame,
