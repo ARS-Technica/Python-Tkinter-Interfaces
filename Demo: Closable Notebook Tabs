@@ -434,10 +434,12 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     """
     Builds the left-side hierarchical navigation Treeview.
     """
-    sidebar_frame = ttk.Frame(parent, height=45, width=250, relief="flat")
+    sidebar_frame = ttk.Frame(parent, height=10, width=250, relief="flat")
     sidebar_frame.pack_propagate(False)
 
-    ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=(10, 5))
+    # ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=(10, 5))
+
+    ttk.Label(sidebar_frame, text="", font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=8) # pady 8 leaves sidebar flush with top of tab bar
 
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
     nav_tree.pack(fill="both", expand=True, padx=5, pady=0)
