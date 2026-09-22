@@ -286,8 +286,19 @@ def bind_tab_events(tab_widgets, node_key, manager):
     pass
 
 
-def register_tab(manager, node_key, page, tab_widgets):
-    pass
+def register_tab(
+    manager: dict,
+    node_key: str,
+    page: tk.Frame,
+    tab_widgets: dict,
+) -> None:
+    """
+    Adds a completed tab to the application's tab registry.
+    """
+    manager["tabs"][node_key] = {
+        "page": page,
+        **tab_widgets,
+    }
 
 
 def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
