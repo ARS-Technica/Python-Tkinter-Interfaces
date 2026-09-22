@@ -245,6 +245,22 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         tab_bar_state["nav_tree"].selection_set()
 
 
+ def create_workspace_page(notebook, node_key, metadata):
+    pass
+
+
+def create_tab_widget(parent, node_key, metadata, manager):
+    pass
+
+
+def bind_tab_events(tab_widgets, node_key, manager):
+    pass
+
+
+def register_tab(manager, node_key, page, tab_widgets):
+    pass
+
+
 def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Creates a new tab in the notebook and a pill button in the tab bar.
