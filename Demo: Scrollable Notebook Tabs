@@ -397,6 +397,41 @@ def register_tab(
     }
 
 
+def create_workspace_page(
+    notebook: ttk.Notebook,
+    node_key: str,
+    metadata: dict,
+) -> tk.Frame:
+    """
+    Creates and registers the notebook page for a workspace tab.
+    """
+    page_frame = tk.Frame(
+        notebook,
+        bg=CONFIG["COLOR_WORKSPACE_BG"],
+        highlightbackground="#000000",
+        highlightthickness=1,
+        highlightcolor="#000000",
+    )
+    page_frame.node_key = node_key
+
+    ttk.Label(
+        page_frame,
+        text=metadata["header"],
+        font=CONFIG["FONT_HEADER"],
+        background=CONFIG["COLOR_WORKSPACE_BG"],
+    ).pack(anchor="w", padx=25, pady=25)
+
+    ttk.Label(
+        page_frame,
+        text=f"Active Context: [{metadata['title']}]",
+        font=CONFIG["FONT_BODY"],
+        background=CONFIG["COLOR_WORKSPACE_BG"],
+    ).pack(anchor="w", padx=25)
+
+    notebook.add(page_frame)
+    return page_frame
+
+
 def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Creates a new tab in the notebook and a pill button in the tab bar.
