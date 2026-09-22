@@ -278,8 +278,104 @@ def create_workspace_tab(node_key: str, manager: dict) -> None:
     select_workspace_tab(node_key, manager)
 
 
-def create_tab_widget(parent, node_key, metadata, manager):
-    pass
+def create_tab_widget(
+    parent: tk.Widget,
+    node_key: str,
+    metadata: dict,
+    manager: dict,
+) -> dict:
+    """
+    Creates the visual tab controls for a workspace tab.
+    """
+    tab_item = tk.Frame(
+        parent,
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        borderwidth=0,
+        relief="flat",
+    )
+
+    lbl_title = tk.Label(
+        tab_item,
+        text=metadata["title"],
+        font=CONFIG["FONT_TAB"],
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        fg="#000000",
+        padx=5,
+        pady=4,
+        cursor="hand2",
+    )
+    lbl_title.pack(side="left")
+
+    btn_close = tk.Button(
+        tab_item,
+        text="×",
+        font=CONFIG["FONT_CLOSE"],
+        relief="flat",
+        borderwidth=0,
+        highlightthickness=0,
+        overrelief="flat",
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        fg="#555555",
+        activebackground=CONFIG["COLOR_TAB_INACTIVE"],
+        cursor="hand2",
+        command=lambda: close_workspace_tab(node_key, manager),
+    )
+    btn_close.pack(side="left", padx=(0, 6))
+
+    # Three-sided bevel.
+    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
+        x=0,
+        y=0,
+        relwidth=1.0,
+        anchor="nw",
+    )
+    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(
+        x=0,
+        y=0,
+        relheight=1.0,
+        anchor="nw",
+    )
+    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(
+        relx=1.0,
+        x=-1,
+        y=0,
+        relheight=1.0,
+        anchor="ne",
+    )
+
+    corner_canvas = tk.Canvas(
+        tab_item,
+        width=9,
+        height=9,
+        bg=CONFIG["COLOR_STRIP_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    corner_canvas.place(relx=1.0, rely=0.0, anchor="ne")
+
+    corner_canvas.create_polygon(
+        0, 0,
+        0, 9,
+        9, 9,
+        fill=CONFIG["COLOR_TAB_INACTIVE"],
+        width=1,
+    )
+    corner_top_line = corner_canvas.create_line(
+        0,
+        0,
+        9,
+        0,
+        fill="#FFFFFF",
+        width=1,
+    )
+
+    return {
+        "frame": tab_item,
+        "lbl_title": lbl_title,
+        "btn_close": btn_close,
+        "corner": corner_canvas,
+        "corner_top_line": corner_top_line,
+    }
 
 
 def bind_tab_events(tab_widgets, node_key, manager):
