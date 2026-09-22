@@ -378,8 +378,51 @@ def create_tab_widget(
     }
 
 
-def bind_tab_events(tab_widgets, node_key, manager):
-    pass
+def bind_tab_events(
+    tab_widgets: dict,
+    node_key: str,
+    manager: dict,
+) -> None:
+    """
+    Binds selection, closing, hover, and scrolling events.
+    """
+    tab_item = tab_widgets["frame"]
+    lbl_title = tab_widgets["lbl_title"]
+    btn_close = tab_widgets["btn_close"]
+    corner_canvas = tab_widgets["corner"]
+
+    select_tab = lambda event: select_workspace_tab(node_key, manager)
+    close_tab = lambda event: close_workspace_tab(node_key, manager)
+    scroll_tabs = lambda event: on_tab_bar_mousewheel(
+        event,
+        manager["canvas"],
+    )
+
+    tab_item.bind("<Button-1>", select_tab)
+    tab_item.bind("<Button-2>", close_tab)
+
+    lbl_title.bind("<Button-1>", select_tab)
+    lbl_title.bind("<Button-2>", close_tab)
+
+    corner_canvas.bind("<Button-1>", select_tab)
+    corner_canvas.bind("<Button-2>", close_tab)
+
+    # The Button command handles normal left-click closing.
+    # Do not also bind btn_close to <Button-1>, or it may close twice.
+
+    btn_close.bind(
+        "<Enter>",
+        lambda event: btn_close.configure(fg="#E81123"),
+    )
+    btn_close.bind(
+        "<Leave>",
+        lambda event: btn_close.configure(fg="#555555"),
+    )
+
+    for widget in (tab_item, lbl_title, btn_close, corner_canvas):
+        widget.bind("<MouseWheel>", scroll_tabs)
+        widget.bind("<Button-4>", scroll_tabs)
+        widget.bind("<Button-5>", scroll_tabs)
 
 
 def register_tab(
