@@ -1,40 +1,41 @@
 """
 Demo: Scrollable Notebook Tabs
-Created: July 17, 2026
+Created: August 26, 2026
 
-Description: Demonstrates a closable notebook tab behavior using a custom ttk 
-style layout. The user can click the 'x' to close the tab, and the underlying 
-frame is destroyed to free memory.
+Description: Solves tab overflow problem in the "Demo: Closable Notebook Tabs" 
+project by pairing a tabless ttk.Notebook with a canvas-backed scrollable tab 
+bar. Features mousewheel scrolling, left/right scroll buttons, active-tab 
+auto-scrolling, and sidebar bidirectional sync.
 
-Advanced application workspace layout. Integrates an expanding
-hierarchical sidebar Treeview on the left with a dynamic ttk.Notebook on the 
-right featuring native image-element close buttons on each tab.
-
-Features Native Closable Tabs & Treeview Sync
+Based on "Demo: Closable Notebook Tabs" project.
 """
-
-
-# Next Issue: When all of the tabs are open, the user can't see the "X" to close the tabs. 
-
 
 import tkinter as tk
 from tkinter import ttk
 
 
-# Centralized Interface Configuration -----------------------------------------
+# Centralized Configuration ---------------------------------------------------
 CONFIG = {
     "WINDOW_TITLE": "Demo: Dynamic Workspace Manager (Scrollable Tabs)",
     "WINDOW_GEOMETRY": "1000x560",
     "FONT_HEADER": ("Segoe UI", 11, "bold"),
     "FONT_BODY": ("Segoe UI", 10),
     "FONT_TAB": ("Segoe UI", 9),
-    "FONT_CLOSE": ("Segoe UI", 8, "bold"),
+    "FONT_CLOSE": ("Segoe UI", 10, "bold"),
     "ROW_HEIGHT": 28,
     "COLOR_TAB_BG": "#E1E1E1",
     "COLOR_TAB_ACTIVE": "#FFFFFF",
+    "COLOR_STRIP_BG": "#F0F0F0", #Over the scrolling tab bar
+    "COLOR_BORDER": "#BCBCBC",
+    "COLOR_TAB_INACTIVE": "#E4E4E4",
+    "COLOR_WORKSPACE_BG": "#FFFFFF",
+    "TAB_OVERLAP": 24,
+    "TAB_BAR_HEIGHT": 40,
+    "SIDEBAR_TREE_INSET": 2,
 }
 
-# Tab Content Registry Schema -------------------------------------------------
+
+# Tab Content Registry --------------------------------------------------------
 TAB_REGISTRY = {
     "dev_dash": {"title": "Analytics Dashboard", "header": "Development Analytics Overview"},
     "dev_shell": {"title": "Shell Terminal Console", "header": "Developer Sandbox Environment Shell"},
@@ -50,16 +51,99 @@ TAB_REGISTRY = {
 # Styles Setup ----------------------------------------------------------------
 def setup_workspace_styles() -> ttk.Style:
     """
-    Registers custom close-state images and builds the CustomNotebook style layout.
+    Configures the theme and completely suppresses native notebook tabs.
     """
     style = ttk.Style()
-    style.theme_use("clam")
+    # style.theme_use("clam")
     style.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
-    
-    # Hide native notebook tabs completely
-    style.layout("Tabless.TNotebook.Tab", None)
-    style.configure("Tabless.TNotebook", tabmargins=0, borderwidth=0, highlightthickness=0)
+
+    # 1. Redefine the notebook layout so it ONLY draws the client viewport
+    # This strips out the tab row entirely.
+    style.layout("Tabless.TNotebook", [
+        ("Tabless.TNotebook.client", {"sticky": "nswe"})
+    ])
+
+    # 2. Empty out the Tab element layout explicitly
+    style.layout("Tabless.TNotebook.Tab", [])
+
+    # 3. Collapse tab dimensions and padding to 0
+    style.configure(
+        "ScrollingTab.TFrame",
+        background=CONFIG["COLOR_TAB_INACTIVE"],
+        borderwidth=1,
+        relief="raised",
+    )
+
+    style.configure(
+        "ScrollingTab.TLabel",
+        background=CONFIG["COLOR_TAB_INACTIVE"],
+        foreground="#000000",
+        padding=(8, 4),
+    )
+
+    style.configure(
+        "ScrollingTabClose.TButton",
+        padding=(2, 2),
+        relief="flat",
+    )
+
+    style.configure(
+        "Sidebar.TFrame",
+        background=CONFIG["COLOR_STRIP_BG"],
+    )
+    style.configure(
+        "Tabless.TNotebook",
+        tabmargins=0,
+        borderwidth=0,
+        highlightthickness=0,
+        background=CONFIG["COLOR_WORKSPACE_BG"],
+        relief="flat",
+        padding=0,
+    )
+    style.configure(
+        "Treeview",
+        rowheight=CONFIG["ROW_HEIGHT"],
+        font=CONFIG["FONT_BODY"],
+        bordercolor="#000000",
+        lightcolor="#000000",
+        darkcolor="#000000",
+        borderwidth=1,
+        relief="solid",
+    )
+
     return style
+
+
+# Sidebar Functions -----------------------------------------------------------
+def on_sidebar_click(event: tk.Event, tab_bar_state: dict) -> None:
+    """
+    Handles sidebar node click to open or select a tab.
+    """
+    treeview = event.widget
+    item = treeview.focus()
+
+    if not item:
+        return
+
+    vals = treeview.item(item, "values")
+
+    if vals:
+        create_workspace_tab(vals[0], tab_bar_state)
+
+
+def sync_sidebar_selection(treeview_widget: ttk.Treeview, active_key: str) -> None:
+    """
+    Highlights the corresponding node in the sidebar.
+    """
+    for parent_id in treeview_widget.get_children():
+        for child_id in treeview_widget.get_children(parent_id):
+            vals = treeview_widget.item(child_id, "values")
+            if vals and vals[0] == active_key:
+                if treeview_widget.focus() != child_id:
+                    treeview_widget.item(parent_id, open=True)
+                    treeview_widget.selection_set(child_id)
+                    treeview_widget.focus(child_id)
+                return
 
 
 # Tab Bar Scrolling & Interaction ---------------------------------------------
@@ -106,108 +190,298 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
         canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
 
 
-# Tab Functions --------------------------------------------------------------
-
-
-def select_workspace_tab(node_key, tab_bar_state):
+def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     """
-    Selects an open tab in the notebook and highlights its header.
+    Positions tabs so each later tab overlaps the previous tab.
     """
+    canvas = tab_bar_state["canvas"]
+    scroll_content = tab_bar_state["scroll_content"]
+    canvas_window = tab_bar_state["canvas_window"]
+    tabs = tab_bar_state["tabs"]
+
+    scroll_content.update_idletasks()
+
+    left_edge = 0
+    right_edge = left_edge
+    for tab_info in tabs.values():
+        tab_item = tab_info["frame"]
+        tab_width = tab_item.winfo_reqwidth()
+        tab_item.place(x=left_edge, rely=1.0, anchor="sw")
+        right_edge = left_edge + tab_width
+        left_edge += max(1, tab_width - CONFIG["TAB_OVERLAP"])
+
+    content_width = max(right_edge, canvas.winfo_width())
+    canvas.itemconfigure(canvas_window, width=content_width, height=40)
+    scroll_content.configure(width=content_width, height=40)
+    canvas.configure(scrollregion=canvas.bbox("all"))
 
 
-def update_tab_bar_visuals(tab_bar_state, active_key):
+# Tab Functions ---------------------------------------------------------------
+def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Closes and deallocates a tab frame and its tab-strip button.
+    """
+    notebook = tab_bar_state["notebook"]
+    tabs_dict = tab_bar_state["tabs"]
+
+    if node_key not in tabs_dict:
+        return
+
+    tab_info = tabs_dict.pop(node_key)
+    tab_info["frame"].destroy()
+
+    # Destroy page in notebook
+    notebook.forget(tab_info["page"])
+    tab_info["page"].destroy()
+
+    # Update canvas scroll boundaries
+    layout_overlapping_tabs(tab_bar_state)
+
+    # Switch focus to the latest tab if any remain
+    if tabs_dict:
+        next_key = list(tabs_dict.keys())[-1]
+        select_workspace_tab(next_key, tab_bar_state)
+    else:
+        tab_bar_state["nav_tree"].selection_set()
+
+
+def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Creates a new tab in the notebook and a pill button in the tab bar.
+    """
+    tabs_dict = tab_bar_state["tabs"]
+    notebook = tab_bar_state["notebook"]
+    scroll_content = tab_bar_state["scroll_content"]
+    tab_meta = TAB_REGISTRY.get(node_key)
+    
+    if not tab_meta:
+        return
+
+    # If already open, just bring to front
+    if node_key in tabs_dict:
+        select_workspace_tab(node_key, tab_bar_state)
+        return
+
+    # 1. Workspace Notebook Page (White canvas background)
+    page_frame = tk.Frame(notebook, 
+        bg=CONFIG["COLOR_WORKSPACE_BG"],
+        highlightbackground="#000000",
+        highlightthickness=1,
+        highlightcolor="#000000",
+    )
+    page_frame.node_key = node_key
+
+    ttk.Label(page_frame, text=tab_meta["header"], font=CONFIG["FONT_HEADER"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25, pady=25)
+    ttk.Label(page_frame, text=f"Active Context: [{tab_meta['title']}]", font=CONFIG["FONT_BODY"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25)
+    notebook.add(page_frame)
+
+    # 2. Create Tab Button Frame in Scrollable Strip
+    tab_item = tk.Frame(
+        scroll_content,
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        borderwidth=0,
+        relief="flat",
+    )
+    # tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
+
+    lbl_title = tk.Label(
+        tab_item,
+        text=tab_meta["title"],
+        font=CONFIG["FONT_TAB"],
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        fg="#000000",
+        padx=5,
+        pady=4,
+        cursor="hand2",
+    )
+    lbl_title.pack(side="left")
+
+    btn_close = tk.Button(
+        tab_item,
+        text="×",
+        font=CONFIG["FONT_CLOSE"],
+        relief="flat",
+        borderwidth=0,
+        highlightthickness=0,
+        overrelief="flat",
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        fg="#555555",
+        activebackground=CONFIG["COLOR_TAB_INACTIVE"],
+        cursor="hand2",
+        command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
+    )
+    btn_close.pack(side="left", padx=(0, 6),)
+
+    # Draw a three-sided bevel without adding a bottom border.
+    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
+        x=0, y=0, relwidth=1.0, anchor="nw"
+    )
+    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(
+        x=0, y=0, relheight=1.0, anchor="nw"
+    )
+    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(
+        relx=1.0, x=-1, y=0, relheight=1.0, anchor="ne"
+    )
+
+    # Overlay a small cut corner to give the tab a native-style dog-ear.
+    corner_canvas = tk.Canvas(
+        tab_item,
+        width=9,
+        height=9,
+        bg=CONFIG["COLOR_STRIP_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    corner_canvas.place(relx=1.0, rely=0.0, anchor="ne")
+    corner_canvas.create_polygon(
+        0, 0,
+        0, 9,
+        9, 9,
+        fill=CONFIG["COLOR_TAB_INACTIVE"],
+        width=1,
+    )
+    corner_top_line = corner_canvas.create_line(
+        0, 0,
+        9, 0,
+        fill="#FFFFFF",
+        width=1,
+    )
+
+    # Hover feedback on close button
+    btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
+    btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#555555"))
+
+    # Event bindings
+    tab_item.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+    tab_item.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+    lbl_title.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+    lbl_title.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+    corner_canvas.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+    corner_canvas.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+    btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+
+    # Mousewheel forwarding
+    for widget in (tab_item, lbl_title, btn_close, corner_canvas):
+        widget.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+        widget.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+        widget.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+
+    # Save to state registry
+    tabs_dict[node_key] = {
+        "page": page_frame,
+        "frame": tab_item,
+        "lbl_title": lbl_title,
+        "btn_close": btn_close,
+        "corner": corner_canvas,
+        "corner_top_line": corner_top_line,
+    }
+
+    # Lay out the overlapping stack and activate the new tab
+    layout_overlapping_tabs(tab_bar_state)
+    select_workspace_tab(node_key, tab_bar_state)
+
+
+def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Updates background colors to reflect the active tab.
     """
-    pass
+    notebook = tab_bar_state["notebook"]
+    tabs_dict = tab_bar_state["tabs"]
+    nav_tree = tab_bar_state["nav_tree"]
 
-
-
-
-# Core Navigation Logic -------------------------------------------------------
-def on_sidebar_select(event: tk.Event, notebook: ttk.Notebook) -> None:
-    """
-    Spawns a new tab panel or shifts focus to an existing one upon node click.
-    """
-    treeview_widget = event.widget
-    selected_item = treeview_widget.focus()
-    
-    if not selected_item:
-        return
-        
-    item_values = treeview_widget.item(selected_item, "values")
-    if not item_values:
-        return  # Clicked a cluster folder header
-        
-    node_key = item_values[0]
-    tab_data = TAB_REGISTRY.get(node_key)
-    if not tab_data:
+    if node_key not in tabs_dict:
         return
 
-    # Check if this tab frame is already open in the notebook
-    for index in range(notebook.index("end")):
-        tab_frame = notebook.nametowidget(notebook.tabs()[index])
-        if getattr(tab_frame, "node_key", None) == node_key:
-            notebook.select(index)
-            return
+    # Select notebook page
+    tab_info = tabs_dict[node_key]
+    notebook.select(tab_info["page"])
 
-    # Dynamic Spawn: Tab was not open, create it
-    new_tab_frame = ttk.Frame(notebook)
-    new_tab_frame.node_key = node_key  
+    # Update visuals & auto-scroll
+    update_tab_bar_visuals(tab_bar_state, node_key)
+    scroll_tab_into_view(tab_bar_state["canvas"], tab_info["frame"])
 
-    ttk.Label(new_tab_frame, text=tab_data["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
-    ttk.Label(new_tab_frame, text=f"Active Environment: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
-    
-    # Add tab cleanly without manual text-padding hacks
-    notebook.add(new_tab_frame, text=f"{tab_data['title']} ")
-    notebook.select(new_tab_frame)
+    # Sync Treeview selection
+    sync_sidebar_selection(nav_tree, node_key)
 
 
-def on_notebook_tab_change(event: tk.Event, treeview_widget: ttk.Treeview) -> None:
+def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
-    Backward Sync: Highlights the matching sidebar row when a tab is focused.
+    Updates tab borders, baseline connectors, and background colors.
     """
-    notebook = event.widget
-    if notebook.index("end") == 0:
-        treeview_widget.selection_set()
-        return
+    active_frame = None
+    tab_items = list(tab_bar_state["tabs"].items())
 
-    try:
-        current_frame = notebook.nametowidget(notebook.select())
-        active_key = getattr(current_frame, "node_key", None)
-    except (tk.TclError, KeyError):
-        return
+    for index, (node_key, item) in enumerate(tab_items):
+        is_active = (node_key == active_key)
 
-    # Highlight the leaf node sharing the active signature key
-    for parent_id in treeview_widget.get_children():
-        for child_id in treeview_widget.get_children(parent_id):
-            vals = treeview_widget.item(child_id, "values")
-            if vals and vals[0] == active_key:
-                if treeview_widget.focus() != child_id:
-                    treeview_widget.item(parent_id, open=True)
-                    treeview_widget.selection_set(child_id)
-                    treeview_widget.focus(child_id)
-                return
+        bg_fill = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_TAB_INACTIVE"]
+
+        # Color the tab frame
+        item["frame"].configure(bg=bg_fill)
+        item["lbl_title"].configure(bg=bg_fill)
+        item["btn_close"].configure(bg=bg_fill)
+        beneath_fill = CONFIG["COLOR_STRIP_BG"]
+        if index + 1 < len(tab_items):
+            beneath_fill = (
+                CONFIG["COLOR_WORKSPACE_BG"]
+                if tab_items[index + 1][0] == active_key
+                else CONFIG["COLOR_TAB_INACTIVE"]
+            )
+        item["corner"].configure(bg=beneath_fill)
+        item["corner"].itemconfigure(1, fill=bg_fill)
+        hide_corner_line = index == len(tab_items) - 1
+        item["corner"].itemconfigure(
+            item["corner_top_line"],
+            state="hidden" if hide_corner_line else "normal",
+        )
+
+        if is_active:
+            active_frame = item["frame"]
+
+    if active_frame is not None:
+        active_frame.lift()
 
 
-# Layout Component Builders ---------------------------------------------------
-def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
+# Widget Layout Functions -----------------------------------------------------
+def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
     """
-    Constructs the left-hand hierarchical navigation controller pane.
+    Builds the left-side hierarchical navigation Treeview.
     """
-    sidebar_frame = ttk.Frame(parent_pane, width=240, relief="flat")
-    sidebar_frame.pack_propagate(False) 
-    
-    sidebar_header = ttk.Label(sidebar_frame, text="💻 System Clusters", font=CONFIG["FONT_HEADER"])
-    sidebar_header.pack(anchor="w", padx=10, pady=(10, 5))
-    
+    sidebar_frame = ttk.Frame(parent, height=10, width=250, relief="flat")
+    sidebar_frame.pack_propagate(False)
+
+    sidebar_header = tk.Frame(
+        sidebar_frame,
+        height=CONFIG["TAB_BAR_HEIGHT"],
+        bg=CONFIG["COLOR_STRIP_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    sidebar_header.pack(side="top", fill="x")
+    sidebar_header.pack_propagate(False)
+
+    tk.Label(
+        sidebar_header,
+        text="System Nodes",
+        font=CONFIG["FONT_HEADER"],
+        bg=CONFIG["COLOR_STRIP_BG"],
+        fg="#000000",
+        anchor="center",
+    ).pack(fill="both", expand=True)
+
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
-    nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
+    nav_tree.pack(
+        side="top",
+        fill="both",
+        expand=True,
+        padx=5,
+        pady=(CONFIG["SIDEBAR_TREE_INSET"], CONFIG["SIDEBAR_TREE_INSET"]),
+    )
 
     # Tier 1 Root Folders
     cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
     cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
-    
+
     # Tier 1: Development Stack (4 items)
     nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
     nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
@@ -225,33 +499,95 @@ def build_sidebar_panel(parent_pane: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Tr
     return sidebar_frame, nav_tree
 
 
-def open_default_tab(nav_tree: ttk.Treeview, notebook: ttk.Notebook) -> None:
+def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     """
-    Safely extracts and spawns the primary default tab panel on program launch.
+    Builds the right-hand panel containing the scrollable tab strip and notebook.
     """
-    root_folders = nav_tree.get_children()
-    if not root_folders:
-        return
+    workspace_container = ttk.Frame(parent)
+    
+    # 1. Top Scrollable Tab Header Bar
+    tab_strip_frame = tk.Frame(
+        workspace_container,
+        height=CONFIG["TAB_BAR_HEIGHT"],
+        bg=CONFIG["COLOR_STRIP_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    tab_strip_frame.pack(side="top", fill="x")
+    tab_strip_frame.pack_propagate(False)
 
-    child_leaves = nav_tree.get_children(root_folders[0])
-    if not child_leaves:
-        return
+    btn_left = tk.Button(
+        tab_strip_frame, text="◀", relief="flat", bg="#CCCCCC", width=3, height=1,
+        command=lambda: scroll_tab_bar(canvas, -1)
+    )
+    btn_left.pack(
+        side="left",
+        anchor="s",
+        padx=(1, 0),
+        pady=(0, 0),
+        ipady=0,
+    )
 
-    target_leaf = child_leaves[0]
-    nav_tree.selection_set(target_leaf)
-    nav_tree.focus(target_leaf)
+    btn_right = tk.Button(
+        tab_strip_frame, text="▶", relief="flat", bg="#CCCCCC", width=3, height=1,
+        command=lambda: scroll_tab_bar(canvas, 1)
+    )
+    btn_right.pack(
+        side="right",
+        anchor="s",
+        padx=(0, 3),
+        pady=(0, 0),
+        ipady=0,
+    )
 
-    node_key = nav_tree.item(target_leaf, "values")[0]
-    tab_data = TAB_REGISTRY.get(node_key)
+    canvas = tk.Canvas(
+        tab_strip_frame,
+        height=CONFIG["TAB_BAR_HEIGHT"],
+        bg=CONFIG["COLOR_STRIP_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    canvas.pack(side="left", fill="both", expand=True)
 
-    new_tab_frame = ttk.Frame(notebook)
-    new_tab_frame.node_key = node_key
+    scroll_content = tk.Frame(
+        canvas,
+        bg=CONFIG["COLOR_STRIP_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    canvas_window = canvas.create_window(
+        (0, CONFIG["TAB_BAR_HEIGHT"]),
+        window=scroll_content,
+        anchor="sw",
+        height=CONFIG["TAB_BAR_HEIGHT"],
+    )
 
-    ttk.Label(new_tab_frame, text=tab_data["header"], font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=25, pady=25)
-    ttk.Label(new_tab_frame, text=f"Active Environment: [{tab_data['title']}]", font=CONFIG["FONT_BODY"]).pack(anchor="w", padx=25)
+    # Keep canvas window height matched
+    scroll_content.bind(
+        "<Configure>",
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all")),
+    )
 
-    notebook.add(new_tab_frame, text=f"{tab_data['title']} ")
-    notebook.select(new_tab_frame)
+    # Mousewheel scrolling over the canvas strip
+    for w in (canvas, scroll_content, tab_strip_frame):
+        w.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, canvas))
+        w.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, canvas))
+        w.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, canvas))
+
+    # 2. Bottom Tabless Notebook Workspace
+    notebook = ttk.Notebook(workspace_container, style="Tabless.TNotebook")
+    notebook.pack(side="top", fill="both", expand=True)
+
+    tab_bar_state = {
+        "canvas": canvas,
+        "canvas_window": canvas_window,
+        "scroll_content": scroll_content,
+        "notebook": notebook,
+        "tabs": {},
+        "nav_tree": None,
+    }
+
+    return workspace_container, tab_bar_state
 
 
 # Master Interface Coordinator ------------------------------------------------
@@ -263,32 +599,28 @@ def create_application() -> None:
     root.title(CONFIG["WINDOW_TITLE"])
     root.geometry(CONFIG["WINDOW_GEOMETRY"])
 
-    style_engine = ttk.Style()
-    style_engine.theme_use("clam")
-    style_engine.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
+    setup_workspace_styles()
 
-    master_paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
-    master_paned_window.pack(fill="both", expand=True, padx=10, pady=10)
+    paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
+    paned_window.pack(fill="both", expand=True, padx=10, pady=10)
 
-    # 1. Instantiate the modular components
-    sidebar_frame, nav_tree = build_sidebar_panel(master_paned_window)
-    
-    # 2. Build Notebook using CustomNotebook style layout
-    workspace_notebook = ttk.Notebook(master_paned_window, style="CustomNotebook")
-    workspace_notebook._active_tab = None
-    workspace_notebook._tab_images = tab_images  # Protect images from garbage collection
+    # Build Left & Right Panes
+    sidebar_frame, nav_tree = build_sidebar_panel(paned_window)
+    workspace_frame, tab_bar_state = build_workspace(paned_window)
+    tab_bar_state["nav_tree"] = nav_tree
 
-    # 3. Add panels in left-to-right order
-    master_paned_window.add(sidebar_frame, weight=0)
-    master_paned_window.add(workspace_notebook, weight=1)
+    paned_window.add(sidebar_frame, weight=0)
+    paned_window.add(workspace_frame, weight=1)
 
-    # 5. Open primary tab on launch
-    open_default_tab(nav_tree, workspace_notebook)
+    # Bind Sidebar Click Event
+    nav_tree.bind("<ButtonRelease-1>", lambda e: on_sidebar_click(e, tab_bar_state))
+
+    # Launch with initial default tab
+    create_workspace_tab("dev_dash", tab_bar_state)
 
     root.mainloop()
 
 
 if __name__ == "__main__":
     create_application()
-
 
