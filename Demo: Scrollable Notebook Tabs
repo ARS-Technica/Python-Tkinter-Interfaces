@@ -709,6 +709,21 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     select_workspace_tab(node_key, tab_bar_state)
 
 
+def register_tab(
+    manager: dict,
+    node_key: str,
+    page: tk.Frame,
+    tab_widgets: dict,
+) -> None:
+    """
+    Adds a completed tab to the application's tab registry.
+    """
+    manager["tabs"][node_key] = {
+        "page": page,
+        **tab_widgets,
+    }
+
+
 def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Updates background colors to reflect the active tab.
