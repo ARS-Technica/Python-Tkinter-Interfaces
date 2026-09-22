@@ -245,8 +245,37 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         tab_bar_state["nav_tree"].selection_set()
 
 
- def create_workspace_page(notebook, node_key, metadata):
-    pass
+def create_workspace_tab(node_key: str, manager: dict) -> None:
+    """
+    Creates, registers, lays out, and selects a workspace tab.
+    """
+    tab_metadata = TAB_REGISTRY.get(node_key)
+
+    if tab_metadata is None:
+        return
+
+    if node_key in manager["tabs"]:
+        select_workspace_tab(node_key, manager)
+        return
+
+    page = create_workspace_page(
+        manager["notebook"],
+        node_key,
+        tab_metadata,
+    )
+
+    tab_widgets = create_tab_widget(
+        manager["scroll_content"],
+        node_key,
+        tab_metadata,
+        manager,
+    )
+
+    bind_tab_events(tab_widgets, node_key, manager)
+    register_tab(manager, node_key, page, tab_widgets)
+
+    layout_overlapping_tabs(manager)
+    select_workspace_tab(node_key, manager)
 
 
 def create_tab_widget(parent, node_key, metadata, manager):
