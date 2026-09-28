@@ -336,20 +336,20 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     
 	btn_close = tk.Label(
         tab_body, text="✕", font=CONFIG["FONT_CLOSE"],	 
-        fg="#666666", bg=CONFIG["COLOR_TAB_INACTIVE"], padx=6, pady=4, cursor="hand2"													 
+        fg="#666666", 
+		bg=CONFIG["COLOR_TAB_INACTIVE"], 
+		padx=6, pady=4, cursor="hand2"													 
     )
     btn_close.pack(side="right")
 
     bottom_gap = tk.Frame(tab_root, height=1, bg=CONFIG["COLOR_BORDER"])
     bottom_gap.pack(side="bottom", fill="x")
 
-
-
-
 	# Hover feedback on close button
     btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
     btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#555555"))
 
+	"""
     # Event bindings
     tab_item.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
     tab_item.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
@@ -358,9 +358,22 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     corner_canvas.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
     corner_canvas.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
     btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+	"""
 
+	"""
     # Mousewheel forwarding
     for widget in (tab_item, lbl_title, btn_close, corner_canvas):
+        widget.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+        widget.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+        widget.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+	"""
+
+    for w in (tab_root, tab_body, lbl_title):														 					
+        w.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))																			  
+    	
+	btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+
+    for widget in (tab_root, tab_body, lbl_title, btn_close):
         widget.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
         widget.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
         widget.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
@@ -368,15 +381,18 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     # Save to state registry
     tabs_dict[node_key] = {
         "page": page_frame,
-        "frame": tab_item,
+        "tab_root": tab_root,
+        "body": tab_body,
         "lbl_title": lbl_title,
         "btn_close": btn_close,
-        "corner": corner_canvas,
-        "corner_top_line": corner_top_line,
+        "bottom_gap": bottom_gap							   
     }
 
+    tab_bar_state["canvas"].update_idletasks()
+    tab_bar_state["canvas"].configure(scrollregion=tab_bar_state["canvas"].bbox("all"))
+
     # Lay out the overlapping stack and activate the new tab
-    layout_overlapping_tabs(tab_bar_state)
+    ion=tab_bar_state["canvas"].bbox("all"))
     select_workspace_tab(node_key, tab_bar_state)
 
 
