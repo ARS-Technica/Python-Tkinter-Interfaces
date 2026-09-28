@@ -127,6 +127,32 @@ def setup_workspace_styles() -> ttk.Style:
         highlightthickness=0,
         background=CONFIG["COLOR_WORKSPACE_BG"]
     )
+    # Slim Micro-Scrollbar: 4px height with hidden directional arrows
+    style.layout("Slim.Horizontal.TScrollbar", [
+        ("Horizontal.Scrollbar.trough", {
+            "sticky": "we",
+            "children": [
+                ("Horizontal.Scrollbar.thumb", {"sticky": "nswe"})
+            ]
+        })
+    ])
+
+    style.configure(
+        "Slim.Horizontal.TScrollbar",
+        troughcolor=CONFIG["COLOR_SCROLL_TROUGH"],
+        background=CONFIG["COLOR_SCROLL_THUMB"],
+							  
+        lightcolor=CONFIG["COLOR_SCROLL_THUMB"],
+        darkcolor=CONFIG["COLOR_SCROLL_THUMB"],
+        bordercolor=CONFIG["COLOR_SCROLL_TROUGH"],
+        arrowsize=0,
+        width=4,
+        relief="flat"
+    )
+    # Hover effect for scrollbar thumb
+    style.map("Slim.Horizontal.TScrollbar",
+        background=[("active", "#757575"), ("pressed", "#424242")]
+    )
 
     return style
 
