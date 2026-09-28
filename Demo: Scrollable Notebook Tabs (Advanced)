@@ -320,84 +320,33 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     ttk.Label(page_frame, text=f"Active Context: [{tab_meta['title']}]", font=CONFIG["FONT_BODY"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25)
     notebook.add(page_frame)
 
-	"""
-    # 2. Create Tab Button Frame in Scrollable Strip
-    tab_item = tk.Frame(
-        scroll_content,
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
-        borderwidth=0,
-        relief="flat",
-    )
-    # tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
+	# 2. Native-Look Tab Structure
+    tab_root = tk.Frame(scroll_content, bg=CONFIG["COLOR_BORDER"], height=32)
+    tab_root.pack(side="left", padx=(3, 0), anchor="s")
+
+    tab_body = tk.Frame(tab_root, bg=CONFIG["COLOR_TAB_INACTIVE"])	
+    
+    tab_body.pack(side="top", fill="both", expand=True, padx=(1, 1), pady=(1, 0))
 
     lbl_title = tk.Label(
-        tab_item,
-        text=tab_meta["title"],
-        font=CONFIG["FONT_TAB"],
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
-        fg="#000000",
-        padx=5,
-        pady=4,
-        cursor="hand2",
+        tab_body, text=tab_meta["title"], font=CONFIG["FONT_TAB"],
+        bg=CONFIG["COLOR_TAB_INACTIVE"], padx=8, pady=4, cursor="hand2"
     )
     lbl_title.pack(side="left")
+    
+	btn_close = tk.Label(
+        tab_body, text="✕", font=CONFIG["FONT_CLOSE"],	 
+        fg="#666666", bg=CONFIG["COLOR_TAB_INACTIVE"], padx=6, pady=4, cursor="hand2"													 
+    )
+    btn_close.pack(side="right")
 
-    btn_close = tk.Button(
-        tab_item,
-        text="×",
-        font=CONFIG["FONT_CLOSE"],
-        relief="flat",
-        borderwidth=0,
-        highlightthickness=0,
-        overrelief="flat",
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
-        fg="#555555",
-        activebackground=CONFIG["COLOR_TAB_INACTIVE"],
-        cursor="hand2",
-        command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
-    )
-    btn_close.pack(side="left", padx=(0, 6),)
-
-    # Draw a three-sided bevel without adding a bottom border.
-    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
-        x=0, y=0, relwidth=1.0, anchor="nw"
-    )
-    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(
-        x=0, y=0, relheight=1.0, anchor="nw"
-    )
-    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(
-        relx=1.0, x=-1, y=0, relheight=1.0, anchor="ne"
-    )
-
-    # Overlay a small cut corner to give the tab a native-style dog-ear.
-    corner_canvas = tk.Canvas(
-        tab_item,
-        width=9,
-        height=9,
-        bg=CONFIG["COLOR_STRIP_BG"],
-        borderwidth=0,
-        highlightthickness=0,
-    )
-    corner_canvas.place(relx=1.0, rely=0.0, anchor="ne")
-    corner_canvas.create_polygon(
-        0, 0,
-        0, 9,
-        9, 9,
-        fill=CONFIG["COLOR_TAB_INACTIVE"],
-        width=1,
-    )
-    corner_top_line = corner_canvas.create_line(
-        0, 0,
-        9, 0,
-        fill="#FFFFFF",
-        width=1,
-    )
-	"""
-	
+    bottom_gap = tk.Frame(tab_root, height=1, bg=CONFIG["COLOR_BORDER"])
+    bottom_gap.pack(side="bottom", fill="x")
 
 
 
-    # Hover feedback on close button
+
+	# Hover feedback on close button
     btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
     btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#555555"))
 
