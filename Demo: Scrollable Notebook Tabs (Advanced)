@@ -1,13 +1,17 @@
 """
-Demo: Scrollable Notebook Tabs
-Created: August 26, 2026
+Demo: Scrollable Notebook Tabs (Advanced)
+Created: September 27, 2026
 
 Description: Solves tab overflow problem in the "Demo: Closable Notebook Tabs" 
 project by pairing a tabless ttk.Notebook with a canvas-backed scrollable tab 
 bar. Features mousewheel scrolling, left/right scroll buttons, active-tab 
 auto-scrolling, and sidebar bidirectional sync.
 
-Based on "Demo: Closable Notebook Tabs" project.
+This version integrates a low-profile, modern 4px horizontal
+scrollbar directly between the custom scrollable tab strip and the main workspace
+canvas, providing smooth click-and-drag scrolling alongside mousewheel support.
+
+Based on "Demo: Scrollable Notebook Tabs" project.
 """
 
 import tkinter as tk
@@ -16,7 +20,7 @@ from tkinter import ttk
 
 # Centralized Configuration ---------------------------------------------------
 CONFIG = {
-    "WINDOW_TITLE": "Demo: Dynamic Workspace Manager (Scrollable Tabs)",
+    "WINDOW_TITLE": "Demo: Scrollable Notebook Tabs (Advanced)",
     "WINDOW_GEOMETRY": "1000x560",
     "FONT_HEADER": ("Segoe UI", 11, "bold"),
     "FONT_BODY": ("Segoe UI", 10),
@@ -29,6 +33,8 @@ CONFIG = {
     "COLOR_BORDER": "#BCBCBC",
     "COLOR_TAB_INACTIVE": "#E4E4E4",
     "COLOR_WORKSPACE_BG": "#FFFFFF",
+    "COLOR_SCROLL_TROUGH": "#E0E0E0",
+    "COLOR_SCROLL_THUMB": "#9E9E9E",
     "TAB_OVERLAP": 24,
     "TAB_BAR_HEIGHT": 40,
     "SIDEBAR_TREE_INSET": 2,
@@ -52,6 +58,7 @@ TAB_REGISTRY = {
 def setup_workspace_styles() -> ttk.Style:
     """
     Configures the theme and completely suppresses native notebook tabs.
+    Configures the theme, tabless notebook, and thin micro-scrollbar.
     """
     style = ttk.Style()
     # style.theme_use("clam")
@@ -66,6 +73,7 @@ def setup_workspace_styles() -> ttk.Style:
     # 2. Empty out the Tab element layout explicitly
     style.layout("Tabless.TNotebook.Tab", [])
 
+    """
     # 3. Collapse tab dimensions and padding to 0
     style.configure(
         "ScrollingTab.TFrame",
@@ -109,6 +117,15 @@ def setup_workspace_styles() -> ttk.Style:
         darkcolor="#000000",
         borderwidth=1,
         relief="solid",
+    )
+    """
+
+    style.configure(
+        "Tabless.TNotebook",
+        tabmargins=0,
+        borderwidth=0,
+        highlightthickness=0,
+        background=CONFIG["COLOR_WORKSPACE_BG"]
     )
 
     return style
