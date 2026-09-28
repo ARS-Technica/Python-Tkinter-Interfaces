@@ -770,8 +770,8 @@ def register_tab(
 
 def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
-    Updates background colors to reflect the active tab.
-    """
+	Selects an open tab in the notebook and updates seamless styling.
+	"""
     notebook = tab_bar_state["notebook"]
     tabs_dict = tab_bar_state["tabs"]
     nav_tree = tab_bar_state["nav_tree"]
@@ -779,15 +779,11 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     if node_key not in tabs_dict:
         return
 
-    # Select notebook page
     tab_info = tabs_dict[node_key]
     notebook.select(tab_info["page"])
-
-    # Update visuals & auto-scroll
+								  
     update_tab_bar_visuals(tab_bar_state, node_key)
-    scroll_tab_into_view(tab_bar_state["canvas"], tab_info["frame"])
-
-    # Sync Treeview selection
+    scroll_tab_into_view(tab_bar_state["canvas"], tab_info["tab_root"])
     sync_sidebar_selection(nav_tree, node_key)
 
 
