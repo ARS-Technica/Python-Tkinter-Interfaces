@@ -1,13 +1,15 @@
 """
-Demo: Listbox Widget
-Created: May 15, 2026
+Demo: List Box Widget with Scrollbar
+Created: May 18, 2026
 
-Description: Demonstrates the Tkinter Listbox widget used to manage 
+Description: Demonstrates the Tkinter List Box widget used to manage 
 collections of text data such as playlists, file explorers, or task managers.
+This iteration includes a Scrollbar widget that is linked to the Listbox for 
+better navigation when the list exceeds the length of the Listbox.
 
-Future Listbox demonstrations will expand this code to include multiple 
-Listboxes that interact with each other and Scrollbars, but this project 
-focuses on a single Listbox and its basic functionality.
+Future List Box demonstrations will expand this code to include multiple 
+Listboxes that interact with each other, but this project focuses on a single 
+Listbox and its basic functionality.
 """
 
 import tkinter as tk
@@ -36,7 +38,7 @@ def add_custom_item(entry_widget: tk.Entry, label_bottom: tk.Label,
         label_bottom.config(text="")
 
 
-def clear_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widget: tk.Listbox) -> None:
+def clear_selection(label_bottom, label_top, listbox_widget):
     '''
     Clears the currently highlighted item from display label
     '''
@@ -48,7 +50,7 @@ def clear_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widget:
     label_bottom.config(text="")
 
 
-def display_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widget: tk.Listbox) -> None:
+def display_selection(label_bottom, label_top, listbox_widget):
     '''
     Retrieves the currently highlighted item in the Listbox and displays it.
     '''
@@ -67,8 +69,29 @@ def display_selection(label_bottom: tk.Label, label_top: tk.Label, listbox_widge
         label_top.config(text="Please select an item first!")
 
 
+def remove_selection(label_bottom, label_top, listbox_widget):
+    """
+    Deletes the currently highlighted item from the Listbox and updates status labels.
+    """
+    selected_indices = listbox_widget.curselection()
+
+    if selected_indices:
+        index = selected_indices[0]
+        removed_item = listbox_widget.get(index)
+        
+        # Delete the item from the Listbox
+        listbox_widget.delete(index)
+
+        # Update feedback labels
+        label_top.config(text="Removed from list:")
+        label_bottom.config(text=f"{removed_item}")
+    else:
+        label_top.config(text="No item selected to remove!")
+        label_bottom.config(text="")
+
+
 # Widget Creation -------------------------------------------------------------
-def build_listbox(parent: tk.Misc) -> tk.Listbox:
+def build_listbox(parent):
     '''
     Creates a Listbox widget, populates it with selections, and returns it.
     '''
@@ -89,12 +112,12 @@ def build_listbox(parent: tk.Misc) -> tk.Listbox:
 
 
 # User Interface --------------------------------------------------------------
-def create_user_interface() -> None:
+def create_user_interface():
     '''
     Creates the main application window and calls the function to build widgets.
     '''
     root = tk.Tk()
-    root.title("Demo: Listbox Widget")
+    root.title("Demo: List Box Widget")
     root.geometry("300x350")
 
     # Build the Listbox and pack it into the main window
@@ -121,7 +144,7 @@ def create_user_interface() -> None:
 
     # Container Frame for Buttons ---------------------------------------------
     button_frame = tk.Frame(root)
-    button_frame.pack(pady=10)
+    button_frame.pack(pady=10)    
 
     # Build and place the Add Selection Button
     # Arguments passed match parameters alphabetically: new_item_entry, status_display_bottom, status_display_top, listbox_widget
@@ -134,12 +157,13 @@ def create_user_interface() -> None:
 
     # Build and place the Clear Selection Button
     # Arguments passed match parameters alphabetically: status_display_bottom, status_display_top, listbox_widget
-    clear_button = tk.Button(
+    # Build and place the Remove Selection Button
+    remove_button = tk.Button(
         button_frame, 
-        text="Clear Selection", 
-        command=lambda: clear_selection(status_display_bottom, status_display_top, listbox_widget)
+        text="Remove Selection", 
+        command=lambda: remove_selection(status_display_bottom, status_display_top, listbox_widget)
     )
-    clear_button.pack(side="left", padx=5)
+    remove_button.pack(side="left", padx=5)
 
     root.mainloop()
 
