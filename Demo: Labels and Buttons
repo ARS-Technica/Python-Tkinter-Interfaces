@@ -1,0 +1,37 @@
+"""
+Demo: Labels and Buttons
+Created: September 28, 2026
+
+Description: Label, arguably one of the simplest widgets available in the 
+Tkinter toolbox. This is a simple one-line piece of text that you can position 
+in your application. You can set the text by passing in a str as you create it.
+
+The fun part is that we can change labels in order to use them as status 
+messages.
+"""
+
+import tkinter as tk
+
+root = tk.Tk()
+root.title("Demo: Label and Button")
+root.geometry("300x125")
+
+def on_click():
+    dynamic_label.config(text="... is just waiting to be clicked!")
+
+static_label = tk.Label(root, text="This label remains the same.")
+static_label.pack(padx=5, pady=(10, 10))
+
+button = tk.Button(
+    root,
+    text="Click Me",
+    command=on_click,
+)
+button.pack(padx=5, pady=5)
+
+# A helper label to show the result of the click
+dynamic_label = tk.Label(root, text="Meanwhile, this label...")
+dynamic_label.pack(padx=5, pady=(10, 10))
+
+root.mainloop()
+
