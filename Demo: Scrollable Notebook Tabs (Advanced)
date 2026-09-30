@@ -409,7 +409,8 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     lbl_title.pack(side="left")
     
 	btn_close = tk.Label(
-        tab_body, text="✕", font=CONFIG["FONT_CLOSE"],	 
+        tab_body, text="✕", 
+		font=CONFIG["FONT_CLOSE"],	 
         fg="#666666", 
 		bg=CONFIG["COLOR_TAB_INACTIVE"], 
 		padx=6, pady=4, cursor="hand2"													 
@@ -520,13 +521,15 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
         item["bottom_gap"].configure(bg=bottom_line_color)
 
 # Widget Layout Functions -----------------------------------------------------
-def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
+def build_sidebar(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
     """
     Builds the left-side hierarchical navigation Treeview.
     """
-    sidebar_frame = ttk.Frame(parent, height=10, width=250, relief="flat")
+    sidebar_frame = ttk.Frame(parent, width=250, 
+	relief="flat")
     sidebar_frame.pack_propagate(False)
 
+	"""
     sidebar_header = tk.Frame(
         sidebar_frame,
         height=CONFIG["TAB_BAR_HEIGHT"],
@@ -536,6 +539,7 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     )
     sidebar_header.pack(side="top", fill="x")
     sidebar_header.pack_propagate(False)
+	"""
 
     ttk.Label(sidebar_frame, 
 		text="💻 System Clusters", 
@@ -571,28 +575,20 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     """
     workspace_container = ttk.Frame(parent)
     
-    # 1. Top Scrollable Tab Header Bar
-    tab_strip_frame = tk.Frame(
-        workspace_container,
-        height=CONFIG["TAB_BAR_HEIGHT"],
-        bg=CONFIG["COLOR_STRIP_BG"],
-        borderwidth=0,
-        highlightthickness=0,
-    )
+   # 1. Top Tab Strip Frame
+    tab_strip_frame = tk.Frame(workspace_container, 
+		height=33, 
+		bg=CONFIG["COLOR_STRIP_BG"]
+	)								
     tab_strip_frame.pack(side="top", fill="x")
     tab_strip_frame.pack_propagate(False)
 
     btn_left = tk.Button(
-        tab_strip_frame, text="◀", relief="flat", bg="#CCCCCC", width=3, height=1,
+        tab_strip_frame, text="◀", relief="flat", bg=CONFIG["COLOR_STRIP_BG"],
+        activebackground=CONFIG["COLOR_TAB_INACTIVE"], bd=0, width=2,
         command=lambda: scroll_tab_bar(canvas, -1)
     )
-    btn_left.pack(
-        side="left",
-        anchor="s",
-        padx=(1, 0),
-        pady=(0, 0),
-        ipady=0,
-    )
+    btn_left.pack(side="left", fill="y")
 
     btn_right = tk.Button(
         tab_strip_frame, text="▶", relief="flat", bg=CONFIG["COLOR_STRIP_BG"],
