@@ -156,8 +156,8 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
 # Tab Lifecycle Management ---------------------------------------------------
 def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
-    Updates tab borders, baseline connectors, and background colors.
-    """
+	Updates tab borders, baseline connectors, and background colors.
+	"""
     for node_key, item in tab_bar_state["tabs"].items():
         is_active = (node_key == active_key)
         bg_fill = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_TAB_INACTIVE"]
@@ -222,7 +222,6 @@ def spawn_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
 	Spawns a workspace page and builds a bottom-borderless native tab.
 	"""
-
     tabs_dict = tab_bar_state["tabs"]
     notebook = tab_bar_state["notebook"]
     scroll_content = tab_bar_state["scroll_content"]
@@ -295,7 +294,25 @@ def spawn_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 				
     select_workspace_tab(node_key, tab_bar_state)
 
+
 # Sidebar & Synchronization ---------------------------------------------------
+def sync_sidebar_selection(treeview_widget: ttk.Treeview, active_key: str) -> None:
+    """
+	Highlights the corresponding node in the sidebar.
+	"""
+    for parent_id in treeview_widget.get_children():
+        for child_id in treeview_widget.get_children(parent_id):
+            vals = treeview_widget.item(child_id, "values")
+
+            if vals and vals[0] == active_key:
+                if treeview_widget.focus() != child_id:
+                    treeview_widget.item(parent_id, open=True)
+                    treeview_widget.selection_set(child_id)
+                    treeview_widget.focus(child_id)
+
+                return
+
+
 def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Creates a new tab in the notebook and a pill button in the tab bar.
