@@ -35,9 +35,6 @@ CONFIG = {
     "COLOR_WORKSPACE_BG": "#FFFFFF",
     "COLOR_SCROLL_TROUGH": "#E0E0E0",
     "COLOR_SCROLL_THUMB": "#9E9E9E",
-    "TAB_OVERLAP": 24,
-    "TAB_BAR_HEIGHT": 40,
-    "SIDEBAR_TREE_INSET": 2,
 }
 
 
@@ -61,10 +58,10 @@ def setup_workspace_styles() -> ttk.Style:
     Configures the theme, tabless notebook, and thin micro-scrollbar.
     """
     style = ttk.Style()
-    # style.theme_use("clam")
+    style.theme_use("clam")
     style.configure("Treeview", rowheight=CONFIG["ROW_HEIGHT"], font=CONFIG["FONT_BODY"])
 
-    # 1. Redefine the notebook layout so it ONLY draws the client viewport
+    # 1. Notebook viewport with zero margins
     # This strips out the tab row entirely.
     style.layout("Tabless.TNotebook", [
         ("Tabless.TNotebook.client", {"sticky": "nswe"})
@@ -72,53 +69,6 @@ def setup_workspace_styles() -> ttk.Style:
 
     # 2. Empty out the Tab element layout explicitly
     style.layout("Tabless.TNotebook.Tab", [])
-
-    """
-    # 3. Collapse tab dimensions and padding to 0
-    style.configure(
-        "ScrollingTab.TFrame",
-        background=CONFIG["COLOR_TAB_INACTIVE"],
-        borderwidth=1,
-        relief="raised",
-    )
-
-    style.configure(
-        "ScrollingTab.TLabel",
-        background=CONFIG["COLOR_TAB_INACTIVE"],
-        foreground="#000000",
-        padding=(8, 4),
-    )
-
-    style.configure(
-        "ScrollingTabClose.TButton",
-        padding=(2, 2),
-        relief="flat",
-    )
-
-    style.configure(
-        "Sidebar.TFrame",
-        background=CONFIG["COLOR_STRIP_BG"],
-    )
-    style.configure(
-        "Tabless.TNotebook",
-        tabmargins=0,
-        borderwidth=0,
-        highlightthickness=0,
-        background=CONFIG["COLOR_WORKSPACE_BG"],
-        relief="flat",
-        padding=0,
-    )
-    style.configure(
-        "Treeview",
-        rowheight=CONFIG["ROW_HEIGHT"],
-        font=CONFIG["FONT_BODY"],
-        bordercolor="#000000",
-        lightcolor="#000000",
-        darkcolor="#000000",
-        borderwidth=1,
-        relief="solid",
-    )
-    """
 
     style.configure(
         "Tabless.TNotebook",
@@ -157,38 +107,6 @@ def setup_workspace_styles() -> ttk.Style:
 
     return style
 
-"""
-# Sidebar Functions -----------------------------------------------------------
-def on_sidebar_click(event: tk.Event, tab_bar_state: dict) -> None:
-    """
-    Handles sidebar node click to open or select a tab.
-    """
-    treeview = event.widget
-    item = treeview.focus()
-
-    if not item:
-        return
-
-    vals = treeview.item(item, "values")
-
-    if vals:
-        create_workspace_tab(vals[0], tab_bar_state)
-
-
-def sync_sidebar_selection(treeview_widget: ttk.Treeview, active_key: str) -> None:
-    """
-    Highlights the corresponding node in the sidebar.
-    """
-    for parent_id in treeview_widget.get_children():
-        for child_id in treeview_widget.get_children(parent_id):
-            vals = treeview_widget.item(child_id, "values")
-            if vals and vals[0] == active_key:
-                if treeview_widget.focus() != child_id:
-                    treeview_widget.item(parent_id, open=True)
-                    treeview_widget.selection_set(child_id)
-                    treeview_widget.focus(child_id)
-                return
-"""
 
 # Tab Bar Scrolling & Interaction ---------------------------------------------
 
@@ -235,30 +153,40 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
         canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 30) / total_w))
 
 
-def layout_overlapping_tabs(tab_bar_state: dict) -> None:
+# Tab Lifecycle Management ---------------------------------------------------
+def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
-    Positions tabs so each later tab overlaps the previous tab.
+    Updates tab borders, baseline connectors, and background colors.
     """
-    canvas = tab_bar_state["canvas"]
-    scroll_content = tab_bar_state["scroll_content"]
-    canvas_window = tab_bar_state["canvas_window"]
-    tabs = tab_bar_state["tabs"]
+    for node_key, item in tab_bar_state["tabs"].items():
+        is_active = (node_key == active_key)
+        bg_fill = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_TAB_INACTIVE"]
 
-    scroll_content.update_idletasks()
+        item["body"].configure(bg=bg_fill)
+        item["lbl_title"].configure(bg=bg_fill)
+        item["btn_close"].configure(bg=bg_fill)
 
-    left_edge = 0
-    right_edge = left_edge
-    for tab_info in tabs.values():
-        tab_item = tab_info["frame"]
-        tab_width = tab_item.winfo_reqwidth()
-        tab_item.place(x=left_edge, rely=1.0, anchor="sw")
-        right_edge = left_edge + tab_width
-        left_edge += max(1, tab_width - CONFIG["TAB_OVERLAP"])
+        bottom_line_color = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_BORDER"]
+        item["bottom_gap"].configure(bg=bottom_line_color)
 
-    content_width = max(right_edge, canvas.winfo_width())
-    canvas.itemconfigure(canvas_window, width=content_width, height=40)
-    scroll_content.configure(width=content_width, height=40)
-    canvas.configure(scrollregion=canvas.bbox("all"))
+
+def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+	Selects an open tab in the notebook and updates seamless styling.
+	"""
+    notebook = tab_bar_state["notebook"]
+    tabs_dict = tab_bar_state["tabs"]
+    nav_tree = tab_bar_state["nav_tree"]
+
+    if node_key not in tabs_dict:
+        return
+
+    tab_info = tabs_dict[node_key]
+    notebook.select(tab_info["page"])
+								  
+    update_tab_bar_visuals(tab_bar_state, node_key)
+    scroll_tab_into_view(tab_bar_state["canvas"], tab_info["tab_root"])
+    sync_sidebar_selection(nav_tree, node_key)
 
 
 # Tab Functions ---------------------------------------------------------------
@@ -339,12 +267,11 @@ def spawn_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 
     bottom_gap = tk.Frame(tab_root, height=1, bg=CONFIG["COLOR_BORDER"])
     bottom_gap.pack(side="bottom", fill="x")
-
-								 
+						 
     btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
     btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#666666"))
 
-    for w in (tab_root, tab_body, lbl_title):																											
+    for w in (tab_root, tab_body, lbl_title):
         w.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
 																																 
     btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
@@ -368,7 +295,7 @@ def spawn_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 				
     select_workspace_tab(node_key, tab_bar_state)
 
-
+# Sidebar & Synchronization ---------------------------------------------------
 def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Creates a new tab in the notebook and a pill button in the tab bar.
@@ -484,41 +411,6 @@ def register_tab(
         "page": page,
         **tab_widgets,
     }
-
-
-def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
-    """
-	Selects an open tab in the notebook and updates seamless styling.
-	"""
-    notebook = tab_bar_state["notebook"]
-    tabs_dict = tab_bar_state["tabs"]
-    nav_tree = tab_bar_state["nav_tree"]
-
-    if node_key not in tabs_dict:
-        return
-
-    tab_info = tabs_dict[node_key]
-    notebook.select(tab_info["page"])
-								  
-    update_tab_bar_visuals(tab_bar_state, node_key)
-    scroll_tab_into_view(tab_bar_state["canvas"], tab_info["tab_root"])
-    sync_sidebar_selection(nav_tree, node_key)
-
-
-def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
-    """
-    Updates tab borders, baseline connectors, and background colors.
-    """
-    for node_key, item in tab_bar_state["tabs"].items():
-        is_active = (node_key == active_key)
-        bg_fill = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_TAB_INACTIVE"]
-
-        item["body"].configure(bg=bg_fill)
-        item["lbl_title"].configure(bg=bg_fill)
-        item["btn_close"].configure(bg=bg_fill)
-
-        bottom_line_color = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_BORDER"]
-        item["bottom_gap"].configure(bg=bottom_line_color)
 
 # Widget Layout Functions -----------------------------------------------------
 def build_sidebar(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
