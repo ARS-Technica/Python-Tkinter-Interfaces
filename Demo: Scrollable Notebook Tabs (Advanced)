@@ -109,7 +109,6 @@ def setup_workspace_styles() -> ttk.Style:
 
 
 # Tab Bar Scrolling & Interaction ---------------------------------------------
-
 def scroll_tab_bar(canvas: tk.Canvas, direction: int) -> None:
     """
 	Scrolls the canvas horizontally by units.
