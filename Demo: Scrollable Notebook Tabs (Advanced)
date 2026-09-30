@@ -595,43 +595,40 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     )
 
     btn_right = tk.Button(
-        tab_strip_frame, text="▶", relief="flat", bg="#CCCCCC", width=3, height=1,
+        tab_strip_frame, text="▶", relief="flat", bg=CONFIG["COLOR_STRIP_BG"],
+        activebackground=CONFIG["COLOR_TAB_INACTIVE"], bd=0, width=2,
         command=lambda: scroll_tab_bar(canvas, 1)
     )
-    btn_right.pack(
-        side="right",
-        anchor="s",
-        padx=(0, 3),
-        pady=(0, 0),
-        ipady=0,
-    )
+    btn_right.pack(side="right", fill="y")
 
     canvas = tk.Canvas(
         tab_strip_frame,
-        height=CONFIG["TAB_BAR_HEIGHT"],
+        height=33,
         bg=CONFIG["COLOR_STRIP_BG"],
         borderwidth=0,
         highlightthickness=0,
     )
     canvas.pack(side="left", fill="both", expand=True)
 
-    scroll_content = tk.Frame(
-        canvas,
-        bg=CONFIG["COLOR_STRIP_BG"],
-        borderwidth=0,
-        highlightthickness=0,
+    scroll_content = tk.Frame(canvas, bg=CONFIG["COLOR_STRIP_BG"])
+    canvas.create_window((0, 0), window=scroll_content, anchor="sw")
+
+    # 2. Thin Horizontal Micro-Scrollbar (placed directly beneath the tabs)
+    tab_scrollbar = ttk.Scrollbar(
+        workspace_container,
+        orient="horizontal",
+        style="Slim.Horizontal.TScrollbar",
+        command=canvas.xview
     )
-    canvas_window = canvas.create_window(
-        (0, CONFIG["TAB_BAR_HEIGHT"]),
-        window=scroll_content,
-        anchor="sw",
-        height=CONFIG["TAB_BAR_HEIGHT"],
-    )
+    tab_scrollbar.pack(side="top", fill="x")
+
+    # Connect the canvas view to the scrollbar
+    canvas.configure(xscrollcommand=tab_scrollbar.set)
 
     # Keep canvas window height matched
     scroll_content.bind(
         "<Configure>",
-        lambda e: canvas.configure(scrollregion=canvas.bbox("all")),
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
     )
 
     # Mousewheel scrolling over the canvas strip
@@ -640,13 +637,13 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         w.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, canvas))
         w.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, canvas))
 
-    # 2. Bottom Tabless Notebook Workspace
+    # 3. Bottom Tabless Notebook Workspace
     notebook = ttk.Notebook(workspace_container, style="Tabless.TNotebook")
     notebook.pack(side="top", fill="both", expand=True)
 
     tab_bar_state = {
         "canvas": canvas,
-        "canvas_window": canvas_window,
+        # "canvas_window": canvas_window,
         "scroll_content": scroll_content,
         "notebook": notebook,
         "tabs": {},
@@ -671,7 +668,7 @@ def create_application() -> None:
     paned_window.pack(fill="both", expand=True, padx=10, pady=10)
 
     # Build Left & Right Panes
-    sidebar_frame, nav_tree = build_sidebar_panel(paned_window)
+    sidebar_frame, nav_tree = build_sidebar(paned_window)
     workspace_frame, tab_bar_state = build_workspace(paned_window)
     tab_bar_state["nav_tree"] = nav_tree
 
@@ -682,7 +679,7 @@ def create_application() -> None:
     nav_tree.bind("<ButtonRelease-1>", lambda e: on_sidebar_click(e, tab_bar_state))
 
     # Launch with initial default tab
-    create_workspace_tab("dev_dash", tab_bar_state)
+    spawn_workspace_tab("dev_dash", tab_bar_state)
 
     root.mainloop()
 
