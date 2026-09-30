@@ -290,10 +290,83 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         tab_bar_state["nav_tree"].selection_set()
 
 
-# def spawn_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
-#   """
-#	Spawns a workspace page and builds a bottom-borderless native tab.
-#	"""
+def spawn_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+	Spawns a workspace page and builds a bottom-borderless native tab.
+	"""
+
+    tabs_dict = tab_bar_state["tabs"]
+    notebook = tab_bar_state["notebook"]
+    scroll_content = tab_bar_state["scroll_content"]
+    tab_meta = TAB_REGISTRY.get(node_key)
+
+    if not tab_meta:
+        return
+							  
+    if node_key in tabs_dict:
+        select_workspace_tab(node_key, tab_bar_state)
+        return
+
+    # 1. Workspace Notebook Page
+    page_frame = tk.Frame(notebook, bg=CONFIG["COLOR_WORKSPACE_BG"])
+    page_frame.node_key = node_key
+
+    ttk.Label(page_frame, text=tab_meta["header"], font=CONFIG["FONT_HEADER"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25, pady=25)
+    ttk.Label(page_frame, text=f"Active Context: [{tab_meta['title']}]", font=CONFIG["FONT_BODY"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25)
+    notebook.add(page_frame)
+
+    # 2. Native-Look Tab Structure
+    tab_root = tk.Frame(scroll_content, bg=CONFIG["COLOR_BORDER"], height=32)
+    tab_root.pack(side="left", padx=(3, 0), anchor="s")
+
+    tab_body = tk.Frame(tab_root, bg=CONFIG["COLOR_TAB_INACTIVE"])
+	
+    tab_body.pack(side="top", fill="both", expand=True, padx=(1, 1), pady=(1, 0))
+
+    lbl_title = tk.Label(
+        tab_body, text=tab_meta["title"], font=CONFIG["FONT_TAB"],
+        bg=CONFIG["COLOR_TAB_INACTIVE"], padx=8, pady=4, cursor="hand2"
+    )
+    lbl_title.pack(side="left")
+
+    btn_close = tk.Label(
+        tab_body, text="✕", font=CONFIG["FONT_CLOSE"],
+					  
+        fg="#666666", bg=CONFIG["COLOR_TAB_INACTIVE"], padx=6, pady=4, cursor="hand2"
+																									 
+    )
+    btn_close.pack(side="right")
+
+    bottom_gap = tk.Frame(tab_root, height=1, bg=CONFIG["COLOR_BORDER"])
+    bottom_gap.pack(side="bottom", fill="x")
+
+								 
+    btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
+    btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#666666"))
+
+    for w in (tab_root, tab_body, lbl_title):																											
+        w.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+																																 
+    btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+
+    for widget in (tab_root, tab_body, lbl_title, btn_close):
+        widget.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+        widget.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+        widget.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
+
+    tabs_dict[node_key] = {
+        "page": page_frame,
+        "tab_root": tab_root,
+        "body": tab_body,
+        "lbl_title": lbl_title,
+        "btn_close": btn_close,
+        "bottom_gap": bottom_gap
+    }
+
+    tab_bar_state["canvas"].update_idletasks()
+    tab_bar_state["canvas"].configure(scrollregion=tab_bar_state["canvas"].bbox("all"))
+				
+    select_workspace_tab(node_key, tab_bar_state)
 
 
 def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
