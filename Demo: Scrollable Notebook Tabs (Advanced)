@@ -537,23 +537,12 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     sidebar_header.pack(side="top", fill="x")
     sidebar_header.pack_propagate(False)
 
-    tk.Label(
-        sidebar_header,
-        text="System Nodes",
-        font=CONFIG["FONT_HEADER"],
-        bg=CONFIG["COLOR_STRIP_BG"],
-        fg="#000000",
-        anchor="center",
-    ).pack(fill="both", expand=True)
+    ttk.Label(sidebar_frame, 
+		text="💻 System Clusters", 
+		font=CONFIG["FONT_HEADER"]).pack(anchor="w", padx=10, pady=(10, 5))
 
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
-    nav_tree.pack(
-        side="top",
-        fill="both",
-        expand=True,
-        padx=5,
-        pady=(CONFIG["SIDEBAR_TREE_INSET"], CONFIG["SIDEBAR_TREE_INSET"]),
-    )
+    nav_tree.pack(fill="both", expand=True, padx=5, pady=5)
 
     # Tier 1 Root Folders
     cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
