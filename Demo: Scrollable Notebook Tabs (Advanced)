@@ -854,36 +854,6 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     sidebar_frame = ttk.Frame(parent, height=10, width=250, relief="flat")
     sidebar_frame.pack_propagate(False)
 
-    """
-    sidebar_header = tk.Frame(
-        sidebar_frame,
-        height=CONFIG["TAB_BAR_HEIGHT"],
-        bg=CONFIG["COLOR_STRIP_BG"],
-        borderwidth=0,
-        highlightthickness=0,
-    )
-    sidebar_header.pack(side="top", fill="x")
-    sidebar_header.pack_propagate(False)
-
-    tk.Label(
-        sidebar_header,
-        text="💻 System Nodes",
-        font=CONFIG["FONT_HEADER"],
-        bg=CONFIG["COLOR_STRIP_BG"],
-        fg="#000000",
-        anchor="center",
-    ).pack(fill="both", expand=True, pady=(10, 5))
-
-    nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
-    nav_tree.pack(
-        side="top",
-        fill="both",
-        expand=True,
-        padx=5,
-        pady=(CONFIG["SIDEBAR_TREE_INSET"], CONFIG["SIDEBAR_TREE_INSET"]),
-    )
-    """
-
     # 1. Expand the header height downward by ~15px using bottom padding
     #    (Changed pady from (10, 5) to (10, 20))
     sidebar_header = ttk.Label(
