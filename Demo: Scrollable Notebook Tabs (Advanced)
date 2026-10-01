@@ -893,7 +893,8 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     tab_strip_frame.pack_propagate(False)
 
 
-    # 3. Canvas
+    # 2. Canvas & Inner Content
+    # Must exist BEFORE binding scrollbar commands
     canvas = tk.Canvas(
         tab_strip_frame,
         height=CONFIG["TAB_BAR_HEIGHT"],
@@ -928,28 +929,6 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     )
 
 
-    # 2. Horizontal Scrollbar Container Frame 
-    # (Separates mouse hit target from Canvas & Notebook)
-    # Dedicated container frame so mouse clicks are never clipped
-    scrollbar_container = tk.Frame(workspace_container, height=8, bg=CONFIG["COLOR_SCROLL_TROUGH"])
-    scrollbar_container.pack(side="top", fill="x")
-    scrollbar_container.pack_propagate(False)
-
-    # Instantiate the scrollbar inside its container
-    tab_scrollbar = ttk.Scrollbar(
-        scrollbar_container,
-        orient="horizontal",
-        style="Slim.Horizontal.TScrollbar",
-        command=canvas.xview
-    )
-    tab_scrollbar.pack(fill="both", expand=True)
-
-    # Connect canvas horizontal movement to the scrollbar thumb
-    canvas.configure(xscrollcommand=tab_scrollbar.set)
-
-
-
-
     scroll_content = tk.Frame(
         canvas,
         bg=CONFIG["COLOR_STRIP_BG"],
@@ -974,6 +953,32 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         w.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, canvas))
         w.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, canvas))
         w.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, canvas))
+
+
+
+    # 2. Horizontal Scrollbar Container Frame 
+    # (Separates mouse hit target from Canvas & Notebook)
+    # Dedicated container frame so mouse clicks are never clipped
+    scrollbar_container = tk.Frame(workspace_container, height=8, bg=CONFIG["COLOR_SCROLL_TROUGH"])
+    scrollbar_container.pack(side="top", fill="x")
+    scrollbar_container.pack_propagate(False)
+
+    # Instantiate the scrollbar inside its container
+    tab_scrollbar = ttk.Scrollbar(
+        scrollbar_container,
+        orient="horizontal",
+        style="Slim.Horizontal.TScrollbar",
+        command=canvas.xview
+    )
+    tab_scrollbar.pack(fill="both", expand=True)
+
+    # Connect canvas horizontal movement to the scrollbar thumb
+    canvas.configure(xscrollcommand=tab_scrollbar.set)
+
+
+
+
+
 
     # 4. Bottom Tabless Notebook Workspace
     notebook = ttk.Notebook(workspace_container, style="Tabless.TNotebook")
