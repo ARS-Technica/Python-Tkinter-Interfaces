@@ -14,8 +14,6 @@ providing smooth click-and-drag scrolling alongside mousewheel support.
 Based on "Demo: Scrollable Notebook Tabs" project.
 """
 
-# Current Issue: Integrate scrollbar and tab effects
-
 import tkinter as tk
 from tkinter import ttk
 
