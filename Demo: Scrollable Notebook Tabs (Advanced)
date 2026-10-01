@@ -880,8 +880,8 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     Builds the right-hand panel containing the scrollable tab strip and notebook.
     """
     workspace_container = ttk.Frame(parent)
-    
-    # 1. Top Scrollable Tab Header Bar
+
+    # 1. Top Scrollable Tabs in Header Bar
     tab_strip_frame = tk.Frame(
         workspace_container,
         height=CONFIG["TAB_BAR_HEIGHT"],
@@ -916,6 +916,25 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         ipady=0,
     )
 
+
+    # 2. Horizontal Scrollbar Container Frame 
+    # (Separates mouse hit target from Canvas & Notebook)
+    # Dedicated container frame so mouse clicks are never clipped
+    scrollbar_container = tk.Frame(workspace_container, height=8, bg=CONFIG["COLOR_SCROLL_TROUGH"])
+    scrollbar_container.pack(side="top", fill="x")
+    scrollbar_container.pack_propagate(False)
+
+    # Instantiate the scrollbar inside its container
+    tab_scrollbar = ttk.Scrollbar(
+        scrollbar_container,
+        orient="horizontal",
+        style="Slim.Horizontal.TScrollbar",
+        command=canvas.xview
+    )
+    tab_scrollbar.pack(fill="both", expand=True)
+
+
+    # 3. Canvas
     canvas = tk.Canvas(
         tab_strip_frame,
         height=CONFIG["TAB_BAR_HEIGHT"],
@@ -950,7 +969,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         w.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, canvas))
         w.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, canvas))
 
-    # 2. Bottom Tabless Notebook Workspace
+    # 4. Bottom Tabless Notebook Workspace
     notebook = ttk.Notebook(workspace_container, style="Tabless.TNotebook")
     notebook.pack(side="top", fill="both", expand=True)
 
