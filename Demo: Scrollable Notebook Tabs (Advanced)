@@ -933,6 +933,9 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     )
     tab_scrollbar.pack(fill="both", expand=True)
 
+    # Connect canvas horizontal movement to the scrollbar thumb
+    canvas.configure(xscrollcommand=tab_scrollbar.set)
+
 
     # 3. Canvas
     canvas = tk.Canvas(
