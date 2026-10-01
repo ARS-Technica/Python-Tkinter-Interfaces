@@ -902,7 +902,6 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         borderwidth=0,
         highlightthickness=0,
     )
-    canvas.pack(side="left", fill="both", expand=True)
 
     btn_left = tk.Button(
         tab_strip_frame, text="◀", relief="flat", bg="#CCCCCC", width=3, height=1,
@@ -928,7 +927,9 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         ipady=0,
     )
 
+    canvas.pack(side="left", fill="both", expand=True)
 
+    # 3. Canvas Window
     scroll_content = tk.Frame(
         canvas,
         bg=CONFIG["COLOR_STRIP_BG"],
@@ -955,8 +956,7 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         w.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, canvas))
 
 
-
-    # 2. Horizontal Scrollbar Container Frame 
+    # 3. Horizontal Scrollbar Container Frame 
     # (Separates mouse hit target from Canvas & Notebook)
     # Dedicated container frame so mouse clicks are never clipped
     scrollbar_container = tk.Frame(workspace_container, height=8, bg=CONFIG["COLOR_SCROLL_TROUGH"])
@@ -974,10 +974,6 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
 
     # Connect canvas horizontal movement to the scrollbar thumb
     canvas.configure(xscrollcommand=tab_scrollbar.set)
-
-
-
-
 
 
     # 4. Bottom Tabless Notebook Workspace
