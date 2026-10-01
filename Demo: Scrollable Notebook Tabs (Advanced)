@@ -119,6 +119,30 @@ def setup_workspace_styles() -> ttk.Style:
         relief="solid",
     )
 
+    # Define a horizontal scrollbar layout
+    style.layout("Slim.Horizontal.TScrollbar", [
+        ("Horizontal.Scrollbar.trough", {
+            "sticky": "nswe",
+            "children": [
+                ("Horizontal.Scrollbar.thumb", {"sticky": "nswe"})
+            ]
+        })
+    ])
+    style.configure(
+        "Slim.Horizontal.TScrollbar",
+        troughcolor=CONFIG["COLOR_SCROLL_TROUGH"],
+        background=CONFIG["COLOR_SCROLL_THUMB"],
+        lightcolor=CONFIG["COLOR_SCROLL_THUMB"],
+        darkcolor=CONFIG["COLOR_SCROLL_THUMB"],
+        bordercolor=CONFIG["COLOR_SCROLL_TROUGH"],
+        arrowsize=0,
+        width=8,
+        relief="flat"
+    )
+    style.map("Slim.Horizontal.TScrollbar",
+        background=[("active", "#6B6B6B"), ("pressed", "#404040")]
+    )    
+
     return style
 
 
