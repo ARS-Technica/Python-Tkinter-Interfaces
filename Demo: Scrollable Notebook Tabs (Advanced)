@@ -269,11 +269,48 @@ def _bind_tab_events(
     """
     pass
 
+
 def _build_tab_button(parent: tk.Misc, node_key: str, tab_meta: dict, tab_bar_state: dict) -> tuple[tk.Frame, tk.Label, tk.Button]:
     """
     Instantiate the tab item frame, title label, and close button.
     """
-    pass
+    tab_item = tk.Frame(
+        parent,
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        borderwidth=0,
+        relief="flat",
+    )
+
+    lbl_title = tk.Label(
+        tab_item,
+        text=tab_meta["title"],
+        font=CONFIG["FONT_TAB"],
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        fg="#000000",
+        padx=5,
+        pady=4,
+        cursor="hand2",
+    )
+    lbl_title.pack(side="left")
+
+    btn_close = tk.Button(
+        tab_item,
+        text="×",
+        font=CONFIG["FONT_CLOSE"],
+        relief="flat",
+        borderwidth=0,
+        highlightthickness=0,
+        overrelief="flat",
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        fg="#555555",
+        activebackground=CONFIG["COLOR_TAB_INACTIVE"],
+        cursor="hand2",
+        command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
+    )
+    btn_close.pack(side="left", padx=(0, 6))
+
+    return tab_item, lbl_title, btn_close
+
 
 def _build_workspace_page(notebook: ttk.Notebook, node_key: str, tab_meta: dict) -> tk.Frame:
     """
