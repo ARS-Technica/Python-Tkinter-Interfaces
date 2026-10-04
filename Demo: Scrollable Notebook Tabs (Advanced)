@@ -394,14 +394,32 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         select_workspace_tab(node_key, tab_bar_state)
         return
 
-
     # 1. Workspace Notebook Page
     page_frame = _build_workspace_page(tab_bar_state["notebook"], node_key, tab_meta)
 
     # 2. Tab Strip Button & Elements
+    tab_item, lbl_title, btn_close = _build_tab_button(
+        tab_bar_state["scroll_content"], node_key, tab_meta, tab_bar_state
+    )
+
     # 3. Visual Accents & Geometry
+    corner_canvas, corner_top_line = _apply_tab_decorations(tab_item)
+
     # 4. Event & Interaction Bindings
+    _bind_tab_events(node_key, tab_bar_state, tab_item, lbl_title, btn_close, corner_canvas)
+
     # 5. State Registration & Presentation
+    tabs_dict[node_key] = {
+        "page": page_frame,
+        "frame": tab_item,
+        "lbl_title": lbl_title,
+        "btn_close": btn_close,
+        "corner": corner_canvas,
+        "corner_top_line": corner_top_line,
+    }
+
+    layout_overlapping_tabs(tab_bar_state)
+    select_workspace_tab(node_key, tab_bar_state)
 
 
 # Tab Functions ---------------------------------------------------------------
