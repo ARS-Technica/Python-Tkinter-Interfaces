@@ -269,11 +269,24 @@ def _build_workspace_page
     Build and mouns the workspace notebook panel.
     """
 
-def create_workspace_tab 
+def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Coordinate lifecycle, layout, and registration of each workspace tab.
     """
-    # 1. Workspace Notebook Page 
+    tabs_dict = tab_bar_state["tabs"]
+    tab_meta = TAB_REGISTRY.get(node_key)    
+
+    if not tab_meta:
+        return
+
+    if node_key in tabs_dict:
+        select_workspace_tab(node_key, tab_bar_state)
+        return
+
+
+    # 1. Workspace Notebook Page
+    page_frame = _build_workspace_page(tab_bar_state["notebook"], node_key, tab_meta)
+
     # 2. Tab Strip Button & Elements
     # 3. Visual Accents & Geometry
     # 4. Event & Interaction Bindings
