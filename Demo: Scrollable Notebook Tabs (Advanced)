@@ -117,32 +117,6 @@ def setup_workspace_styles() -> ttk.Style:
         relief="solid",
     )
 
-    """
-    # Define a horizontal scrollbar layout
-    style.layout("Slim.Horizontal.TScrollbar", [
-        ("Horizontal.Scrollbar.trough", {
-            "sticky": "nswe",
-            "children": [
-                ("Horizontal.Scrollbar.thumb", {"sticky": "nswe"})
-            ]
-        })
-    ])
-    style.configure(
-        "Slim.Horizontal.TScrollbar",
-        troughcolor=CONFIG["COLOR_SCROLL_TROUGH"],
-        background=CONFIG["COLOR_SCROLL_THUMB"],
-        lightcolor=CONFIG["COLOR_SCROLL_THUMB"],
-        darkcolor=CONFIG["COLOR_SCROLL_THUMB"],
-        bordercolor=CONFIG["COLOR_SCROLL_TROUGH"],
-        arrowsize=0,
-        width=14, # Horizonyal Scrollbar Style Thickness
-        relief="flat"
-    )
-    style.map("Slim.Horizontal.TScrollbar",
-        background=[("active", "#6B6B6B"), ("pressed", "#404040")]
-    )    
-    """
-
     # 1. Register a square, flat block layout
     # Define a horizontal scrollbar layout
     # Clean, modern scrollbar without arrow boxes; 8px width ensures reliable mouse grabbing
@@ -688,7 +662,7 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     sidebar_header.pack(anchor="w", fill="x", padx=10, pady=(10, 15))
 
     # 2. Pack the nav_tree flush with its new position
-    #    (Changed pady from (5, 5) to (0, 5) to keep the bottom aligned)
+    # (Changed pady from (5, 5) to (0, 5) to keep the bottom aligned)
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
     nav_tree.pack(fill="both", expand=True, padx=5, pady=(0, 5))
 
