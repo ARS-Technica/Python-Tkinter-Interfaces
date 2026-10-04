@@ -273,7 +273,11 @@ def create_workspace_tab
     """
     Coordinate lifecycle, layout, and registration of each workspace tab.
     """
- 
+    # 1. Workspace Notebook Page 
+    # 2. Tab Strip Button & Elements
+    # 3. Visual Accents & Geometry
+    # 4. Event & Interaction Bindings
+    # 5. State Registration & Presentation
 
 
 # Tab Functions ---------------------------------------------------------------
