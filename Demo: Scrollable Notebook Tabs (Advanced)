@@ -254,7 +254,25 @@ def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int]:
     """
     Apply the 3-sided border bevels and top-right corner dog-ear overlay.
     """
-    pass
+    # 3-sided border bevels
+    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(x=0, y=0, relwidth=1.0, anchor="nw")
+    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(x=0, y=0, relheight=1.0, anchor="nw")
+    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(relx=1.0, x=-1, y=0, relheight=1.0, anchor="ne")
+
+    # Corner dog-ear canvas
+    corner_canvas = tk.Canvas(
+        tab_item,
+        width=9,
+        height=9,
+        bg=CONFIG["COLOR_STRIP_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    corner_canvas.place(relx=1.0, rely=0.0, anchor="ne")
+    corner_canvas.create_polygon(0, 0, 0, 9, 9, 9, fill=CONFIG["COLOR_TAB_INACTIVE"], width=1)
+    corner_top_line = corner_canvas.create_line(0, 0, 9, 0, fill="#FFFFFF", width=1)
+
+    return corner_canvas, corner_top_line
 
 
 def _bind_tab_events(
