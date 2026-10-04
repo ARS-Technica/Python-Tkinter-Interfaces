@@ -256,6 +256,7 @@ def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int]:
     """
     pass
 
+
 def _bind_tab_events(
     node_key: str,
     tab_bar_state: dict,
@@ -267,7 +268,25 @@ def _bind_tab_events(
     """
     Attach selection, close-click, hover, and scroll forwarding bindings.
     """
-    pass
+    # Close button hover effect
+    btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
+    btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#555555"))
+
+    # Select / Close triggers across tab sub-elements
+    interactive_elements = (tab_item, lbl_title, corner_canvas)
+    for element in interactive_elements:
+        element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+        element.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+
+    btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+
+    # Mousewheel forwarding
+    canvas = tab_bar_state["canvas"]
+    all_elements = (*interactive_elements, btn_close)
+    for widget in all_elements:
+        widget.bind("<MouseWheel>", lambda e, c=canvas: on_tab_bar_mousewheel(e, c))
+        widget.bind("<Button-4>", lambda e, c=canvas: on_tab_bar_mousewheel(e, c))
+        widget.bind("<Button-5>", lambda e, c=canvas: on_tab_bar_mousewheel(e, c))
 
 
 def _build_tab_button(parent: tk.Misc, node_key: str, tab_meta: dict, tab_bar_state: dict) -> tuple[tk.Frame, tk.Label, tk.Button]:
