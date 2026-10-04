@@ -250,24 +250,36 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
 
 
 # Tab Creation ----------------------------------------------------------------
-def _apply_tab_decorations 
+def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int]:
     """
     Apply the 3-sided border bevels and top-right corner dog-ear overlay.
     """
-def _bind_tab_events 
+    pass
+
+def _bind_tab_events(
+    node_key: str,
+    tab_bar_state: dict,
+    tab_item: tk.Frame,
+    lbl_title: tk.Label,
+    btn_close: tk.Button,
+    corner_canvas: tk.Canvas,
+) -> None:
     """
     Attach selection, close-click, hover, and scroll forwarding bindings.
     """
+    pass
 
-def _build_tab_button 
+def _build_tab_button(parent: tk.Misc, node_key: str, tab_meta: dict, tab_bar_state: dict) -> tuple[tk.Frame, tk.Label, tk.Button]:
     """
     Instantiate the tab item frame, title label, and close button.
     """
+    pass
 
-def _build_workspace_page 
+def _build_workspace_page(notebook: ttk.Notebook, node_key: str, tab_meta: dict) -> tk.Frame:
     """
     Build and mouns the workspace notebook panel.
     """
+    pass
 
 def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
