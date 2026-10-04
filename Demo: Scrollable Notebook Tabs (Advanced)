@@ -249,6 +249,33 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
         canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
 
 
+# Tab Creation ----------------------------------------------------------------
+def _apply_tab_decorations 
+    """
+    Apply the 3-sided border bevels and top-right corner dog-ear overlay.
+    """
+def _bind_tab_events 
+    """
+    Attach selection, close-click, hover, and scroll forwarding bindings.
+    """
+
+def _build_tab_button 
+    """
+    Instantiate the tab item frame, title label, and close button.
+    """
+
+def _build_workspace_page 
+    """
+    Build and mouns the workspace notebook panel.
+    """
+
+def create_workspace_tab 
+    """
+    Coordinate lifecycle, layout, and registration of each workspace tab.
+    """
+ 
+
+
 # Tab Functions ---------------------------------------------------------------
 def bind_tab_events(
     tab_widgets: dict,
@@ -428,143 +455,6 @@ def create_workspace_page(
 
     notebook.add(page_frame)
     return page_frame
-
-
-def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
-    """
-    Creates a new tab in the notebook and a pill button in the tab bar.
-    """
-    tabs_dict = tab_bar_state["tabs"]
-    notebook = tab_bar_state["notebook"]
-    scroll_content = tab_bar_state["scroll_content"]
-    tab_meta = TAB_REGISTRY.get(node_key)
-    
-    if not tab_meta:
-        return
-
-    # If already open, just bring to front
-    if node_key in tabs_dict:
-        select_workspace_tab(node_key, tab_bar_state)
-        return
-
-    # 1. Workspace Notebook Page (White canvas background)
-    page_frame = tk.Frame(notebook, 
-        bg=CONFIG["COLOR_WORKSPACE_BG"],
-        highlightbackground="#000000",
-        highlightthickness=1,
-        highlightcolor="#000000",
-    )
-    page_frame.node_key = node_key
-
-    ttk.Label(page_frame, text=tab_meta["header"], font=CONFIG["FONT_HEADER"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25, pady=25)
-    ttk.Label(page_frame, text=f"Active Context: [{tab_meta['title']}]", font=CONFIG["FONT_BODY"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25)
-    notebook.add(page_frame)
-
-    # 2. Create Tab Button Frame in Scrollable Strip
-    tab_item = tk.Frame(
-        scroll_content,
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
-        borderwidth=0,
-        relief="flat",
-    )
-    # tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
-
-    lbl_title = tk.Label(
-        tab_item,
-        text=tab_meta["title"],
-        font=CONFIG["FONT_TAB"],
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
-        fg="#000000",
-        padx=5,
-        pady=4,
-        cursor="hand2",
-    )
-    lbl_title.pack(side="left")
-
-    btn_close = tk.Button(
-        tab_item,
-        text="×",
-        font=CONFIG["FONT_CLOSE"],
-        relief="flat",
-        borderwidth=0,
-        highlightthickness=0,
-        overrelief="flat",
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
-        fg="#555555",
-        activebackground=CONFIG["COLOR_TAB_INACTIVE"],
-        cursor="hand2",
-        command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
-    )
-    btn_close.pack(side="left", padx=(0, 6),)
-
-    # Draw a three-sided bevel without adding a bottom border.
-    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
-        x=0, y=0, relwidth=1.0, anchor="nw"
-    )
-    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(
-        x=0, y=0, relheight=1.0, anchor="nw"
-    )
-    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(
-        relx=1.0, x=-1, y=0, relheight=1.0, anchor="ne"
-    )
-
-    # Overlay a small cut corner to give the tab a native-style dog-ear.
-    corner_canvas = tk.Canvas(
-        tab_item,
-        width=9,
-        height=9,
-        bg=CONFIG["COLOR_STRIP_BG"],
-        borderwidth=0,
-        highlightthickness=0,
-    )
-    corner_canvas.place(relx=1.0, rely=0.0, anchor="ne")
-    corner_canvas.create_polygon(
-        0, 0,
-        0, 9,
-        9, 9,
-        fill=CONFIG["COLOR_TAB_INACTIVE"],
-        width=1,
-    )
-    corner_top_line = corner_canvas.create_line(
-        0, 0,
-        9, 0,
-        fill="#FFFFFF",
-        width=1,
-    )
-
-    # Hover feedback on close button
-    btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
-    btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#555555"))
-
-    # Event bindings
-    tab_item.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-    tab_item.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
-    lbl_title.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-    lbl_title.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
-    corner_canvas.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-    corner_canvas.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
-    btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
-
-
-    # Mousewheel forwarding
-    for widget in (tab_item, lbl_title, btn_close, corner_canvas):
-        widget.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
-        widget.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
-        widget.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
-
-    # Save to state registry
-    tabs_dict[node_key] = {
-        "page": page_frame,
-        "frame": tab_item,
-        "lbl_title": lbl_title,
-        "btn_close": btn_close,
-        "corner": corner_canvas,
-        "corner_top_line": corner_top_line,
-    }
-
-    # Lay out the overlapping stack and activate the new tab
-    layout_overlapping_tabs(tab_bar_state)
-    select_workspace_tab(node_key, tab_bar_state)
 
 
 def register_tab(
