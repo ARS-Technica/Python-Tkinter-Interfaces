@@ -1,6 +1,6 @@
 """
-Demo: Scrollable Notebook Tabs (Advanced)
-Created: September 27, 2026
+Demo: Scrollable Notebook Resizing Tabs
+Created: October 6, 2026
 
 Description: Solves tab overflow problem in the "Demo: Closable Notebook Tabs" 
 project by pairing a tabless ttk.Notebook with a canvas-backed scrollable tab 
