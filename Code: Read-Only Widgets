@@ -1,0 +1,38 @@
+"""
+Code: Read-Only Widgets
+Created: October 6, 2026
+
+Description: A simple Tkinter snippet demonstrating a read-only Text widget.
+
+Set the state option to "disabled" to prevent user input. 
+Note that when disabled, you must temporarily set the state back to 'normal' 
+to insert or modify text programmatically, then revert it to "disabled". 
+"""
+
+
+import tkinter as tk 
+
+root = tk.Tk()
+
+# Configure the root grid so the Text widget can expand if desired
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+
+text = tk.Text(
+    root,
+    height=5,
+    width=30,
+    pady=10,
+    padx=10,
+    background="lightblue",
+    foreground="black",
+    selectbackground="gray"
+)
+text.grid(row=0, column=0, sticky="nsew")  
+# Sticky ensures it fills space if resized
+
+text.insert(tk.END, "Styled Read-Only Text.")
+text.config(state="disabled")  # Make it read-only 
+
+root.mainloop()
+
