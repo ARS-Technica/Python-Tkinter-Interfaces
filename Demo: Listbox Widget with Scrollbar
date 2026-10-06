@@ -1,5 +1,5 @@
 """
-Demo: Listbox Widget with Scrollbar
+Demo: Listbox with Scrollbar
 Created: May 19, 2026
 
 Description: Demonstrates the Tkinter Listbox widget used to manage 
