@@ -117,32 +117,6 @@ def setup_workspace_styles() -> ttk.Style:
         relief="solid",
     )
 
-    """
-    # Define a horizontal scrollbar layout
-    style.layout("Slim.Horizontal.TScrollbar", [
-        ("Horizontal.Scrollbar.trough", {
-            "sticky": "nswe",
-            "children": [
-                ("Horizontal.Scrollbar.thumb", {"sticky": "nswe"})
-            ]
-        })
-    ])
-    style.configure(
-        "Slim.Horizontal.TScrollbar",
-        troughcolor=CONFIG["COLOR_SCROLL_TROUGH"],
-        background=CONFIG["COLOR_SCROLL_THUMB"],
-        lightcolor=CONFIG["COLOR_SCROLL_THUMB"],
-        darkcolor=CONFIG["COLOR_SCROLL_THUMB"],
-        bordercolor=CONFIG["COLOR_SCROLL_TROUGH"],
-        arrowsize=0,
-        width=14, # Horizonyal Scrollbar Style Thickness
-        relief="flat"
-    )
-    style.map("Slim.Horizontal.TScrollbar",
-        background=[("active", "#6B6B6B"), ("pressed", "#404040")]
-    )    
-    """
-
     # 1. Register a square, flat block layout
     # Define a horizontal scrollbar layout
     # Clean, modern scrollbar without arrow boxes; 8px width ensures reliable mouse grabbing
@@ -205,7 +179,33 @@ def sync_sidebar_selection(treeview_widget: ttk.Treeview, active_key: str) -> No
                 return
 
 
-# Tab Bar Scrolling & Interaction ---------------------------------------------
+# Tab Bar Scrolling Functions -------------------------------------------------
+def layout_overlapping_tabs(tab_bar_state: dict) -> None:
+    """
+    Positions tabs so each later tab overlaps the previous tab.
+    """
+    canvas = tab_bar_state["canvas"]
+    scroll_content = tab_bar_state["scroll_content"]
+    canvas_window = tab_bar_state["canvas_window"]
+    tabs = tab_bar_state["tabs"]
+
+    scroll_content.update_idletasks()
+
+    left_edge = 0
+    right_edge = left_edge
+    for tab_info in tabs.values():
+        tab_item = tab_info["frame"]
+        tab_width = tab_item.winfo_reqwidth()
+        tab_item.place(x=left_edge, rely=1.0, anchor="sw")
+        right_edge = left_edge + tab_width
+        left_edge += max(1, tab_width - CONFIG["TAB_OVERLAP"])
+
+    content_width = max(right_edge, canvas.winfo_width())
+    canvas.itemconfigure(canvas_window, width=content_width, height=40)
+    scroll_content.configure(width=content_width, height=40)
+    canvas.configure(scrollregion=canvas.bbox("all"))
+
+
 def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
     """
     Scrolls the tab bar horizontally using the mouse wheel.
@@ -249,59 +249,226 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
         canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
 
 
-def layout_overlapping_tabs(tab_bar_state: dict) -> None:
+# Tab Creation ----------------------------------------------------------------
+def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int]:
     """
-    Positions tabs so each later tab overlaps the previous tab.
+    Apply the 3-sided border bevels and top-right corner dog-ear overlay.
     """
+    # 3-sided border bevels
+    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(x=0, y=0, relwidth=1.0, anchor="nw")
+    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(x=0, y=0, relheight=1.0, anchor="nw")
+    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(relx=1.0, x=-1, y=0, relheight=1.0, anchor="ne")
+
+    # Corner dog-ear canvas
+    corner_canvas = tk.Canvas(
+        tab_item,
+        width=9,
+        height=9,
+        bg=CONFIG["COLOR_STRIP_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    corner_canvas.place(relx=1.0, rely=0.0, anchor="ne")
+    corner_canvas.create_polygon(0, 0, 0, 9, 9, 9, fill=CONFIG["COLOR_TAB_INACTIVE"], width=1)
+    corner_top_line = corner_canvas.create_line(0, 0, 9, 0, fill="#FFFFFF", width=1)
+
+    return corner_canvas, corner_top_line
+
+
+def _bind_tab_events(
+    node_key: str,
+    tab_bar_state: dict,
+    tab_item: tk.Frame,
+    lbl_title: tk.Label,
+    btn_close: tk.Button,
+    corner_canvas: tk.Canvas,
+) -> None:
+    """
+    Attach selection, close-click, hover, and scroll forwarding bindings.
+    """
+    # Close button hover effect
+    btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
+    btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#555555"))
+
+    # Select / Close triggers across tab sub-elements
+    interactive_elements = (tab_item, lbl_title, corner_canvas)
+    for element in interactive_elements:
+        element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+        element.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+
+    btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+
+    # Mousewheel forwarding
     canvas = tab_bar_state["canvas"]
-    scroll_content = tab_bar_state["scroll_content"]
-    canvas_window = tab_bar_state["canvas_window"]
-    tabs = tab_bar_state["tabs"]
+    all_elements = (*interactive_elements, btn_close)
+    for widget in all_elements:
+        widget.bind("<MouseWheel>", lambda e, c=canvas: on_tab_bar_mousewheel(e, c))
+        widget.bind("<Button-4>", lambda e, c=canvas: on_tab_bar_mousewheel(e, c))
+        widget.bind("<Button-5>", lambda e, c=canvas: on_tab_bar_mousewheel(e, c))
 
-    scroll_content.update_idletasks()
 
-    left_edge = 0
-    right_edge = left_edge
-    for tab_info in tabs.values():
-        tab_item = tab_info["frame"]
-        tab_width = tab_item.winfo_reqwidth()
-        tab_item.place(x=left_edge, rely=1.0, anchor="sw")
-        right_edge = left_edge + tab_width
-        left_edge += max(1, tab_width - CONFIG["TAB_OVERLAP"])
+def _build_tab_button(parent: tk.Misc, node_key: str, tab_meta: dict, tab_bar_state: dict) -> tuple[tk.Frame, tk.Label, tk.Button]:
+    """
+    Instantiate the tab item frame, title label, and close button.
+    """
+    tab_item = tk.Frame(
+        parent,
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        borderwidth=0,
+        relief="flat",
+    )
 
-    content_width = max(right_edge, canvas.winfo_width())
-    canvas.itemconfigure(canvas_window, width=content_width, height=40)
-    scroll_content.configure(width=content_width, height=40)
-    canvas.configure(scrollregion=canvas.bbox("all"))
+    lbl_title = tk.Label(
+        tab_item,
+        text=tab_meta["title"],
+        font=CONFIG["FONT_TAB"],
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        fg="#000000",
+        padx=5,
+        pady=4,
+        cursor="hand2",
+    )
+    lbl_title.pack(side="left")
+
+    btn_close = tk.Button(
+        tab_item,
+        text="×",
+        font=CONFIG["FONT_CLOSE"],
+        relief="flat",
+        borderwidth=0,
+        highlightthickness=0,
+        overrelief="flat",
+        bg=CONFIG["COLOR_TAB_INACTIVE"],
+        fg="#555555",
+        activebackground=CONFIG["COLOR_TAB_INACTIVE"],
+        cursor="hand2",
+        command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
+    )
+    btn_close.pack(side="left", padx=(0, 6))
+
+    return tab_item, lbl_title, btn_close
+
+
+def _build_workspace_page(notebook: ttk.Notebook, node_key: str, tab_meta: dict) -> tk.Frame:
+    """
+    Build and mouns the workspace notebook panel.
+    """
+    page_frame = tk.Frame(
+        notebook,
+        bg=CONFIG["COLOR_WORKSPACE_BG"],
+        highlightbackground="#000000",
+        highlightthickness=1,
+        highlightcolor="#000000",
+    )
+    page_frame.node_key = node_key
+
+    ttk.Label(
+        page_frame,
+        text=tab_meta["header"],
+        font=CONFIG["FONT_HEADER"],
+        background=CONFIG["COLOR_WORKSPACE_BG"],
+    ).pack(anchor="w", padx=25, pady=25)
+
+    ttk.Label(
+        page_frame,
+        text=f"Active Context: [{tab_meta['title']}]",
+        font=CONFIG["FONT_BODY"],
+        background=CONFIG["COLOR_WORKSPACE_BG"],
+    ).pack(anchor="w", padx=25)
+
+    notebook.add(page_frame)
+
+    return page_frame
+
+
+def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Coordinate lifecycle, layout, and registration of each workspace tab.
+    """
+    tabs_dict = tab_bar_state["tabs"]
+    tab_meta = TAB_REGISTRY.get(node_key)    
+
+    if not tab_meta:
+        return
+
+    if node_key in tabs_dict:
+        select_workspace_tab(node_key, tab_bar_state)
+        return
+
+    # 1. Workspace Notebook Page
+    page_frame = _build_workspace_page(tab_bar_state["notebook"], node_key, tab_meta)
+
+    # 2. Tab Strip Button & Elements
+    tab_item, lbl_title, btn_close = _build_tab_button(
+        tab_bar_state["scroll_content"], node_key, tab_meta, tab_bar_state
+    )
+
+    # 3. Visual Accents & Geometry
+    corner_canvas, corner_top_line = _apply_tab_decorations(tab_item)
+
+    # 4. Event & Interaction Bindings
+    _bind_tab_events(node_key, tab_bar_state, tab_item, lbl_title, btn_close, corner_canvas)
+
+    # 5. State Registration & Presentation
+    tabs_dict[node_key] = {
+        "page": page_frame,
+        "frame": tab_item,
+        "lbl_title": lbl_title,
+        "btn_close": btn_close,
+        "corner": corner_canvas,
+        "corner_top_line": corner_top_line,
+    }
+
+    layout_overlapping_tabs(tab_bar_state)
+    select_workspace_tab(node_key, tab_bar_state)
 
 
 # Tab Functions ---------------------------------------------------------------
-def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+def bind_tab_events(
+    tab_widgets: dict,
+    node_key: str,
+    manager: dict,
+) -> None:
     """
-    Closes and deallocates a tab frame and its tab-strip button.
+    Binds selection, closing, hover, and scrolling events.
     """
-    notebook = tab_bar_state["notebook"]
-    tabs_dict = tab_bar_state["tabs"]
+    tab_item = tab_widgets["frame"]
+    lbl_title = tab_widgets["lbl_title"]
+    btn_close = tab_widgets["btn_close"]
+    corner_canvas = tab_widgets["corner"]
 
-    if node_key not in tabs_dict:
-        return
+    select_tab = lambda event: select_workspace_tab(node_key, manager)
+    close_tab = lambda event: close_workspace_tab(node_key, manager)
+    scroll_tabs = lambda event: on_tab_bar_mousewheel(
+        event,
+        manager["canvas"],
+    )
 
-    tab_info = tabs_dict.pop(node_key)
-    tab_info["frame"].destroy()
+    tab_item.bind("<Button-1>", select_tab)
+    tab_item.bind("<Button-2>", close_tab)
 
-    # Destroy page in notebook
-    notebook.forget(tab_info["page"])
-    tab_info["page"].destroy()
+    lbl_title.bind("<Button-1>", select_tab)
+    lbl_title.bind("<Button-2>", close_tab)
 
-    # Update canvas scroll boundaries
-    layout_overlapping_tabs(tab_bar_state)
+    corner_canvas.bind("<Button-1>", select_tab)
+    corner_canvas.bind("<Button-2>", close_tab)
 
-    # Switch focus to the latest tab if any remain
-    if tabs_dict:
-        next_key = list(tabs_dict.keys())[-1]
-        select_workspace_tab(next_key, tab_bar_state)
-    else:
-        tab_bar_state["nav_tree"].selection_set()
+    # The Button command handles normal left-click closing.
+    # Do not also bind btn_close to <Button-1>, or it may close twice.
+
+    btn_close.bind(
+        "<Enter>",
+        lambda event: btn_close.configure(fg="#E81123"),
+    )
+    btn_close.bind(
+        "<Leave>",
+        lambda event: btn_close.configure(fg="#555555"),
+    )
+
+    for widget in (tab_item, lbl_title, btn_close, corner_canvas):
+        widget.bind("<MouseWheel>", scroll_tabs)
+        widget.bind("<Button-4>", scroll_tabs)
+        widget.bind("<Button-5>", scroll_tabs)
 
 
 def create_tab_widget(
@@ -310,7 +477,9 @@ def create_tab_widget(
     metadata: dict,
     manager: dict,
 ) -> dict:
-    """Creates the visual tab controls for a workspace tab."""
+    """
+    Creates the visual tab controls for a workspace tab.
+    """
     tab_item = tk.Frame(
         parent,
         bg=CONFIG["COLOR_TAB_INACTIVE"],
@@ -437,190 +606,6 @@ def create_workspace_page(
     return page_frame
 
 
-def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
-    """
-    Creates a new tab in the notebook and a pill button in the tab bar.
-    """
-    tabs_dict = tab_bar_state["tabs"]
-    notebook = tab_bar_state["notebook"]
-    scroll_content = tab_bar_state["scroll_content"]
-    tab_meta = TAB_REGISTRY.get(node_key)
-    
-    if not tab_meta:
-        return
-
-    # If already open, just bring to front
-    if node_key in tabs_dict:
-        select_workspace_tab(node_key, tab_bar_state)
-        return
-
-    # 1. Workspace Notebook Page (White canvas background)
-    page_frame = tk.Frame(notebook, 
-        bg=CONFIG["COLOR_WORKSPACE_BG"],
-        highlightbackground="#000000",
-        highlightthickness=1,
-        highlightcolor="#000000",
-    )
-    page_frame.node_key = node_key
-
-    ttk.Label(page_frame, text=tab_meta["header"], font=CONFIG["FONT_HEADER"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25, pady=25)
-    ttk.Label(page_frame, text=f"Active Context: [{tab_meta['title']}]", font=CONFIG["FONT_BODY"], background=CONFIG["COLOR_WORKSPACE_BG"]).pack(anchor="w", padx=25)
-    notebook.add(page_frame)
-
-    # 2. Create Tab Button Frame in Scrollable Strip
-    tab_item = tk.Frame(
-        scroll_content,
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
-        borderwidth=0,
-        relief="flat",
-    )
-    # tab_item.pack(side="left", padx=(2, 2), pady=0, fill="y", anchor="s")
-
-    lbl_title = tk.Label(
-        tab_item,
-        text=tab_meta["title"],
-        font=CONFIG["FONT_TAB"],
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
-        fg="#000000",
-        padx=5,
-        pady=4,
-        cursor="hand2",
-    )
-    lbl_title.pack(side="left")
-
-    btn_close = tk.Button(
-        tab_item,
-        text="×",
-        font=CONFIG["FONT_CLOSE"],
-        relief="flat",
-        borderwidth=0,
-        highlightthickness=0,
-        overrelief="flat",
-        bg=CONFIG["COLOR_TAB_INACTIVE"],
-        fg="#555555",
-        activebackground=CONFIG["COLOR_TAB_INACTIVE"],
-        cursor="hand2",
-        command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
-    )
-    btn_close.pack(side="left", padx=(0, 6),)
-
-    # Draw a three-sided bevel without adding a bottom border.
-    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
-        x=0, y=0, relwidth=1.0, anchor="nw"
-    )
-    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(
-        x=0, y=0, relheight=1.0, anchor="nw"
-    )
-    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(
-        relx=1.0, x=-1, y=0, relheight=1.0, anchor="ne"
-    )
-
-    # Overlay a small cut corner to give the tab a native-style dog-ear.
-    corner_canvas = tk.Canvas(
-        tab_item,
-        width=9,
-        height=9,
-        bg=CONFIG["COLOR_STRIP_BG"],
-        borderwidth=0,
-        highlightthickness=0,
-    )
-    corner_canvas.place(relx=1.0, rely=0.0, anchor="ne")
-    corner_canvas.create_polygon(
-        0, 0,
-        0, 9,
-        9, 9,
-        fill=CONFIG["COLOR_TAB_INACTIVE"],
-        width=1,
-    )
-    corner_top_line = corner_canvas.create_line(
-        0, 0,
-        9, 0,
-        fill="#FFFFFF",
-        width=1,
-    )
-
-    # Hover feedback on close button
-    btn_close.bind("<Enter>", lambda e, b=btn_close: b.configure(fg="#E81123"))
-    btn_close.bind("<Leave>", lambda e, b=btn_close: b.configure(fg="#555555"))
-
-    # Event bindings
-    tab_item.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-    tab_item.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
-    lbl_title.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-    lbl_title.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
-    corner_canvas.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-    corner_canvas.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
-    btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
-
-
-    # Mousewheel forwarding
-    for widget in (tab_item, lbl_title, btn_close, corner_canvas):
-        widget.bind("<MouseWheel>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
-        widget.bind("<Button-4>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
-        widget.bind("<Button-5>", lambda e: on_tab_bar_mousewheel(e, tab_bar_state["canvas"]))
-
-    # Save to state registry
-    tabs_dict[node_key] = {
-        "page": page_frame,
-        "frame": tab_item,
-        "lbl_title": lbl_title,
-        "btn_close": btn_close,
-        "corner": corner_canvas,
-        "corner_top_line": corner_top_line,
-    }
-
-    # Lay out the overlapping stack and activate the new tab
-    layout_overlapping_tabs(tab_bar_state)
-    select_workspace_tab(node_key, tab_bar_state)
-
-
-def bind_tab_events(
-    tab_widgets: dict,
-    node_key: str,
-    manager: dict,
-) -> None:
-    """
-    Binds selection, closing, hover, and scrolling events.
-    """
-    tab_item = tab_widgets["frame"]
-    lbl_title = tab_widgets["lbl_title"]
-    btn_close = tab_widgets["btn_close"]
-    corner_canvas = tab_widgets["corner"]
-
-    select_tab = lambda event: select_workspace_tab(node_key, manager)
-    close_tab = lambda event: close_workspace_tab(node_key, manager)
-    scroll_tabs = lambda event: on_tab_bar_mousewheel(
-        event,
-        manager["canvas"],
-    )
-
-    tab_item.bind("<Button-1>", select_tab)
-    tab_item.bind("<Button-2>", close_tab)
-
-    lbl_title.bind("<Button-1>", select_tab)
-    lbl_title.bind("<Button-2>", close_tab)
-
-    corner_canvas.bind("<Button-1>", select_tab)
-    corner_canvas.bind("<Button-2>", close_tab)
-
-    # The Button command handles normal left-click closing.
-    # Do not also bind btn_close to <Button-1>, or it may close twice.
-
-    btn_close.bind(
-        "<Enter>",
-        lambda event: btn_close.configure(fg="#E81123"),
-    )
-    btn_close.bind(
-        "<Leave>",
-        lambda event: btn_close.configure(fg="#555555"),
-    )
-
-    for widget in (tab_item, lbl_title, btn_close, corner_canvas):
-        widget.bind("<MouseWheel>", scroll_tabs)
-        widget.bind("<Button-4>", scroll_tabs)
-        widget.bind("<Button-5>", scroll_tabs)
-
-
 def register_tab(
     manager: dict,
     node_key: str,
@@ -700,13 +685,13 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
 # Widget Layout Functions -----------------------------------------------------
 def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
     """
-    Builds the left-side hierarchical navigation Treeview.
+    Builds the left-side hierarchical navigation Treeview with a 3-tier structure:
+    Tier 1: Root Clusters -> Tier 2: Category Sub-Folders -> Tier 3: Workspaces.
     """
     sidebar_frame = ttk.Frame(parent, height=10, width=250, relief="flat")
     sidebar_frame.pack_propagate(False)
 
-    # 1. Expand the header height downward by ~15px using bottom padding
-    #    (Changed pady from (10, 5) to (10, 20))
+    # 1. Sidebar Header
     sidebar_header = ttk.Label(
         sidebar_frame, 
         text="💻 System Clusters", 
@@ -715,29 +700,38 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     )
     sidebar_header.pack(anchor="w", fill="x", padx=10, pady=(10, 15))
 
-    # 2. Pack the nav_tree flush with its new position
-    #    (Changed pady from (5, 5) to (0, 5) to keep the bottom aligned)
+    # 2. Hierarchical Treeview
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
     nav_tree.pack(fill="both", expand=True, padx=5, pady=(0, 5))
 
-    # Tier 1 Root Folders
+    # --- Tier 1: Root Cluster Folders ---
     cluster_dev = nav_tree.insert("", tk.END, text="📁 Core Development Stack")
     cluster_adm = nav_tree.insert("", tk.END, text="📁 Server Administration Space")
 
-    # Tier 1: Development Stack (4 items)
-    nav_tree.insert(cluster_dev, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
-    nav_tree.insert(cluster_dev, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
-    nav_tree.insert(cluster_dev, tk.END, text="🌿 Source Version Control", values=("dev_git",))
-    nav_tree.insert(cluster_dev, tk.END, text="🌐 API Gateway Inspector", values=("dev_api",))
+    # --- Tier 2: Development Sub-Folders ---
+    folder_dev_tools = nav_tree.insert(cluster_dev, tk.END, text="📂 Developer Tooling")
+    folder_dev_traffic = nav_tree.insert(cluster_dev, tk.END, text="📂 Services & Traffic")
 
-    # Tier 2: Server Administration Space (4 items)
-    nav_tree.insert(cluster_adm, tk.END, text="⚙️ Global System Rules", values=("adm_rules",))
-    nav_tree.insert(cluster_adm, tk.END, text="🔒 Database Key Vault", values=("adm_vault",))
-    nav_tree.insert(cluster_adm, tk.END, text="📋 Live Server Logs", values=("adm_logs",))
-    nav_tree.insert(cluster_adm, tk.END, text="📈 Performance Monitor", values=("adm_perf",))
+    # Tier 3: Development Workspace Leaves
+    nav_tree.insert(folder_dev_tools, tk.END, text="💻 Shell Terminal Console", values=("dev_shell",))
+    nav_tree.insert(folder_dev_tools, tk.END, text="🌿 Source Version Control", values=("dev_git",))
+    nav_tree.insert(folder_dev_traffic, tk.END, text="📊 Analytics Dashboard", values=("dev_dash",))
+    nav_tree.insert(folder_dev_traffic, tk.END, text="🌐 API Gateway Inspector", values=("dev_api",))
 
-    nav_tree.item(cluster_dev, open=True)
-    nav_tree.item(cluster_adm, open=True)
+    # --- Tier 2: Administration Sub-Folders ---
+    folder_adm_security = nav_tree.insert(cluster_adm, tk.END, text="📂 Security & Governance")
+    folder_adm_telemetry = nav_tree.insert(cluster_adm, tk.END, text="📂 Diagnostics & Health")
+
+    # Tier 3: Administration Workspace Leaves
+    nav_tree.insert(folder_adm_security, tk.END, text="⚙️ Global System Rules", values=("adm_rules",))
+    nav_tree.insert(folder_adm_security, tk.END, text="🔒 Database Key Vault", values=("adm_vault",))
+    nav_tree.insert(folder_adm_telemetry, tk.END, text="📋 Live Server Logs", values=("adm_logs",))
+    nav_tree.insert(folder_adm_telemetry, tk.END, text="📈 Performance Monitor", values=("adm_perf",))
+
+    # Automatically expand folders on launch
+    for folder in (cluster_dev, cluster_adm, folder_dev_tools, folder_dev_traffic, folder_adm_security, folder_adm_telemetry):
+        nav_tree.item(folder, open=True)
+
     return sidebar_frame, nav_tree
 
 
