@@ -196,6 +196,32 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     canvas.update_idletasks()
 
+    viewport_width = canvas.winfo_width()
+    if viewport_width <= 1:
+        viewport_width = 600
+
+
+    # Step 1: Measure preferred full width of all tabs with normal text
+
+
+    if total_natural_width <= viewport_width:
+ 
+        # MODE 1: Normal Side-by-Side (Full Titles, Standard Padding)
+
+    else:
+
+        # MODE 2: Overlapping & Dynamic Truncation
+
+
+        # 2. Determine visible width budget
+
+        # Deduct close button, dog ear, and title padding from the budget
+
+        # 3. Add ellipsis
+        
+        # 4. Give tab full natural width so lifting it renders it complete
+
+
     left_edge = 0
     right_edge = left_edge
     for tab_info in tabs.values():
