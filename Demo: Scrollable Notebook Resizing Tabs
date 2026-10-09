@@ -792,12 +792,12 @@ def on_tab_strip_resize(event: tk.Event, tab_bar_state: dict) -> None:
     Uses after_idle to avoid layout thrashing during active dragging.
     """
     canvas: tk.Canvas = tab_bar_state["canvas"]
-
+    
     # Cancel any pending queued calculation to prevent lag
     pending_job = getattr(canvas, "_resize_job", None)
     if pending_job is not None:
         canvas.after_cancel(pending_job)
-
+        
     def _recalculate():
         canvas._resize_job = None
         layout_overlapping_tabs(tab_bar_state)
@@ -1005,8 +1005,11 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     # Connect canvas horizontal movement to the scrollbar thumb
     canvas.configure(xscrollcommand=tab_scrollbar.set)
 
+    # 5. Instant Tab Recalculation on Resize
+    canvas._resize_job = None
+    canvas.bind("<Configure>", lambda e: on_tab_strip_resize(e, tab_bar_state))
 
-    # 5. Bottom Tabless Notebook Workspace
+    # 6. Bottom Tabless Notebook Workspace
     notebook = ttk.Notebook(workspace_container, style="Tabless.TNotebook")
     notebook.pack(side="top", fill="both", expand=True)
 
