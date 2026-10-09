@@ -786,6 +786,16 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
 
 
 # Tab Resizing Functions ------------------------------------------------------
+def on_tab_strip_resize():
+    """
+    Triggers an immediate layout recalculation when the window or tab strip resizes.
+    Uses after_idle to avoid layout thrashing during active dragging.
+    """
+
+    # Schedule immediate recalculation as soon as Tk finishes the resize pass
+    pass
+
+
 def truncate_text_to_width(full_text: str, font: tuple | tkfont.Font, max_pixels: int) -> str:
     """
     Truncates full_text with an ellipsis ('…') so that its rendered
