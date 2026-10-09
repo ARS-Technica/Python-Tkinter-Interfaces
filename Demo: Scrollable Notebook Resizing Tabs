@@ -15,6 +15,7 @@ Based on "Demo: Scrollable Notebook Tabs" project.
 """
 
 import tkinter as tk
+import tkinter.font as tkfont
 from tkinter import ttk
 
 
@@ -680,6 +681,17 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
 
     if active_frame is not None:
         active_frame.lift()
+
+
+# Tab Resizing Functions ------------------------------------------------------
+def truncate_text_to_width() -> str:
+    """
+    Truncates full_text with an ellipsis ('…') so that its rendered
+    pixel width does not exceed max_pixels.
+
+    Necessary to resizing tabs.
+    """
+    pass
 
 
 # Widget Layout Functions -----------------------------------------------------
