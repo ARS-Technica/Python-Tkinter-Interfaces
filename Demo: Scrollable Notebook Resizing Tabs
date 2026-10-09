@@ -684,7 +684,7 @@ def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
 
 
 # Tab Resizing Functions ------------------------------------------------------
-def truncate_text_to_width() -> str:
+def truncate_text_to_width(full_text: str, font: tuple | tkfont.Font, max_pixels: int) -> str:
     """
     Truncates full_text with an ellipsis ('…') so that its rendered
     pixel width does not exceed max_pixels.
@@ -696,9 +696,9 @@ def truncate_text_to_width() -> str:
 
     # Resolve font object for exact pixel measuring
     f = font if isinstance(font, tkfont.Font) else tkfont.Font(font=font)
-   
-    if ellipsis_width > max_pixels:
-        return ""
+
+    if f.measure(full_text) <= max_pixels:
+        return full_text
 
     ellipsis = "…"
     ellipsis_width = f.measure(ellipsis)
@@ -712,7 +712,7 @@ def truncate_text_to_width() -> str:
     low = 0
     high = len(full_text)
     best_fit = ""
-    
+
     while low <= high:
         mid = (low + high) // 2
         candidate = full_text[:mid]
@@ -721,6 +721,8 @@ def truncate_text_to_width() -> str:
             low = mid + 1
         else:
             high = mid - 1
+
+    return best_fit + ellipsis if best_fit else ellipsis
 
 
 # Widget Layout Functions -----------------------------------------------------
