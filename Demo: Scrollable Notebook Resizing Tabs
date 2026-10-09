@@ -693,6 +693,14 @@ def truncate_text_to_width() -> str:
     """
     pass
 
+    if max_pixels <= 10:
+        return ""  # Not enough room even for an ellipsis
+   
+    if ellipsis_width > max_pixels:
+        return ""
+
+    budget = max_pixels - ellipsis_width
+
 
 # Widget Layout Functions -----------------------------------------------------
 def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
