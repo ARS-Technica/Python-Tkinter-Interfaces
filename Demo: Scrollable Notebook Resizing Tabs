@@ -691,11 +691,18 @@ def truncate_text_to_width() -> str:
 
     Necessary to resizing tabs.
     """
-    pass
-
     if max_pixels <= 10:
         return ""  # Not enough room even for an ellipsis
+
+    # Resolve font object for exact pixel measuring
+    f = font if isinstance(font, tkfont.Font) else tkfont.Font(font=font)
    
+    if ellipsis_width > max_pixels:
+        return ""
+
+    ellipsis = "…"
+    ellipsis_width = f.measure(ellipsis)
+
     if ellipsis_width > max_pixels:
         return ""
 
