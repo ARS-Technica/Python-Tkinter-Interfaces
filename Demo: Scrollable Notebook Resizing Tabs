@@ -701,6 +701,20 @@ def truncate_text_to_width() -> str:
 
     budget = max_pixels - ellipsis_width
 
+    # Trim characters until the remaining string fits the budget
+    low = 0
+    high = len(full_text)
+    best_fit = ""
+    
+    while low <= high:
+        mid = (low + high) // 2
+        candidate = full_text[:mid]
+        if f.measure(candidate) <= budget:
+            best_fit = candidate
+            low = mid + 1
+        else:
+            high = mid - 1
+
 
 # Widget Layout Functions -----------------------------------------------------
 def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treeview]:
