@@ -195,44 +195,107 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     notebook: ttk.Notebook = tab_bar_state["notebook"]
 
     canvas.update_idletasks()
-
     viewport_width = canvas.winfo_width()
     if viewport_width <= 1:
         viewport_width = 600
 
+    tab_items = list(tabs_dict.items())  # list of (node_key, info_dict)
+    tab_count = len(tab_items)
+    tab_height = CONFIG.get("TAB_BAR_HEIGHT", 32)
+    min_tab_stride = 65  # Minimum visible slice before horizontal scrolling starts
+
+    # Find which node_key is currently active in the notebook
+    active_key = None
+    try:
+        current_page = notebook.select()
+        if current_page:
+            active_key = getattr(notebook.nametowidget(current_page), "node_key", None)
+    except Exception:
+        pass
 
     # Step 1: Measure preferred full width of all tabs with normal text
+    font_tab = CONFIG["FONT_TAB"]
+    fixed_elements_width = 38  # Approx combined width: close btn (~20px) + dogear (~9px) + borders/gaps (~9px)
 
+    natural_widths = []
+    for node_key, item in tab_items:
+        full_title = TAB_REGISTRY.get(node_key, {}).get("title", "")
+        f = tkfont.Font(font=font_tab)
+        w = f.measure(full_title) + fixed_elements_width + 10  # 10px = normal 5px padding on both sides
+        natural_widths.append(w)
+
+    total_natural_width = sum(natural_widths)
 
     if total_natural_width <= viewport_width:
- 
+        # -------------------------------------------------------------
         # MODE 1: Normal Side-by-Side (Full Titles, Standard Padding)
+        # -------------------------------------------------------------
+        current_x = 2
+        for (node_key, item), w in zip(tab_items, natural_widths):
+            full_title = TAB_REGISTRY.get(node_key, {}).get("title", "")
+            
+            # Reset standard padding & full title
+            item["lbl_title"].configure(text=full_title, padx=5)
+            item["frame"].place(
+                x=current_x,
+                y=0,
+                width=w,
+                height=tab_height,
+                anchor="nw"
+            )
+            current_x += w + 2
+        total_content_width = current_x
 
     else:
-
+        # -------------------------------------------------------------
         # MODE 2: Overlapping & Dynamic Truncation
+        # -------------------------------------------------------------
+        available_stride = (viewport_width - natural_widths[-1]) / max(1, tab_count - 1)
+        stride = max(min_tab_stride, available_stride)
+        is_tight = stride < 110  # Compress padding if under 110px
 
+        current_x = 0
+        for i, (node_key, item) in enumerate(tab_items):
+            is_active = (node_key == active_key)
+            is_last = (i == tab_count - 1)
+            full_title = TAB_REGISTRY.get(node_key, {}).get("title", "")
 
-        # 2. Determine visible width budget
+            # 1. Compress padding when tight
+            title_pad = 2 if is_tight else 5
+            item["lbl_title"].configure(padx=title_pad)
 
-        # Deduct close button, dog ear, and title padding from the budget
+            # 2. Determine visible width budget
+            # Active and last tabs have access to their full width;
+            # obscured tabs only have `stride` space visible
+            if is_active or is_last:
+                visible_slot = natural_widths[i]
+            else:
+                visible_slot = stride
 
-        # 3. Add ellipsis
-        
-        # 4. Give tab full natural width so lifting it renders it complete
+            # Deduct close button, dog ear, and title padding from the budget
+            overhead = fixed_elements_width + (title_pad * 2)
+            text_budget = max(0, int(visible_slot - overhead))
 
+            # 3. Apply ellipsis truncation
+            truncated_title = truncate_text_to_width(full_title, font_tab, text_budget)
+            item["lbl_title"].configure(text=truncated_title)
 
-    left_edge = 0
-    right_edge = left_edge
-    for tab_info in tabs.values():
-        tab_item = tab_info["frame"]
-        tab_width = tab_item.winfo_reqwidth()
-        tab_item.place(x=left_edge, rely=1.0, anchor="sw")
-        right_edge = left_edge + tab_width
-        left_edge += max(1, tab_width - CONFIG["TAB_OVERLAP"])
+            # Placed width: Give tab full natural width so lifting it renders it complete
+            placed_w = max(natural_widths[i], int(stride))
+            item["frame"].place(
+                x=int(current_x),
+                y=0,
+                width=placed_w,
+                height=tab_height,
+                anchor="nw"
+            )
+            current_x += stride
 
-    content_width = max(right_edge, canvas.winfo_width())
-    canvas.itemconfigure(canvas_window, width=content_width, height=40)
+        total_content_width = int((current_x - stride) + natural_widths[-1])
+
+    # Re-apply lift to the active tab so it sits on top of truncated neighbors
+    if active_key and active_key in tabs_dict:
+        tabs_dict[active_key]["frame"].lift()
 
     # Update scroll region
     scroll_content.configure(width=total_content_width, height=tab_height)
