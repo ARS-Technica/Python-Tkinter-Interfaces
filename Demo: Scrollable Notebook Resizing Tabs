@@ -586,8 +586,11 @@ def close_workspace_tab():
         return
 
     # 1. Pop tab state dictionary entry
+    tab_info = tabs_dict.pop(node_key)
 
     # 2. Destroy the tab button in the tab bar
+    if "frame" in tab_info and tab_info["frame"].winfo_exists():
+        tab_info["frame"].destroy()
 
     # 3. Remove and destroy the notebook content frame
 
