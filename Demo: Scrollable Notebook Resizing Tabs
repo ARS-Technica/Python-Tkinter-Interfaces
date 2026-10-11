@@ -202,8 +202,18 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     tab_items = list(tabs_dict.items())  # list of (node_key, info_dict)
     tab_count = len(tab_items)
-    tab_height = CONFIG.get("TAB_BAR_HEIGHT", 32)
+    # tab_height = CONFIG.get("TAB_BAR_HEIGHT", 32)
+    tab_height = CONFIG["TAB_BAR_HEIGHT"]  # Reads 26px directly
     min_tab_stride = 65  # Minimum visible slice before horizontal scrolling starts
+
+    # When placing tabs in either mode:
+    item["frame"].place(
+        x=int(current_x),
+        y=0,
+        width=placed_w,
+        height=tab_height,  # Cleanly locks height to 26px
+        anchor="nw"
+    )
 
     # Find which node_key is currently active in the notebook
     active_key = None
