@@ -577,6 +577,14 @@ def close_workspace_tab():
     Closes a workspace tab, destroys its associated UI widgets to prevent
     memory leaks, recalculates layout compression, and shifts active focus.
     """
+    tabs_dict: dict = tab_bar_state.get("tabs", {})
+    notebook: ttk.Notebook = tab_bar_state.get("notebook")
+    canvas: tk.Canvas = tab_bar_state.get("canvas")
+    nav_tree: ttk.Treeview | None = tab_bar_state.get("nav_tree")
+
+    if node_key not in tabs_dict:
+        return
+
     # 1. Pop tab state dictionary entry
 
     # 2. Destroy the tab button in the tab bar
