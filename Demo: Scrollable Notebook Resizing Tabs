@@ -416,9 +416,10 @@ def _build_tab_button(parent: tk.Misc, node_key: str, tab_meta: dict, tab_bar_st
         fg="#000000",
         padx=5,
         pady=1,
+        anchor="w",  # Pins text to the left
         cursor="hand2",
     )
-    lbl_title.pack(side="left", fill="y")
+    lbl_title.pack(side="left", fill="x", expand=True)
 
     btn_close = tk.Button(
         tab_item,
@@ -434,7 +435,7 @@ def _build_tab_button(parent: tk.Misc, node_key: str, tab_meta: dict, tab_bar_st
         cursor="hand2",
         command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
     )
-    btn_close.pack(side="left", fill="y", padx=(0, 4))
+    btn_close.pack(side="right", fill="y", padx=(0, 4))
 
     return tab_item, lbl_title, btn_close
 
