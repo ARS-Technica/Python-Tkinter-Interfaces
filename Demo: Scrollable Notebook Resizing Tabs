@@ -264,9 +264,20 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
             title_pad = 2 if is_tight else 5
             item["lbl_title"].configure(padx=title_pad)
 
-            visible_slot = natural_widths[i] if (is_active or is_last) else stride
+            # 2. Determine actual placed frame width
+            # Active tab and the very last tab get full natural width.
+            # Inactive overlapping tabs are strictly constrained to the stride slice.
+            if is_active:
+                placed_w = natural_widths[i]
+                visible_slot = natural_widths[i]
+            elif is_last:
+                placed_w = natural_widths[i]
+                visible_slot = natural_widths[i]
+            else:
+                placed_w = int(stride)
+                visible_slot = stride
 
-            # Deduct close button, dog ear, and title padding from the budget
+            # Deduct close button (~20px), dog ear (~9px), borders, and padding
             overhead = fixed_elements_width + (title_pad * 2)
             text_budget = max(0, int(visible_slot - overhead))
 
@@ -274,8 +285,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
             truncated_title = truncate_text_to_width(full_title, font_tab, text_budget)
             item["lbl_title"].configure(text=truncated_title)
 
-            # Placed width: Give tab full natural width so lifting it renders it complete
-            placed_w = max(natural_widths[i], int(stride))
+            # 4. Place tab: inactive tabs now strictly occupy their visible slice
             item["frame"].place(
                 x=int(current_x),
                 y=0,
