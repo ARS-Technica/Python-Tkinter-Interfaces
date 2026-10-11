@@ -423,10 +423,10 @@ def _build_tab_button(parent: tk.Misc, node_key: str, tab_meta: dict, tab_bar_st
         bg=CONFIG["COLOR_TAB_INACTIVE"],
         fg="#000000",
         padx=5,
-        pady=4,
+        pady=1,
         cursor="hand2",
     )
-    lbl_title.pack(side="left")
+    lbl_title.pack(side="left", fill="y")
 
     btn_close = tk.Button(
         tab_item,
@@ -442,7 +442,7 @@ def _build_tab_button(parent: tk.Misc, node_key: str, tab_meta: dict, tab_bar_st
         cursor="hand2",
         command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
     )
-    btn_close.pack(side="left", padx=(0, 6))
+    btn_close.pack(side="left", fill="y", padx=(0, 4))
 
     return tab_item, lbl_title, btn_close
 
