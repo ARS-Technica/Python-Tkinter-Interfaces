@@ -592,6 +592,13 @@ def close_workspace_tab():
     # 3. Remove and destroy the notebook content frame
 
     # 4. If tabs remain, select the most recently opened/adjacent tab
+    if tabs_dict:
+        next_key = list(tabs_dict.keys())[-1]
+        select_workspace_tab(next_key, tab_bar_state)
+    else:
+        # Clear sidebar selection if all tabs are closed
+        if nav_tree:
+            nav_tree.selection_set()
 
     # 5. Recompute tab overlap widths and scrolling boundaries
 
