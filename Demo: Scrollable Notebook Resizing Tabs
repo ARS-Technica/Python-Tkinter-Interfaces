@@ -35,7 +35,7 @@ CONFIG = {
     "COLOR_WORKSPACE_BG": "#FFFFFF",
     "ROW_HEIGHT": 28,
     "SIDEBAR_TREE_INSET": 2,
-    "TAB_BAR_HEIGHT": 26,       # Match arrow button height
+    "TAB_BAR_HEIGHT": 26, # Match arrow button height
     "TAB_OVERLAP": 24,
     "WINDOW_GEOMETRY": "1000x560",
     "WINDOW_TITLE": "Demo: Dynamic Workspace Manager (Scrollable Tabs)",
@@ -931,27 +931,37 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     )
 
     btn_left = tk.Button(
-        tab_strip_frame, text="◀", relief="flat", bg="#CCCCCC", width=3, height=1,
+        tab_strip_frame, 
+        text="◀", 
+        relief="flat", 
+        bg="#CCCCCC", 
+        width=3,
+        bd=0,
+        highlightthickness=0,
         command=lambda: scroll_tab_bar(canvas, -1)
     )
     btn_left.pack(
         side="left",
-        anchor="s",
+        fill="y",          # Fills exact height of tab_strip_frame
         padx=(1, 0),
-        pady=(0, 0),
-        ipady=0,
+        pady=0,
     )
 
     btn_right = tk.Button(
-        tab_strip_frame, text="▶", relief="flat", bg="#CCCCCC", width=3, height=1,
+        tab_strip_frame, 
+        text="▶", 
+        relief="flat", 
+        bg="#CCCCCC", 
+        width=3,
+        bd=0,
+        highlightthickness=0,
         command=lambda: scroll_tab_bar(canvas, 1)
     )
     btn_right.pack(
         side="right",
-        anchor="s",
-        padx=(0, 3),
-        pady=(0, 0),
-        ipady=0,
+        fill="y",          # Fills exact height of tab_strip_frame
+        padx=(0, 1),
+        pady=0,
     )
 
     canvas.pack(side="left", fill="both", expand=True)
