@@ -21,24 +21,24 @@ from tkinter import ttk
 
 # Centralized Configuration ---------------------------------------------------
 CONFIG = {
-    "WINDOW_TITLE": "Demo: Dynamic Workspace Manager (Scrollable Tabs)",
-    "WINDOW_GEOMETRY": "1000x560",
-    "FONT_HEADER": ("Segoe UI", 11, "bold"),
     "FONT_BODY": ("Segoe UI", 10),
-    "FONT_TAB": ("Segoe UI", 9),
     "FONT_CLOSE": ("Segoe UI", 10, "bold"),
-    "ROW_HEIGHT": 28,
-    "COLOR_TAB_BG": "#E1E1E1",
-    "COLOR_TAB_ACTIVE": "#FFFFFF",
-    "COLOR_STRIP_BG": "#F0F0F0", #Over the scrolling tab bar
+    "FONT_HEADER": ("Segoe UI", 11, "bold"),
+    "FONT_TAB": ("Segoe UI", 9),
     "COLOR_BORDER": "#BCBCBC",
+    "COLOR_SCROLL_THUMB": "#A0A0A0", # Horizontal scrollbar
+    "COLOR_SCROLL_TROUGH": "#E6E6E6", # Horizontal scrollbar
+    "COLOR_STRIP_BG": "#F0F0F0", #Over the scrolling tab bar
+    "COLOR_TAB_ACTIVE": "#FFFFFF",
+    "COLOR_TAB_BG": "#E1E1E1",
     "COLOR_TAB_INACTIVE": "#E4E4E4",
     "COLOR_WORKSPACE_BG": "#FFFFFF",
-    "TAB_OVERLAP": 24,
-    "TAB_BAR_HEIGHT": 40,
+    "ROW_HEIGHT": 28,
     "SIDEBAR_TREE_INSET": 2,
-    "COLOR_SCROLL_TROUGH": "#E6E6E6", # Horizontal scrollbar
-    "COLOR_SCROLL_THUMB": "#A0A0A0", # Horizontal scrollbar
+    "TAB_BAR_HEIGHT": 26,       # Match arrow button height
+    "TAB_OVERLAP": 24,
+    "WINDOW_GEOMETRY": "1000x560",
+    "WINDOW_TITLE": "Demo: Dynamic Workspace Manager (Scrollable Tabs)",
 }
 
 
@@ -187,6 +187,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     label padding and truncating tab titles with an ellipsis.
     """
     tabs_dict = tab_bar_state.get("tabs", {})
+
     if not tabs_dict:
         return
 
@@ -206,6 +207,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     # Find which node_key is currently active in the notebook
     active_key = None
+
     try:
         current_page = notebook.select()
         if current_page:
