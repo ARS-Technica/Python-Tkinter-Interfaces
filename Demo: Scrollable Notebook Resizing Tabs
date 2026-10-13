@@ -373,9 +373,14 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
 								  
     bbox = canvas.bbox("all")
 
-    tab_x = tab_item.winfo_x()
-    tab_w = tab_item.winfo_width()
-    canvas_w = canvas.winfo_width()
+    if not bbox or (bbox[2] - bbox[0]) <= viewport_width:
+        # If tabs fit inside the viewport, enforce zero-offset pin
+        canvas.xview_moveto(0.0)
+        return
+
+    content_width = bbox[2] - bbox[0]
+    tab_x = tab_frame.winfo_x()
+    tab_w = tab_frame.winfo_width()
 
     scroll_region = canvas.bbox("all")
     if not scroll_region or scroll_region[2] <= canvas_w:
