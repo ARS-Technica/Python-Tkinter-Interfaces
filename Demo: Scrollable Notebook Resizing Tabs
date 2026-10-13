@@ -189,7 +189,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     tabs_dict: dict = tab_bar_state.get("tabs", {})
 
     if not tabs_dict:
-        return
+            return
 
     canvas: tk.Canvas = tab_bar_state["canvas"]
     scroll_content: tk.Frame = tab_bar_state["scroll_content"]
@@ -222,6 +222,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     fixed_elements_width = 38  # Approx combined width: close btn (~20px) + dogear (~9px) + borders/gaps (~9px)
 
     # 3. Calculate full natural width for every tab
+    # Measure preferred widths
     natural_widths = []
 
     for node_key, item in tab_items:
@@ -239,8 +240,9 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
         for (node_key, item), w in zip(tab_items, natural_widths):
             full_title = TAB_REGISTRY.get(node_key, {}).get("title", "")
+            item["lbl_title"].configure(text=full_title, padx=5)
 
-            # Reset standard padding & full title
+            # Reset standard padding & full title            
             item["frame"].place(
                 x=current_x,
                 y=0,
@@ -252,7 +254,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
         total_content_width = current_x
 
-       # Lock view flush to the left edge; expand scroll area to eliminate empty space drift
+        # Lock view flush to the left edge; expand scroll area to eliminate empty space drift
         canvas.xview_moveto(0.0)
         effective_width = max(total_content_width, viewport_width)
         scroll_content.configure(width=effective_width, height=tab_height)
@@ -260,7 +262,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     else:
         # MODE 2: Overlapping & Dynamic Truncation
-        available_stride = (viewport_width - natural_widths[-1]) / max(1, tab_count - 1)
+        available_stride = (viewport_width - natural_widths[-1]) / max(1, tab_count - 1)        
         stride = max(min_tab_stride, available_stride)
         is_tight = stride < 110
 
@@ -275,13 +277,9 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
             item["lbl_title"].configure(padx=title_pad)
 
             # 2. Determine actual placed frame width
-            # Active tab and the very last tab get full natural width.
             # Inactive tabs are physically sized to 'stride' so text cannot bleed to the right.
             # Active tabs and the final tab retain full width.
             if is_active or is_last:
-                placed_w = natural_widths[i]
-                visible_slot = natural_widths[i]
-            elif is_last:
                 placed_w = natural_widths[i]
                 visible_slot = natural_widths[i]
             else:
@@ -346,9 +344,22 @@ def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
 
 def scroll_tab_bar(canvas: tk.Canvas, direction: int) -> None:
     """
-    Scrolls the canvas horizontally by units.
+    Scrolls the canvas horizontally. Disabled when all tabs fit within the viewport.
     """
-    canvas.xview_scroll(direction * 2, "units")
+    canvas.update_idletasks()
+    viewport_width = canvas.winfo_width()
+    
+    # Read the current bounding box / scrollable area
+    bbox = canvas.bbox("all")
+    content_width = (bbox[2] - bbox[0]) if bbox else 0
+
+    # If the tabs fit comfortably within view, pin flush to the left
+    if content_width <= viewport_width:
+        canvas.xview_moveto(0.0)
+        return
+
+    # Normal scrolling when tabs actually overflow
+    canvas.xview_scroll(direction * 3, "units")
 
 
 def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
@@ -376,16 +387,20 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
 
 
 # Tab Creation ----------------------------------------------------------------
-def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int]:
-    """
-    Apply the 3-sided border bevels and top-right corner dog-ear overlay.
-    """
-    # 3-sided border bevels
-    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(x=0, y=0, relwidth=1.0, anchor="nw")
-    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(x=0, y=0, relheight=1.0, anchor="nw")
-    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(relx=1.0, x=-1, y=0, relheight=1.0, anchor="ne")
+def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int, int]:
+    """Applies the 3-sided border bevels and top-right corner dog-ear overlay."""
+    # 3-sided border bevels: Top line stops 9px short of the right edge to avoid crossing the dog ear
+    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
+        x=0, y=0, relwidth=1.0, width=-9, anchor="nw"
+    )
+    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(
+        x=0, y=0, relheight=1.0, anchor="nw"
+    )
+    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(
+        relx=1.0, x=-1, y=9, relheight=1.0, height=-9, anchor="ne"
+    )
 
-    # Corner dog-ear canvas
+    # Corner dog-ear canvas: background MUST match the scrolling strip background
     corner_canvas = tk.Canvas(
         tab_item,
         width=9,
@@ -395,10 +410,25 @@ def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int]:
         highlightthickness=0,
     )
     corner_canvas.place(relx=1.0, rely=0.0, anchor="ne")
-    corner_canvas.create_polygon(0, 0, 0, 9, 9, 9, fill=CONFIG["COLOR_TAB_INACTIVE"], width=1)
-    corner_top_line = corner_canvas.create_line(0, 0, 9, 0, fill="#FFFFFF", width=1)
 
-    return corner_canvas, corner_top_line
+    # Lower-left triangle filled with the tab's body color
+    corner_poly = corner_canvas.create_polygon(
+        0, 0,
+        0, 9,
+        9, 9,
+        fill=CONFIG["COLOR_TAB_INACTIVE"],
+        outline=CONFIG["COLOR_TAB_INACTIVE"]
+    )
+
+    # Diagonal cut line separating the tab from the strip
+    corner_diagonal = corner_canvas.create_line(
+        0, 0,
+        9, 9,
+        fill=CONFIG["COLOR_BORDER"],
+        width=1
+    )
+
+    return corner_canvas, corner_poly, corner_diagonal
 
 
 def _bind_tab_events(
@@ -531,7 +561,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     )
 
     # 3. Visual Accents & Geometry
-    corner_canvas, corner_top_line = _apply_tab_decorations(tab_item)
+    corner_canvas, corner_poly, corner_diagonal = _apply_tab_decorations(tab_item)
 
     # 4. Event & Interaction Bindings
     _bind_tab_events(node_key, tab_bar_state, tab_item, lbl_title, btn_close, corner_canvas)
@@ -543,7 +573,8 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         "lbl_title": lbl_title,
         "btn_close": btn_close,
         "corner": corner_canvas,
-        "corner_top_line": corner_top_line,
+        "corner_poly": corner_poly,
+        "corner_diagonal": corner_diagonal,
     }
 
     layout_overlapping_tabs(tab_bar_state)
@@ -818,40 +849,26 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
 
 def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
-    Updates tab borders, baseline connectors, and background colors.
+    Updates tab borders, button backgrounds, and dog-ear corner colors.
     """
-    active_frame = None
-    tab_items = list(tab_bar_state["tabs"].items())
-
-    for index, (node_key, item) in enumerate(tab_items):
+    for node_key, item in tab_bar_state["tabs"].items():
         is_active = (node_key == active_key)
-
         bg_fill = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_TAB_INACTIVE"]
 
-        # Color the tab frame
         item["frame"].configure(bg=bg_fill)
         item["lbl_title"].configure(bg=bg_fill)
-        item["btn_close"].configure(bg=bg_fill)
-        beneath_fill = CONFIG["COLOR_STRIP_BG"]
-        if index + 1 < len(tab_items):
-            beneath_fill = (
-                CONFIG["COLOR_WORKSPACE_BG"]
-                if tab_items[index + 1][0] == active_key
-                else CONFIG["COLOR_TAB_INACTIVE"]
+        item["btn_close"].configure(bg=bg_fill, activebackground=bg_fill)
+
+        # Sync the dog-ear corner triangle fill
+        if "corner" in item and "corner_poly" in item:
+            item["corner"].itemconfig(
+                item["corner_poly"],
+                fill=bg_fill,
+                outline=bg_fill
             )
-        item["corner"].configure(bg=beneath_fill)
-        item["corner"].itemconfigure(1, fill=bg_fill)
-        hide_corner_line = index == len(tab_items) - 1
-        item["corner"].itemconfigure(
-            item["corner_top_line"],
-            state="hidden" if hide_corner_line else "normal",
-        )
-
-        if is_active:
-            active_frame = item["frame"]
-
-    if active_frame is not None:
-        active_frame.lift()
+            # Active tab diagonal bevel highlight
+            diag_color = "#FFFFFF" if is_active else CONFIG["COLOR_BORDER"]
+            item["corner"].itemconfig(item["corner_diagonal"], fill=diag_color)
 
 
 # Tab Resizing Functions ------------------------------------------------------
