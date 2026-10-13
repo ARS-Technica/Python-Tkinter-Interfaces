@@ -388,7 +388,9 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
 
 # Tab Creation ----------------------------------------------------------------
 def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int, int]:
-    """Applies the 3-sided border bevels and top-right corner dog-ear overlay."""
+    """
+    Applies the 3-sided border bevels and top-right corner dog-ear overlay.
+    """
     # 3-sided border bevels: Top line stops 9px short of the right edge to avoid crossing the dog ear
     tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
         x=0, y=0, relwidth=1.0, width=-9, anchor="nw"
