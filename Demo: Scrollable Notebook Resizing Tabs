@@ -362,7 +362,7 @@ def scroll_tab_bar(canvas: tk.Canvas, direction: int) -> None:
     canvas.xview_scroll(direction * 3, "units")
 
 
-def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
+def scroll_tab_into_view(canvas: tk.Canvas, tab_frame: tk.Frame) -> None:
     """
     Ensures the active tab is visible in the scrollable viewport.
     """
@@ -382,18 +382,18 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
     tab_x = tab_frame.winfo_x()
     tab_w = tab_frame.winfo_width()
 
-    scroll_region = canvas.bbox("all")
-    if not scroll_region or scroll_region[2] <= canvas_w:
-        return
+    # Canvas current visible boundaries in pixel coordinates
+    left_vis = canvas.xview()[0] * content_width
+    right_vis = canvas.xview()[1] * content_width
 
-    total_w = scroll_region[2]
-    current_left = canvas.xview()[0] * total_w
-    current_right = current_left + canvas_w
-
-    if tab_x < current_left:
-        canvas.xview_moveto(max(0.0, tab_x / total_w))
-    elif (tab_x + tab_w) > current_right:
-        canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
+    # Tab is tucked past the right edge -> pan right
+    if (tab_x + tab_w) > right_vis:
+        target = (tab_x + tab_w - viewport_width) / content_width
+        canvas.xview_moveto(max(0.0, min(1.0, target)))
+    # Tab is tucked past the left edge -> pan left
+    elif tab_x < left_vis:
+        target = tab_x / content_width
+        canvas.xview_moveto(max(0.0, min(1.0, target)))
 
 
 # Tab Creation ----------------------------------------------------------------
