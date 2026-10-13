@@ -314,20 +314,34 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
         tabs_dict[active_key]["frame"].lift()
 
     # Update scroll region
-    scroll_content.configure(width=total_content_width, height=tab_height)
-    canvas.configure(scrollregion=(0, 0, total_content_width, tab_height))
+    # scroll_content.configure(width=total_content_width, height=tab_height)
+    # canvas.configure(scrollregion=(0, 0, total_content_width, tab_height))
 
 
 def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
     """
-    Scrolls the tab bar horizontally using the mouse wheel.
+    Scrolls the tab bar horizontally using the mouse wheel.  Blocked if all tabs 
+    fit inside viewport at maximum width. This prevents all of the tabs from 
+    being pulled all of the way to the right.
     """
-    if event.delta:
-        scroll_tab_bar(canvas, -1 if event.delta > 0 else 1)
-    elif event.num == 4:
-        scroll_tab_bar(canvas, -1)
+    canvas.update_idletasks()
+    viewport_width = canvas.winfo_width()
+    bbox = canvas.bbox("all")
+    content_width = (bbox[2] - bbox[0]) if bbox else 0
+
+    if content_width <= viewport_width:
+        canvas.xview_moveto(0.0)
+        return
+
+    # Linux (Button-4 / Button-5) vs Windows/macOS (delta)
+    if event.num == 4:
+        delta = -1
     elif event.num == 5:
-        scroll_tab_bar(canvas, 1)
+        delta = 1
+    else:
+        delta = -1 if event.delta > 0 else 1
+
+    canvas.xview_scroll(delta * 2, "units")
 
 
 def scroll_tab_bar(canvas: tk.Canvas, direction: int) -> None:
