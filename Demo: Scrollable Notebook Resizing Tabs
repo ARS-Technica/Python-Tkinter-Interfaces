@@ -367,6 +367,11 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
     Ensures the active tab is visible in the scrollable viewport.
     """
     canvas.update_idletasks()
+    tab_frame.update_idletasks()
+
+    viewport_width = canvas.winfo_width()
+								  
+    bbox = canvas.bbox("all")
 
     tab_x = tab_item.winfo_x()
     tab_w = tab_item.winfo_width()
