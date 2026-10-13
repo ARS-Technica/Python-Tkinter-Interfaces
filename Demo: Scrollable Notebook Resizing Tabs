@@ -227,8 +227,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     for node_key, item in tab_items:
         full_title = TAB_REGISTRY.get(node_key, {}).get("title", "")
         f = tkfont.Font(font=font_tab)
-        w = f.measure(full_title) + fixed_elements_width + 10
-        fixed_elements_width + 10  # 10px = 5px padding on both sides
+        w = f.measure(full_title) + fixed_elements_width + 10  # 10px = 5px padding on both sides
         natural_widths.append(w)
 
     total_natural_width = sum(natural_widths)
@@ -309,13 +308,14 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
         total_content_width = int((current_x - stride) + natural_widths[-1])
 
+        # Update scroll region
+        scroll_content.configure(width=total_content_width, height=tab_height)
+        canvas.configure(scrollregion=(0, 0, total_content_width, tab_height))
+
+    # 5. Maintain Z-index: Ensure the active tab always rests on top
     # Re-apply lift to the active tab so it sits on top of truncated neighbors
     if active_key and active_key in tabs_dict:
         tabs_dict[active_key]["frame"].lift()
-
-    # Update scroll region
-    # scroll_content.configure(width=total_content_width, height=tab_height)
-    # canvas.configure(scrollregion=(0, 0, total_content_width, tab_height))
 
 
 def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
