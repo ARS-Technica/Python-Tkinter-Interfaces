@@ -469,9 +469,17 @@ def _bind_tab_events(
 
     # Select / Close triggers across tab sub-elements
     interactive_elements = (tab_item, lbl_title, corner_canvas)
-    for element in interactive_elements:
+    for element in (tab_item, lbl_title, corner_canvas):
         element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-        element.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+        element.bind("<Button-2>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))        
+
+    '''
+    for element in interactive_elements:
+        #element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+        element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+        # element.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
+        element.bind("<Button-2>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
+    '''
 
     btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
 
