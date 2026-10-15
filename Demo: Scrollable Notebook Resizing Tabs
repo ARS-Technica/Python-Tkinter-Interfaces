@@ -833,22 +833,27 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Selects an open tab in the notebook, raises its z-index, and updates visuals.
     """
-    notebook = tab_bar_state["notebook"]
-    tabs_dict = tab_bar_state["tabs"]
-    nav_tree = tab_bar_state["nav_tree"]
+    tabs_dict: dict = tab_bar_state.get("tabs", {})
+    notebook: ttk.Notebook = tab_bar_state.get("notebook")
+    canvas: tk.Canvas = tab_bar_state.get("canvas")
+    nav_tree: ttk.Treeview | None = tab_bar_state.get("nav_tree")
 
     if node_key not in tabs_dict:
         return
 
-    # Select notebook pag
+    # Select notebook page
     tab_info = tabs_dict[node_key]
+
+    # PHASE 1: State Selection & Z-Index Promotion ---------
+    # Switch the underlying tabless notebook panel
     notebook.select(tab_info["page"])
 
-    # Bring active tab to the top of the z-stack
+    # Raise the active tab frame above its overlapping neighbors
     tab_info["frame"].lift()
 
-    # Bring active tab to the top of the z-stack
-    tab_info["frame"].lift()
+
+
+
 
     # Refresh truncated text so the newly active tab displays clearly
     layout_overlapping_tabs(tab_bar_state)
