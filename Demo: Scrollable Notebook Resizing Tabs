@@ -370,7 +370,6 @@ def scroll_tab_into_view(canvas: tk.Canvas, tab_frame: tk.Frame) -> None:
     tab_frame.update_idletasks()
 
     viewport_width = canvas.winfo_width()
-								  
     bbox = canvas.bbox("all")
 
     if not bbox or (bbox[2] - bbox[0]) <= viewport_width:
@@ -645,17 +644,30 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     Closes a workspace tab, destroys its associated UI widgets to prevent
     memory leaks, recalculates layout compression, and shifts active focus.
+
+    Closes a tab and selects its neighbor:
+    - If the closed tab was active: selects the next tab to the right.
+      If none exists to the right, selects the tab to the left.
+    - If the closed tab was inactive: maintains current active tab selection.
     """
     tabs_dict: dict = tab_bar_state.get("tabs", {})
     notebook: ttk.Notebook = tab_bar_state.get("notebook")
-    canvas: tk.Canvas = tab_bar_state.get("canvas")
+    # canvas: tk.Canvas = tab_bar_state.get("canvas")
     nav_tree: ttk.Treeview | None = tab_bar_state.get("nav_tree")
 
     if node_key not in tabs_dict:
         return
 
-    # 1. Pop tab state dictionary entry
-    tab_info = tabs_dict.pop(node_key)
+    # 1. Determine if the closing tab is currently active
+    active_key = None
+    try:
+        current_page = notebook.select()
+        if current_page:
+            active_key = getattr(notebook.nametowidget(current_page), "node_key", None)
+    except Exception:
+        pass
+
+    was_active = (node_key == active_key)
 
     # 2. Destroy the tab button in the tab bar
     if "frame" in tab_info and tab_info["frame"].winfo_exists():
