@@ -195,19 +195,21 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     scroll_content: tk.Frame = tab_bar_state["scroll_content"]
     notebook: ttk.Notebook = tab_bar_state["notebook"]
 
-    # 1. Determine current visible width of the tab strip viewport
+    # 1. Measure current visible viewport width
+    canvas.update_idletasks()
     viewport_width = canvas.winfo_width()
     if viewport_width <= 1:
         viewport_width = canvas.winfo_reqwidth()
         if viewport_width <= 1:
             viewport_width = 600
 
-    tab_items = list(tabs_dict.items())  # list of (node_key, item)
+    tab_items = list(tabs_dict.items())  # List of (node_key, item_dict)
     tab_count = len(tab_items)
     # tab_height = CONFIG.get("TAB_BAR_HEIGHT", 32)    
     tab_height = CONFIG.get("TAB_BAR_HEIGHT", 26)  # Reads 26px directly
-    min_tab_stride = 65  # Minimum visible slice before horizontal scrolling starts
+    min_tab_stride = 65  # Narrowest visible slice before horizontal scrolling starts
 
+    # 2. Find which node_key is currently active in the notebook
     # Find which node_key is currently active in the notebook
     active_key = None
     try:
@@ -217,18 +219,19 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     except Exception:
         pass
 
-    # Step 1: Measure preferred full width of all tabs with normal text
+    # 3: Measure preferred full width of all tabs with normal text
     font_tab = CONFIG["FONT_TAB"]
+    # Fixed UI element footprint: close button (~20px) + dog-ear (~9px) + borders/gaps (~9px)
     fixed_elements_width = 38  # Approx combined width: close btn (~20px) + dogear (~9px) + borders/gaps (~9px)
 
-    # 3. Calculate full natural width for every tab
+    # 4. Calculate full natural width for every tab
     # Measure preferred widths
     natural_widths = []
 
     for node_key, item in tab_items:
         full_title = TAB_REGISTRY.get(node_key, {}).get("title", "")
         f = tkfont.Font(font=font_tab)
-        w = f.measure(full_title) + fixed_elements_width + 10  # 10px = 5px padding on both sides
+        w = f.measure(full_title) + fixed_elements_width + 10  # 10px = 5px padding on each side
         natural_widths.append(w)
 
     total_natural_width = sum(natural_widths)
@@ -262,6 +265,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     else:
         # MODE 2: Overlapping & Dynamic Truncation
+        # Calculate stride between tab origins
         available_stride = (viewport_width - natural_widths[-1]) / max(1, tab_count - 1)        
         stride = max(min_tab_stride, available_stride)
         is_tight = stride < 110
