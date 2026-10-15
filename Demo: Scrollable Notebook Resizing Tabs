@@ -694,17 +694,18 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         notebook.forget(tab_info["page"])
         tab_info["page"].destroy()    
 
-    # 4. If tabs remain, select the most recently opened/adjacent tab
-    if tabs_dict:
-        next_key = list(tabs_dict.keys())[-1]
-        select_workspace_tab(next_key, tab_bar_state)
-    else:
-        # Clear sidebar selection if all tabs are closed
+    # 4. Handle focus re-routing
+    if not tabs_dict:
+        # All tabs closed
         if nav_tree:
             nav_tree.selection_set()
-
-    # 5. Recompute tab overlap widths and scrolling boundaries
-    layout_overlapping_tabs(tab_bar_state)
+        layout_overlapping_tabs(tab_bar_state)
+    elif was_active and target_key:
+        # Transfer selection to designated right/left neighbor
+        select_workspace_tab(target_key, tab_bar_state)
+    else:
+        # Inactive tab closed: active tab unchanged, just compress/recalculate layout
+        layout_overlapping_tabs(tab_bar_state)
 
 
 def create_tab_widget(
