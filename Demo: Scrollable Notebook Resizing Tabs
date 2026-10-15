@@ -652,7 +652,6 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     tabs_dict: dict = tab_bar_state.get("tabs", {})
     notebook: ttk.Notebook = tab_bar_state.get("notebook")
-    # canvas: tk.Canvas = tab_bar_state.get("canvas")
     nav_tree: ttk.Treeview | None = tab_bar_state.get("nav_tree")
 
     if node_key not in tabs_dict:
