@@ -314,8 +314,14 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
         scroll_content.configure(width=total_content_width, height=tab_height)
         canvas.configure(scrollregion=(0, 0, total_content_width, tab_height))
 
-    # 5. Maintain Z-index: Ensure the active tab always rests on top
-    # Re-apply lift to the active tab so it sits on top of truncated neighbors
+    # 5. Clean Z-Index Stacking Order
+    # First, stack inactive tabs sequentially so left neighbors don't get covered by invisible frames
+    # Inactive tabs follow a natural left-to-right cascade:
+    for node_key, item in tab_items:
+        if node_key != active_key:
+            item["frame"].lift()
+
+    # Second, lift ONLY the active tab so its full width, dog-ear, and borders sit on top of everything
     if active_key and active_key in tabs_dict:
         tabs_dict[active_key]["frame"].lift()
 
