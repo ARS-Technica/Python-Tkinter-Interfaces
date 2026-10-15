@@ -673,10 +673,16 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     keys = list(tabs_dict.keys())
     closing_index = keys.index(node_key)
 
-    # 3. Remove and destroy the notebook content frame
-    if "page" in tab_info and tab_info["page"].winfo_exists():
-        notebook.forget(tab_info["page"])
-        tab_info["page"].destroy()
+    # Calculate fallback target only if the tab being closed is active
+    target_key = None
+
+    if was_active and len(keys) > 1:
+        if closing_index < len(keys) - 1:
+            # Prefer neighbor to the right
+            target_key = keys[closing_index + 1]
+        else:
+            # No tab to the right (rightmost closed), pick neighbor to the left
+            target_key = keys[closing_index - 1]
 
     # 4. If tabs remain, select the most recently opened/adjacent tab
     if tabs_dict:
