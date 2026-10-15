@@ -851,15 +851,19 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     # Raise the active tab frame above its overlapping neighbors
     tab_info["frame"].lift()
 
+    # PHASE 2: Visual Styling & Corner Bevels ---------------
+    # Paint active tab to white and inactive tabs back to strip gray
+    update_tab_bar_visuals(tab_bar_state, active_key=node_key)
 
-
-
-
-    # Refresh truncated text so the newly active tab displays clearly
+    # PHASE 3: Geometry Recalculation & Title Expansion ------
+    # Expands active tab to natural width, truncates compressed neighbors
     layout_overlapping_tabs(tab_bar_state)
-    update_tab_bar_visuals(tab_bar_state, node_key)
-    scroll_tab_into_view(tab_bar_state["canvas"], tab_info["frame"])
 
+    # PHASE 4: Scroll Alignment & External Sync ---------------
+    # Ensure the newly expanded tab is not scrolled out of view
+    scroll_tab_into_view(canvas, tab_info["frame"])
+
+    # Highlight corresponding leaf node in the sidebar treeview
     if nav_tree:
         sync_sidebar_selection(nav_tree, node_key)
 
