@@ -492,14 +492,6 @@ def _bind_tab_events(
         element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
         element.bind("<Button-2>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))        
 
-    '''
-    for element in interactive_elements:
-        #element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-        element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-        # element.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
-        element.bind("<Button-2>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-    '''
-
     btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
 
     # Mousewheel forwarding
@@ -696,53 +688,28 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         return
 
     # 1. Determine if the closing tab is currently active
-    active_key = None
-    try:
-        current_page = notebook.select()
-        if current_page:
-            active_key = getattr(notebook.nametowidget(current_page), "node_key", None)
-    except Exception:
-        pass
-
-    was_active = (node_key == active_key)
-
-    # 2. Capture ordered list and index BEFORE removing from state
-    keys = list(tabs_dict.keys())
-    closing_index = keys.index(node_key)
-
-    # Calculate fallback target only if the tab being closed is active
-    target_key = None
-
-    if was_active and len(keys) > 1:
-        if closing_index < len(keys) - 1:
-            # Prefer neighbor to the right
-            target_key = keys[closing_index + 1]
-        else:
-            # No tab to the right (rightmost closed), pick neighbor to the left
-            target_key = keys[closing_index - 1]
-
-    # 3. Clean up the closing tab's UI and notebook state
     tab_info = tabs_dict.pop(node_key)
 
+    # 2. Destroy the tab button in the tab bar
     if "frame" in tab_info and tab_info["frame"].winfo_exists():
         tab_info["frame"].destroy()
 
+    # 3. Remove and destroy the notebook content frame
     if "page" in tab_info and tab_info["page"].winfo_exists():
         notebook.forget(tab_info["page"])
-        tab_info["page"].destroy()    
+        tab_info["page"].destroy()
 
-    # 4. Handle focus re-routing
-    if not tabs_dict:
-        # All tabs closed
+    # 4. If tabs remain, select the most recently opened/adjacent tab
+    if tabs_dict:
+        next_key = list(tabs_dict.keys())[-1]
+        select_workspace_tab(next_key, tab_bar_state)
+    else:
+        # Clear sidebar selection if all tabs are closed
         if nav_tree:
             nav_tree.selection_set()
-        layout_overlapping_tabs(tab_bar_state)
-    elif was_active and target_key:
-        # Transfer selection to designated right/left neighbor
-        select_workspace_tab(target_key, tab_bar_state)
-    else:
-        # Inactive tab closed: active tab unchanged, just compress/recalculate layout
-        layout_overlapping_tabs(tab_bar_state)
+
+    # 5. Recompute tab overlap widths and scrolling boundaries													 
+    layout_overlapping_tabs(tab_bar_state)
 
 
 def create_tab_widget(
