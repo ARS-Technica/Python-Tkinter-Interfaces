@@ -306,15 +306,16 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
                 placed_w = int(stride)
                 visible_slot = stride
 
+            # 3. Dynamic title truncation for the visible slice
             # Deduct close button (~20px), dog ear (~9px), borders, and padding
             overhead = fixed_elements_width + (title_pad * 2)
             text_budget = max(0, int(visible_slot - overhead))
 
-            # 3. Apply ellipsis truncation
+            # 4. Apply ellipsis truncation
             truncated_title = truncate_text_to_width(full_title, font_tab, text_budget)
             item["lbl_title"].configure(text=truncated_title)
 
-            # 4. Place tab: inactive tabs now strictly occupy their visible slice
+            # 5. Place tab: inactive tabs now strictly occupy their visible slice
             item["frame"].place(
                 x=int(current_x),
                 y=0,
