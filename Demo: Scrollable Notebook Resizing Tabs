@@ -323,7 +323,13 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
                 height=tab_height,
                 anchor="nw",
             )
-            current_x += stride
+            # current_x += stride
+
+            # Advance current_x by the actual visible width of THIS tab
+            if is_active:
+                current_x += natural_widths[i]
+            else:
+                current_x += stride
 
         total_content_width = int((current_x - stride) + natural_widths[-1])
 
@@ -332,13 +338,9 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
         canvas.configure(scrollregion=(0, 0, total_content_width, tab_height))
 
     # 5. Clean Z-Index Stacking Order
-    # First, stack inactive tabs sequentially so left neighbors don't get covered by invisible frames
     # Inactive tabs follow a natural left-to-right cascade:
-    for node_key, item in tab_items:
-        if node_key != active_key:
-            item["frame"].lift()
 
-    # Second, lift ONLY the active tab so its full width, dog-ear, and borders sit on top of everything
+    # Lift ONLY the active tab so its full width, dog-ear, and borders sit on top of everything
     if active_key and active_key in tabs_dict:
         tabs_dict[active_key]["frame"].lift()
 
