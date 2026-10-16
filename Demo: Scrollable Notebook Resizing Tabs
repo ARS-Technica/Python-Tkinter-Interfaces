@@ -196,7 +196,6 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     notebook: ttk.Notebook = tab_bar_state["notebook"]
 
     # 1. Measure current visible viewport width
-    canvas.update_idletasks()
     viewport_width = canvas.winfo_width()
     if viewport_width <= 1:
         viewport_width = canvas.winfo_reqwidth()
@@ -207,7 +206,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     tab_count = len(tab_items)
     # tab_height = CONFIG.get("TAB_BAR_HEIGHT", 32)    
     tab_height = CONFIG.get("TAB_BAR_HEIGHT", 26)  # Reads 26px directly
-    min_tab_stride = 65  # Narrowest visible slice before horizontal scrolling starts
+    min_tab_stride = 65  # Minimum visible slice before horizontal scrolling starts
 
     # 2. Find which node_key is currently active in the notebook
     # Find which node_key is currently active in the notebook
@@ -265,8 +264,25 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     else:
         # MODE 2: Overlapping & Dynamic Truncation
+
+        # Active tab gets full natural width. Remaining space is divided among inactive tabs.
+        active_idx = 0
+        for idx, (node_key, _) in enumerate(tab_items):
+            if node_key == active_key:
+                active_idx = idx
+                break
+
+        active_width = natural_widths[active_idx]
+        remaining_space = viewport_width - active_width
+
+        # Calculate stride for inactive tabs
+        if tab_count > 1:
+            available_stride = remaining_space / (tab_count - 1)
+        else:
+            available_stride = min_tab_stride
+
         # Calculate stride between tab origins
-        available_stride = (viewport_width - natural_widths[-1]) / max(1, tab_count - 1)        
+        # available_stride = (viewport_width - natural_widths[-1]) / max(1, tab_count - 1)        
         stride = max(min_tab_stride, available_stride)
         is_tight = stride < 110
 
