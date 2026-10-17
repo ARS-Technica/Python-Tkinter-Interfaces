@@ -1044,6 +1044,19 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     return sidebar_frame, nav_tree
 
 
+def build_status_bar(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
+    # Bottom Status Bar (Full Width)
+    status_bar_frame = tk.Frame(
+        root,
+        height=24,
+        bg=CONFIG["COLOR_STATUS_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    status_bar_frame.pack(side="bottom", fill="x")
+    status_bar_frame.pack_propagate(False)
+
+
 def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     """
     Builds the right-hand panel containing the scrollable tab strip and notebook.
