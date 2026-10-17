@@ -24,10 +24,13 @@ CONFIG = {
     "FONT_BODY": ("Segoe UI", 10),
     "FONT_CLOSE": ("Segoe UI", 10, "bold"),
     "FONT_HEADER": ("Segoe UI", 11, "bold"),
+    "FONT_STATUS": ("Segoe UI", 9),
     "FONT_TAB": ("Segoe UI", 9),
     "COLOR_BORDER": "#BCBCBC",
     "COLOR_SCROLL_THUMB": "#A0A0A0", # Horizontal scrollbar
     "COLOR_SCROLL_TROUGH": "#E6E6E6", # Horizontal scrollbar
+    "COLOR_STATUS_BG": "#E1E1E1",
+    "COLOR_STATUS_FG": "#333333",
     "COLOR_STRIP_BG": "#F0F0F0", #Over the scrolling tab bar
     "COLOR_TAB_ACTIVE": "#FFFFFF",
     "COLOR_TAB_BG": "#E1E1E1",
