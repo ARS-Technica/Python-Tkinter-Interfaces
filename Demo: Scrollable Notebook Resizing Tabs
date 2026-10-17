@@ -1044,8 +1044,12 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     return sidebar_frame, nav_tree
 
 
-def build_status_bar(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
-    # Bottom Status Bar (Full Width)
+def build_status_bar(parent: tk.Misc) -> tuple[tk.Frame, dict]:
+    """
+    Builds the bottom-docked status bar spanning the full window width.
+    Returns the container frame.
+    """
+    # 1. Outer Container Frame
     status_bar_frame = tk.Frame(
         root,
         height=24,
@@ -1053,8 +1057,15 @@ def build_status_bar(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
         borderwidth=0,
         highlightthickness=0,
     )
+    # Pack to the bottom of the parent window    
     status_bar_frame.pack(side="bottom", fill="x")
     status_bar_frame.pack_propagate(False)
+
+    # 2. Top Divider Line (1px border separating status bar from workspace)
+
+    # 3. Status Text Label
+
+    return status_bar_frame, status_widgets
 
 
 def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
