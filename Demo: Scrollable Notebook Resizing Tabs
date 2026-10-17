@@ -1202,7 +1202,7 @@ def create_application() -> None:
     nav_tree.bind("<ButtonRelease-1>", lambda e: on_sidebar_click(e, tab_bar_state))
 
     # Launch with initial default tab
-    create_workspace_tab("dev_dash", tab_bar_state)
+    create_workspace_tab("dev_shell", tab_bar_state)
 
     root.mainloop()
 
