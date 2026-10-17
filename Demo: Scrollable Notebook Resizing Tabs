@@ -202,11 +202,11 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
         if viewport_width <= 1:
             viewport_width = 600
 
-    tab_items = list(tabs_dict.items())  # List of (node_key, item_dict)
+    tab_items = list(tabs_dict.items())  # list of (node_key, item)
     tab_count = len(tab_items)
     # tab_height = CONFIG.get("TAB_BAR_HEIGHT", 32)    
     tab_height = CONFIG.get("TAB_BAR_HEIGHT", 26)  # Reads 26px directly
-    min_tab_stride = 65  # Minimum visible slice before horizontal scrolling starts
+    min_tab_stride = 65  # Narrowest visible slice before horizontal scrolling starts
 
     # 2. Find which node_key is currently active in the notebook
     # Find which node_key is currently active in the notebook
@@ -218,7 +218,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     except Exception:
         pass
 
-    # 3: Measure preferred full width of all tabs with normal text
+    # 3. Measure preferred full width of all tabs with normal text
     font_tab = CONFIG["FONT_TAB"]
     # Fixed UI element footprint: close button (~20px) + dog-ear (~9px) + borders/gaps (~9px)
     fixed_elements_width = 38  # Approx combined width: close btn (~20px) + dogear (~9px) + borders/gaps (~9px)
@@ -235,7 +235,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     total_natural_width = sum(natural_widths)
 
-    # 4. Lay out tabs based on available space
+    # 5. Lay out tabs based on available space
     if total_natural_width <= viewport_width:
         # MODE 1: Normal Side-by-Side (Full Titles, Standard Padding)
         current_x = 2
@@ -337,9 +337,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
         scroll_content.configure(width=total_content_width, height=tab_height)
         canvas.configure(scrollregion=(0, 0, total_content_width, tab_height))
 
-    # 5. Clean Z-Index Stacking Order
-    # Inactive tabs follow a natural left-to-right cascade:
-
+    # 6. Maintain Z-index: Ensure the active tab always rests on top
     # Lift ONLY the active tab so its full width, dog-ear, and borders sit on top of everything
     if active_key and active_key in tabs_dict:
         tabs_dict[active_key]["frame"].lift()
@@ -488,9 +486,9 @@ def _bind_tab_events(
 
     # Select / Close triggers across tab sub-elements
     interactive_elements = (tab_item, lbl_title, corner_canvas)
-    for element in (tab_item, lbl_title, corner_canvas):
+    for element in interactive_elements:
         element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-        element.bind("<Button-2>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))        
+        element.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))      
 
     btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
 
@@ -681,13 +679,13 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     tabs_dict: dict = tab_bar_state.get("tabs", {})
     notebook: ttk.Notebook = tab_bar_state.get("notebook")
-    # canvas: tk.Canvas = tab_bar_state.get("canvas")
+    canvas: tk.Canvas = tab_bar_state.get("canvas")
     nav_tree: ttk.Treeview | None = tab_bar_state.get("nav_tree")
 
     if node_key not in tabs_dict:
         return
 
-    # 1. Determine if the closing tab is currently active
+    # 1. Pop tab state dictionary entry
     tab_info = tabs_dict.pop(node_key)
 
     # 2. Destroy the tab button in the tab bar
@@ -708,7 +706,7 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         if nav_tree:
             nav_tree.selection_set()
 
-    # 5. Recompute tab overlap widths and scrolling boundaries													 
+    # 5. Recompute tab overlap widths and scrolling boundaries
     layout_overlapping_tabs(tab_bar_state)
 
 
@@ -1003,7 +1001,10 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
         font=CONFIG["FONT_HEADER"],
         anchor="center"
     )
-    sidebar_header.pack(anchor="w", fill="x", padx=10, pady=(10, 15))
+    sidebar_header.pack(anchor="w", fill="x", padx=10, pady=(5, 7))
+    # This is where you keep the top edge of the sidebar_header even with the 
+    # top edge of the canvase.  Be careful, it shifts with every change in the 
+    # GUI interface.
 
     # 2. Hierarchical Treeview
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
