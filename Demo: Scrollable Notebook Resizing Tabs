@@ -1235,13 +1235,20 @@ def create_application() -> None:
 
     setup_workspace_styles()
 
+    # Build Bottom Status Bar (Full Width across root)
+    status_frame, status_state = build_status_bar(root)
+
+    # Main Paned Interface
     paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
-    paned_window.pack(fill="both", expand=True, padx=10, pady=10)
+    paned_window.pack(fill="both", expand=True, padx=10, pady=(10, 6))
 
     # Build Left & Right Panes
     sidebar_frame, nav_tree = build_sidebar_panel(paned_window)
     workspace_frame, tab_bar_state = build_workspace(paned_window)
+
+    # Share references across states
     tab_bar_state["nav_tree"] = nav_tree
+    tab_bar_state["lbl_status"] = status_state["lbl_status"]
 
     paned_window.add(sidebar_frame, weight=0)
     paned_window.add(workspace_frame, weight=1)
