@@ -212,7 +212,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     min_tab_stride = 65  # Narrowest visible slice before horizontal scrolling starts
 
     # 2. Find which node_key is currently active in the notebook
-    # Find which node_key is currently active in the notebook
+    # Find which node_key is currently active in the notebook    
     active_key = None
     try:
         current_page = notebook.select()
@@ -223,7 +223,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
 
     # 3. Measure preferred full width of all tabs with normal text
     font_tab = CONFIG["FONT_TAB"]
-    # Fixed UI element footprint: close button (~20px) + dog-ear (~9px) + borders/gaps (~9px)
+    # Fixed UI element footprint: close button (~20px) + dog-ear (~9px) + borders/gaps (~9px)    
     fixed_elements_width = 38  # Approx combined width: close btn (~20px) + dogear (~9px) + borders/gaps (~9px)
 
     # 4. Calculate full natural width for every tab
@@ -233,7 +233,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     for node_key, item in tab_items:
         full_title = TAB_REGISTRY.get(node_key, {}).get("title", "")
         f = tkfont.Font(font=font_tab)
-        w = f.measure(full_title) + fixed_elements_width + 10  # 10px = 5px padding on each side
+        w = f.measure(full_title) + fixed_elements_width + 10  # 10px = 5px padding on both sides
         natural_widths.append(w)
 
     total_natural_width = sum(natural_widths)
@@ -282,7 +282,7 @@ def layout_overlapping_tabs(tab_bar_state: dict) -> None:
         if tab_count > 1:
             available_stride = remaining_space / (tab_count - 1)
         else:
-            available_stride = min_tab_stride
+            available_stride = min_tab_stride        
 
         # Calculate stride between tab origins
         # available_stride = (viewport_width - natural_widths[-1]) / max(1, tab_count - 1)        
@@ -489,9 +489,10 @@ def _bind_tab_events(
 
     # Select / Close triggers across tab sub-elements
     interactive_elements = (tab_item, lbl_title, corner_canvas)
+
     for element in interactive_elements:
         element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
-        element.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))      
+        element.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
 
     btn_close.bind("<Button-1>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
 
@@ -1062,6 +1063,11 @@ def build_status_bar(parent: tk.Misc) -> tuple[tk.Frame, dict]:
     status_bar_frame.pack_propagate(False)
 
     # 2. Top Divider Line (1px border separating status bar from workspace)
+    tk.Frame(
+        status_bar_frame,
+        bg=CONFIG.get("COLOR_BORDER", "#BCBCBC"),
+        height=1,
+    ).pack(side="top", fill="x")
 
     # 3. Status Text Label
 
