@@ -692,9 +692,19 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     # 1. Pop tab state dictionary entry
     tab_info = tabs_dict.pop(node_key)
 
-    # 2. Destroy the tab button in the tab bar
-    if "frame" in tab_info and tab_info["frame"].winfo_exists():
-        tab_info["frame"].destroy()
+    # 2. Capture ordered list and index BEFORE popping from state dictionary
+    keys = list(tabs_dict.keys())
+    closing_index = keys.index(node_key)
+
+    # Calculate fallback target only if the active tab is being closed
+    target_key = None
+    if was_active and len(keys) > 1:
+        if closing_index < len(keys) - 1:
+            # Prefer neighbor to the right
+            target_key = keys[closing_index + 1]
+        else:
+            # Rightmost tab closed: select neighbor to the left
+            target_key = keys[closing_index - 1]
 
     # 3. Clean up the closing tab's UI and notebook page
     tab_info = tabs_dict.pop(node_key)
