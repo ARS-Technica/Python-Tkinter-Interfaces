@@ -1070,6 +1070,16 @@ def build_status_bar(parent: tk.Misc) -> tuple[tk.Frame, dict]:
     ).pack(side="top", fill="x")
 
     # 3. Status Text Label
+    lbl_status = tk.Label(
+        status_bar_frame,
+        text="Ready",
+        font=CONFIG.get("FONT_STATUS", ("Segoe UI", 9)),
+        bg=CONFIG.get("COLOR_STATUS_BG", "#E1E1E1"),
+        fg=CONFIG.get("COLOR_STATUS_FG", "#333333"),
+        anchor="w",
+        padx=10,
+    )
+    lbl_status.pack(side="left", fill="both", expand=True)
 
     return status_bar_frame, status_widgets
 
