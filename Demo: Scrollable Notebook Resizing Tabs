@@ -884,7 +884,7 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     notebook.select(tab_info["page"])
 
     # Raise the active tab frame above its overlapping neighbors
-    tab_info["frame"].lift()
+    # tab_info["frame"].lift()
 
     # PHASE 2: Visual Styling & Corner Bevels ---------------
     # Paint active tab to white and inactive tabs back to strip gray
@@ -901,6 +901,11 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     # Highlight corresponding leaf node in the sidebar treeview
     if nav_tree:
         sync_sidebar_selection(nav_tree, node_key)
+
+    # Update Status Bar 
+    if lbl_status:
+        tab_title = TAB_REGISTRY.get(node_key, {}).get("title", node_key)
+        lbl_status.configure(text=f"Active Workspace: {tab_title}")
 
 
 def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
@@ -1052,7 +1057,7 @@ def build_status_bar(parent: tk.Misc) -> tuple[tk.Frame, dict]:
     """
     # 1. Outer Container Frame
     status_bar_frame = tk.Frame(
-        root,
+        parent,
         height=24,
         bg=CONFIG["COLOR_STATUS_BG"],
         borderwidth=0,
