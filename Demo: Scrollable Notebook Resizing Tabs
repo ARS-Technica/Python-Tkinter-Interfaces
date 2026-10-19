@@ -872,6 +872,7 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     notebook: ttk.Notebook = tab_bar_state.get("notebook")
     canvas: tk.Canvas = tab_bar_state.get("canvas")
     nav_tree: ttk.Treeview | None = tab_bar_state.get("nav_tree")
+    lbl_status: tk.Label | None = tab_bar_state.get("lbl_status")
 
     if node_key not in tabs_dict:
         return
@@ -884,7 +885,7 @@ def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     notebook.select(tab_info["page"])
 
     # Raise the active tab frame above its overlapping neighbors
-    # tab_info["frame"].lift()
+    tab_info["frame"].lift()
 
     # PHASE 2: Visual Styling & Corner Bevels ---------------
     # Paint active tab to white and inactive tabs back to strip gray
