@@ -683,8 +683,8 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
     tabs_dict: dict = tab_bar_state.get("tabs", {})
     notebook: ttk.Notebook = tab_bar_state.get("notebook")
-    canvas: tk.Canvas = tab_bar_state.get("canvas")
     nav_tree: ttk.Treeview | None = tab_bar_state.get("nav_tree")
+    lbl_status: tk.Label | None = tab_bar_state.get("lbl_status")
 
     if node_key not in tabs_dict:
         return
@@ -701,17 +701,23 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         notebook.forget(tab_info["page"])
         tab_info["page"].destroy()
 
-    # 4. If tabs remain, select the most recently opened/adjacent tab
-    if tabs_dict:
-        next_key = list(tabs_dict.keys())[-1]
-        select_workspace_tab(next_key, tab_bar_state)
-    else:
-        # Clear sidebar selection if all tabs are closed
+    # 4. Handle focus re-routing and layout updates
+    if not tabs_dict:
+        # All tabs closed: clear sidebar treeview and reset status bar
         if nav_tree:
             nav_tree.selection_set()
+        if lbl_status:
+            lbl_status.configure(text="Ready (No active workspace)")
+        layout_overlapping_tabs(tab_bar_state)
 
-    # 5. Recompute tab overlap widths and scrolling boundaries
-    layout_overlapping_tabs(tab_bar_state)
+    elif was_active and target_key:
+        # Hand off focus to designated right/left neighbor
+        # Note: select_workspace_tab automatically updates lbl_status and layout
+        select_workspace_tab(target_key, tab_bar_state)
+
+    else:
+        # Inactive tab closed: active tab remains unchanged, just recompress
+        layout_overlapping_tabs(tab_bar_state)
 
 
 def create_tab_widget(
