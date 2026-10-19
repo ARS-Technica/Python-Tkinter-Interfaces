@@ -689,8 +689,16 @@ def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     if node_key not in tabs_dict:
         return
 
-    # 1. Pop tab state dictionary entry
-    tab_info = tabs_dict.pop(node_key)
+    # 1. Determine if the tab being closed is currently active
+    active_key = None
+    try:
+        current_page = notebook.select()
+        if current_page:
+            active_key = getattr(notebook.nametowidget(current_page), "node_key", None)
+    except Exception:
+        pass
+
+    was_active = (node_key == active_key)
 
     # 2. Capture ordered list and index BEFORE popping from state dictionary
     keys = list(tabs_dict.keys())
