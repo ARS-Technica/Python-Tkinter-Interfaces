@@ -1081,6 +1081,11 @@ def build_status_bar(parent: tk.Misc) -> tuple[tk.Frame, dict]:
     )
     lbl_status.pack(side="left", fill="both", expand=True)
 
+    status_widgets = {
+        "frame": status_bar_frame,
+        "lbl_status": lbl_status,
+    }
+
     return status_bar_frame, status_widgets
 
 
