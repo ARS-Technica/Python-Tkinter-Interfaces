@@ -189,7 +189,13 @@ def cycle_next_workspace_tab():
     Cycles to the next open tab to the right, wrapping around to the first tab.
     Returns 'break' to suppress default Tkinter focus traversal.
     """
-    pass
+    if not tabs_dict or len(tabs_dict) <= 1:
+        return "break"
+
+
+
+    select_workspace_tab(next_key, tab_bar_state)
+    return "break"
 
 
 def layout_overlapping_tabs(tab_bar_state: dict) -> None:
