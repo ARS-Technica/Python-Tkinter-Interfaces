@@ -1,6 +1,6 @@
 """
-Demo: Scrollable Notebook Tabs (Advanced)
-Created: September 27, 2026
+Demo: Scrollable Notebook Resizing Tabs
+Created: October 6, 2026
 
 Description: Solves tab overflow problem in the "Demo: Closable Notebook Tabs" 
 project by pairing a tabless ttk.Notebook with a canvas-backed scrollable tab 
@@ -15,29 +15,33 @@ Based on "Demo: Scrollable Notebook Tabs" project.
 """
 
 import tkinter as tk
+import tkinter.font as tkfont
 from tkinter import ttk
 
 
 # Centralized Configuration ---------------------------------------------------
 CONFIG = {
-    "WINDOW_TITLE": "Demo: Dynamic Workspace Manager (Scrollable Tabs)",
-    "WINDOW_GEOMETRY": "1000x560",
-    "FONT_HEADER": ("Segoe UI", 11, "bold"),
-    "FONT_BODY": ("Segoe UI", 10),
-    "FONT_TAB": ("Segoe UI", 9),
-    "FONT_CLOSE": ("Segoe UI", 10, "bold"),
-    "ROW_HEIGHT": 28,
-    "COLOR_TAB_BG": "#E1E1E1",
-    "COLOR_TAB_ACTIVE": "#FFFFFF",
-    "COLOR_STRIP_BG": "#F0F0F0", #Over the scrolling tab bar
     "COLOR_BORDER": "#BCBCBC",
+    "COLOR_SCROLL_THUMB": "#A0A0A0", # Horizontal scrollbar
+    "COLOR_SCROLL_TROUGH": "#E6E6E6", # Horizontal scrollbar
+    "COLOR_STATUS_BG": "#E1E1E1",
+    "COLOR_STATUS_FG": "#333333",
+    "COLOR_STRIP_BG": "#F0F0F0", #Over the scrolling tab bar
+    "COLOR_TAB_ACTIVE": "#FFFFFF",
+    "COLOR_TAB_BG": "#E1E1E1",
     "COLOR_TAB_INACTIVE": "#E4E4E4",
     "COLOR_WORKSPACE_BG": "#FFFFFF",
-    "TAB_OVERLAP": 24,
-    "TAB_BAR_HEIGHT": 40,
+    "FONT_BODY": ("Segoe UI", 10),
+    "FONT_CLOSE": ("Segoe UI", 10, "bold"),
+    "FONT_HEADER": ("Segoe UI", 11, "bold"),
+    "FONT_STATUS": ("Segoe UI", 9),
+    "FONT_TAB": ("Segoe UI", 9),
+    "ROW_HEIGHT": 28,
     "SIDEBAR_TREE_INSET": 2,
-    "COLOR_SCROLL_TROUGH": "#E6E6E6", # Horizontal scrollbar
-    "COLOR_SCROLL_THUMB": "#A0A0A0", # Horizontal scrollbar
+    "TAB_BAR_HEIGHT": 26, # Match arrow button height
+    "TAB_OVERLAP": 24,
+    "WINDOW_GEOMETRY": "1000x560",
+    "WINDOW_TITLE": "Demo: Dynamic Workspace Manager (Scrollable Tabs)",
 }
 
 
@@ -180,86 +184,272 @@ def sync_sidebar_selection(treeview_widget: ttk.Treeview, active_key: str) -> No
 
 
 # Tab Bar Scrolling Functions -------------------------------------------------
+def cycle_next_workspace_tab():
+    """
+    Cycles to the next open tab to the right, wrapping around to the first tab.
+    Returns 'break' to suppress default Tkinter focus traversal.
+    """
+    pass
+
+
 def layout_overlapping_tabs(tab_bar_state: dict) -> None:
     """
-    Positions tabs so each later tab overlaps the previous tab.
+    Positions tabs side-by-side or overlapped, dynamically adjusting
+    label padding and truncating tab titles with an ellipsis.
     """
-    canvas = tab_bar_state["canvas"]
-    scroll_content = tab_bar_state["scroll_content"]
-    canvas_window = tab_bar_state["canvas_window"]
-    tabs = tab_bar_state["tabs"]
+    tabs_dict: dict = tab_bar_state.get("tabs", {})
 
-    scroll_content.update_idletasks()
+    if not tabs_dict:
+            return
 
-    left_edge = 0
-    right_edge = left_edge
-    for tab_info in tabs.values():
-        tab_item = tab_info["frame"]
-        tab_width = tab_item.winfo_reqwidth()
-        tab_item.place(x=left_edge, rely=1.0, anchor="sw")
-        right_edge = left_edge + tab_width
-        left_edge += max(1, tab_width - CONFIG["TAB_OVERLAP"])
+    canvas: tk.Canvas = tab_bar_state["canvas"]
+    scroll_content: tk.Frame = tab_bar_state["scroll_content"]
+    notebook: ttk.Notebook = tab_bar_state["notebook"]
 
-    content_width = max(right_edge, canvas.winfo_width())
-    canvas.itemconfigure(canvas_window, width=content_width, height=40)
-    scroll_content.configure(width=content_width, height=40)
-    canvas.configure(scrollregion=canvas.bbox("all"))
+    # 1. Measure current visible viewport width
+    viewport_width = canvas.winfo_width()
+    if viewport_width <= 1:
+        viewport_width = canvas.winfo_reqwidth()
+        if viewport_width <= 1:
+            viewport_width = 600
+
+    tab_items = list(tabs_dict.items())  # list of (node_key, item)
+    tab_count = len(tab_items)
+    # tab_height = CONFIG.get("TAB_BAR_HEIGHT", 32)    
+    tab_height = CONFIG.get("TAB_BAR_HEIGHT", 26)  # Reads 26px directly
+    min_tab_stride = 65  # Narrowest visible slice before horizontal scrolling starts
+
+    # 2. Find which node_key is currently active in the notebook
+    # Find which node_key is currently active in the notebook    
+    active_key = None
+    try:
+        current_page = notebook.select()
+        if current_page:
+            active_key = getattr(notebook.nametowidget(current_page), "node_key", None)
+    except Exception:
+        pass
+
+    # 3. Measure preferred full width of all tabs with normal text
+    font_tab = CONFIG["FONT_TAB"]
+    # Fixed UI element footprint: close button (~20px) + dog-ear (~9px) + borders/gaps (~9px)    
+    fixed_elements_width = 38  # Approx combined width: close btn (~20px) + dogear (~9px) + borders/gaps (~9px)
+
+    # 4. Calculate full natural width for every tab
+    # Measure preferred widths
+    natural_widths = []
+
+    for node_key, item in tab_items:
+        full_title = TAB_REGISTRY.get(node_key, {}).get("title", "")
+        f = tkfont.Font(font=font_tab)
+        w = f.measure(full_title) + fixed_elements_width + 10  # 10px = 5px padding on both sides
+        natural_widths.append(w)
+
+    total_natural_width = sum(natural_widths)
+
+    # 5. Lay out tabs based on available space
+    if total_natural_width <= viewport_width:
+        # MODE 1: Normal Side-by-Side (Full Titles, Standard Padding)
+        current_x = 2
+
+        for (node_key, item), w in zip(tab_items, natural_widths):
+            full_title = TAB_REGISTRY.get(node_key, {}).get("title", "")
+            item["lbl_title"].configure(text=full_title, padx=5)
+
+            # Reset standard padding & full title            
+            item["frame"].place(
+                x=current_x,
+                y=0,
+                width=w,
+                height=tab_height,
+                anchor="nw",
+            )
+            current_x += w + 2
+
+        total_content_width = current_x
+
+        # Lock view flush to the left edge; expand scroll area to eliminate empty space drift
+        canvas.xview_moveto(0.0)
+        effective_width = max(total_content_width, viewport_width)
+        scroll_content.configure(width=effective_width, height=tab_height)
+        canvas.configure(scrollregion=(0, 0, effective_width, tab_height))
+
+    else:
+        # MODE 2: Overlapping & Dynamic Truncation
+
+        # Active tab gets full natural width. Remaining space is divided among inactive tabs.
+        active_idx = 0
+        for idx, (node_key, _) in enumerate(tab_items):
+            if node_key == active_key:
+                active_idx = idx
+                break
+
+        active_width = natural_widths[active_idx]
+        remaining_space = viewport_width - active_width
+
+        # Calculate stride for inactive tabs
+        if tab_count > 1:
+            available_stride = remaining_space / (tab_count - 1)
+        else:
+            available_stride = min_tab_stride        
+
+        # Calculate stride between tab origins
+        # available_stride = (viewport_width - natural_widths[-1]) / max(1, tab_count - 1)        
+        stride = max(min_tab_stride, available_stride)
+        is_tight = stride < 110
+
+        current_x = 0
+        for i, (node_key, item) in enumerate(tab_items):
+            is_active = (node_key == active_key)
+            is_last = (i == tab_count - 1)
+            full_title = TAB_REGISTRY.get(node_key, {}).get("title", "")
+
+            # 1. Compress padding when tight
+            title_pad = 2 if is_tight else 5
+            item["lbl_title"].configure(padx=title_pad)
+
+            # 2. Determine actual placed frame width
+            # Inactive tabs are physically sized to 'stride' so text cannot bleed to the right.
+            # Active tabs and the final tab retain full width.
+            if is_active or is_last:
+                placed_w = natural_widths[i]
+                visible_slot = natural_widths[i]
+            else:
+                placed_w = int(stride)
+                visible_slot = stride
+
+            # 3. Dynamic title truncation for the visible slice
+            # Deduct close button (~20px), dog ear (~9px), borders, and padding
+            overhead = fixed_elements_width + (title_pad * 2)
+            text_budget = max(0, int(visible_slot - overhead))
+
+            # 4. Apply ellipsis truncation
+            truncated_title = truncate_text_to_width(full_title, font_tab, text_budget)
+            item["lbl_title"].configure(text=truncated_title)
+
+            # 5. Place tab: inactive tabs now strictly occupy their visible slice
+            item["frame"].place(
+                x=int(current_x),
+                y=0,
+                width=placed_w,
+                height=tab_height,
+                anchor="nw",
+            )
+            # current_x += stride
+
+            # Advance current_x by the actual visible width of THIS tab
+            if is_active:
+                current_x += natural_widths[i]
+            else:
+                current_x += stride
+
+        total_content_width = int((current_x - stride) + natural_widths[-1])
+
+        # Update scroll region
+        scroll_content.configure(width=total_content_width, height=tab_height)
+        canvas.configure(scrollregion=(0, 0, total_content_width, tab_height))
+
+    # 6. Maintain Z-index: Ensure the active tab always rests on top
+    # Lift ONLY the active tab so its full width, dog-ear, and borders sit on top of everything
+    if active_key and active_key in tabs_dict:
+        tabs_dict[active_key]["frame"].lift()
 
 
 def on_tab_bar_mousewheel(event: tk.Event, canvas: tk.Canvas) -> None:
     """
-    Scrolls the tab bar horizontally using the mouse wheel.
+    Scrolls the tab bar horizontally using the mouse wheel.  Blocked if all tabs 
+    fit inside viewport at maximum width. This prevents all of the tabs from 
+    being pulled all of the way to the right.
     """
-    if event.delta:
-        scroll_tab_bar(canvas, -1 if event.delta > 0 else 1)
-    elif event.num == 4:
-        scroll_tab_bar(canvas, -1)
+    canvas.update_idletasks()
+    viewport_width = canvas.winfo_width()
+    bbox = canvas.bbox("all")
+    content_width = (bbox[2] - bbox[0]) if bbox else 0
+
+    if content_width <= viewport_width:
+        canvas.xview_moveto(0.0)
+        return
+
+    # Linux (Button-4 / Button-5) vs Windows/macOS (delta)
+    if event.num == 4:
+        delta = -1
     elif event.num == 5:
-        scroll_tab_bar(canvas, 1)
+        delta = 1
+    else:
+        delta = -1 if event.delta > 0 else 1
+
+    canvas.xview_scroll(delta * 2, "units")
 
 
 def scroll_tab_bar(canvas: tk.Canvas, direction: int) -> None:
     """
-    Scrolls the canvas horizontally by units.
+    Scrolls the canvas horizontally. Disabled when all tabs fit within the viewport.
     """
-    canvas.xview_scroll(direction * 2, "units")
+    canvas.update_idletasks()
+    viewport_width = canvas.winfo_width()
+    
+    # Read the current bounding box / scrollable area
+    bbox = canvas.bbox("all")
+    content_width = (bbox[2] - bbox[0]) if bbox else 0
+
+    # If the tabs fit comfortably within view, pin flush to the left
+    if content_width <= viewport_width:
+        canvas.xview_moveto(0.0)
+        return
+
+    # Normal scrolling when tabs actually overflow
+    canvas.xview_scroll(direction * 3, "units")
 
 
-def scroll_tab_into_view(canvas: tk.Canvas, tab_item: tk.Frame) -> None:
+def scroll_tab_into_view(canvas: tk.Canvas, tab_frame: tk.Frame) -> None:
     """
     Ensures the active tab is visible in the scrollable viewport.
     """
     canvas.update_idletasks()
+    tab_frame.update_idletasks()
 
-    tab_x = tab_item.winfo_x()
-    tab_w = tab_item.winfo_width()
-    canvas_w = canvas.winfo_width()
+    viewport_width = canvas.winfo_width()
+    bbox = canvas.bbox("all")
 
-    scroll_region = canvas.bbox("all")
-    if not scroll_region or scroll_region[2] <= canvas_w:
+    if not bbox or (bbox[2] - bbox[0]) <= viewport_width:
+        # If tabs fit inside the viewport, enforce zero-offset pin
+        canvas.xview_moveto(0.0)
         return
 
-    total_w = scroll_region[2]
-    current_left = canvas.xview()[0] * total_w
-    current_right = current_left + canvas_w
+    content_width = bbox[2] - bbox[0]
+    tab_x = tab_frame.winfo_x()
+    tab_w = tab_frame.winfo_width()
 
-    if tab_x < current_left:
-        canvas.xview_moveto(max(0.0, tab_x / total_w))
-    elif (tab_x + tab_w) > current_right:
-        canvas.xview_moveto(min(1.0, (tab_x + tab_w - canvas_w + 20) / total_w))
+    # Canvas current visible boundaries in pixel coordinates
+    left_vis = canvas.xview()[0] * content_width
+    right_vis = canvas.xview()[1] * content_width
+
+    # Tab is tucked past the right edge -> pan right
+    if (tab_x + tab_w) > right_vis:
+        target = (tab_x + tab_w - viewport_width) / content_width
+        canvas.xview_moveto(max(0.0, min(1.0, target)))
+    # Tab is tucked past the left edge -> pan left
+    elif tab_x < left_vis:
+        target = tab_x / content_width
+        canvas.xview_moveto(max(0.0, min(1.0, target)))
 
 
 # Tab Creation ----------------------------------------------------------------
-def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int]:
+def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int, int]:
     """
-    Apply the 3-sided border bevels and top-right corner dog-ear overlay.
+    Applies the 3-sided border bevels and top-right corner dog-ear overlay.
     """
-    # 3-sided border bevels
-    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(x=0, y=0, relwidth=1.0, anchor="nw")
-    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(x=0, y=0, relheight=1.0, anchor="nw")
-    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(relx=1.0, x=-1, y=0, relheight=1.0, anchor="ne")
+    # 3-sided border bevels: Top line stops 9px short of the right edge to avoid crossing the dog ear
+    tk.Frame(tab_item, bg="#FFFFFF", height=1).place(
+        x=0, y=0, relwidth=1.0, width=-9, anchor="nw"
+    )
+    tk.Frame(tab_item, bg="#FFFFFF", width=1).place(
+        x=0, y=0, relheight=1.0, anchor="nw"
+    )
+    tk.Frame(tab_item, bg=CONFIG["COLOR_BORDER"], width=1).place(
+        relx=1.0, x=-1, y=9, relheight=1.0, height=-9, anchor="ne"
+    )
 
-    # Corner dog-ear canvas
+    # Corner dog-ear canvas: background MUST match the scrolling strip background
     corner_canvas = tk.Canvas(
         tab_item,
         width=9,
@@ -269,10 +459,25 @@ def _apply_tab_decorations(tab_item: tk.Frame) -> tuple[tk.Canvas, int]:
         highlightthickness=0,
     )
     corner_canvas.place(relx=1.0, rely=0.0, anchor="ne")
-    corner_canvas.create_polygon(0, 0, 0, 9, 9, 9, fill=CONFIG["COLOR_TAB_INACTIVE"], width=1)
-    corner_top_line = corner_canvas.create_line(0, 0, 9, 0, fill="#FFFFFF", width=1)
 
-    return corner_canvas, corner_top_line
+    # Lower-left triangle filled with the tab's body color
+    corner_poly = corner_canvas.create_polygon(
+        0, 0,
+        0, 9,
+        9, 9,
+        fill=CONFIG["COLOR_TAB_INACTIVE"],
+        outline=CONFIG["COLOR_TAB_INACTIVE"]
+    )
+
+    # Diagonal cut line separating the tab from the strip
+    corner_diagonal = corner_canvas.create_line(
+        0, 0,
+        9, 9,
+        fill=CONFIG["COLOR_BORDER"],
+        width=1
+    )
+
+    return corner_canvas, corner_poly, corner_diagonal
 
 
 def _bind_tab_events(
@@ -292,6 +497,7 @@ def _bind_tab_events(
 
     # Select / Close triggers across tab sub-elements
     interactive_elements = (tab_item, lbl_title, corner_canvas)
+
     for element in interactive_elements:
         element.bind("<Button-1>", lambda e, k=node_key: select_workspace_tab(k, tab_bar_state))
         element.bind("<Button-2>", lambda e, k=node_key: close_workspace_tab(k, tab_bar_state))
@@ -325,10 +531,11 @@ def _build_tab_button(parent: tk.Misc, node_key: str, tab_meta: dict, tab_bar_st
         bg=CONFIG["COLOR_TAB_INACTIVE"],
         fg="#000000",
         padx=5,
-        pady=4,
+        pady=1,
+        anchor="w",  # Pins text to the left
         cursor="hand2",
     )
-    lbl_title.pack(side="left")
+    lbl_title.pack(side="left", fill="x", expand=True)
 
     btn_close = tk.Button(
         tab_item,
@@ -344,7 +551,7 @@ def _build_tab_button(parent: tk.Misc, node_key: str, tab_meta: dict, tab_bar_st
         cursor="hand2",
         command=lambda k=node_key: close_workspace_tab(k, tab_bar_state),
     )
-    btn_close.pack(side="left", padx=(0, 6))
+    btn_close.pack(side="right", fill="y", padx=(0, 4))
 
     return tab_item, lbl_title, btn_close
 
@@ -404,7 +611,7 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     )
 
     # 3. Visual Accents & Geometry
-    corner_canvas, corner_top_line = _apply_tab_decorations(tab_item)
+    corner_canvas, corner_poly, corner_diagonal = _apply_tab_decorations(tab_item)
 
     # 4. Event & Interaction Bindings
     _bind_tab_events(node_key, tab_bar_state, tab_item, lbl_title, btn_close, corner_canvas)
@@ -416,7 +623,8 @@ def create_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
         "lbl_title": lbl_title,
         "btn_close": btn_close,
         "corner": corner_canvas,
-        "corner_top_line": corner_top_line,
+        "corner_poly": corner_poly,
+        "corner_diagonal": corner_diagonal,
     }
 
     layout_overlapping_tabs(tab_bar_state)
@@ -469,6 +677,78 @@ def bind_tab_events(
         widget.bind("<MouseWheel>", scroll_tabs)
         widget.bind("<Button-4>", scroll_tabs)
         widget.bind("<Button-5>", scroll_tabs)
+
+
+def close_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
+    """
+    Closes a workspace tab, destroys its associated UI widgets to prevent
+    memory leaks, recalculates layout compression, and shifts active focus.
+
+    Closes a tab and selects its neighbor:
+    - If the closed tab was active: selects the next tab to the right.
+      If none exists to the right, selects the tab to the left.
+    - If the closed tab was inactive: maintains current active tab selection.
+    """
+    tabs_dict: dict = tab_bar_state.get("tabs", {})
+    notebook: ttk.Notebook = tab_bar_state.get("notebook")
+    nav_tree: ttk.Treeview | None = tab_bar_state.get("nav_tree")
+    lbl_status: tk.Label | None = tab_bar_state.get("lbl_status")
+
+    if node_key not in tabs_dict:
+        return
+
+    # 1. Determine if the tab being closed is currently active
+    active_key = None
+    try:
+        current_page = notebook.select()
+        if current_page:
+            active_key = getattr(notebook.nametowidget(current_page), "node_key", None)
+    except Exception:
+        pass
+
+    was_active = (node_key == active_key)
+
+    # 2. Capture ordered list and index BEFORE popping from state dictionary
+    keys = list(tabs_dict.keys())
+    closing_index = keys.index(node_key)
+
+    # Calculate fallback target only if the active tab is being closed
+    target_key = None
+    if was_active and len(keys) > 1:
+        if closing_index < len(keys) - 1:
+            # Prefer neighbor to the right
+            target_key = keys[closing_index + 1]
+        else:
+            # Rightmost tab closed: select neighbor to the left
+            target_key = keys[closing_index - 1]
+
+    # 3. Clean up the closing tab's UI and notebook page
+    tab_info = tabs_dict.pop(node_key)
+
+    if "frame" in tab_info and tab_info["frame"].winfo_exists():
+        tab_info["frame"].destroy()
+
+    if "page" in tab_info and tab_info["page"].winfo_exists():
+        notebook.forget(tab_info["page"])
+        tab_info["page"].destroy()
+
+    # 4. Handle focus re-routing and layout updates
+    if not tabs_dict:
+        # All tabs closed: clear sidebar treeview and reset status bar
+        if nav_tree:
+            nav_tree.selection_set()
+        if lbl_status:
+            lbl_status.configure(text="Ready (No active workspace)")
+        layout_overlapping_tabs(tab_bar_state)
+
+    elif was_active and target_key:
+        # Hand off focus to designated right/left neighbor
+        # Note: select_workspace_tab automatically updates lbl_status and layout
+        select_workspace_tab(target_key, tab_bar_state)
+
+    else:
+        # Inactive tab closed: active tab remains unchanged, just recompress
+        layout_overlapping_tabs(tab_bar_state)
 
 
 def create_tab_widget(
@@ -623,63 +903,133 @@ def register_tab(
 
 def select_workspace_tab(node_key: str, tab_bar_state: dict) -> None:
     """
-    Updates background colors to reflect the active tab.
+    Selects an open tab in the notebook, raises its z-index, and updates visuals.
     """
-    notebook = tab_bar_state["notebook"]
-    tabs_dict = tab_bar_state["tabs"]
-    nav_tree = tab_bar_state["nav_tree"]
+    tabs_dict: dict = tab_bar_state.get("tabs", {})
+    notebook: ttk.Notebook = tab_bar_state.get("notebook")
+    canvas: tk.Canvas = tab_bar_state.get("canvas")
+    nav_tree: ttk.Treeview | None = tab_bar_state.get("nav_tree")
+    lbl_status: tk.Label | None = tab_bar_state.get("lbl_status")
 
     if node_key not in tabs_dict:
         return
 
     # Select notebook page
     tab_info = tabs_dict[node_key]
+
+    # PHASE 1: State Selection & Z-Index Promotion ---------
+    # Switch the underlying tabless notebook panel
     notebook.select(tab_info["page"])
 
-    # Update visuals & auto-scroll
-    update_tab_bar_visuals(tab_bar_state, node_key)
-    scroll_tab_into_view(tab_bar_state["canvas"], tab_info["frame"])
+    # Raise the active tab frame above its overlapping neighbors
+    tab_info["frame"].lift()
 
-    # Sync Treeview selection
-    sync_sidebar_selection(nav_tree, node_key)
+    # PHASE 2: Visual Styling & Corner Bevels ---------------
+    # Paint active tab to white and inactive tabs back to strip gray
+    update_tab_bar_visuals(tab_bar_state, active_key=node_key)
+
+    # PHASE 3: Geometry Recalculation & Title Expansion ------
+    # Expands active tab to natural width, truncates compressed neighbors
+    layout_overlapping_tabs(tab_bar_state)
+
+    # PHASE 4: Scroll Alignment & External Sync ---------------
+    # Ensure the newly expanded tab is not scrolled out of view
+    scroll_tab_into_view(canvas, tab_info["frame"])
+
+    # Highlight corresponding leaf node in the sidebar treeview
+    if nav_tree:
+        sync_sidebar_selection(nav_tree, node_key)
+
+    # Update Status Bar 
+    if lbl_status:
+        tab_title = TAB_REGISTRY.get(node_key, {}).get("title", node_key)
+        lbl_status.configure(text=f"{tab_title}")
 
 
 def update_tab_bar_visuals(tab_bar_state: dict, active_key: str | None) -> None:
     """
-    Updates tab borders, baseline connectors, and background colors.
+    Updates tab borders, button backgrounds, and dog-ear corner colors.
     """
-    active_frame = None
-    tab_items = list(tab_bar_state["tabs"].items())
-
-    for index, (node_key, item) in enumerate(tab_items):
+    for node_key, item in tab_bar_state["tabs"].items():
         is_active = (node_key == active_key)
-
         bg_fill = CONFIG["COLOR_WORKSPACE_BG"] if is_active else CONFIG["COLOR_TAB_INACTIVE"]
 
-        # Color the tab frame
         item["frame"].configure(bg=bg_fill)
         item["lbl_title"].configure(bg=bg_fill)
-        item["btn_close"].configure(bg=bg_fill)
-        beneath_fill = CONFIG["COLOR_STRIP_BG"]
-        if index + 1 < len(tab_items):
-            beneath_fill = (
-                CONFIG["COLOR_WORKSPACE_BG"]
-                if tab_items[index + 1][0] == active_key
-                else CONFIG["COLOR_TAB_INACTIVE"]
+        item["btn_close"].configure(bg=bg_fill, activebackground=bg_fill)
+
+        # Sync the dog-ear corner triangle fill
+        if "corner" in item and "corner_poly" in item:
+            item["corner"].itemconfig(
+                item["corner_poly"],
+                fill=bg_fill,
+                outline=bg_fill
             )
-        item["corner"].configure(bg=beneath_fill)
-        item["corner"].itemconfigure(1, fill=bg_fill)
-        hide_corner_line = index == len(tab_items) - 1
-        item["corner"].itemconfigure(
-            item["corner_top_line"],
-            state="hidden" if hide_corner_line else "normal",
-        )
+            # Active tab diagonal bevel highlight
+            diag_color = "#FFFFFF" if is_active else CONFIG["COLOR_BORDER"]
+            item["corner"].itemconfig(item["corner_diagonal"], fill=diag_color)
 
-        if is_active:
-            active_frame = item["frame"]
 
-    if active_frame is not None:
-        active_frame.lift()
+# Tab Resizing Functions ------------------------------------------------------
+def on_tab_strip_resize(event: tk.Event, tab_bar_state: dict) -> None:
+    """
+    Triggers an immediate layout recalculation when the window or tab strip resizes.
+    Uses after_idle to avoid layout thrashing during active dragging.
+    """
+    canvas: tk.Canvas = tab_bar_state["canvas"]
+    
+    # Cancel any pending queued calculation to prevent lag
+    pending_job = getattr(canvas, "_resize_job", None)
+    if pending_job is not None:
+        canvas.after_cancel(pending_job)
+        
+    def _recalculate():
+        canvas._resize_job = None
+        layout_overlapping_tabs(tab_bar_state)
+
+    # Schedule immediate recalculation as soon as Tk finishes the resize pass
+    canvas._resize_job = canvas.after_idle(_recalculate)
+
+
+def truncate_text_to_width(full_text: str, font: tuple | tkfont.Font, max_pixels: int) -> str:
+    """
+    Truncates full_text with an ellipsis ('…') so that its rendered
+    pixel width does not exceed max_pixels.
+
+    Necessary to resizing tabs.
+    """
+    if max_pixels <= 10:
+        return ""  # Not enough room even for an ellipsis
+
+    # Resolve font object for exact pixel measuring
+    f = font if isinstance(font, tkfont.Font) else tkfont.Font(font=font)
+
+    if f.measure(full_text) <= max_pixels:
+        return full_text
+
+    ellipsis = "…"
+    ellipsis_width = f.measure(ellipsis)
+
+    if ellipsis_width > max_pixels:
+        return ""
+
+    budget = max_pixels - ellipsis_width
+
+    # Trim characters until the remaining string fits the budget
+    low = 0
+    high = len(full_text)
+    best_fit = ""
+
+    while low <= high:
+        mid = (low + high) // 2
+        candidate = full_text[:mid]
+        if f.measure(candidate) <= budget:
+            best_fit = candidate
+            low = mid + 1
+        else:
+            high = mid - 1
+
+    return best_fit + ellipsis if best_fit else ellipsis
 
 
 # Widget Layout Functions -----------------------------------------------------
@@ -698,7 +1048,10 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
         font=CONFIG["FONT_HEADER"],
         anchor="center"
     )
-    sidebar_header.pack(anchor="w", fill="x", padx=10, pady=(10, 15))
+    sidebar_header.pack(anchor="w", fill="x", padx=10, pady=(5, 7))
+    # This is where you keep the top edge of the sidebar_header even with the 
+    # top edge of the canvase.  Be careful, it shifts with every change in the 
+    # GUI interface.
 
     # 2. Hierarchical Treeview
     nav_tree = ttk.Treeview(sidebar_frame, show="tree", selectmode="browse")
@@ -735,6 +1088,50 @@ def build_sidebar_panel(parent: ttk.PanedWindow) -> tuple[ttk.Frame, ttk.Treevie
     return sidebar_frame, nav_tree
 
 
+def build_status_bar(parent: tk.Misc) -> tuple[tk.Frame, dict]:
+    """
+    Builds the bottom-docked status bar spanning the full window width.
+    Returns the container frame.
+    """
+    # 1. Outer Container Frame
+    status_bar_frame = tk.Frame(
+        parent,
+        height=24,
+        bg=CONFIG["COLOR_STATUS_BG"],
+        borderwidth=0,
+        highlightthickness=0,
+    )
+    # Pack to the bottom of the parent window    
+    status_bar_frame.pack(side="bottom", fill="x")
+    status_bar_frame.pack_propagate(False)
+
+    # 2. Top Divider Line (1px border separating status bar from workspace)
+    tk.Frame(
+        status_bar_frame,
+        bg=CONFIG.get("COLOR_BORDER", "#BCBCBC"),
+        height=1,
+    ).pack(side="top", fill="x")
+
+    # 3. Status Text Label
+    lbl_status = tk.Label(
+        status_bar_frame,
+        text="Ready",
+        font=CONFIG.get("FONT_STATUS", ("Segoe UI", 9)),
+        bg=CONFIG.get("COLOR_STATUS_BG", "#E1E1E1"),
+        fg=CONFIG.get("COLOR_STATUS_FG", "#333333"),
+        anchor="w",
+        padx=10,
+    )
+    lbl_status.pack(side="left", fill="both", expand=True)
+
+    status_widgets = {
+        "frame": status_bar_frame,
+        "lbl_status": lbl_status,
+    }
+
+    return status_bar_frame, status_widgets
+
+
 def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     """
     Builds the right-hand panel containing the scrollable tab strip and notebook.
@@ -764,27 +1161,37 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     )
 
     btn_left = tk.Button(
-        tab_strip_frame, text="◀", relief="flat", bg="#CCCCCC", width=3, height=1,
+        tab_strip_frame, 
+        text="◀", 
+        relief="flat", 
+        bg="#CCCCCC", 
+        width=3,
+        bd=0,
+        highlightthickness=0,
         command=lambda: scroll_tab_bar(canvas, -1)
     )
     btn_left.pack(
         side="left",
-        anchor="s",
+        fill="y",          # Fills exact height of tab_strip_frame
         padx=(1, 0),
-        pady=(0, 0),
-        ipady=0,
+        pady=0,
     )
 
     btn_right = tk.Button(
-        tab_strip_frame, text="▶", relief="flat", bg="#CCCCCC", width=3, height=1,
+        tab_strip_frame, 
+        text="▶", 
+        relief="flat", 
+        bg="#CCCCCC", 
+        width=3,
+        bd=0,
+        highlightthickness=0,
         command=lambda: scroll_tab_bar(canvas, 1)
     )
     btn_right.pack(
         side="right",
-        anchor="s",
-        padx=(0, 3),
-        pady=(0, 0),
-        ipady=0,
+        fill="y",          # Fills exact height of tab_strip_frame
+        padx=(0, 1),
+        pady=0,
     )
 
     canvas.pack(side="left", fill="both", expand=True)
@@ -840,8 +1247,11 @@ def build_workspace(parent: ttk.PanedWindow) -> tuple[ttk.Frame, dict]:
     # Connect canvas horizontal movement to the scrollbar thumb
     canvas.configure(xscrollcommand=tab_scrollbar.set)
 
+    # 5. Instant Tab Recalculation on Resize
+    canvas._resize_job = None
+    canvas.bind("<Configure>", lambda e: on_tab_strip_resize(e, tab_bar_state))
 
-    # 5. Bottom Tabless Notebook Workspace
+    # 6. Bottom Tabless Notebook Workspace
     notebook = ttk.Notebook(workspace_container, style="Tabless.TNotebook")
     notebook.pack(side="top", fill="both", expand=True)
 
@@ -868,13 +1278,20 @@ def create_application() -> None:
 
     setup_workspace_styles()
 
+    # Build Bottom Status Bar (Full Width across root)
+    status_frame, status_state = build_status_bar(root)
+
+    # Main Paned Interface
     paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
-    paned_window.pack(fill="both", expand=True, padx=10, pady=10)
+    paned_window.pack(fill="both", expand=True, padx=10, pady=(10, 6))
 
     # Build Left & Right Panes
     sidebar_frame, nav_tree = build_sidebar_panel(paned_window)
     workspace_frame, tab_bar_state = build_workspace(paned_window)
+
+    # Share references across states
     tab_bar_state["nav_tree"] = nav_tree
+    tab_bar_state["lbl_status"] = status_state["lbl_status"]
 
     paned_window.add(sidebar_frame, weight=0)
     paned_window.add(workspace_frame, weight=1)
@@ -883,7 +1300,7 @@ def create_application() -> None:
     nav_tree.bind("<ButtonRelease-1>", lambda e: on_sidebar_click(e, tab_bar_state))
 
     # Launch with initial default tab
-    create_workspace_tab("dev_dash", tab_bar_state)
+    create_workspace_tab("dev_shell", tab_bar_state)
 
     root.mainloop()
 
