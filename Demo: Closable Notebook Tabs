@@ -192,6 +192,14 @@ def cycle_next_workspace_tab():
     if not tabs_dict or len(tabs_dict) <= 1:
         return "break"
 
+    # Identify currently active tab key    
+    try:
+        current_page = notebook.select()
+        if current_page:
+            active_key = getattr(notebook.nametowidget(current_page), "node_key", None)
+    except Exception:
+        pass
+
 
     if active_key in keys:
         current_idx = keys.index(active_key)
