@@ -193,6 +193,13 @@ def cycle_next_workspace_tab():
         return "break"
 
 
+    if active_key in keys:
+        current_idx = keys.index(active_key)
+        # Advance index by 1 and wrap around using modulo
+        next_idx = (current_idx + 1) % len(keys)
+        next_key = keys[next_idx]
+    else:
+        next_key = keys[0]
 
     select_workspace_tab(next_key, tab_bar_state)
     return "break"
