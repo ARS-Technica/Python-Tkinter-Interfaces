@@ -184,15 +184,19 @@ def sync_sidebar_selection(treeview_widget: ttk.Treeview, active_key: str) -> No
 
 
 # Tab Bar Scrolling Functions -------------------------------------------------
-def cycle_next_workspace_tab():
+def cycle_next_workspace_tab(event: tk.Event, tab_bar_state: dict) -> str:
     """
     Cycles to the next open tab to the right, wrapping around to the first tab.
     Returns 'break' to suppress default Tkinter focus traversal.
     """
+    tabs_dict: dict = tab_bar_state.get("tabs", {})
+    notebook: ttk.Notebook = tab_bar_state.get("notebook")
+
     if not tabs_dict or len(tabs_dict) <= 1:
         return "break"
 
-    # Identify currently active tab key    
+    # Identify currently active tab key
+    active_key = None
     try:
         current_page = notebook.select()
         if current_page:
@@ -200,7 +204,7 @@ def cycle_next_workspace_tab():
     except Exception:
         pass
 
-
+    keys = list(tabs_dict.keys())
     if active_key in keys:
         current_idx = keys.index(active_key)
         # Advance index by 1 and wrap around using modulo
