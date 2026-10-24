@@ -1,0 +1,15 @@
+"""
+Demo: Toggle Switch
+Created: October 22, 2026
+
+Description:
+A standalone, anti-aliased animated pill toggle switch for Tkinter.
+Standard Tkinter Canvas drawing produces aliased (pixelated/jagged) curves.
+This component solves that by rendering the pill track and thumb at 4x scale
+in Pillow (PIL) and downsampling to physical dimensions using a Lanczos filter.
+It also features 60fps non-blocking animation and dark/light mode background syncing.
+"""
+
+
+
+
