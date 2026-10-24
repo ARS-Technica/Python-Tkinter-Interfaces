@@ -38,6 +38,22 @@ class AntiAliasedToggle(tk.Canvas):
     pass
 
 
+def get(self) -> bool:
+    """
+    Returns True if toggled ON, False if OFF.
+    """
+    return self._is_on
+
+
+def set(self, value: bool) -> None:
+    """
+    Programmatically flips the switch with standard animation.
+    """
+    if self._is_on != value:
+        self._on_click()
+
+
+
 if __name__ == "__main__":
     # Root demo window setup
     app = tk.Tk()
