@@ -15,6 +15,16 @@ from typing import Callable, Optional
 from PIL import Image, ImageDraw, ImageTk
 
 
+class AntiAliasedToggle(tk.Canvas):
+    """
+    Anti-aliased animated toggle switch using supersampled Pillow rendering.
+
+    Inherits from tk.Canvas to act as a lightweight container displaying a
+    single updating ImageTk.PhotoImage bitmap.
+    """
+
+
+
 if __name__ == "__main__":
     # Root demo window setup
     app = tk.Tk()
