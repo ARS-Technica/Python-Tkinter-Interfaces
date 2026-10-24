@@ -54,7 +54,18 @@ class AntiAliasedToggle(tk.Canvas):
             cursor="hand2",
             **kwargs
         )
+        # Base configuration and dimensions
+        self.w = width
+        self.h = height
+        self.scale = scale
+        self.bg_off = bg_off
+        self.bg_on = bg_on
+        self.thumb_color = thumb_color
+        self.command = command
 
+        # State flags
+        self._is_on = initial_state
+        self._animating = False
 
     def get(self) -> bool:
         """
