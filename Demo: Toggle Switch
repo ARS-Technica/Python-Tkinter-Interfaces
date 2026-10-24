@@ -22,7 +22,20 @@ class AntiAliasedToggle(tk.Canvas):
     Inherits from tk.Canvas to act as a lightweight container displaying a
     single updating ImageTk.PhotoImage bitmap.
     """
-
+    def __init__(
+        self,
+        parent: tk.Misc,
+        width: int = 56,
+        height: int = 28,
+        bg_off: str = "#CCCCCC",
+        bg_on: str = "#0078D4",
+        thumb_color: str = "#FFFFFF",
+        initial_state: bool = False,
+        scale: int = 4,  # 4x supersampling for smooth edges
+        command: Optional[Callable[[bool], None]] = None,
+        **kwargs
+    ):
+    pass
 
 
 if __name__ == "__main__":
