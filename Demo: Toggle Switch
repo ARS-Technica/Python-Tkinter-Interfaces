@@ -35,7 +35,14 @@ class AntiAliasedToggle(tk.Canvas):
         command: Optional[Callable[[bool], None]] = None,
         **kwargs
     ):
-    pass
+        # Auto-detect parent's background color so the rectangular canvas frame
+        # seamlessly blends into its container without hardcoded colors.
+        if "bg" not in kwargs and "background" not in kwargs:
+            try:
+                parent_bg = parent.cget("bg")
+            except Exception:
+                parent_bg = "#F8F9FA"
+            kwargs["bg"] = parent_bg
 
 
 def get(self) -> bool:
