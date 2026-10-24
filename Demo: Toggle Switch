@@ -10,6 +10,38 @@ in Pillow (PIL) and downsampling to physical dimensions using a Lanczos filter.
 It also features 60fps non-blocking animation and dark/light mode background syncing.
 """
 
+import tkinter as tk
+from typing import Callable, Optional
+from PIL import Image, ImageDraw, ImageTk
 
 
+if __name__ == "__main__":
+    # Root demo window setup
+    app = tk.Tk()
+    app.title("Anti-Aliased Toggle Demo")
+    app.geometry("400x240")
+    app.configure(bg="#F8F9FA")
+
+    lbl_status = tk.Label(
+        app,
+        text="Status: OFF",
+        font=("Segoe UI", 11),
+        bg="#F8F9FA",
+        fg="#333333"
+    )
+    lbl_status.pack(pady=(40, 15))
+
+    # Component instantiation
+    toggle = AntiAliasedToggle(
+        app,
+        width=58,
+        height=30,
+        bg_on="#0078D4",    # Fluent blue
+        bg_off="#CCCCCC",   # Neutral gray
+        thumb_color="#FFFFFF",
+        command=on_change
+    )
+    toggle.pack(pady=10)
+
+    app.mainloop()
 
