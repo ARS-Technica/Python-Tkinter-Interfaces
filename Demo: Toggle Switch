@@ -99,6 +99,18 @@ if __name__ == "__main__":
     )
     lbl_status.pack(pady=(40, 15))
 
+    def on_change(state: bool) -> None:
+        """
+        Callback triggered whenever the user flips the toggle.
+        Demonstrates bidirectional theme switching and color synchronization.
+        """
+        bg = "#1E1E1E" if state else "#F8F9FA"
+        fg = "#FFFFFF" if state else "#333333"
+        lbl_status.configure(text=f"Status: {'ON' if state else 'OFF'}", bg=bg, fg=fg)
+        app.configure(bg=bg)
+        # Notify toggle to update its canvas backing color to match new theme
+        toggle.set_parent_bg(bg)
+
     # Component instantiation
     toggle = AntiAliasedToggle(
         app,
