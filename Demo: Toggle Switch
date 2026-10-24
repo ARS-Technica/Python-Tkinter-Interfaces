@@ -44,20 +44,31 @@ class AntiAliasedToggle(tk.Canvas):
                 parent_bg = "#F8F9FA"
             kwargs["bg"] = parent_bg
 
+        # Initialize the underlying tk.Canvas with zero borders to prevent border clipping
+        super().__init__(
+            parent,
+            width=width,
+            height=height,
+            highlightthickness=0,
+            borderwidth=0,
+            cursor="hand2",
+            **kwargs
+        )
 
-def get(self) -> bool:
-    """
-    Returns True if toggled ON, False if OFF.
-    """
-    return self._is_on
 
-
-def set(self, value: bool) -> None:
-    """
-    Programmatically flips the switch with standard animation.
-    """
-    if self._is_on != value:
-        self._on_click()
+    def get(self) -> bool:
+        """
+        Returns True if toggled ON, False if OFF.
+        """
+        return self._is_on
+    
+    
+    def set(self, value: bool) -> None:
+        """
+        Programmatically flips the switch with standard animation.
+        """
+        if self._is_on != value:
+            self._on_click()
 
 
 
