@@ -58,7 +58,18 @@ def get_toggle_state(state: dict) -> bool:
     pass
 
 
+# APPLICATION ENTRY POINT & DEMO ----------------------------------------------
+
+def create_application() -> None:
+    """
+    Constructs the demo window starting in the dark (OFF) state,
+    illuminating to light when toggled ON.
+    """
+
+    pass
+
+
 # LAUNCH APPLICATION ----------------------------------------------------------
 if __name__ == "__main__":
-    create_demo_application()
+    create_application()
 
