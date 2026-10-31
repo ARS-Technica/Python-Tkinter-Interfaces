@@ -29,6 +29,7 @@ def on_toggle_click(event: Optional[tk.Event], state: dict):
 
     pass
 
+
 def set_toggle_parent_bg(state: dict, color: str) -> None:
     """
     Updates the backing canvas background to blend with theme switches.
@@ -40,8 +41,21 @@ def set_toggle_parent_bg(state: dict, color: str) -> None:
     pass
 
 
+def set_toggle_state(state: dict, value: bool) -> None:
+    """
+    Programmatically sets the toggle on/off state with animation.
+    Does nothing if the requested state matches the current state.
+    """
+
+    pass
 
 
+def get_toggle_state(state: dict) -> bool:
+    """
+    Retrieves the current boolean value of the toggle.
+    """
+
+    pass
 
 
 # LAUNCH APPLICATION ----------------------------------------------------------
