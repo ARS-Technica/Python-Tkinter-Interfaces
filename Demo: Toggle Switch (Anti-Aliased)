@@ -14,6 +14,15 @@ It also features 60fps non-blocking animation and dark/light mode background syn
 def render_toggle_surface(state: dict) -> None:
     # 1. Allocate High-Resolution Buffer --------------------------------------
     # 2. Draw the Rounded Pill Track ------------------------------------------
+    # The bounding box uses [0, 0, sw - 1, sh - 1] to stay within image boundaries.
+    # The radius equals half the height (s_radius), which forms semicircular caps
+    # on the left and right ends of the pill track.
+    draw.rounded_rectangle(
+        [0, 0, state["sw"] - 1, state["sh"] - 1],
+        radius=state["s_radius"],
+        fill=track_color,
+    )
+
     # 3. Draw the Circular Sliding Thumb --------------------------------------
     # 4. Downsample with Lanczos Resampling for smooth edges ------------------
     # 5. Swap the active bitmap on the canvas ---------------------------------
