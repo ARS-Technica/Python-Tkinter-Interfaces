@@ -22,4 +22,18 @@ def render_toggle_surface(state: dict) -> None:
 
 
 
+def create_demo_application() -> None:
+    """
+    Constructs the demo window starting in the dark (OFF) state,
+    illuminating to light when toggled ON.
+    """
+
+    pass
+
+
+
+
+# LAUNCH APPLICATION ----------------------------------------------------------
+if __name__ == "__main__":
+    create_demo_application()
 
