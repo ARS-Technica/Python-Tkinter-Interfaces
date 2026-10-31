@@ -61,8 +61,8 @@ def set_toggle_parent_bg(state: dict, color: str) -> None:
     Call this when toggling light/dark mode so the rectangular canvas edges
     and anti-aliasing fringe match the container's background color.
     """
-
-    pass
+    state["canvas"].configure(bg=color)
+    render_toggle_surface(state)
 
 
 def set_toggle_state(state: dict, value: bool) -> None:
