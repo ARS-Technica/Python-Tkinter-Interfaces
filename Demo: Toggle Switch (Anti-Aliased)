@@ -93,6 +93,9 @@ def create_anti_aliased_toggle(
     """
     Factory function that builds the canvas and packages coordinate state.
     """
+    
+
+    return canvas, state
 
 
 # APPLICATION ENTRY POINT & DEMO ----------------------------------------------
