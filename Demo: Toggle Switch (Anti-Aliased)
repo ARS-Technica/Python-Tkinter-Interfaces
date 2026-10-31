@@ -46,16 +46,15 @@ def set_toggle_state(state: dict, value: bool) -> None:
     Programmatically sets the toggle on/off state with animation.
     Does nothing if the requested state matches the current state.
     """
-
-    pass
+    if state["is_on"] != value:
+        on_toggle_click(None, state)
 
 
 def get_toggle_state(state: dict) -> bool:
     """
     Retrieves the current boolean value of the toggle.
     """
-
-    pass
+    return state["is_on"]
 
 
 # APPLICATION ENTRY POINT & DEMO ----------------------------------------------
@@ -65,6 +64,12 @@ def create_application() -> None:
     Constructs the demo window starting in the dark (OFF) state,
     illuminating to light when toggled ON.
     """
+
+    # Root window begins in the dark state (OFF)
+    root = tk.Tk()
+    root.title("Demo: Toggle Switch (Anti-Aliased)")
+    root.geometry("400x240")
+    root.configure(bg="#1E1E1E")
 
     pass
 
