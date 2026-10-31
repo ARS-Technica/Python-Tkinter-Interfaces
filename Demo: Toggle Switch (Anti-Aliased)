@@ -19,16 +19,27 @@ def render_toggle_surface(state: dict) -> None:
     # 5. Swap the active bitmap on the canvas ---------------------------------
 
 
+# EVENT HANDLERS --------------------------------------------------------------
 
-
-
-def create_demo_application() -> None:
+def on_toggle_click(event: Optional[tk.Event], state: dict):
     """
-    Constructs the demo window starting in the dark (OFF) state,
-    illuminating to light when toggled ON.
+    Handles user interaction, updates toggle state, triggers animation,
+    and runs the external callback.
     """
 
     pass
+
+def set_toggle_parent_bg(state: dict, color: str) -> None:
+    """
+    Updates the backing canvas background to blend with theme switches.
+
+    Call this when toggling light/dark mode so the rectangular canvas edges
+    and anti-aliasing fringe match the container's background color.
+    """
+
+    pass
+
+
 
 
 
