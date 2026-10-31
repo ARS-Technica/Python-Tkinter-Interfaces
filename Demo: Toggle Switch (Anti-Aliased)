@@ -34,6 +34,11 @@ def render_toggle_surface(state: dict) -> None:
     # 5. Swap the active bitmap on the canvas ---------------------------------
 
 
+# ANIMATION -------------------------------------------------------------------
+def animate_toggle():
+    canvas: tk.Canvas = state["canvas"]    
+
+
 # EVENT HANDLERS --------------------------------------------------------------
 
 def on_toggle_click(event: Optional[tk.Event], state: dict):
