@@ -10,6 +10,10 @@ in Pillow (PIL) and downsampling to physical dimensions using a Lanczos filter.
 It also features 60fps non-blocking animation and dark/light mode background syncing.
 """
 
+import tkinter as tk
+
+
+# RENDERING PIPELINE ----------------------------------------------------------
 
 def render_toggle_surface(state: dict) -> None:
     canvas: tk.Canvas = state["canvas"]
