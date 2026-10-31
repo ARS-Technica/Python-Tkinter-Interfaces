@@ -12,6 +12,12 @@ It also features 60fps non-blocking animation and dark/light mode background syn
 
 
 def render_toggle_surface(state: dict) -> None:
+    canvas: tk.Canvas = state["canvas"]
+
+    # Match the Pillow buffer's base color to the canvas background  
+
+    # Select the track color  
+
     # 1. Allocate High-Resolution Buffer --------------------------------------
     # 2. Draw the Rounded Pill Track ------------------------------------------
     # The bounding box uses [0, 0, sw - 1, sh - 1] to stay within image boundaries.
