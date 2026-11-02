@@ -7,7 +7,14 @@ root = Tk()
 # Set root window's title
 root.title("Code: Tkinter Window")
 
+# Turn image into PhotoImage
+img = PhotoImage(file="icon.png")
 
+# Initialize the button
+btn = Button(root, image=img)
+
+# Display the button
+btn.pack()
 
 root.mainloop()
 
