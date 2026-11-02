@@ -1,0 +1,17 @@
+# Import the Tkinter module
+from tkinter import *
+
+# Initialize the root window
+root = Tk()
+
+# Set root window's title
+root.title("Code: Close Window")
+
+# Set buton command to root.destroy
+btn = Button(root, text="Exit", command=root.destroy)
+
+# Display Button
+btn.pack()
+
+root.mainlop()
+
