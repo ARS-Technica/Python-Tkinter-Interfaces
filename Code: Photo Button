@@ -1,0 +1,13 @@
+# Import the Tkinter module
+from tkinter import *
+
+# Initialize the root window
+root = Tk()
+
+# Set root window's title
+root.title("Code: Tkinter Window")
+
+
+
+root.mainloop()
+
