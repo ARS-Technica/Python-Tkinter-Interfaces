@@ -5,3 +5,14 @@ A procedural, anti-aliased segmented switch for selecting among N options.
 Features a sliding pill indicator, hover states, and smooth ease-out animations.
 """
 
+import tkinter as tk
+
+
+def create_demo_application():
+  pass
+
+
+# LAUNCH APPLICATION ----------------------------------------------------------
+if __name__ == "__main__":
+    create_demo_application()
+
