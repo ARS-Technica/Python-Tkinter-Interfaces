@@ -4,6 +4,9 @@ from tkinter import *
 # Initialize the root window
 root = Tk()
 
+# Pass in Width and Height
+root.geometry("500x500")
+
 # Set root window's title
 root.title("Code: Tkinter Window")
 
