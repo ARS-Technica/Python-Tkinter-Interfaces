@@ -1,0 +1,7 @@
+"""
+Demo: Segmented Switch
+Description:
+A procedural, anti-aliased segmented switch for selecting among N options.
+Features a sliding pill indicator, hover states, and smooth ease-out animations.
+"""
+
