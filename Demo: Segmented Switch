@@ -9,7 +9,7 @@ import tkinter as tk
 
 
 # RENDERING PIPELINE ----------------------------------------------------------
-def render_segment:
+def render_segmented_surface(state: dict) -> None:
     """
     Renders the outer pill container and the sliding selection pill via Pillow,
     then projects downsampled anti-aliased graphics onto the base canvas.
@@ -29,7 +29,17 @@ def render_segment:
     )
 
     # 2. Sliding indicator pill
+    ix0 = state["indicator_x"]
+    ix1 = ix0 + state["indicator_w"]
+    iy0 = state["s_pad"]
+    iy1 = state["sh"] - state["s_pad"]
+    pill_radius = (iy1 - iy0) // 2
 
+    draw.rounded_rectangle(
+        [ix0, iy0, ix1 - 1, iy1 - 1],
+        radius=pill_radius,
+        fill=state["bg_indicator"],
+    )
 
     # 3. Downscale using Lanczos filter
 
