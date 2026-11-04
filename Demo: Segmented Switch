@@ -8,6 +8,22 @@ Features a sliding pill indicator, hover states, and smooth ease-out animations.
 import tkinter as tk
 
 
+# RENDERING PIPELINE ----------------------------------------------------------
+def render_segment:
+    """
+    Renders the outer pill container and the sliding selection pill via Pillow,
+    then projects downsampled anti-aliased graphics onto the base canvas.
+    """
+
+    # 1. Outer track background
+
+    # 2. Sliding indicator pill
+
+    # 3. Downscale using Lanczos filter
+
+    pass
+
+
 def create_demo_application():
   pass
 
