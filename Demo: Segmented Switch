@@ -14,10 +14,22 @@ def render_segment:
     Renders the outer pill container and the sliding selection pill via Pillow,
     then projects downsampled anti-aliased graphics onto the base canvas.
     """
+    canvas: tk.Canvas = state["canvas"]
+    parent_bg = canvas.cget("bg")
+
+    # High-resolution buffer
+    img = Image.new("RGBA", (state["sw"], state["sh"]), parent_bg)
+    draw = ImageDraw.Draw(img)
 
     # 1. Outer track background
+    draw.rounded_rectangle(
+        [0, 0, state["sw"] - 1, state["sh"] - 1],
+        radius=state["s_radius"],
+        fill=state["bg_track"],
+    )
 
     # 2. Sliding indicator pill
+
 
     # 3. Downscale using Lanczos filter
 
