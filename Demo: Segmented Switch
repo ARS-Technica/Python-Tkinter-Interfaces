@@ -24,8 +24,44 @@ def render_segment:
     pass
 
 
-def create_demo_application():
-  pass
+def select_segment:
+    """
+    Activates segment at index, repositioning the indicator and firing callbacks.
+    """
+    # Target virtual coordinates
+
+    # Reposition indicator
+
+    # Update text label colors (active vs inactive)
+
+
+# WIDGET FUNCTIONS ------------------------------------------------------------
+def create_segmented_control(
+    parent: tk.Misc,
+    options: List[str],
+    font: tuple = ("Segoe UI", 10, "bold"),
+    height: int = 34,
+    pad_h: int = 16,
+    bg_track: str = "#2B2B2B",
+    bg_indicator: str = "#0078D4",
+    fg_active: str = "#FFFFFF",
+    fg_inactive: str = "#AAAAAA",
+    initial_index: int = 0,
+    scale: int = 4,
+    command: Optional[Callable[[str, int], None]] = None,
+    **kwargs):
+    """
+    Constructs a responsive segmented selector.
+    """
+    pass
+
+
+# LAUNCH APPLICATION ----------------------------------------------------------
+def create_demo_application() -> None:
+    root = tk.Tk()
+    root.title("Demo: Segmented Switch")
+    root.geometry("480x260")
+    root.configure(bg="#1E1E1E")
 
 
 # LAUNCH APPLICATION ----------------------------------------------------------
