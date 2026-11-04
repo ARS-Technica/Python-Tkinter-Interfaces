@@ -75,6 +75,32 @@ def create_demo_application() -> None:
     root.geometry("480x260")
     root.configure(bg="#1E1E1E")
 
+    lbl_choice = tk.Label(
+        root,
+        text="View Mode: Daily",
+        font=("Segoe UI", 11),
+        bg="#1E1E1E",
+        fg="#FFFFFF",
+    )
+    lbl_choice.pack(pady=(40, 20))
+
+    # Helper Function for create_segmented_control
+    def on_select(label: str, index: int) -> None:
+        lbl_choice.configure(text=f"View Mode: {label} (Index: {index})")
+
+    control, _ = create_segmented_control(
+        root,
+        options=["Daily", "Weekly", "Monthly", "Annual"],
+        bg_track="#2D2D30",
+        bg_indicator="#0078D4",
+        fg_active="#FFFFFF",
+        fg_inactive="#8E8E93",
+        command=on_select,
+    )
+    control.pack()
+
+    root.mainloop()
+
 
 # LAUNCH APPLICATION ----------------------------------------------------------
 if __name__ == "__main__":
