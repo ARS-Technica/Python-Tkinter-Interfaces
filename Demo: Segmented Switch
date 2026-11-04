@@ -42,8 +42,9 @@ def render_segmented_surface(state: dict) -> None:
     )
 
     # 3. Downscale using Lanczos filter
-
-    pass
+    smooth_img = img.resize((state["w"], state["h"]), Image.Resampling.LANCZOS)
+    state["img_ref"] = ImageTk.PhotoImage(smooth_img)
+    canvas.itemconfig(state["canvas_img_id"], image=state["img_ref"])
 
 
 def select_segment:
