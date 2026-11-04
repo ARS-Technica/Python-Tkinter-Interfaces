@@ -6,6 +6,9 @@ Features a sliding pill indicator, hover states, and smooth ease-out animations.
 """
 
 import tkinter as tk
+import tkinter.font as tkfont
+from typing import Callable, List, Optional
+from PIL import Image, ImageDraw, ImageTk
 
 
 # RENDERING PIPELINE ----------------------------------------------------------
@@ -51,11 +54,25 @@ def select_segment:
     """
     Activates segment at index, repositioning the indicator and firing callbacks.
     """
+    if index < 0 or index >= len(state["segments"]):
+        return
+
+    state["selected_index"] = index
+    state["animating"] = True
+
     # Target virtual coordinates
 
     # Reposition indicator
 
     # Update text label colors (active vs inactive)
+    canvas: tk.Canvas = state["canvas"]
+
+    for i, seg in enumerate(state["segments"]):
+        color = state["fg_active"] if i == index else state["fg_inactive"]
+        canvas.itemconfig(seg["canvas_text_id"], fill=color)
+
+    if state["command"]:
+        state["command"](state["segments"][index]["label"], index)
 
 
 # WIDGET FUNCTIONS ------------------------------------------------------------
