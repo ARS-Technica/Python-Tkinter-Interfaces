@@ -82,11 +82,15 @@ def select_segment_index():
     """
     Activates segment at index, repositioning the indicator and firing callbacks.
     """
+    if index < 0 or index >= len(state["segments"]):
+        return
+
+    # Reposition indicator
+
     # Target virtual coordinates
 
     # Update text label colors (active vs inactive)
 
-    # Reposition indicator
 
     pass
 
