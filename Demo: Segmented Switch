@@ -50,6 +50,7 @@ def render_segmented_surface(state: dict) -> None:
     canvas.itemconfig(state["canvas_img_id"], image=state["img_ref"])
 
 
+# ANIMATION & INTERACTION -----------------------------------------------------
 def animate_indicator(
     target_x: float,
     target_w: float,
@@ -58,27 +59,23 @@ def animate_indicator(
     total_steps: int = 8
 ) -> None:
     """
-    Activates segment at index, repositioning the indicator and firing callbacks.
+    Animates both indicator position and width using exponential decay.
     """
-    if index < 0 or index >= len(state["segments"]):
-        return
-
-    state["selected_index"] = index
-    state["animating"] = True
-
-    # Target virtual coordinates
-
-    # Reposition indicator
-
-    # Update text label colors (active vs inactive)
     canvas: tk.Canvas = state["canvas"]
 
-    for i, seg in enumerate(state["segments"]):
-        color = state["fg_active"] if i == index else state["fg_inactive"]
-        canvas.itemconfig(seg["canvas_text_id"], fill=color)
+    if step >= total_steps:
+        state["indicator_x"] = target_x
+        state["indicator_w"] = target_w
+        render_segmented_surface(state)
+        state["animating"] = False
+        return
 
-    if state["command"]:
-        state["command"](state["segments"][index]["label"], index)
+    # Frame easing step (40% approach per frame)
+    state["indicator_x"] += (target_x - state["indicator_x"]) * 0.4
+    state["indicator_w"] += (target_w - state["indicator_w"]) * 0.4
+    render_segmented_surface(state)
+
+    canvas.after(16, lambda: animate_indicator(target_x, target_w, state, step + 1, total_steps))
 
 
 # WIDGET FUNCTIONS ------------------------------------------------------------
