@@ -78,19 +78,22 @@ def animate_indicator(
     canvas.after(16, lambda: animate_indicator(target_x, target_w, state, step + 1, total_steps))
 
 
-def select_segment_index():
+def select_segment_index(index: int, state: dict) -> None:
     """
     Activates segment at index, repositioning the indicator and firing callbacks.
     """
     if index < 0 or index >= len(state["segments"]):
         return
 
-    # Reposition indicator
-    animate_indicator(target_x, target_w, state)
+    state["selected_index"] = index
+    state["animating"] = True
 
     # Target virtual coordinates
     target_x = state["seg_bounds"][index]["x"]
     target_w = state["seg_bounds"][index]["w"]
+
+    # Reposition indicator
+    animate_indicator(target_x, target_w, state)
 
     # Update text label colors (active vs inactive)
     canvas: tk.Canvas = state["canvas"]
@@ -101,8 +104,6 @@ def select_segment_index():
 
     if state["command"]:
         state["command"](state["segments"][index]["label"], index)
-
-
 
 
 # WIDGET FUNCTIONS ------------------------------------------------------------
