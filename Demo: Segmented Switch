@@ -50,7 +50,13 @@ def render_segmented_surface(state: dict) -> None:
     canvas.itemconfig(state["canvas_img_id"], image=state["img_ref"])
 
 
-def select_segment:
+def animate_indicator(
+    target_x: float,
+    target_w: float,
+    state: dict,
+    step: int = 0,
+    total_steps: int = 8
+) -> None:
     """
     Activates segment at index, repositioning the indicator and firing callbacks.
     """
