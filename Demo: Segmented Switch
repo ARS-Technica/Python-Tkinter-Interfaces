@@ -90,9 +90,13 @@ def select_segment_index():
     # Target virtual coordinates
 
     # Update text label colors (active vs inactive)
+    canvas: tk.Canvas = state["canvas"]
+
+    for i, seg in enumerate(state["segments"]):
+        color = state["fg_active"] if i == index else state["fg_inactive"]
+        canvas.itemconfig(seg["canvas_text_id"], fill=color)
 
 
-    pass
 
 
 # WIDGET FUNCTIONS ------------------------------------------------------------
