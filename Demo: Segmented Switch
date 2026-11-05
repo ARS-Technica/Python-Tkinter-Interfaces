@@ -86,8 +86,11 @@ def select_segment_index():
         return
 
     # Reposition indicator
+    animate_indicator(target_x, target_w, state)
 
     # Target virtual coordinates
+    target_x = state["seg_bounds"][index]["x"]
+    target_w = state["seg_bounds"][index]["w"]
 
     # Update text label colors (active vs inactive)
     canvas: tk.Canvas = state["canvas"]
@@ -95,6 +98,9 @@ def select_segment_index():
     for i, seg in enumerate(state["segments"]):
         color = state["fg_active"] if i == index else state["fg_inactive"]
         canvas.itemconfig(seg["canvas_text_id"], fill=color)
+
+    if state["command"]:
+        state["command"](state["segments"][index]["label"], index)
 
 
 
