@@ -254,6 +254,9 @@ def create_demo_application() -> None:
     )
     control.pack()
 
+    # Trigger callback immediately on launch to synchronize the label
+    on_select(options[initial_idx], initial_idx)
+
     root.mainloop()
 
 
