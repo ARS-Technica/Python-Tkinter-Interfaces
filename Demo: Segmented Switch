@@ -120,7 +120,8 @@ def create_segmented_control(
     initial_index: int = 0,
     scale: int = 4,
     command: Optional[Callable[[str, int], None]] = None,
-    **kwargs):
+    **kwargs,
+) -> tuple[tk.Canvas, dict]:
     """
     Constructs a responsive segmented selector.
     """
@@ -147,6 +148,22 @@ def create_segmented_control(
         cursor="hand2",
         **kwargs,
     )
+
+    # Virtual Math Space
+    sw = total_w * scale
+    sh = height * scale
+    s_radius = sh // 2
+    s_pad = 3 * scale
+
+    # Compute high-res and physical boundaries for each segment
+    seg_bounds = []
+    accum_x = s_pad
+    phys_accum_x = 3
+
+    for swidth in seg_widths:
+        scaled_w = swidth * scale
+        seg_bounds.append({"x": accum_x, "w": scaled_w})
+        accum_x += scaled_w
 
     segments = []
 
@@ -179,9 +196,31 @@ def create_segmented_control(
     state = {
         "canvas": canvas,
         "canvas_img_id": canvas_img_id,
+        "img_ref": None,
+        "w": total_w,
+        "h": height,
+        "sw": sw,
+        "sh": sh,
+        "scale": scale,
+        "s_radius": s_radius,
+        "s_pad": s_pad,
+        "bg_track": bg_track,
+        "bg_indicator": bg_indicator,
+        "fg_active": fg_active,
+        "fg_inactive": fg_inactive,
+        "segments": segments,
+        "seg_bounds": seg_bounds,
+        "selected_index": initial_index,
+        "indicator_x": seg_bounds[initial_index]["x"],
+        "indicator_w": seg_bounds[initial_index]["w"],
+        "animating": False,
+        "command": command,
     }
 
-    return canvas
+    canvas.bind("<Button-1>", lambda e: on_canvas_click(e, state))
+    render_segmented_surface(state)
+
+    return canvas, state
 
 
 # LAUNCH APPLICATION ----------------------------------------------------------
