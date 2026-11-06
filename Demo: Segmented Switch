@@ -131,6 +131,18 @@ def create_segmented_control(
     seg_widths = [w + (pad_h * 2) for w in text_widths]
     total_w = sum(seg_widths) + 6
 
+    canvas = tk.Canvas(
+        parent,
+        width=total_w,
+        height=height,
+        highlightthickness=0,
+        borderwidth=0,
+        cursor="hand2",
+        **kwargs,
+    )
+
+    return canvas
+
 
 # LAUNCH APPLICATION ----------------------------------------------------------
 def create_demo_application() -> None:
