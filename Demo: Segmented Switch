@@ -148,6 +148,21 @@ def create_segmented_control(
         **kwargs,
     )
 
+    segments = []
+
+    for i, opt in enumerate(options):
+        pw = seg_widths[i]
+        segments.append({
+            "label": opt,
+            "phys_x0": phys_accum_x,
+            "phys_x1": phys_accum_x + pw,
+            "center_x": phys_accum_x + (pw // 2),
+            "canvas_text_id": None,
+        })
+        phys_accum_x += pw
+
+    canvas_img_id = canvas.create_image(0, 0, anchor="nw")
+
     # Draw text items above the indicator image
     for i, seg in enumerate(segments):
         color = fg_active if i == initial_index else fg_inactive
