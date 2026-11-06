@@ -124,6 +124,12 @@ def create_segmented_control(
     """
     Constructs a responsive segmented selector.
     """
+    if "bg" not in kwargs and "background" not in kwargs:
+        try:
+            parent_bg = parent.cget("bg")
+        except Exception:
+            parent_bg = "#1E1E1E"
+
     f = tkfont.Font(font=font)
     text_widths = [f.measure(opt) for opt in options]
 
