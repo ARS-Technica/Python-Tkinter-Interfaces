@@ -1,5 +1,7 @@
 """
 Demo: Segmented Switch
+Created: November 1, 2026
+
 Description:
 A procedural, anti-aliased segmented switch for selecting among N options.
 Features a sliding pill indicator, hover states, and smooth ease-out animations.
@@ -106,6 +108,20 @@ def select_segment_index(index: int, state: dict) -> None:
         state["command"](state["segments"][index]["label"], index)
 
 
+def on_canvas_click(event: tk.Event, state: dict) -> None:
+    """
+    Resolves click coordinates to the matching segment.
+    """
+    click_x = event.x
+    for i, seg in enumerate(state["segments"]):
+        # Test physical bounds
+        if seg["phys_x0"] <= click_x <= seg["phys_x1"]:
+            if i != state["selected_index"]:
+                select_segment_index(i, state)
+
+            break
+
+
 # WIDGET FUNCTIONS ------------------------------------------------------------
 def create_segmented_control(
     parent: tk.Misc,
@@ -166,7 +182,6 @@ def create_segmented_control(
         accum_x += scaled_w
 
     segments = []
-
     for i, opt in enumerate(options):
         pw = seg_widths[i]
         segments.append({
