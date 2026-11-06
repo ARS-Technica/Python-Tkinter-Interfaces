@@ -141,6 +141,19 @@ def create_segmented_control(
         **kwargs,
     )
 
+    # Draw text items above the indicator image
+    for i, seg in enumerate(segments):
+        color = fg_active if i == initial_index else fg_inactive
+        text_id = canvas.create_text(
+            seg["center_x"],
+            height // 2,
+            text=seg["label"],
+            font=font,
+            fill=color,
+            anchor="center",
+        )
+        seg["canvas_text_id"] = text_id
+
     return canvas
 
 
