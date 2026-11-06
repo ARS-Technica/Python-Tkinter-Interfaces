@@ -239,9 +239,12 @@ def create_demo_application() -> None:
     )
     lbl_choice.pack(pady=(40, 20))
 
-    # Helper Function for create_segmented_control
     def on_select(label: str, index: int) -> None:
         lbl_choice.configure(text=f"View Mode: {label} (Index: {index})")
+
+    # Define options and initial index as variables first
+    options = ["Daily", "Weekly", "Monthly", "Annual"]
+    initial_idx = 0    
 
     control, _ = create_segmented_control(
         root,
@@ -255,7 +258,7 @@ def create_demo_application() -> None:
     control.pack()
 
     # Trigger callback immediately on launch to synchronize the label
-    on_select(options[initial_idx], initial_idx)
+    on_select(options[initial_idx], initial_idx)    
 
     root.mainloop()
 
