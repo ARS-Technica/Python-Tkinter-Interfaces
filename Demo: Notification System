@@ -1,0 +1,12 @@
+"""
+Demo: Notification System
+Created: November 05, 2026
+
+Description:
+A  notification manager for Tkinter applications.
+
+Features anti-aliased rounded banners rendered with Pillow, smooth slide-in
+and slide-out easing transitions, queue-managed multi-toast stacking, and
+auto-dismiss timers.
+"""
+
