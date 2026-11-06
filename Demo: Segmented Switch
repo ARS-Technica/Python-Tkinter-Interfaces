@@ -233,7 +233,7 @@ def create_demo_application() -> None:
     lbl_choice = tk.Label(
         root,
         text="View Mode: Daily",
-        font=("Segoe UI", 11),
+        font=("Segoe UI", 12, "bold"),
         bg="#1E1E1E",
         fg="#FFFFFF",
     )
