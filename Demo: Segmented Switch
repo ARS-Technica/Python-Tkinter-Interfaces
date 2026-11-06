@@ -129,6 +129,7 @@ def create_segmented_control(
             parent_bg = parent.cget("bg")
         except Exception:
             parent_bg = "#1E1E1E"
+        kwargs["bg"] = parent_bg
 
     f = tkfont.Font(font=font)
     text_widths = [f.measure(opt) for opt in options]
