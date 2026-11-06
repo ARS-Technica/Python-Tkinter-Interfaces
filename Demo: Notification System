@@ -10,3 +10,8 @@ and slide-out easing transitions, queue-managed multi-toast stacking, and
 auto-dismiss timers.
 """
 
+import tkinter as tk
+import tkinter.font as tkfont
+from typing import Optional, Literal
+from PIL import Image, ImageDraw, ImageTk
+
