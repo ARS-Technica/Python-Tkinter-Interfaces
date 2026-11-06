@@ -161,6 +161,11 @@ def create_segmented_control(
         )
         seg["canvas_text_id"] = text_id
 
+    state = {
+        "canvas": canvas,
+        "canvas_img_id": canvas_img_id,
+    }
+
     return canvas
 
 
