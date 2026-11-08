@@ -145,7 +145,6 @@ def create_button(
 # RENDERING PIPELINE ----------------------------------------------------------
 def render_toast:
     pass
- 
 
 
 # ANIMATION & STACK MANAGEMENT ------------------------------------------------
@@ -154,6 +153,7 @@ def animate_toast_slide(toast: dict, manager_state: dict) -> None:
     Step for entering and exiting toasts.
     """
     pass
+
 
 def dismiss_toast:
     """
@@ -167,18 +167,14 @@ def dismiss_toast:
 
 
 # APPLICATION CREATION --------------------------------------------------------
+def create_application() -> None:
+    root = tk.Tk()
+    root.title("Portfolio Component: Toast Notification System")
+    root.geometry("640x440")
+    root.configure(bg="#1E1E1E")
 
 
 # LAUNCH APPLICATION ----------------------------------------------------------
 def create_application() -> None:
     root.mainloop()
-
-
-# LAUNCH APPLICATION ----------------------------------------------------------
-if __name__ == "__main__":
-    create_application()
-
-
-
-
 
