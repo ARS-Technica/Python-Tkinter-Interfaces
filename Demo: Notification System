@@ -78,7 +78,11 @@ TOAST_THEMES = {
 
 
 # CREATE BUTTON WIDGETS -------------------------------------------------------
-def build_buttons:
+def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
+    """
+    Constructs and packs the full suite of demo trigger buttons for the toast system.
+    Returns a list of the instantiated button widgets.
+    """
     global button_specs
 
     buttons = []
