@@ -19,6 +19,41 @@ from PIL import Image, ImageDraw, ImageTk
 # PALETTES & CONFIGURATION ----------------------------------------------------
 
 
+    button_specs = [
+        {
+            "text": "Info Toast",
+            "bg": "#0078D4",
+            "title": "Update Downloaded",
+            "message": "Version 1.4 is ready to install.",
+            "type": "info",
+        },
+        {
+            "text": "Success Toast",
+            "bg": "#107C41",
+            "title": "Connection Established",
+            "message": "Secure tunnel mapped to remote host.",
+            "type": "success",
+        },
+        {
+            "text": "Warning Toast",
+            "bg": "#D8B801",
+            "title": "High Memory Usage",
+            "message": "Buffer pool reached 85% capacity.",
+            "type": "warning",
+        },
+        {
+            "text": "Error Toast",
+            "bg": "#E81123",
+            "title": "Socket Failure",
+            "message": "Connection timed out on port 8080.",
+            "type": "error",
+        },
+    ]
+
+# CREATE BUTTON WIDGETS -------------------------------------------------------
+def build_buttons:
+    
+
 # RENDERING PIPELINE ----------------------------------------------------------
 def render_toast:
     pass
