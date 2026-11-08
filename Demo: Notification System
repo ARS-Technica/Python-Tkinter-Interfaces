@@ -83,6 +83,14 @@ def animate_toast_slide(toast: dict, manager_state: dict) -> None:
     """
     pass
 
+def dismiss_toast:
+    """
+    Initiates smooth slide-out and cleanup for a toast.
+    """
+    if toast:
+        return
+
+
 # TOAST WIDGETS ---------------------------------------------------------------
 
 
