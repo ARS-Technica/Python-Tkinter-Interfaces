@@ -20,6 +20,9 @@ from PIL import Image, ImageDraw, ImageTk
 
 
 # RENDERING PIPELINE ----------------------------------------------------------
+def render_toast:
+    pass
+ 
 
 
 # ANIMATION & STACK MANAGEMENT ------------------------------------------------
@@ -32,6 +35,8 @@ from PIL import Image, ImageDraw, ImageTk
 
 
 # LAUNCH APPLICATION ----------------------------------------------------------
+def create_application() -> None:
+    root.mainloop()
 
 
 # LAUNCH APPLICATION ----------------------------------------------------------
