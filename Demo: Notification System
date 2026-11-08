@@ -104,12 +104,42 @@ def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
     return buttons
 
 
-def create_button():
+def create_button(
+    parent: tk.Misc,
+    text: str,
+    bg_color: str,
+    command: Callable[[], None],
+    fg_color: str = "#FFFFFF",
+    font: tuple = ("Segoe UI", 9, "bold"),
+    padx: int = 14,
+    pady: int = 6,
+    pack_side: Optional[str] = "left",
+    pack_padx: int = 6,
+    pack_pady: int = 0,
+) -> tk.Button:
     """
     Function that builds and styles a flat, modern button.
     Optionally packs the widget into the parent container if pack_side is provided.
     """
-    pass
+    btn = tk.Button(
+        parent,
+        text=text,
+        bg=bg_color,
+        fg=fg_color,
+        font=font,
+        relief="flat",
+        activebackground=bg_color,
+        activeforeground=fg_color,
+        padx=padx,
+        pady=pady,
+        cursor="hand2",
+        command=command,
+    )
+
+    if pack_side:
+        btn.pack(side=pack_side, padx=pack_padx, pady=pack_pady)
+
+    return btn
 
 
 # RENDERING PIPELINE ----------------------------------------------------------
