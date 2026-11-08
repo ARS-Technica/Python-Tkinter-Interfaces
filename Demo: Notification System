@@ -102,7 +102,15 @@ def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
         buttons.append(btn)
 
     return buttons
-    
+
+
+def create_button():
+    """
+    Function that builds and styles a flat, modern button.
+    Optionally packs the widget into the parent container if pack_side is provided.
+    """
+    pass
+
 
 # RENDERING PIPELINE ----------------------------------------------------------
 def render_toast:
