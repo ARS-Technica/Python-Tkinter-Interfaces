@@ -48,6 +48,35 @@ BUTTON_SPECS = [
     },
 ]
 
+
+TOAST_THEMES = {
+    "info": {
+        "accent": "#0078D4",       # Windows Fluent Blue
+        "bg": "#252526",           # Dark surface
+        "fg_title": "#FFFFFF",
+        "fg_msg": "#CCCCCC",
+    },
+    "success": {
+        "accent": "#107C41",       # Forest Green
+        "bg": "#252526",
+        "fg_title": "#FFFFFF",
+        "fg_msg": "#CCCCCC",
+    },
+    "warning": {
+        "accent": "#D8B801",       # Deep Amber / Yellow
+        "bg": "#252526",
+        "fg_title": "#FFFFFF",
+        "fg_msg": "#CCCCCC",
+    },
+    "error": {
+        "accent": "#E81123",       # Crimson Red
+        "bg": "#252526",
+        "fg_title": "#FFFFFF",
+        "fg_msg": "#CCCCCC",
+    },
+}
+
+
 # CREATE BUTTON WIDGETS -------------------------------------------------------
 def build_buttons:
     buttons = []
