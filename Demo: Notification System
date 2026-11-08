@@ -52,6 +52,22 @@ from PIL import Image, ImageDraw, ImageTk
 
 # CREATE BUTTON WIDGETS -------------------------------------------------------
 def build_buttons:
+    buttons = []
+    for spec in button_specs:
+        btn = create_action_button(
+            parent,
+            text=spec["text"],
+            bg_color=spec["bg"],
+            command=lambda s=spec: show_toast(
+                toast_mgr,
+                title=s["title"],
+                message=s["message"],
+                toast_type=s["type"],
+            ),
+        )
+        buttons.append(btn)
+
+    return buttons
     
 
 # RENDERING PIPELINE ----------------------------------------------------------
