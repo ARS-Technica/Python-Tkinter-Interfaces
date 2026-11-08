@@ -79,9 +79,12 @@ TOAST_THEMES = {
 
 # CREATE BUTTON WIDGETS -------------------------------------------------------
 def build_buttons:
+    global button_specs
+
     buttons = []
-    for spec in button_specs:
-        btn = create_action_button(
+
+    for spec in BUTTON_SPECS:
+        btn = create_button(
             parent,
             text=spec["text"],
             bg_color=spec["bg"],
