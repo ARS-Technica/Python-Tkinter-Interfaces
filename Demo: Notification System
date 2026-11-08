@@ -15,3 +15,30 @@ import tkinter.font as tkfont
 from typing import Optional, Literal
 from PIL import Image, ImageDraw, ImageTk
 
+
+# PALETTES & CONFIGURATION ----------------------------------------------------
+
+
+# RENDERING PIPELINE ----------------------------------------------------------
+
+
+# ANIMATION & STACK MANAGEMENT ------------------------------------------------
+
+
+# TOAST WIDGETS ---------------------------------------------------------------
+
+
+# APPLICATION CREATION --------------------------------------------------------
+
+
+# LAUNCH APPLICATION ----------------------------------------------------------
+
+
+# LAUNCH APPLICATION ----------------------------------------------------------
+if __name__ == "__main__":
+    create_application()
+
+
+
+
+
