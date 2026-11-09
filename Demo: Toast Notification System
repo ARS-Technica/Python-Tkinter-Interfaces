@@ -148,6 +148,9 @@ def render_toast:
     Renders an anti-aliased rounded card with an accent status indicator
     into an in-memory Pillow buffer, scales down with Lanczos, and updates the canvas.
     """
+    canvas: tk.Canvas = toast["canvas"]
+    parent_bg = canvas.cget("bg")
+
     img = Image.new("RGBA", (sw, sh), parent_bg)
     draw = ImageDraw.Draw(img)    
 
@@ -164,7 +167,21 @@ def animate_toast_slide(toast: dict, manager_state: dict) -> None:
     """
     Step for entering and exiting toasts.
     """
-    pass
+    canvas: tk.Canvas = toast["canvas"]
+
+    if not canvas.winfo_exists():
+        return
+
+    target = toast["target_y_offset"]
+    curr = toast["current_y_offset"]
+    new_y = curr + (target - curr) * 0.35
+
+    if abs(target - new_y) < 1.0:
+        new_y = target
+        toast["current_y_offset"] = new_y
+
+    else:
+        toast["current_y_offset"] = new_y
 
 
 def dismiss_toast:
