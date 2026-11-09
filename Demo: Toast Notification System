@@ -163,10 +163,25 @@ def dismiss_toast:
         return
 
 
+def reload_toasts():
+    """
+    Recalculates target Y positions for all active toasts in the stack.
+    """
+    pass
+
+
 # TOAST WIDGETS ---------------------------------------------------------------
 
 
+
+
 # TOAST ACTIONS ---------------------------------------------------------------
+def toast_manager():
+    """
+    Initializes a centralized manager dictionary for tracking notification stacks.
+    """
+    pass
+
 def show_toast() -> None:
     """
     Spawns an anti-aliased floating toast and queues its entrance animation.
@@ -215,6 +230,9 @@ def create_application() -> None:
         fg="#999999",
     )
     lbl_sub.pack(pady=(0, 30))
+
+    btn_frame = tk.Frame(root, bg="#1E1E1E")
+    btn_frame.pack(pady=10)
 
     # Create buttons with dedicated function
 
