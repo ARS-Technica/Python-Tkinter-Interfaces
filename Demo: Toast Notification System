@@ -198,6 +198,28 @@ def create_application() -> None:
     root.geometry("640x440")
     root.configure(bg="#1E1E1E")
 
+    lbl_header = tk.Label(
+        root,
+        text="Toast & Snackbar Notification System",
+        font=("Segoe UI", 14, "bold"),
+        bg="#1E1E1E",
+        fg="#FFFFFF",
+    )
+    lbl_header.pack(pady=(40, 10))
+
+    lbl_sub = tk.Label(
+        root,
+        text="Click any action below to trigger anti-aliased, stacking notifications:",
+        font=("Segoe UI", 10),
+        bg="#1E1E1E",
+        fg="#999999",
+    )
+    lbl_sub.pack(pady=(0, 30))
+
+    # Create buttons with dedicated function
+
+    root.mainloop()
+
 
 # LAUNCH APPLICATION ----------------------------------------------------------
 def create_application() -> None:
