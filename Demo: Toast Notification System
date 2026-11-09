@@ -166,6 +166,14 @@ def dismiss_toast:
 # TOAST WIDGETS ---------------------------------------------------------------
 
 
+# TOAST ACTIONS ---------------------------------------------------------------
+def show_toast() -> None:
+    """
+    Spawns an anti-aliased floating toast and queues its entrance animation.
+    """
+    pass
+
+
 # APPLICATION CREATION --------------------------------------------------------
 def create_application() -> None:
     root = tk.Tk()
