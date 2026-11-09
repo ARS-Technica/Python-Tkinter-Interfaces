@@ -211,7 +211,8 @@ def toast_manager():
     """
     pass
 
-def show_toast() -> None:
+
+def show_toast(title: str, message: str = "", toast_type: ) -> None:
     """
     Spawns an anti-aliased floating toast and queues its entrance animation.
     """
@@ -219,6 +220,10 @@ def show_toast() -> None:
     msg_font = ("Segoe UI", 9)
     f_title = tkfont.Font(font=title_font)
     f_msg = tkfont.Font(font=msg_font)
+
+    theme = TOAST_THEMES.get(toast_type, TOAST_THEMES["info"])
+
+    title_font = ("Segoe UI", 10, "bold")
 
     text_w = max(f_title.measure(title), f_msg.measure(message) if message else 0)
     toast_w = max(260, text_w + 50)
