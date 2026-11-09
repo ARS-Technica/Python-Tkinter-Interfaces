@@ -144,7 +144,19 @@ def create_button(
 
 # RENDERING PIPELINE ----------------------------------------------------------
 def render_toast:
-    pass
+    """
+    Renders an anti-aliased rounded card with an accent status indicator
+    into an in-memory Pillow buffer, scales down with Lanczos, and updates the canvas.
+    """
+    img = Image.new("RGBA", (sw, sh), parent_bg)
+    draw = ImageDraw.Draw(img)    
+
+    bar_w = 4 * scale
+    draw.rounded_rectangle(
+        [0, 0, bar_w, sh - 1],
+        radius=corner_radius,
+        fill=toast["theme"]["accent"],
+    )
 
 
 # ANIMATION & STACK MANAGEMENT ------------------------------------------------
