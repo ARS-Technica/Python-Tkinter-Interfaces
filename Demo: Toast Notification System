@@ -171,7 +171,24 @@ def show_toast() -> None:
     """
     Spawns an anti-aliased floating toast and queues its entrance animation.
     """
-    pass
+    title_font = ("Segoe UI", 10, "bold")
+    msg_font = ("Segoe UI", 9)
+    f_title = tkfont.Font(font=title_font)
+    f_msg = tkfont.Font(font=msg_font)
+
+    text_w = max(f_title.measure(title), f_msg.measure(message) if message else 0)
+    toast_w = max(260, text_w + 50)
+    toast_h = 58 if message else 40
+
+    canvas = tk.Canvas(
+        root,
+        width=toast_w,
+        height=toast_h,
+        bg=parent_bg,
+        highlightthickness=0,
+        borderwidth=0,
+        cursor="hand2",
+    )
 
 
 # APPLICATION CREATION --------------------------------------------------------
