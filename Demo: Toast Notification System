@@ -218,11 +218,25 @@ def reload_toasts():
 
 
 # TOAST ACTIONS ---------------------------------------------------------------
-def toast_manager():
+def create_toast_manager(
+    root: tk.Misc,
+    position: Literal["bottom-center", "top-right"] = "bottom-center",
+    margin_x: int = 24,
+    margin_y: int = 24,
+    scale: int = 4,
+) -> dict:
     """
     Initializes a centralized manager dictionary for tracking notification stacks.
     """
-    pass
+    return {
+        "root": root,
+        "position": position,
+        "margin_x": margin_x,
+        "margin_y": margin_y,
+        "scale": scale,
+        "active_toasts": [],
+    }
+
 
 
 def show_toast(title: str, message: str = "", toast_type: ) -> None:
