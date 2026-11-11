@@ -223,7 +223,7 @@ def _reposition_toast_widget(toast: dict, manager_state: dict) -> None:
     """
     canvas: tk.Canvas = toast["canvas"]
     pos = manager_state["position"]
-
+    y_offset = int(toast["current_y_offset"])
     place_method = canvas.place if not toast["is_placed"] else canvas.place_configure
 
     if pos == "bottom-center":
@@ -242,6 +242,7 @@ def _reposition_toast_widget(toast: dict, manager_state: dict) -> None:
             y=y_offset,
             anchor="ne",
         )
+    toast["is_placed"] = True
 
 
 def reload_toasts():
