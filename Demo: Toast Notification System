@@ -336,6 +336,22 @@ def show_toast(title: str, message: str = "", toast_type: ) -> None:
             anchor="w",
         )
 
+    toast = {
+        "canvas": canvas,
+        "canvas_img_id": canvas_img_id,
+        "img_ref": None,
+        "w": toast_w,
+        "h": toast_h,
+        "sw": toast_w * scale,
+        "sh": toast_h * scale,
+        "scale": scale,
+        "theme": theme,
+        "current_y_offset": start_y,
+        "target_y_offset": start_y,
+        "is_dismissing": False,
+        "is_placed": False,
+    }
+
     render_toast(toast)
     canvas.bind("<Button-1>", lambda e: dismiss_toast(toast, manager_state))
 
