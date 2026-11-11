@@ -280,7 +280,13 @@ def create_toast_manager(
     }
 
 
-def show_toast(title: str, message: str = "", toast_type: ) -> None:
+def show_toast(
+    manager_state: dict,
+    title: str,
+    message: str = "",
+    toast_type: Literal["info", "success", "warning", "error"] = "info",
+    duration_ms: int = 3500,
+) -> None:
     """
     Spawns an anti-aliased floating toast and queues its entrance animation.
     """
@@ -354,6 +360,13 @@ def show_toast(title: str, message: str = "", toast_type: ) -> None:
 
     render_toast(toast)
     canvas.bind("<Button-1>", lambda e: dismiss_toast(toast, manager_state))
+
+    manager_state["active_toasts"].insert(0, toast)
+    restack_active_toasts(manager_state)
+    animate_toast_slide(toast, manager_state)
+
+    if duration_ms > 0:
+        canvas.after(duration_ms, lambda: dismiss_toast(toast, manager_state))
 
 
 # APPLICATION CREATION --------------------------------------------------------
