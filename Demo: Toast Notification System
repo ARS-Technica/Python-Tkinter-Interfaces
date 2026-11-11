@@ -394,6 +394,8 @@ def create_application() -> None:
     )
     lbl_sub.pack(pady=(0, 30))
 
+    toast_mgr = create_toast_manager(root, position="bottom-center")
+
     btn_frame = tk.Frame(root, bg="#1E1E1E")
     btn_frame.pack(pady=10)
 
