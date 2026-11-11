@@ -229,18 +229,21 @@ def show_toast(title: str, message: str = "", toast_type: ) -> None:
     """
     Spawns an anti-aliased floating toast and queues its entrance animation.
     """
+    root: tk.Misc = manager_state["root"]
+    scale = manager_state["scale"]
+    theme = TOAST_THEMES.get(toast_type, TOAST_THEMES["info"])
+
     title_font = ("Segoe UI", 10, "bold")
     msg_font = ("Segoe UI", 9)
     f_title = tkfont.Font(font=title_font)
     f_msg = tkfont.Font(font=msg_font)
 
-    theme = TOAST_THEMES.get(toast_type, TOAST_THEMES["info"])
-
-    title_font = ("Segoe UI", 10, "bold")
-
     text_w = max(f_title.measure(title), f_msg.measure(message) if message else 0)
     toast_w = max(260, text_w + 50)
     toast_h = 58 if message else 40
+
+    start_y = -toast_h - 10
+    parent_bg = root.cget("bg")
 
     canvas = tk.Canvas(
         root,
@@ -251,6 +254,9 @@ def show_toast(title: str, message: str = "", toast_type: ) -> None:
         borderwidth=0,
         cursor="hand2",
     )
+
+    render_toast(toast)
+    canvas.bind("<Button-1>", lambda e: dismiss_toast(toast, manager_state))
 
 
 # APPLICATION CREATION --------------------------------------------------------
