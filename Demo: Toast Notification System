@@ -245,13 +245,18 @@ def _reposition_toast_widget(toast: dict, manager_state: dict) -> None:
     toast["is_placed"] = True
 
 
-def reload_toasts():
+def restack_active_toasts(manager_state: dict) -> None:
     """
     Recalculates target Y positions for all active toasts in the stack.
     """
-    pass
+    spacing = 10
+    accum_offset = manager_state["margin_y"]
 
-
+    for toast in manager_state["active_toasts"]:
+        if toast["is_dismissing"]:
+            continue
+        toast["target_y_offset"] = accum_offset
+        accum_offset += toast["h"] + spacing
 
 
 # TOAST WIDGETS ---------------------------------------------------------------
