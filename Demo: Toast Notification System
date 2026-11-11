@@ -205,12 +205,16 @@ def animate_toast_slide(toast: dict, manager_state: dict) -> None:
         canvas.after(16, lambda: animate_toast_slide(toast, manager_state))
 
 
-def dismiss_toast:
+def dismiss_toast(toast: dict, manager_state: dict) -> None:
     """
     Initiates smooth slide-out and cleanup for a toast.
     """
-    if toast:
+    if toast["is_dismissing"]:
         return
+
+    toast["is_dismissing"] = True
+    toast["target_y_offset"] = -toast["h"] - 20
+    animate_toast_slide(toast, manager_state)
 
 
 def _reposition_toast_widget(toast: dict, manager_state: dict) -> None:
