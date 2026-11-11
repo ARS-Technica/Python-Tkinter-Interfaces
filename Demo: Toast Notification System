@@ -1,5 +1,5 @@
 """
-Demo: Notification System
+Demo: Toast Notification System
 Created: November 05, 2026
 
 Description:
@@ -22,7 +22,7 @@ BUTTON_SPECS = [
         "text": "Info Toast",
         "bg": "#0078D4",
         "title": "Update Downloaded",
-        "message": "Version 1.4 is ready to install!",
+        "message": "Version 1.4 is ready to install.",
         "type": "info",
     },
     {
@@ -47,7 +47,6 @@ BUTTON_SPECS = [
         "type": "error",
     },
 ]
-
 
 TOAST_THEMES = {
     "info": {
@@ -80,7 +79,7 @@ TOAST_THEMES = {
 # CREATE BUTTON WIDGETS -------------------------------------------------------
 def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
     """
-    Constructs and packs the full suite of demo trigger buttons for the toast system.
+    Constructs and packs the full suite of trigger buttons for the toast system.
     Returns a list of the instantiated button widgets.
     """
     global button_specs
@@ -412,6 +411,7 @@ def create_application() -> None:
 
 
 # LAUNCH APPLICATION ----------------------------------------------------------
-def create_application() -> None:
-    root.mainloop()
+if __name__ == "__main__":
+    create_application()
 
+ 
