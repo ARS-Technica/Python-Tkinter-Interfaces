@@ -371,8 +371,14 @@ def show_toast(
 
 # APPLICATION CREATION --------------------------------------------------------
 def create_application() -> None:
+    import ctypes
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(2)
+    except Exception:
+        pass
+
     root = tk.Tk()
-    root.title("Portfolio Component: Toast Notification System")
+    root.title("Demo: Toast Notification System")
     root.geometry("640x440")
     root.configure(bg="#1E1E1E")
 
@@ -399,7 +405,8 @@ def create_application() -> None:
     btn_frame = tk.Frame(root, bg="#1E1E1E")
     btn_frame.pack(pady=10)
 
-    # Create buttons with dedicated function
+    # Delegate button generation to dedicated function
+    build_buttons(btn_frame, toast_mgr)
 
     root.mainloop()
 
