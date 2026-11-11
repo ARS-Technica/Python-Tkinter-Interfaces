@@ -178,10 +178,9 @@ def render_toast(toast: dict) -> None:
 # ANIMATION & STACK MANAGEMENT ------------------------------------------------
 def animate_toast_slide(toast: dict, manager_state: dict) -> None:
     """
-    Step for entering and exiting toasts.
+    Non-blocking easing step for entering and exiting toasts.
     """
     canvas: tk.Canvas = toast["canvas"]
-
     if not canvas.winfo_exists():
         return
 
@@ -192,9 +191,18 @@ def animate_toast_slide(toast: dict, manager_state: dict) -> None:
     if abs(target - new_y) < 1.0:
         new_y = target
         toast["current_y_offset"] = new_y
+        _reposition_toast_widget(toast, manager_state)
 
+        if toast["is_dismissing"]:
+            if toast in manager_state["active_toasts"]:
+                manager_state["active_toasts"].remove(toast)
+            canvas.destroy()
+            restack_active_toasts(manager_state)
+            return
     else:
         toast["current_y_offset"] = new_y
+        _reposition_toast_widget(toast, manager_state)
+        canvas.after(16, lambda: animate_toast_slide(toast, manager_state))
 
 
 def dismiss_toast:
@@ -265,7 +273,6 @@ def create_toast_manager(
         "scale": scale,
         "active_toasts": [],
     }
-
 
 
 def show_toast(title: str, message: str = "", toast_type: ) -> None:
