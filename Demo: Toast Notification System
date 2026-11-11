@@ -259,11 +259,6 @@ def restack_active_toasts(manager_state: dict) -> None:
         accum_offset += toast["h"] + spacing
 
 
-# TOAST WIDGETS ---------------------------------------------------------------
-
-
-
-
 # TOAST ACTIONS ---------------------------------------------------------------
 def create_toast_manager(
     root: tk.Misc,
@@ -314,6 +309,32 @@ def show_toast(title: str, message: str = "", toast_type: ) -> None:
         borderwidth=0,
         cursor="hand2",
     )
+
+    canvas_img_id = canvas.create_image(0, 0, anchor="nw")
+
+    if message:
+        canvas.create_text(
+            18, 18,
+            text=title,
+            font=title_font,
+            fill=theme["fg_title"],
+            anchor="w",
+        )
+        canvas.create_text(
+            18, 38,
+            text=message,
+            font=msg_font,
+            fill=theme["fg_msg"],
+            anchor="w",
+        )
+    else:
+        canvas.create_text(
+            18, toast_h // 2,
+            text=title,
+            font=title_font,
+            fill=theme["fg_title"],
+            anchor="w",
+        )
 
     render_toast(toast)
     canvas.bind("<Button-1>", lambda e: dismiss_toast(toast, manager_state))
