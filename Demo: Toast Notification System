@@ -205,11 +205,40 @@ def dismiss_toast:
         return
 
 
+def _reposition_toast_widget(toast: dict, manager_state: dict) -> None:
+    """
+    Calculates physical canvas place coordinates based on placement mode.
+    """
+    canvas: tk.Canvas = toast["canvas"]
+    pos = manager_state["position"]
+
+    place_method = canvas.place if not toast["is_placed"] else canvas.place_configure
+
+    if pos == "bottom-center":
+        place_method(
+            relx=0.5,
+            rely=1.0,
+            x=0,
+            y=-y_offset,
+            anchor="s",
+        )
+    elif pos == "top-right":
+        place_method(
+            relx=1.0,
+            rely=0.0,
+            x=-manager_state["margin_x"],
+            y=y_offset,
+            anchor="ne",
+        )
+
+
 def reload_toasts():
     """
     Recalculates target Y positions for all active toasts in the stack.
     """
     pass
+
+
 
 
 # TOAST WIDGETS ---------------------------------------------------------------
