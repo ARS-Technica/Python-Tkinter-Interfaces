@@ -77,32 +77,6 @@ TOAST_THEMES = {
 
 
 # CREATE BUTTON WIDGETS -------------------------------------------------------
-def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
-    """
-    Constructs and packs the full suite of trigger buttons for the toast system.
-    Returns a list of the instantiated button widgets.
-    """
-    global button_specs
-
-    buttons = []
-
-    for spec in BUTTON_SPECS:
-        btn = create_button(
-            parent,
-            text=spec["text"],
-            bg_color=spec["bg"],
-            command=lambda s=spec: show_toast(
-                toast_mgr,
-                title=s["title"],
-                message=s["message"],
-                toast_type=s["type"],
-            ),
-        )
-        buttons.append(btn)
-
-    return buttons
-
-
 def create_button(
     parent: tk.Misc,
     text: str,
@@ -141,6 +115,32 @@ def create_button(
     return btn
 
 
+def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
+    """
+    Constructs and packs the full suite of trigger buttons for the toast system.
+    Returns a list of the instantiated button widgets.
+    """
+    global button_specs
+
+    buttons = []
+
+    for spec in BUTTON_SPECS:
+        btn = create_button(
+            parent,
+            text=spec["text"],
+            bg_color=spec["bg"],
+            command=lambda s=spec: show_toast(
+                toast_mgr,
+                title=s["title"],
+                message=s["message"],
+                toast_type=s["type"],
+            ),
+        )
+        buttons.append(btn)
+
+    return buttons
+
+
 # RENDERING PIPELINE ----------------------------------------------------------
 def render_toast(toast: dict) -> None:
     """
@@ -175,6 +175,20 @@ def render_toast(toast: dict) -> None:
 
 
 # ANIMATION & STACK MANAGEMENT ------------------------------------------------
+def restack_active_toasts(manager_state: dict) -> None:
+    """
+    Recalculates target Y positions for all active toasts in the stack.
+    """
+    spacing = 10
+    accum_offset = manager_state["margin_y"]
+
+    for toast in manager_state["active_toasts"]:
+        if toast["is_dismissing"]:
+            continue
+        toast["target_y_offset"] = accum_offset
+        accum_offset += toast["h"] + spacing
+
+
 def animate_toast_slide(toast: dict, manager_state: dict) -> None:
     """
     Non-blocking easing step for entering and exiting toasts.
