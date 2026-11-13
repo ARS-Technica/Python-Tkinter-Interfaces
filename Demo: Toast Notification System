@@ -217,6 +217,13 @@ def animate_toast_up(toast: dict, manager_state: dict) -> None:
         )
 
 
+def animate_toast_down(toast: dict, manager_state: dict) -> None:
+    """
+    Animates a toast down and out of the window.
+    """
+    pass
+
+
 def dismiss_toast(toast: dict, manager_state: dict) -> None:
     """
     Initiates smooth slide-out and cleanup for a toast.
