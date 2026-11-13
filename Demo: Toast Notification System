@@ -222,9 +222,13 @@ def animate_toast_down(toast: dict, manager_state: dict) -> None:
     Animates a toast down and out of the window.
     """
     canvas: tk.Canvas = toast["canvas"]
-
     if not canvas.winfo_exists():
         return
+
+    toast["animation_after_id"] = None
+    target = -toast["h"] - 20
+    curr = toast["current_y_offset"]
+    new_y = curr + (target - curr) * 0.35
 
     if abs(target - new_y) < 1.0:
         disappear_toast(toast, manager_state)
