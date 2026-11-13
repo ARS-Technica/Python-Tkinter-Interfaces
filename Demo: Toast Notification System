@@ -221,7 +221,11 @@ def animate_toast_down(toast: dict, manager_state: dict) -> None:
     """
     Animates a toast down and out of the window.
     """
-    pass
+    canvas: tk.Canvas = toast["canvas"]
+
+    if not canvas.winfo_exists():
+        return
+
 
 
 def dismiss_toast(toast: dict, manager_state: dict) -> None:
