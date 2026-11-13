@@ -189,14 +189,16 @@ def restack_active_toasts(manager_state: dict) -> None:
         accum_offset += toast["h"] + spacing
 
 
-def animate_toast_slide(toast: dict, manager_state: dict) -> None:
+def animate_toast_up(toast: dict, manager_state: dict) -> None:
     """
-    Non-blocking easing step for entering and exiting toasts.
+    Animates a toast from above the window into its target position.
     """
     canvas: tk.Canvas = toast["canvas"]
+
     if not canvas.winfo_exists():
         return
 
+    toast["animation_after_id"] = None
     target = toast["target_y_offset"]
     curr = toast["current_y_offset"]
     new_y = curr + (target - curr) * 0.35
@@ -206,16 +208,13 @@ def animate_toast_slide(toast: dict, manager_state: dict) -> None:
         toast["current_y_offset"] = new_y
         _reposition_toast_widget(toast, manager_state)
 
-        if toast["is_dismissing"]:
-            if toast in manager_state["active_toasts"]:
-                manager_state["active_toasts"].remove(toast)
-            canvas.destroy()
-            restack_active_toasts(manager_state)
-            return
     else:
         toast["current_y_offset"] = new_y
         _reposition_toast_widget(toast, manager_state)
-        canvas.after(16, lambda: animate_toast_slide(toast, manager_state))
+        toast["animation_after_id"] = canvas.after(
+            16,
+            lambda: animate_toast_up(toast, manager_state),
+        )
 
 
 def dismiss_toast(toast: dict, manager_state: dict) -> None:
