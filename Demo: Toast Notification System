@@ -292,6 +292,10 @@ def show_toast(
     scale = manager_state["scale"]
     theme = TOAST_THEMES.get(toast_type, TOAST_THEMES["info"])
 
+    for existing_toast in manager_state["active_toasts"]:
+        existing_toast["window"].destroy()
+    manager_state["active_toasts"].clear()
+
     title_font = ("Segoe UI", 10, "bold")
     msg_font = ("Segoe UI", 9)
     f_title = tkfont.Font(font=title_font)
@@ -304,6 +308,10 @@ def show_toast(
     start_y = -toast_h - 10
     parent_bg = root.cget("bg")
 
+    window = tk.Toplevel(root)
+    window.overrideredirect(True)
+    window.withdraw()
+
     canvas = tk.Canvas(
         root,
         width=toast_w,
@@ -313,6 +321,7 @@ def show_toast(
         borderwidth=0,
         cursor="hand2",
     )
+    canvas.pack(fill="both", expand=True)
 
     canvas_img_id = canvas.create_image(0, 0, anchor="nw")
 
