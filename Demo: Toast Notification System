@@ -226,6 +226,16 @@ def animate_toast_down(toast: dict, manager_state: dict) -> None:
     if not canvas.winfo_exists():
         return
 
+    if abs(target - new_y) < 1.0:
+        disappear_toast(toast, manager_state)
+        return
+
+    toast["current_y_offset"] = new_y
+    _reposition_toast_widget(toast, manager_state)
+    toast["animation_after_id"] = canvas.after(
+        16,
+        lambda: animate_toast_down(toast, manager_state),
+    )
 
 
 def dismiss_toast(toast: dict, manager_state: dict) -> None:
