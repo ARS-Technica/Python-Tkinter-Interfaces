@@ -218,29 +218,28 @@ def dismiss_toast(toast: dict, manager_state: dict) -> None:
 
 def _reposition_toast_widget(toast: dict, manager_state: dict) -> None:
     """
-    Calculates physical canvas place coordinates based on placement mode.
+    Calculates physical screen coordinates for a toast window.
     """
-    canvas: tk.Canvas = toast["canvas"]
+    window: tk.Toplevel = toast["window"]
     pos = manager_state["position"]
     y_offset = int(toast["current_y_offset"])
-    place_method = canvas.place if not toast["is_placed"] else canvas.place_configure
+    root = manager_state["root"]
+    root.update_idletasks()
+    root_x = root.winfo_rootx()
+    root_y = root.winfo_rooty()
+    root_width = root.winfo_width()
+    root_height = root.winfo_height()
+    x = root_x
+    y = root_y
 
     if pos == "bottom-center":
-        place_method(
-            relx=0.5,
-            rely=1.0,
-            x=0,
-            y=-y_offset,
-            anchor="s",
-        )
+        x = root_x + (root_width - toast["w"]) // 2
+        y = root_y + root_height - y_offset - toast["h"]
     elif pos == "top-right":
-        place_method(
-            relx=1.0,
-            rely=0.0,
-            x=-manager_state["margin_x"],
-            y=y_offset,
-            anchor="ne",
-        )
+        x = root_x + root_width - manager_state["margin_x"] - toast["w"]
+        y = root_y + y_offset
+
+    window.geometry(f"{toast['w']}x{toast['h']}+{x}+{y}")
     toast["is_placed"] = True
 
 
