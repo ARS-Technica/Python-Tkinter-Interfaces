@@ -77,6 +77,32 @@ TOAST_THEMES = {
 
 
 # CREATE BUTTON WIDGETS -------------------------------------------------------
+def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
+    """
+    Constructs and packs the full suite of trigger buttons for the toast system.
+    Returns a list of the instantiated button widgets.
+    """
+    global button_specs
+
+    buttons = []
+
+    for spec in BUTTON_SPECS:
+        btn = create_button(
+            parent,
+            text=spec["text"],
+            bg_color=spec["bg"],
+            command=lambda s=spec: show_toast(
+                toast_mgr,
+                title=s["title"],
+                message=s["message"],
+                toast_type=s["type"],
+            ),
+        )
+        buttons.append(btn)
+
+    return buttons
+
+
 def create_button(
     parent: tk.Misc,
     text: str,
@@ -113,32 +139,6 @@ def create_button(
         btn.pack(side=pack_side, padx=pack_padx, pady=pack_pady)
 
     return btn
-
-
-def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
-    """
-    Constructs and packs the full suite of trigger buttons for the toast system.
-    Returns a list of the instantiated button widgets.
-    """
-    global button_specs
-
-    buttons = []
-
-    for spec in BUTTON_SPECS:
-        btn = create_button(
-            parent,
-            text=spec["text"],
-            bg_color=spec["bg"],
-            command=lambda s=spec: show_toast(
-                toast_mgr,
-                title=s["title"],
-                message=s["message"],
-                toast_type=s["type"],
-            ),
-        )
-        buttons.append(btn)
-
-    return buttons
 
 
 # RENDERING PIPELINE ----------------------------------------------------------
@@ -198,7 +198,6 @@ def animate_toast_up(toast: dict, manager_state: dict) -> None:
     if not canvas.winfo_exists():
         return
 
-    toast["animation_after_id"] = None
     target = toast["target_y_offset"]
     curr = toast["current_y_offset"]
     new_y = curr + (target - curr) * 0.35
@@ -208,6 +207,12 @@ def animate_toast_up(toast: dict, manager_state: dict) -> None:
         toast["current_y_offset"] = new_y
         _reposition_toast_widget(toast, manager_state)
 
+        if toast["is_dismissing"]:
+            if toast in manager_state["active_toasts"]:
+                manager_state["active_toasts"].remove(toast)
+            toast["window"].destroy()
+            restack_active_toasts(manager_state)
+            return
     else:
         toast["current_y_offset"] = new_y
         _reposition_toast_widget(toast, manager_state)
