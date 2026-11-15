@@ -311,7 +311,7 @@ def show_toast(
     duration_ms: int = 3500,
 ) -> None:
     """
-    Spawns an anti-aliased floating toast and queues its entrance animation.
+    Replaces the current toast with a new anti-aliased floating toast.
     """
     root: tk.Misc = manager_state["root"]
     scale = manager_state["scale"]
