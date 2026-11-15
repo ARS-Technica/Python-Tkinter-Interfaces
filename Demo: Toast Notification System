@@ -277,13 +277,9 @@ def dismiss_toast(toast: dict, manager_state: dict) -> None:
     if toast["is_dismissing"]:
         return
 
-    dismiss_after_id = toast["dismiss_after_id"]
-    if dismiss_after_id is not None:
-        toast["canvas"].after_cancel(dismiss_after_id)
-        toast["dismiss_after_id"] = None
-
     toast["is_dismissing"] = True
-    animate_toast_down(toast, manager_state)
+    toast["target_y_offset"] = -toast["h"] - 20
+    animate_toast_slide(toast, manager_state)
 
 
 # TOAST ACTIONS ---------------------------------------------------------------
