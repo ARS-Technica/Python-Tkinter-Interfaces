@@ -273,21 +273,25 @@ def _reposition_toast_widget(toast: dict, manager_state: dict) -> None:
     toast["is_placed"] = True
 
 
-def dismiss_toast(toast: dict, manager_state: dict) -> None:
+def disappear_toast(toast: dict, manager_state: dict) -> None:
     """
-    Initiates smooth slide-out and cleanup for a toast.
+    Immediately removes a toast without running its downward animation.
     """
-    if toast["is_dismissing"]:
-        return
+    canvas = toast["canvas"]
 
-    dismiss_after_id = toast["dismiss_after_id"]
+    for callback_id in ("animation_after_id", "dismiss_after_id"):
+        callback_id = toast[callback_id]
+        if callback_id is not None:
+            canvas.after_cancel(callback_id)
+            toast[callback_id] = None
 
-    if dismiss_after_id is not None:
-        toast["canvas"].after_cancel(dismiss_after_id)
-        toast["dismiss_after_id"] = None
+    if toast in manager_state["active_toasts"]:
+        manager_state["active_toasts"].remove(toast)
 
-    toast["is_dismissing"] = True
-    animate_toast_down(toast, manager_state)
+    if canvas.winfo_exists():
+        canvas.destroy()
+
+    restack_active_toasts(manager_state)
 
 
 # TOAST ACTIONS ---------------------------------------------------------------
