@@ -323,16 +323,14 @@ def show_toast(
     duration_ms: int = 3500,
 ) -> None:
     """
-    Replaces the current toast with a new anti-aliased floating toast.
+    Spawns an anti-aliased floating toast and queues its entrance animation.
     """
     root: tk.Misc = manager_state["root"]
     scale = manager_state["scale"]
     theme = TOAST_THEMES.get(toast_type, TOAST_THEMES["info"])
 
-    for existing_toast in manager_state["active_toasts"]:
-        existing_toast["window"].destroy()
-
-    manager_state["active_toasts"].clear()
+    for existing_toast in manager_state["active_toasts"][:]:
+        disappear_toast(existing_toast, manager_state)
 
     title_font = ("Segoe UI", 10, "bold")
     msg_font = ("Segoe UI", 9)
@@ -345,10 +343,6 @@ def show_toast(
 
     start_y = -toast_h - 10
     parent_bg = root.cget("bg")
-
-    window = tk.Toplevel(root)
-    window.overrideredirect(True)
-    window.withdraw()
 
     canvas = tk.Canvas(
         root,
@@ -409,7 +403,7 @@ def show_toast(
 
     manager_state["active_toasts"].insert(0, toast)
     restack_active_toasts(manager_state)
-    animate_toast_slide(toast, manager_state)
+    animate_toast_up(toast, manager_state)
 
     if duration_ms > 0:
         toast["dismiss_after_id"] = canvas.after(
