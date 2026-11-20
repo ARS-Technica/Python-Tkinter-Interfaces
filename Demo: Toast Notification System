@@ -412,6 +412,11 @@ def show_toast(
         )
 
 
+def _expire_toast(toast: dict, manager_state: dict) -> None:
+    toast["dismiss_after_id"] = None
+    dismiss_toast(toast, manager_state)
+
+
 # APPLICATION CREATION --------------------------------------------------------
 def create_application() -> None:
     import ctypes
