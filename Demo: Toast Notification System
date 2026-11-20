@@ -331,6 +331,7 @@ def show_toast(
 
     for existing_toast in manager_state["active_toasts"]:
         existing_toast["window"].destroy()
+
     manager_state["active_toasts"].clear()
 
     title_font = ("Segoe UI", 10, "bold")
@@ -410,7 +411,10 @@ def show_toast(
     animate_toast_slide(toast, manager_state)
 
     if duration_ms > 0:
-        canvas.after(duration_ms, lambda: dismiss_toast(toast, manager_state))
+        toast["dismiss_after_id"] = canvas.after(
+            duration_ms,
+            lambda: _expire_toast(toast, manager_state),
+        )
 
 
 # APPLICATION CREATION --------------------------------------------------------
