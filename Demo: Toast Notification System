@@ -359,7 +359,6 @@ def show_toast(
         borderwidth=0,
         cursor="hand2",
     )
-    canvas.pack(fill="both", expand=True)
 
     canvas_img_id = canvas.create_image(0, 0, anchor="nw")
 
@@ -401,6 +400,8 @@ def show_toast(
         "target_y_offset": start_y,
         "is_dismissing": False,
         "is_placed": False,
+        "animation_after_id": None,
+        "dismiss_after_id": None,
     }
 
     render_toast(toast)
