@@ -194,6 +194,7 @@ def animate_toast_slide(toast: dict, manager_state: dict) -> None:
     Non-blocking easing step for entering and exiting toasts.
     """
     canvas: tk.Canvas = toast["canvas"]
+
     if not canvas.winfo_exists():
         return
 
@@ -223,6 +224,7 @@ def animate_toast_down(toast: dict, manager_state: dict) -> None:
     Animates a toast down and out of the window.
     """
     canvas: tk.Canvas = toast["canvas"]
+
     if not canvas.winfo_exists():
         return
 
@@ -245,28 +247,29 @@ def animate_toast_down(toast: dict, manager_state: dict) -> None:
 
 def _reposition_toast_widget(toast: dict, manager_state: dict) -> None:
     """
-    Calculates physical screen coordinates for a toast window.
+    Calculates physical canvas place coordinates based on placement mode.
     """
-    window: tk.Toplevel = toast["window"]
+    canvas: tk.Canvas = toast["canvas"]
     pos = manager_state["position"]
     y_offset = int(toast["current_y_offset"])
-    root = manager_state["root"]
-    root.update_idletasks()
-    root_x = root.winfo_rootx()
-    root_y = root.winfo_rooty()
-    root_width = root.winfo_width()
-    root_height = root.winfo_height()
-    x = root_x
-    y = root_y
+    place_method = canvas.place if not toast["is_placed"] else canvas.place_configure
 
     if pos == "bottom-center":
-        x = root_x + (root_width - toast["w"]) // 2
-        y = root_y + root_height - y_offset - toast["h"]
+        place_method(
+            relx=0.5,
+            rely=1.0,
+            x=0,
+            y=-y_offset,
+            anchor="s",
+        )
     elif pos == "top-right":
-        x = root_x + root_width - manager_state["margin_x"] - toast["w"]
-        y = root_y + y_offset
-
-    window.geometry(f"{toast['w']}x{toast['h']}+{x}+{y}")
+        place_method(
+            relx=1.0,
+            rely=0.0,
+            x=-manager_state["margin_x"],
+            y=y_offset,
+            anchor="ne",
+        )
     toast["is_placed"] = True
 
 
