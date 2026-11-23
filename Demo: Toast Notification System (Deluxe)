@@ -1,0 +1,479 @@
+"""
+Demo: Toast Notification System (Deluxe)
+Created: November 22, 2026
+
+Description:
+A  notification manager for Tkinter applications.
+
+Features anti-aliased rounded banners rendered with Pillow, smooth slide-in
+and slide-out easing transitions, queue-managed multi-toast stacking, and
+auto-dismiss timers.
+"""
+
+import tkinter as tk
+import tkinter.font as tkfont
+from typing import Callable, Optional, Literal
+from PIL import Image, ImageDraw, ImageTk
+
+
+# PALETTES & CONFIGURATION ----------------------------------------------------
+BUTTON_SPECS = [
+    {
+        "text": "Info Toast",
+        "bg": "#0078D4",
+        "title": "Update Downloaded",
+        "message": "Version 1.4 is ready to install.",
+        "type": "info",
+    },
+    {
+        "text": "Success Toast",
+        "bg": "#107C41",
+        "title": "Connection Established",
+        "message": "Secure tunnel mapped to remote host.",
+        "type": "success",
+    },
+    {
+        "text": "Warning Toast",
+        "bg": "#D8B801",
+        "title": "High Memory Usage",
+        "message": "Buffer pool reached 85% capacity.",
+        "type": "warning",
+    },
+    {
+        "text": "Error Toast",
+        "bg": "#E81123",
+        "title": "Socket Failure",
+        "message": "Connection timed out on port 8080.",
+        "type": "error",
+    },
+]
+
+TOAST_THEMES = {
+    "info": {
+        "accent": "#0078D4",       # Windows Fluent Blue
+        "bg": "#252526",           # Dark surface
+        "fg_title": "#FFFFFF",
+        "fg_msg": "#CCCCCC",
+    },
+    "success": {
+        "accent": "#107C41",       # Forest Green
+        "bg": "#252526",
+        "fg_title": "#FFFFFF",
+        "fg_msg": "#CCCCCC",
+    },
+    "warning": {
+        "accent": "#D8B801",       # Deep Amber / Yellow
+        "bg": "#252526",
+        "fg_title": "#FFFFFF",
+        "fg_msg": "#CCCCCC",
+    },
+    "error": {
+        "accent": "#E81123",       # Crimson Red
+        "bg": "#252526",
+        "fg_title": "#FFFFFF",
+        "fg_msg": "#CCCCCC",
+    },
+}
+
+
+# CREATE BUTTON WIDGETS -------------------------------------------------------
+def create_button(
+    parent: tk.Misc,
+    text: str,
+    bg_color: str,
+    command: Callable[[], None],
+    fg_color: str = "#FFFFFF",
+    font: tuple = ("Segoe UI", 9, "bold"),
+    padx: int = 14,
+    pady: int = 6,
+    pack_side: Optional[str] = "left",
+    pack_padx: int = 6,
+    pack_pady: int = 0,
+) -> tk.Button:
+    """
+    Function that builds and styles a flat, modern button.
+    Optionally packs the widget into the parent container if pack_side is provided.
+    """
+    btn = tk.Button(
+        parent,
+        text=text,
+        bg=bg_color,
+        fg=fg_color,
+        font=font,
+        relief="flat",
+        activebackground=bg_color,
+        activeforeground=fg_color,
+        padx=padx,
+        pady=pady,
+        cursor="hand2",
+        command=command,
+    )
+
+    if pack_side:
+        btn.pack(side=pack_side, padx=pack_padx, pady=pack_pady)
+
+    return btn
+
+
+def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
+    """
+    Constructs and packs the full suite of trigger buttons for the toast system.
+    Returns a list of the instantiated button widgets.
+    """
+    buttons = []
+
+    for spec in BUTTON_SPECS:
+        btn = create_button(
+            parent,
+            text=spec["text"],
+            bg_color=spec["bg"],
+            command=lambda s=spec: show_toast(
+                toast_mgr,
+                title=s["title"],
+                message=s["message"],
+                toast_type=s["type"],
+            ),
+        )
+        buttons.append(btn)
+
+    return buttons
+
+
+# RENDERING PIPELINE ----------------------------------------------------------
+def render_toast(toast: dict) -> None:
+    """
+    Renders an anti-aliased rounded card with an accent status indicator
+    into an in-memory Pillow buffer, scales down with Lanczos, and updates the canvas.
+    """
+    canvas: tk.Canvas = toast["canvas"]
+    parent_bg = canvas.cget("bg")
+    sw, sh = toast["sw"], toast["sh"]
+    scale = toast["scale"]
+
+    img = Image.new("RGBA", (sw, sh), parent_bg)
+    draw = ImageDraw.Draw(img)
+
+    corner_radius = 8 * scale
+    draw.rounded_rectangle(
+        [0, 0, sw - 1, sh - 1],
+        radius=corner_radius,
+        fill=toast["theme"]["bg"],
+    )
+
+    bar_w = 4 * scale
+    draw.rounded_rectangle(
+        [0, 0, bar_w, sh - 1],
+        radius=corner_radius,
+        fill=toast["theme"]["accent"],
+    )
+
+    smooth_img = img.resize((toast["w"], toast["h"]), Image.Resampling.LANCZOS)
+    toast["img_ref"] = ImageTk.PhotoImage(smooth_img)
+    canvas.itemconfig(toast["canvas_img_id"], image=toast["img_ref"])
+
+
+# ANIMATION & STACK MANAGEMENT ------------------------------------------------
+def restack_active_toasts(manager_state: dict) -> None:
+    """
+    Recalculates target Y positions for all active toasts in the stack.
+    """
+    spacing = 10
+    accum_offset = manager_state["margin_y"]
+
+    for toast in manager_state["active_toasts"]:
+        if toast["is_dismissing"]:
+            continue
+        toast["target_y_offset"] = accum_offset
+        accum_offset += toast["h"] + spacing
+
+
+def animate_toast_up(toast: dict, manager_state: dict) -> None:
+    """
+    Animates a toast from above the window into its target position.
+    """
+    canvas: tk.Canvas = toast["canvas"]
+
+    if not canvas.winfo_exists():
+        return
+
+    toast["animation_after_id"] = None
+    target = toast["target_y_offset"]
+    curr = toast["current_y_offset"]
+    new_y = curr + (target - curr) * 0.35
+
+    if abs(target - new_y) < 1.0:
+        new_y = target
+        toast["current_y_offset"] = new_y
+        _reposition_toast_widget(toast, manager_state)
+
+    else:
+        toast["current_y_offset"] = new_y
+        _reposition_toast_widget(toast, manager_state)
+        toast["animation_after_id"] = canvas.after(
+            16,
+            lambda: animate_toast_up(toast, manager_state),
+        )
+
+
+def animate_toast_down(toast: dict, manager_state: dict) -> None:
+    """
+    Animates a toast down and out of the window.
+    """
+    canvas: tk.Canvas = toast["canvas"]
+
+    if not canvas.winfo_exists():
+        return
+
+    toast["animation_after_id"] = None
+    target = -toast["h"] - 20
+    curr = toast["current_y_offset"]
+    new_y = curr + (target - curr) * 0.35
+
+    if abs(target - new_y) < 1.0:
+        disappear_toast(toast, manager_state)
+        return
+
+    toast["current_y_offset"] = new_y
+    _reposition_toast_widget(toast, manager_state)
+    toast["animation_after_id"] = canvas.after(
+        16,
+        lambda: animate_toast_down(toast, manager_state),
+    )
+
+
+def _reposition_toast_widget(toast: dict, manager_state: dict) -> None:
+    """
+    Calculates physical canvas place coordinates based on placement mode.
+    """
+    canvas: tk.Canvas = toast["canvas"]
+    pos = manager_state["position"]
+    y_offset = int(toast["current_y_offset"])
+    place_method = canvas.place if not toast["is_placed"] else canvas.place_configure
+
+    if pos == "bottom-center":
+        place_method(
+            relx=0.5,
+            rely=1.0,
+            x=0,
+            y=-y_offset,
+            anchor="s",
+        )
+    elif pos == "top-right":
+        place_method(
+            relx=1.0,
+            rely=0.0,
+            x=-manager_state["margin_x"],
+            y=y_offset,
+            anchor="ne",
+        )
+    toast["is_placed"] = True
+
+
+def dismiss_toast(toast: dict, manager_state: dict) -> None:
+    """
+    Initiates smooth slide-out and cleanup for a toast.
+    """
+    if toast["is_dismissing"]:
+        return
+
+    dismiss_after_id = toast["dismiss_after_id"]
+
+    if dismiss_after_id is not None:
+        toast["canvas"].after_cancel(dismiss_after_id)
+        toast["dismiss_after_id"] = None
+
+    toast["is_dismissing"] = True
+    animate_toast_down(toast, manager_state)
+
+
+def disappear_toast(toast: dict, manager_state: dict) -> None:
+    """
+    Immediately removes a toast without running its downward animation.
+    """
+    canvas = toast["canvas"]
+
+    for key in ("animation_after_id", "dismiss_after_id"):
+        callback_id = toast[key]
+        if callback_id is not None:
+            canvas.after_cancel(callback_id)
+            toast[callback_id] = None
+
+    if toast in manager_state["active_toasts"]:
+        manager_state["active_toasts"].remove(toast)
+
+    if canvas.winfo_exists():
+        canvas.destroy()
+
+    restack_active_toasts(manager_state)
+
+
+# TOAST ACTIONS ---------------------------------------------------------------
+def create_toast_manager(
+    root: tk.Misc,
+    position: Literal["bottom-center", "top-right"] = "bottom-center",
+    margin_x: int = 24,
+    margin_y: int = 24,
+    scale: int = 4,
+) -> dict:
+    """
+    Initializes a centralized manager dictionary for tracking notification stacks.
+    """
+    return {
+        "root": root,
+        "position": position,
+        "margin_x": margin_x,
+        "margin_y": margin_y,
+        "scale": scale,
+        "active_toasts": [],
+    }
+
+
+def show_toast(
+    manager_state: dict,
+    title: str,
+    message: str = "",
+    toast_type: Literal["info", "success", "warning", "error"] = "info",
+    duration_ms: int = 3500,
+) -> None:
+    """
+    Spawns an anti-aliased floating toast and queues its entrance animation.
+    """
+    root: tk.Misc = manager_state["root"]
+    scale = manager_state["scale"]
+    theme = TOAST_THEMES.get(toast_type, TOAST_THEMES["info"])
+
+    for existing_toast in manager_state["active_toasts"][:]:
+        disappear_toast(existing_toast, manager_state)
+
+    title_font = ("Segoe UI", 10, "bold")
+    msg_font = ("Segoe UI", 9)
+    f_title = tkfont.Font(font=title_font)
+    f_msg = tkfont.Font(font=msg_font)
+
+    text_w = max(f_title.measure(title), f_msg.measure(message) if message else 0)
+    toast_w = max(260, text_w + 50)
+    toast_h = 58 if message else 40
+
+    start_y = -toast_h - 10
+    parent_bg = root.cget("bg")
+
+    canvas = tk.Canvas(
+        root,
+        width=toast_w,
+        height=toast_h,
+        bg=parent_bg,
+        highlightthickness=0,
+        borderwidth=0,
+        cursor="hand2",
+    )
+
+    canvas_img_id = canvas.create_image(0, 0, anchor="nw")
+
+    if message:
+        canvas.create_text(
+            18, 18,
+            text=title,
+            font=title_font,
+            fill=theme["fg_title"],
+            anchor="w",
+        )
+        canvas.create_text(
+            18, 38,
+            text=message,
+            font=msg_font,
+            fill=theme["fg_msg"],
+            anchor="w",
+        )
+    else:
+        canvas.create_text(
+            18, toast_h // 2,
+            text=title,
+            font=title_font,
+            fill=theme["fg_title"],
+            anchor="w",
+        )
+
+    toast = {
+        "canvas": canvas,
+        "canvas_img_id": canvas_img_id,
+        "img_ref": None,
+        "w": toast_w,
+        "h": toast_h,
+        "sw": toast_w * scale,
+        "sh": toast_h * scale,
+        "scale": scale,
+        "theme": theme,
+        "current_y_offset": start_y,
+        "target_y_offset": start_y,
+        "is_dismissing": False,
+        "is_placed": False,
+        "animation_after_id": None,
+        "dismiss_after_id": None,
+    }
+
+    render_toast(toast)
+    canvas.bind("<Button-1>", lambda e: dismiss_toast(toast, manager_state))
+
+    manager_state["active_toasts"].insert(0, toast)
+    restack_active_toasts(manager_state)
+    animate_toast_up(toast, manager_state)
+
+    if duration_ms > 0:
+        toast["dismiss_after_id"] = canvas.after(
+            duration_ms,
+            lambda: _expire_toast(toast, manager_state),
+        )
+
+
+def _expire_toast(toast: dict, manager_state: dict) -> None:
+    toast["dismiss_after_id"] = None
+    dismiss_toast(toast, manager_state)
+
+
+# APPLICATION CREATION --------------------------------------------------------
+def create_application() -> None:
+    import ctypes
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(2)
+    except Exception:
+        pass
+
+    root = tk.Tk()
+    root.title("Demo: Toast Notification System")
+    root.geometry("640x440")
+    root.configure(bg="#1E1E1E")
+
+    lbl_header = tk.Label(
+        root,
+        text="Toast & Snackbar Notification System",
+        font=("Segoe UI", 14, "bold"),
+        bg="#1E1E1E",
+        fg="#FFFFFF",
+    )
+    lbl_header.pack(pady=(40, 10))
+
+    lbl_sub = tk.Label(
+        root,
+        text="Click any action below to trigger anti-aliased, stacking notifications:",
+        font=("Segoe UI", 10),
+        bg="#1E1E1E",
+        fg="#999999",
+    )
+    lbl_sub.pack(pady=(0, 30))
+
+    toast_mgr = create_toast_manager(root, position="bottom-center")
+
+    btn_frame = tk.Frame(root, bg="#1E1E1E")
+    btn_frame.pack(pady=10)
+
+    # Delegate button generation to dedicated function
+    build_buttons(btn_frame, toast_mgr)
+
+    root.mainloop()
+
+
+# LAUNCH APPLICATION ----------------------------------------------------------
+if __name__ == "__main__":
+    create_application()
+
+ 
