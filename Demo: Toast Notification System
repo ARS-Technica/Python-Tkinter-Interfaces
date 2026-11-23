@@ -294,8 +294,8 @@ def disappear_toast(toast: dict, manager_state: dict) -> None:
     """
     canvas = toast["canvas"]
 
-    for callback_id in ("animation_after_id", "dismiss_after_id"):
-        callback_id = toast[callback_id]
+    for key in ("animation_after_id", "dismiss_after_id"):
+        callback_id = toast[key]
         if callback_id is not None:
             canvas.after_cancel(callback_id)
             toast[callback_id] = None
