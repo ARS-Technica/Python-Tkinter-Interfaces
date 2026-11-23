@@ -12,7 +12,7 @@ auto-dismiss timers.
 
 import tkinter as tk
 import tkinter.font as tkfont
-from typing import Optional, Literal
+from typing import Callable, Optional, Literal
 from PIL import Image, ImageDraw, ImageTk
 
 
@@ -77,32 +77,6 @@ TOAST_THEMES = {
 
 
 # CREATE BUTTON WIDGETS -------------------------------------------------------
-def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
-    """
-    Constructs and packs the full suite of trigger buttons for the toast system.
-    Returns a list of the instantiated button widgets.
-    """
-    global button_specs
-
-    buttons = []
-
-    for spec in BUTTON_SPECS:
-        btn = create_button(
-            parent,
-            text=spec["text"],
-            bg_color=spec["bg"],
-            command=lambda s=spec: show_toast(
-                toast_mgr,
-                title=s["title"],
-                message=s["message"],
-                toast_type=s["type"],
-            ),
-        )
-        buttons.append(btn)
-
-    return buttons
-
-
 def create_button(
     parent: tk.Misc,
     text: str,
@@ -139,6 +113,32 @@ def create_button(
         btn.pack(side=pack_side, padx=pack_padx, pady=pack_pady)
 
     return btn
+
+
+def build_buttons(parent: tk.Misc, toast_mgr: dict) -> list[tk.Button]:
+    """
+    Constructs and packs the full suite of trigger buttons for the toast system.
+    Returns a list of the instantiated button widgets.
+    """
+    global button_specs
+
+    buttons = []
+
+    for spec in BUTTON_SPECS:
+        btn = create_button(
+            parent,
+            text=spec["text"],
+            bg_color=spec["bg"],
+            command=lambda s=spec: show_toast(
+                toast_mgr,
+                title=s["title"],
+                message=s["message"],
+                toast_type=s["type"],
+            ),
+        )
+        buttons.append(btn)
+
+    return buttons
 
 
 # RENDERING PIPELINE ----------------------------------------------------------
@@ -189,15 +189,16 @@ def restack_active_toasts(manager_state: dict) -> None:
         accum_offset += toast["h"] + spacing
 
 
-def animate_toast_slide(toast: dict, manager_state: dict) -> None:
+def animate_toast_up(toast: dict, manager_state: dict) -> None:
     """
-    Non-blocking easing step for entering and exiting toasts.
+    Animates a toast from above the window into its target position.
     """
     canvas: tk.Canvas = toast["canvas"]
 
     if not canvas.winfo_exists():
         return
 
+    toast["animation_after_id"] = None
     target = toast["target_y_offset"]
     curr = toast["current_y_offset"]
     new_y = curr + (target - curr) * 0.35
@@ -207,16 +208,13 @@ def animate_toast_slide(toast: dict, manager_state: dict) -> None:
         toast["current_y_offset"] = new_y
         _reposition_toast_widget(toast, manager_state)
 
-        if toast["is_dismissing"]:
-            if toast in manager_state["active_toasts"]:
-                manager_state["active_toasts"].remove(toast)
-            toast["window"].destroy()
-            restack_active_toasts(manager_state)
-            return
     else:
         toast["current_y_offset"] = new_y
         _reposition_toast_widget(toast, manager_state)
-        canvas.after(16, lambda: animate_toast_slide(toast, manager_state))
+        toast["animation_after_id"] = canvas.after(
+            16,
+            lambda: animate_toast_up(toast, manager_state),
+        )
 
 
 def animate_toast_down(toast: dict, manager_state: dict) -> None:
@@ -271,6 +269,23 @@ def _reposition_toast_widget(toast: dict, manager_state: dict) -> None:
             anchor="ne",
         )
     toast["is_placed"] = True
+
+
+def dismiss_toast(toast: dict, manager_state: dict) -> None:
+    """
+    Initiates smooth slide-out and cleanup for a toast.
+    """
+    if toast["is_dismissing"]:
+        return
+
+    dismiss_after_id = toast["dismiss_after_id"]
+
+    if dismiss_after_id is not None:
+        toast["canvas"].after_cancel(dismiss_after_id)
+        toast["dismiss_after_id"] = None
+
+    toast["is_dismissing"] = True
+    animate_toast_down(toast, manager_state)
 
 
 def disappear_toast(toast: dict, manager_state: dict) -> None:
