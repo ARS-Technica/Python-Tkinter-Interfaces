@@ -3,11 +3,13 @@ Demo: Toast Notification System (Deluxe)
 Created: November 22, 2026
 
 Description:
-A  notification manager for Tkinter applications.
+A  notification manager for Tkinter applications.  Based on the "Demo: Toast 
+Notification System" project.
 
-Features anti-aliased rounded banners rendered with Pillow, smooth slide-in
-and slide-out easing transitions, queue-managed multi-toast stacking, and
-auto-dismiss timers.
+This "Deluxe" version of the Toast Notification System incorporates a feature 
+that pauses the auto-dismiss when a user hovers their mouse over a toast to read
+a longer messages.  It cancels dismiss_after_id on <Enter> and restarts the timer
+on <Leave>.
 """
 
 import tkinter as tk
