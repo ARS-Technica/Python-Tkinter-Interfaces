@@ -155,11 +155,15 @@ def render_toast(toast: dict) -> None:
     img = Image.new("RGBA", (sw, sh), parent_bg)
     draw = ImageDraw.Draw(img)
 
+    # Subtle surface lift when hovered
+    card_bg = toast["theme"].get("bg_hover", "#323234") if toast["is_hovered"] else toast["theme"]["bg"]
+
     corner_radius = 8 * scale
+
     draw.rounded_rectangle(
         [0, 0, sw - 1, sh - 1],
         radius=corner_radius,
-        fill=toast["theme"]["bg"],
+        fill=card_bg,
     )
 
     bar_w = 4 * scale
