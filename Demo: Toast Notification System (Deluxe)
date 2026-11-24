@@ -442,8 +442,13 @@ def on_toast_enter(event: tk.Event, toast: dict) -> None:
         return
 
     # 1. Cancel pending auto-dismiss timer
+    if toast["dismiss_after_id"] is not None:
+        toast["canvas"].after_cancel(toast["dismiss_after_id"])
+        toast["dismiss_after_id"] = None
 
     # 2. Subtly highlight card surface to signal paused state
+    toast["is_hovered"] = True
+    render_toast(toast)
 
 
 def on_toast_leave(event: tk.Event, toast: dict, manager_state: dict) -> None:
