@@ -438,7 +438,20 @@ def on_toast_enter(event: tk.Event, toast: dict) -> None:
     Pauses auto-dismissal while the user hovers over the toast
     and subtly brightens the card surface for visual feedback.
     """
-    pass
+    if toast["is_dismissing"]:
+        return
+
+    # 1. Cancel pending auto-dismiss timer
+
+    # 2. Subtly highlight card surface to signal paused state
+
+
+def on_toast_leave(event: tk.Event, toast: dict, manager_state: dict) -> None:
+    """
+    Resumes auto-dismissal after an auto-dismissal pause once the mouse exits the toast.
+    """
+    if toast["is_dismissing"]:
+        return
 
 
 # APPLICATION CREATION --------------------------------------------------------
@@ -487,4 +500,3 @@ def create_application() -> None:
 if __name__ == "__main__":
     create_application()
 
- 
