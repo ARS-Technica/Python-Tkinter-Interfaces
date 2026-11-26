@@ -445,7 +445,15 @@ def disappear_toast(toast: dict, manager_state: dict) -> None:
     """
     Immediately removes a toast without running its downward animation.
     """
-    pass
+    canvas = toast["canvas"]
+
+    for key in ("animation_after_id", "dismiss_after_id"):
+        cb_id = toast[key]
+        if cb_id is not None:
+            canvas.after_cancel(cb_id)
+            toast[key] = None
+
+    restack_active_toasts(manager_state)
 
 
 def on_toast_enter(event: tk.Event, toast: dict) -> None:
