@@ -409,6 +409,8 @@ def show_toast(
         "sh": toast_h * scale,
         "scale": scale,
         "theme": theme,
+        "duration_ms": duration_ms,
+        "is_hovered": False,
         "current_y_offset": start_y,
         "target_y_offset": start_y,
         "is_dismissing": False,
@@ -417,8 +419,10 @@ def show_toast(
         "dismiss_after_id": None,
     }
 
-    render_toast(toast)
+    render_toast(toast) 
     canvas.bind("<Button-1>", lambda e: dismiss_toast(toast, manager_state))
+    canvas.bind("<Enter>", lambda e: on_toast_enter(e, toast))
+    canvas.bind("<Leave>", lambda e: on_toast_leave(e, toast, manager_state))
 
     manager_state["active_toasts"].insert(0, toast)
     restack_active_toasts(manager_state)
@@ -521,3 +525,4 @@ def create_application() -> None:
 if __name__ == "__main__":
     create_application()
 
+ 
