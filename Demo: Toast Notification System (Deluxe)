@@ -155,7 +155,7 @@ def render_toast(toast: dict) -> None:
     scale = toast["scale"]
     corner_radius = 8 * scale
 
-
+    # 1. Base transparent image + rounded card mask
     img = Image.new("RGBA", (sw, sh), parent_bg)
     draw = ImageDraw.Draw(img)
 
