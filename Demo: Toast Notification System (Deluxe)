@@ -453,6 +453,12 @@ def disappear_toast(toast: dict, manager_state: dict) -> None:
             canvas.after_cancel(cb_id)
             toast[key] = None
 
+    if toast in manager_state["active_toasts"]:
+        manager_state["active_toasts"].remove(toast)
+
+    if canvas.winfo_exists():
+        canvas.destroy()
+
     restack_active_toasts(manager_state)
 
 
