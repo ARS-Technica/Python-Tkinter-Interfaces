@@ -146,19 +146,21 @@ def render_toast(toast: dict) -> None:
     """
     Renders an anti-aliased rounded card with an accent status indicator
     into an in-memory Pillow buffer, scales down with Lanczos, and updates the canvas.
+
+    Adds a bottom countdown progress bar clipped cleanly to the card's rounded corners.
     """
     canvas: tk.Canvas = toast["canvas"]
     parent_bg = canvas.cget("bg")
     sw, sh = toast["sw"], toast["sh"]
     scale = toast["scale"]
+    corner_radius = 8 * scale
+
 
     img = Image.new("RGBA", (sw, sh), parent_bg)
     draw = ImageDraw.Draw(img)
 
     # Subtle surface lift when hovered
     card_bg = toast["theme"].get("bg_hover", "#323234") if toast["is_hovered"] else toast["theme"]["bg"]
-
-    corner_radius = 8 * scale
 
     draw.rounded_rectangle(
         [0, 0, sw - 1, sh - 1],
