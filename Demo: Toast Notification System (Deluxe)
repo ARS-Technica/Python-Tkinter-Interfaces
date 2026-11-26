@@ -441,6 +441,13 @@ def _expire_toast(toast: dict, manager_state: dict) -> None:
 
 
 # "DELUXE" TOAST ACTIONS ------------------------------------------------------
+def disappear_toast(toast: dict, manager_state: dict) -> None:
+    """
+    Immediately removes a toast without running its downward animation.
+    """
+    pass
+
+
 def on_toast_enter(event: tk.Event, toast: dict) -> None:
     """
     Pauses auto-dismissal while the user hovers over the toast
