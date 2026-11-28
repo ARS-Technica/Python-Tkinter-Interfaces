@@ -171,6 +171,10 @@ def render_toast(toast: dict) -> None:
     bar_w = 4 * scale
     card_draw.rectangle([0, 0, bar_w, sh], fill=toast["theme"]["accent"])    
 
+    # 3. Paste card layer onto background using the rounded mask
+    img.paste(card_layer, (0, 0), mask)
+
+    # 4. Lanczos downsampling to physical display size
     smooth_img = img.resize((toast["w"], toast["h"]), Image.Resampling.LANCZOS)
     toast["img_ref"] = ImageTk.PhotoImage(smooth_img)
     canvas.itemconfig(toast["canvas_img_id"], image=toast["img_ref"])
