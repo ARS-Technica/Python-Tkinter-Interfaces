@@ -423,16 +423,19 @@ def show_toast(
         "scale": scale,
         "theme": theme,
         "duration_ms": duration_ms,
+        "remaining_ms": float(duration_ms),
+        "progress": 1.0 if duration_ms > 0 else 0.0,
+        "last_tick_time": time.monotonic(),
         "is_hovered": False,
         "current_y_offset": start_y,
         "target_y_offset": start_y,
         "is_dismissing": False,
         "is_placed": False,
         "animation_after_id": None,
-        "dismiss_after_id": None,
+        "countdown_after_id": None,
     }
 
-    render_toast(toast) 
+    render_toast(toast)
     canvas.bind("<Button-1>", lambda e: dismiss_toast(toast, manager_state))
     canvas.bind("<Enter>", lambda e: on_toast_enter(e, toast))
     canvas.bind("<Leave>", lambda e: on_toast_leave(e, toast, manager_state))
@@ -442,9 +445,9 @@ def show_toast(
     animate_toast_up(toast, manager_state)
 
     if duration_ms > 0:
-        toast["dismiss_after_id"] = canvas.after(
-            duration_ms,
-            lambda: _expire_toast(toast, manager_state),
+        toast["countdown_after_id"] = canvas.after(
+            16,
+            lambda: _tick_toast_countdown(toast, manager_state),
         )
 
 
