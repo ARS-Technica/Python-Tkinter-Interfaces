@@ -163,12 +163,13 @@ def render_toast(toast: dict) -> None:
     mask = Image.new("L", (sw, sh), 0)
     ImageDraw.Draw(mask).rounded_rectangle([0, 0, sw - 1, sh - 1], radius=corner_radius, fill=255)
 
+    # 2. Compose card surface, left accent bar, and bottom progress bar onto an inner layer
+    card_layer = Image.new("RGBA", (sw, sh), card_bg)
+    card_draw = ImageDraw.Draw(card_layer)
+
+    # Left vertical accent bar
     bar_w = 4 * scale
-    draw.rounded_rectangle(
-        [0, 0, bar_w, sh - 1],
-        radius=corner_radius,
-        fill=toast["theme"]["accent"],
-    )
+    card_draw.rectangle([0, 0, bar_w, sh], fill=toast["theme"]["accent"])    
 
     smooth_img = img.resize((toast["w"], toast["h"]), Image.Resampling.LANCZOS)
     toast["img_ref"] = ImageTk.PhotoImage(smooth_img)
