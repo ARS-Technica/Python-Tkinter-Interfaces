@@ -12,6 +12,7 @@ a longer messages.  It cancels dismiss_after_id on <Enter> and restarts the time
 on <Leave>.
 """
 
+import time # For toast progress bar
 import tkinter as tk
 import tkinter.font as tkfont
 from typing import Callable, Optional, Literal
