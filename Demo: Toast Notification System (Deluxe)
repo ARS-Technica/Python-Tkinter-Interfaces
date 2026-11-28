@@ -171,6 +171,16 @@ def render_toast(toast: dict) -> None:
     bar_w = 4 * scale
     card_draw.rectangle([0, 0, bar_w, sh], fill=toast["theme"]["accent"])    
 
+    # Bottom countdown progress bar
+    progress = toast["progress"]
+    if toast["duration_ms"] > 0 and progress > 0.0:
+        prog_h = 3 * scale
+        prog_w = int(sw * progress)
+        card_draw.rectangle(
+            [0, sh - prog_h, prog_w, sh],
+            fill=toast["theme"]["accent"],
+        )
+
     # 3. Paste card layer onto background using the rounded mask
     img.paste(card_layer, (0, 0), mask)
 
